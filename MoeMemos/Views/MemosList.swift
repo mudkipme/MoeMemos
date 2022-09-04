@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MemosList: View {
     @State private var searchString = ""
+    @State private var showingNewPost = false
     
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -19,22 +20,23 @@ struct MemosList: View {
             }
             .listStyle(InsetGroupedListStyle())
             
-            ZStack {
-                Button {
-                    
-                } label: {
-                    ZStack {
-                        Circle()
-                        Image(systemName: "plus")
-                            .resizable()
-                            .frame(width: 25, height: 25)
-                            .foregroundColor(.white)
-                    }.frame(width: 60, height: 60)
+            Button {
+                showingNewPost = true
+            } label: {
+                Circle().overlay {
+                    Image(systemName: "plus")
+                        .resizable()
+                        .frame(width: 25, height: 25)
+                        .foregroundColor(.white)
                 }
+                .frame(width: 60, height: 60)
             }.padding(20)
         }
         .searchable(text: $searchString)
         .navigationTitle("Memos")
+        .sheet(isPresented: $showingNewPost) {
+            MemoInput()
+        }
     }
 }
 

@@ -12,7 +12,15 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            Sidebar().navigationTitle("Mudkip")
+            Sidebar()
+                .toolbar {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                }
+                .navigationTitle("Mudkip")
         }
         .tint(.green)
         .onAppear {

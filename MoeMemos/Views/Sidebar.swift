@@ -14,35 +14,8 @@ struct Sidebar: View {
 
     var body: some View {
         VStack {
-            HStack {
-                VStack {
-                    Text("0")
-                        .font(.title2)
-                    Text("Memo")
-                        .textCase(.uppercase)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                VStack {
-                    Text("0")
-                        .font(.title2)
-                    Text("Tag")
-                        .textCase(.uppercase)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                VStack {
-                    Text("0")
-                        .font(.title2)
-                    Text("Day")
-                        .textCase(.uppercase)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .padding(20)
+            Stats()
+                .padding(20)
             
             HStack {
                 VStack(alignment: .trailing) {
@@ -58,14 +31,28 @@ struct Sidebar: View {
                 Heatmap()
             }
             .frame(minHeight: 120, maxHeight: 120)
-            .padding(.bottom, 20)
+            .padding(10)
             
             List {
                 NavigationLink(destination: MemosList(), isActive: $toMemosList) {
                     Text("✍️ Memos")
                 }
+                NavigationLink(destination: {
+                    
+                }) {
+                    Text("🗂 Archived")
+                }
+                
+                Section {
+                    NavigationLink(destination: {}) {
+                        Label("Games", systemImage: "number")
+                    }
+                } header: {
+                    Text("Tags")
+                }
             }
             .listStyle(.sidebar)
+            
             Spacer()
             
             Text("Moe Memos")

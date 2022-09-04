@@ -19,6 +19,8 @@
 		199A657D28C4761100C39994 /* Usage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657C28C4761100C39994 /* Usage.swift */; };
 		199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657E28C47D7C00C39994 /* Sidebar.swift */; };
 		199A658128C48A6200C39994 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A658028C48A6200C39994 /* Login.swift */; };
+		19E1C5BE28C4F6410072CEEF /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E1C5BD28C4F6410072CEEF /* Stats.swift */; };
+		19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E1C5BF28C5191D0072CEEF /* MemoInput.swift */; };
 		19F31BF728C3E26D000C5207 /* MemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BF628C3E26D000C5207 /* MemosList.swift */; };
 		19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFA28C3E9B2000C5207 /* Memo.swift */; };
 		19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFC28C3ED11000C5207 /* MemoCard.swift */; };
@@ -57,6 +59,8 @@
 		199A657C28C4761100C39994 /* Usage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Usage.swift; sourceTree = "<group>"; };
 		199A657E28C47D7C00C39994 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		199A658028C48A6200C39994 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		19E1C5BD28C4F6410072CEEF /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
+		19E1C5BF28C5191D0072CEEF /* MemoInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInput.swift; sourceTree = "<group>"; };
 		19F31BF628C3E26D000C5207 /* MemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosList.swift; sourceTree = "<group>"; };
 		19F31BFA28C3E9B2000C5207 /* Memo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memo.swift; sourceTree = "<group>"; };
 		19F31BFC28C3ED11000C5207 /* MemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCard.swift; sourceTree = "<group>"; };
@@ -162,6 +166,8 @@
 				1995E9CD28C46DC9004F2EDB /* Heatmap.swift */,
 				199A657E28C47D7C00C39994 /* Sidebar.swift */,
 				199A658028C48A6200C39994 /* Login.swift */,
+				19E1C5BD28C4F6410072CEEF /* Stats.swift */,
+				19E1C5BF28C5191D0072CEEF /* MemoInput.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -306,12 +312,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				19F31BF728C3E26D000C5207 /* MemosList.swift in Sources */,
+				19E1C5BE28C4F6410072CEEF /* Stats.swift in Sources */,
 				199A658128C48A6200C39994 /* Login.swift in Sources */,
 				19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */,
 				199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */,
 				199A657B28C474BA00C39994 /* Color.swift in Sources */,
 				199A657D28C4761100C39994 /* Usage.swift in Sources */,
 				1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */,
+				19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */,
 				194B273328C3973400A48675 /* ContentView.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
 				19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */,

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-fileprivate let gridSpacing: CGFloat = 2
+fileprivate let gridSpacing: CGFloat = 3
 fileprivate let daysInWeek = Calendar.current.weekdaySymbols.count
 fileprivate let defaultRows = [GridItem](repeating: GridItem(.flexible(minimum: 0, maximum: .infinity), spacing: gridSpacing), count: daysInWeek)
 fileprivate let days = [Int](0...daysInWeek)
