@@ -8,18 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var toMemosList = true
+    @State private var showingLogin = false
     
     var body: some View {
         NavigationView {
-            ZStack {
-                NavigationLink(destination: MemosList(), isActive: $toMemosList) {
-                    Text("Hello, world!")
-                        .padding()
-                }
-            }.navigationTitle("Mudkip")
+            Sidebar().navigationTitle("Mudkip")
         }
         .tint(.green)
+        .onAppear {
+            showingLogin = true
+        }
+        .sheet(isPresented: $showingLogin) {
+            Login()
+        }
     }
 }
 

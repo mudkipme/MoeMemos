@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-let relativeFormatter: RelativeDateTimeFormatter = {
+fileprivate let relativeFormatter: RelativeDateTimeFormatter = {
     let formatter = RelativeDateTimeFormatter()
     formatter.unitsStyle = .full
     return formatter
@@ -28,20 +28,54 @@ struct MemoCard: View {
                     .font(.footnote)
                     .foregroundColor(.secondary)
                 Spacer()
-                Button {
-                    
+                
+                Menu {
+                    Button {
+                        
+                    } label: {
+                        Label("Pin", systemImage: "flag")
+                    }
+                    Button {
+                        
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
+                    Button {
+                        
+                    } label: {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                    Button(role: .destructive, action: {
+                        
+                    }, label: {
+                        Label("Archive", systemImage: "archivebox")
+                    })
                 } label: {
                     Image(systemName: "ellipsis").frame(minHeight: 20)
                 }
-                .buttonStyle(.borderless)
             }
             
-            Text(memo.content)
+            Text(renderContent())
                 .font(.body)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
-        }.padding([.top, .bottom], 5)
- 
+        }
+        .contextMenu {
+            Button {
+                
+            } label: {
+                Label("Copy", systemImage: "doc.on.doc")
+            }
+        }
+        .padding([.top, .bottom], 5)
+    }
+    
+    private func renderContent() -> AttributedString {
+        do {
+            return try AttributedString(markdown: memo.content, options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace))
+        } catch {
+            return AttributedString(memo.content)
+        }
     }
 }
 

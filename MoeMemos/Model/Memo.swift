@@ -18,7 +18,7 @@ struct Memo {
     let visibility: String
     
     static let samples: [Memo] = [
-        Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\nThis is a multiline statement and thank you for everything.", pinned: false, rowStatus: "", updatedTs: .now, visibility: ""),
+        Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: "", updatedTs: .now, visibility: ""),
         Memo(id: 2, createdTs: .now, creatorId: 1, content: "Hello Memos", pinned: false, rowStatus: "", updatedTs: .now, visibility: "")
     ]
 }

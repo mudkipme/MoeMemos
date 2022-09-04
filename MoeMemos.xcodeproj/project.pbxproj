@@ -14,6 +14,11 @@
 		194B274228C3973600A48675 /* MoeMemosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274128C3973600A48675 /* MoeMemosTests.swift */; };
 		194B274C28C3973600A48675 /* MoeMemosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274B28C3973600A48675 /* MoeMemosUITests.swift */; };
 		194B274E28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */; };
+		1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1995E9CD28C46DC9004F2EDB /* Heatmap.swift */; };
+		199A657B28C474BA00C39994 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657A28C474BA00C39994 /* Color.swift */; };
+		199A657D28C4761100C39994 /* Usage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657C28C4761100C39994 /* Usage.swift */; };
+		199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657E28C47D7C00C39994 /* Sidebar.swift */; };
+		199A658128C48A6200C39994 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A658028C48A6200C39994 /* Login.swift */; };
 		19F31BF728C3E26D000C5207 /* MemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BF628C3E26D000C5207 /* MemosList.swift */; };
 		19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFA28C3E9B2000C5207 /* Memo.swift */; };
 		19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFC28C3ED11000C5207 /* MemoCard.swift */; };
@@ -47,6 +52,11 @@
 		194B274728C3973600A48675 /* MoeMemosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoeMemosUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		194B274B28C3973600A48675 /* MoeMemosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosUITests.swift; sourceTree = "<group>"; };
 		194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		1995E9CD28C46DC9004F2EDB /* Heatmap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Heatmap.swift; sourceTree = "<group>"; };
+		199A657A28C474BA00C39994 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		199A657C28C4761100C39994 /* Usage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Usage.swift; sourceTree = "<group>"; };
+		199A657E28C47D7C00C39994 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
+		199A658028C48A6200C39994 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		19F31BF628C3E26D000C5207 /* MemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosList.swift; sourceTree = "<group>"; };
 		19F31BFA28C3E9B2000C5207 /* Memo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memo.swift; sourceTree = "<group>"; };
 		19F31BFC28C3ED11000C5207 /* MemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCard.swift; sourceTree = "<group>"; };
@@ -100,6 +110,7 @@
 		194B272F28C3973400A48675 /* MoeMemos */ = {
 			isa = PBXGroup;
 			children = (
+				199A657928C4749800C39994 /* Extensions */,
 				19F31BF928C3E990000C5207 /* Model */,
 				19F31BF828C3E286000C5207 /* Views */,
 				194B273028C3973400A48675 /* MoeMemosApp.swift */,
@@ -135,11 +146,22 @@
 			path = MoeMemosUITests;
 			sourceTree = "<group>";
 		};
+		199A657928C4749800C39994 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				199A657A28C474BA00C39994 /* Color.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		19F31BF828C3E286000C5207 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				19F31BF628C3E26D000C5207 /* MemosList.swift */,
 				19F31BFC28C3ED11000C5207 /* MemoCard.swift */,
+				1995E9CD28C46DC9004F2EDB /* Heatmap.swift */,
+				199A657E28C47D7C00C39994 /* Sidebar.swift */,
+				199A658028C48A6200C39994 /* Login.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -148,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				19F31BFA28C3E9B2000C5207 /* Memo.swift */,
+				199A657C28C4761100C39994 /* Usage.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -283,7 +306,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				19F31BF728C3E26D000C5207 /* MemosList.swift in Sources */,
+				199A658128C48A6200C39994 /* Login.swift in Sources */,
 				19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */,
+				199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */,
+				199A657B28C474BA00C39994 /* Color.swift in Sources */,
+				199A657D28C4761100C39994 /* Usage.swift in Sources */,
+				1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */,
 				194B273328C3973400A48675 /* ContentView.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
 				19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */,
