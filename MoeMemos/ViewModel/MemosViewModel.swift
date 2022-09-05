@@ -11,6 +11,7 @@ import Foundation
 class MemosViewModel: ObservableObject {
     private var memos: Memos?
     @Published private(set) var currentUser: MemosUser?
+    @Published private(set) var memoList: [Memo] = []
     
     func reset(memosHost: String) throws {
         if memosHost == "" {
@@ -46,5 +47,11 @@ class MemosViewModel: ObservableObject {
 
         try await memos.logout()
         currentUser = nil
+    }
+    
+    func loadMemos() async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+        let response = try await memos.listMemos(data: nil)
+        memoList = response.data
     }
 }

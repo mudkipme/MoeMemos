@@ -10,10 +10,11 @@ import SwiftUI
 struct MemosList: View {
     @State private var searchString = ""
     @State private var showingNewPost = false
+    @EnvironmentObject private var memosViewModel: MemosViewModel
     
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            List(Memo.samples, id: \.id) { memo in
+            List(memosViewModel.memoList, id: \.id) { memo in
                 Section {
                     MemoCard(memo)
                 }
@@ -36,6 +37,20 @@ struct MemosList: View {
         .navigationTitle("Memos")
         .sheet(isPresented: $showingNewPost) {
             MemoInput()
+        }
+        .refreshable {
+            do {
+                try await memosViewModel.loadMemos()
+            } catch {
+                print(error)
+            }
+        }
+        .task {
+            do {
+                try await memosViewModel.loadMemos()
+            } catch {
+                print(error)
+            }
         }
     }
 }

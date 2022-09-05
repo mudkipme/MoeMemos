@@ -7,12 +7,18 @@
 
 import Foundation
 
-enum MemosRowStatus: String, Decodable {
+enum MemosVisibility: String, Decodable, Encodable {
+    case `public` = "PUBLIC"
+    case `protected` = "PROTECTED"
+    case `private` = "PRIVATE"
+}
+
+enum MemosRowStatus: String, Decodable, Encodable {
     case normal = "NORMAL"
     case archived = "ARCHIVED"
 }
 
-struct Memo {
+struct Memo: Decodable {
     let id: Int
     let createdTs: Date
     let creatorId: Int
@@ -20,10 +26,10 @@ struct Memo {
     let pinned: Bool
     let rowStatus: MemosRowStatus
     let updatedTs: Date
-    let visibility: String
+    let visibility: MemosVisibility
     
     static let samples: [Memo] = [
-        Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: ""),
-        Memo(id: 2, createdTs: .now, creatorId: 1, content: "Hello Memos", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: "")
+        Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private),
+        Memo(id: 2, createdTs: .now, creatorId: 1, content: "Hello Memos", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private)
     ]
 }

@@ -22,6 +22,7 @@ enum HTTPMethod: String {
     case options = "OPTIONS"
     case trace = "TRACE"
     case connect = "CONNECT"
+    case patch = "PATCH"
 }
 
 enum HTTPBodyEncodeMode {

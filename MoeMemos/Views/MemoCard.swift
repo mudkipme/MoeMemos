@@ -7,13 +7,6 @@
 
 import SwiftUI
 
-fileprivate let relativeFormatter: RelativeDateTimeFormatter = {
-    let formatter = RelativeDateTimeFormatter()
-    formatter.unitsStyle = .full
-    return formatter
-}()
-
-
 struct MemoCard: View {
     let memo: Memo
     
@@ -24,7 +17,7 @@ struct MemoCard: View {
     var body: some View {
         VStack {
             HStack(alignment: .bottom) {
-                Text(relativeFormatter.localizedString(for: memo.createdTs, relativeTo: .now))
+                Text(renderTime())
                     .font(.footnote)
                     .foregroundColor(.secondary)
                 Spacer()
@@ -68,6 +61,19 @@ struct MemoCard: View {
             }
         }
         .padding([.top, .bottom], 5)
+    }
+    
+    private func renderTime() -> String {
+        if Calendar.current.dateComponents([.day], from: memo.createdTs, to: .now).day! > 7 {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .long
+            formatter.timeStyle = .short
+            return formatter.string(from: memo.createdTs)
+        }
+        
+        let formatter = RelativeDateTimeFormatter()
+        formatter.dateTimeStyle = .named
+        return formatter.localizedString(for: memo.createdTs, relativeTo: .now)
     }
     
     private func renderContent() -> AttributedString {

@@ -52,11 +52,28 @@ struct MemosMe: MemosAPI {
     static func path(_ params: Void) -> String { "/api/user/me" }
 }
 
+struct MemosListMemo: MemosAPI {
+    struct Input: Encodable {
+        let creatorId: Int?
+        let rowStatus: MemosRowStatus?
+        let visibility: MemosVisibility?
+    }
+
+    struct Output: Decodable {
+        let data: [Memo]
+    }
+    
+    static let method: HTTPMethod = .get
+    static let encodeMode: HTTPBodyEncodeMode = .urlencoded
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static func path(_ params: Void) -> String { "/api/memo" }
+}
+
 extension MemosAPI {
     static func request(_ memos: Memos, data: Input?, param: Param) async throws -> Output {
         var url = memos.host.appendingPathComponent(path(param))
                 
-        if method == .get && encodeMode == .urlencoded {
+        if method == .get && encodeMode == .urlencoded && data != nil {
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
             components.queryItems = try encodeToQueryItems(data)
             url = components.url!
@@ -66,7 +83,7 @@ extension MemosAPI {
         request.httpMethod = method.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        if method == .post || method == .put {
+        if (method == .post || method == .put || method == .patch) && data != nil {
             if let contentType = encodeMode.contentType() {
                 request.setValue(contentType, forHTTPHeaderField: "Content-Type")
             }
@@ -108,5 +125,9 @@ class Memos {
     
     func me() async throws -> MemosMe.Output {
         return try await MemosMe.request(self, data: nil, param: ())
+    }
+    
+    func listMemos(data: MemosListMemo.Input?) async throws -> MemosListMemo.Output {
+        return try await MemosListMemo.request(self, data: data, param: ())
     }
 }
