@@ -13,54 +13,53 @@ struct Sidebar: View {
     @State private var toMemosList = true
 
     var body: some View {
-        VStack {
-            Stats()
-                .padding(20)
-            
-            HStack {
-                VStack(alignment: .trailing) {
-                    Text(weekDaySymbols.first ?? "")
-                        .font(.footnote).foregroundStyle(.secondary)
-                    Spacer()
-                    Text(weekDaySymbols[weekDaySymbols.count / 2])
-                        .font(.footnote).foregroundStyle(.secondary)
-                    Spacer()
-                    Text(weekDaySymbols.last ?? "")
-                        .font(.footnote).foregroundStyle(.secondary)
+        List {
+            VStack {
+                Stats()
+                    .padding(20)
+                
+                HStack {
+                    VStack(alignment: .trailing) {
+                        Text(weekDaySymbols.first ?? "")
+                            .font(.footnote).foregroundStyle(.secondary)
+                        Spacer()
+                        Text(weekDaySymbols[weekDaySymbols.count / 2])
+                            .font(.footnote).foregroundStyle(.secondary)
+                        Spacer()
+                        Text(weekDaySymbols.last ?? "")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                    Heatmap()
                 }
-                Heatmap()
+                .frame(minHeight: 120, maxHeight: 120)
+                .padding(.bottom, 10)
             }
-            .frame(minHeight: 120, maxHeight: 120)
-            .padding(10)
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(EmptyView())
             
-            List {
+            Section {
                 NavigationLink(destination: MemosList(), isActive: $toMemosList) {
-                    Text("✍️ Memos")
+                    Label("Memos", systemImage: "rectangle.grid.1x2")
                 }
                 NavigationLink(destination: {
                     
                 }) {
-                    Text("🗂 Archived")
+                    Label("Archived", systemImage: "archivebox")
                 }
-                
-                Section {
-                    NavigationLink(destination: {}) {
-                        Label("Games", systemImage: "number")
-                    }
-                } header: {
-                    Text("Tags")
-                }
+            } header: {
+                Text("Moe Memos")
             }
-            .listStyle(.sidebar)
             
-            Spacer()
-            
-            Text("Moe Memos")
-                .font(.footnote)
-                .foregroundColor(.secondary)
-                .padding(.bottom, 20)
+            Section {
+                NavigationLink(destination: {}) {
+                    Label("Games", systemImage: "number")
+                }
+            } header: {
+                Text("Tags")
+            }
         }
-        .background(Color(uiColor: .systemGroupedBackground))
+        .listStyle(.sidebar)
     }
 }
 

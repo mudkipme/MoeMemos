@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct Login: View {
-    @State var host: String = ""
-    @State var email: String = ""
-    @State var password: String = ""
+    @AppStorage("memosHost") var memosHost = ""
+    @State private var host = ""
+    @State private var email = ""
+    @State private var password = ""
     @Environment(\.dismiss) var dismiss
-
+    @EnvironmentObject private var memosViewModel: MemosViewModel
+    
     var body: some View {
         VStack {
             Text("Moe Memos")
@@ -23,7 +25,7 @@ struct Login: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .padding(.bottom, 20)
-
+            
             TextField("Host", text: $host)
                 .textContentType(.URL)
                 .keyboardType(.URL)
@@ -36,20 +38,40 @@ struct Login: View {
                 .textFieldStyle(.roundedBorder)
             
             Button {
-                dismiss()
+                Task {
+                    try await doLogin()
+                }
             } label: {
                 Text("Sign in")
             }
             .buttonStyle(.borderedProminent)
+            .controlSize(.large)
             .padding(.top, 20)
         }
         .padding()
+        .onAppear {
+            if host == "" {
+                host = memosHost
+            }
+        }
+    }
+    
+    func doLogin() async throws {
+        if host.isEmpty ||
+            email.trimmingCharacters(in: .whitespaces).isEmpty ||
+            password.isEmpty {
+            return
+        }
         
+        try await memosViewModel.signIn(memosHost: host, input: MemosSignIn.Input(email: email.trimmingCharacters(in: .whitespaces), password: password))
+        memosHost = host
+        dismiss()
     }
 }
 
 struct Login_Previews: PreviewProvider {
     static var previews: some View {
         Login()
+            .environmentObject(MemosViewModel())
     }
 }
