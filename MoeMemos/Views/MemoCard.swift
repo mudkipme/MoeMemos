@@ -6,11 +6,15 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct MemoCard: View {
     let memo: Memo
     
     @EnvironmentObject private var memosViewModel: MemosViewModel
+    @State private var showingEdit = false
+    @State private var showingShareSheet = false
+    @State private var showingDeleteConfirmation = false
     
     init(_ memo: Memo) {
         self.memo = memo
@@ -49,14 +53,27 @@ struct MemoCard: View {
         }
         .contextMenu {
             Button {
-                
+                UIPasteboard.general.setValue(memo.content, forPasteboardType: UTType.plainText.identifier)
             } label: {
                 Label("Copy", systemImage: "doc.on.doc")
             }
         }
         .padding([.top, .bottom], 5)
+        .sheet(isPresented: $showingEdit) {
+            MemoInput(memo: memo)
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            ShareSheet(activityItems: [memo.content])
+        }
+        .confirmationDialog("Delete this memo?", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
+            Button("Yes", role: .destructive) {
+                Task {
+                    try await memosViewModel.deleteMemo(id: memo.id)
+                }
+            }
+            Button("No", role: .cancel) {}
+        }
     }
-    
     
     @ViewBuilder
     private func normalMenu() -> some View {
@@ -76,17 +93,23 @@ struct MemoCard: View {
             }
         }
         Button {
-            
+            showingEdit = true
         } label: {
             Label("Edit", systemImage: "pencil")
         }
         Button {
-            
+            showingShareSheet = true
         } label: {
             Label("Share", systemImage: "square.and.arrow.up")
         }
         Button(role: .destructive, action: {
-            
+            Task {
+                do {
+                    try await memosViewModel.archiveMemo(id: memo.id)
+                } catch {
+                    print(error)
+                }
+            }
         }, label: {
             Label("Archive", systemImage: "archivebox")
         })
@@ -95,12 +118,18 @@ struct MemoCard: View {
     @ViewBuilder
     private func archivedMenu() -> some View {
         Button {
-            
+            Task {
+                do {
+                    try await memosViewModel.restoreMemo(id: memo.id)
+                } catch {
+                    print(error)
+                }
+            }
         } label: {
             Label("Restore", systemImage: "tray.and.arrow.up")
         }
         Button(role: .destructive, action: {
-            
+            showingDeleteConfirmation = true
         }, label: {
             Label("Delete", systemImage: "trash")
         })
@@ -121,7 +150,10 @@ struct MemoCard: View {
     
     private func renderContent() -> AttributedString {
         do {
-            return try AttributedString(markdown: memo.content, options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace))
+            return try AttributedString(markdown: memo.content, options: AttributedString.MarkdownParsingOptions(
+                    allowsExtendedAttributes: true,
+                    interpretedSyntax: .inlineOnlyPreservingWhitespace))
+            
         } catch {
             return AttributedString(memo.content)
         }

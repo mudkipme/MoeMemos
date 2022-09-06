@@ -123,4 +123,41 @@ class MemosViewModel: ObservableObject {
         
         updateMemo(memo)
     }
+    
+    func archiveMemo(id: Int) async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+
+        _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .archived, content: nil, visibility: nil))
+        memoList = memoList.filter({ memo in
+            memo.id != id
+        })
+    }
+    
+    func restoreMemo(id: Int) async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+
+        _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .normal, content: nil, visibility: nil))
+        archivedMemoList = archivedMemoList.filter({ memo in
+            memo.id != id
+        })
+        try await loadMemos()
+    }
+    
+    func editMemo(id: Int, content: String) async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+
+        let response = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: nil, content: content, visibility: nil))
+        updateMemo(response.data)
+    }
+    
+    func deleteMemo(id: Int) async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+        _ = try await memos.deleteMemo(id: id)
+        memoList = memoList.filter({ memo in
+            memo.id != id
+        })
+        archivedMemoList = archivedMemoList.filter({ memo in
+            memo.id != id
+        })
+    }
 }

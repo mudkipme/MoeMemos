@@ -118,6 +118,36 @@ struct MemosOrganizer: MemosAPI {
     static func path(_ params: Int) -> String { "/api/memo/\(params)/organizer" }
 }
 
+struct MemosPatch: MemosAPI {
+    struct Input: Encodable {
+        let id: Int
+        let createdTs: Date?
+        let rowStatus: MemosRowStatus?
+        let content: String?
+        let visibility: MemosVisibility?
+    }
+
+    struct Output: Decodable {
+        let data: Memo
+    }
+    
+    typealias Param = Int
+    
+    static let method: HTTPMethod = .patch
+    static let encodeMode: HTTPBodyEncodeMode = .json
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static func path(_ params: Int) -> String { "/api/memo/\(params)" }
+}
+
+struct MemosDelete: MemosAPI {
+    typealias Output = Bool
+    typealias Param = Int
+    
+    static let method: HTTPMethod = .delete
+    static let encodeMode: HTTPBodyEncodeMode = .none
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static func path(_ params: Int) -> String { "/api/memo/\(params)" }
+}
 
 extension MemosAPI {
     static func request(_ memos: Memos, data: Input?, param: Param) async throws -> Output {

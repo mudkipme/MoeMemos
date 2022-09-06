@@ -40,7 +40,7 @@ struct MemosList: View {
         .searchable(text: $searchString)
         .navigationTitle(tag?.name ?? "Memos")
         .sheet(isPresented: $showingNewPost) {
-            MemoInput()
+            MemoInput(memo: nil)
         }
         .onAppear {
             filteredMemoList = filterMemoList(memosViewModel.memoList)

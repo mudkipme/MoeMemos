@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
+		192DF0F528C7B71D0077E785 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F428C7B71D0077E785 /* ShareSheet.swift */; };
 		193DE92128C5CFBB002651E0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92028C5CFBB002651E0 /* User.swift */; };
 		193DE92328C5E267002651E0 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92228C5E267002651E0 /* Settings.swift */; };
 		193DE92828C61488002651E0 /* MemosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92728C61488002651E0 /* MemosAPI.swift */; };
@@ -55,6 +56,7 @@
 
 /* Begin PBXFileReference section */
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
+		192DF0F428C7B71D0077E785 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		193DE92028C5CFBB002651E0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		193DE92228C5E267002651E0 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		193DE92728C61488002651E0 /* MemosAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosAPI.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				193DE92A28C619D9002651E0 /* HTTP.swift */,
 				193DE93128C652F7002651E0 /* Error.swift */,
 				195E5D6A28C704AC00784EF5 /* Date.swift */,
+				192DF0F428C7B71D0077E785 /* ShareSheet.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -385,6 +388,7 @@
 				193DE92828C61488002651E0 /* MemosAPI.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
 				195E5D6B28C704AC00784EF5 /* Date.swift in Sources */,
+				192DF0F528C7B71D0077E785 /* ShareSheet.swift in Sources */,
 				19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */,
 				193DE93228C652F7002651E0 /* Error.swift in Sources */,
 			);

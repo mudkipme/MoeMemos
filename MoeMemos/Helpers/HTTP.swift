@@ -13,6 +13,12 @@ private var memosJsonDecoder: JSONDecoder {
     return decoder
 }
 
+private var memosJsonEncoder: JSONEncoder {
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .secondsSince1970
+    return encoder
+}
+
 enum HTTPMethod: String {
     case get = "GET"
     case put = "PUT"
@@ -47,7 +53,7 @@ enum HTTPBodyEncodeMode {
             components.queryItems = queryItems
             return components.percentEncodedQuery?.data(using: .utf8)
         case .json:
-            return try JSONEncoder().encode(data)
+            return try memosJsonEncoder.encode(data)
         default:
             return data as? Data
         }

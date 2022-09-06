@@ -21,7 +21,7 @@ struct Login: View {
                 .font(.largeTitle)
                 .fontWeight(.semibold)
                 .padding(.bottom, 10)
-            Text("Please input your login information of your Memos instance.")
+            Text("Please input the login information of your Memos instance.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .padding(.bottom, 20)

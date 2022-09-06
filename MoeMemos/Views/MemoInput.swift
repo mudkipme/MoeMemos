@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MemoInput: View {
+    let memo: Memo?
     @State private var text = ""
     @State private var placeholderText = "Any thoughts…"
     @FocusState private var focused: Bool
@@ -47,16 +48,10 @@ struct MemoInput: View {
                         Image(systemName: "number")
                     }
                 }
-                
-                Button {
-                    
-                } label: {
-                    Image(systemName: "camera")
-                }
                 Spacer()
                 Button {
                     Task {
-                        try await createMemo()
+                        try await saveMemo()
                     }
                 } label: {
                     Label("Save", systemImage: "paperplane")
@@ -66,7 +61,11 @@ struct MemoInput: View {
             .padding([.leading, .trailing, .bottom])
         }
         .onAppear {
-            text = draft
+            if let memo = memo {
+                text = memo.content
+            } else {
+                text = draft
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                 focused = true
             }
@@ -79,24 +78,32 @@ struct MemoInput: View {
             }
         }
         .onDisappear {
-            draft = text
+            if memo == nil {
+                draft = text
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-            draft = text
+            if memo == nil {
+                draft = text
+            }
         }
     }
     
-    func createMemo() async throws {
-        try await memosViewModel.createMemo(content: text)
+    func saveMemo() async throws {
+        if let memo = memo {
+            try await memosViewModel.editMemo(id: memo.id, content: text)
+        } else {
+            try await memosViewModel.createMemo(content: text)
+            draft = ""
+        }
         text = ""
-        draft = ""
         dismiss()
     }
 }
 
 struct MemoInput_Previews: PreviewProvider {
     static var previews: some View {
-        MemoInput()
+        MemoInput(memo: nil)
             .environmentObject(MemosViewModel())
     }
 }

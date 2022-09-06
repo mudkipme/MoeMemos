@@ -44,4 +44,12 @@ class Memos {
     func updateMemoOrganizer(memoId: Int, data: MemosOrganizer.Input) async throws -> MemosOrganizer.Output {
         return try await MemosOrganizer.request(self, data: data, param: memoId)
     }
+    
+    func updateMemo(data: MemosPatch.Input) async throws -> MemosPatch.Output {
+        return try await MemosPatch.request(self, data: data, param: data.id)
+    }
+    
+    func deleteMemo(id: Int) async throws -> MemosDelete.Output {
+        return try await MemosDelete.request(self, data: nil, param: id)
+    }
 }
