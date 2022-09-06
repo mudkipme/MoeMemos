@@ -7,17 +7,20 @@
 
 import Foundation
 
+
 struct DailyUsageStat: Identifiable {
     let date: Date
-    let count: Int
+    var count: Int
     
     var id: String {
         date.formatted(date: .numeric, time: .omitted)
     }
     
     static let initialMatrix: [DailyUsageStat] = {
+        let today = Calendar.current.startOfDay(for: .now)
+        
         return Calendar.current.range(of: .day, in: .year, for: Date())!.map { day in
-            Self.init(date: Calendar.current.date(byAdding: .day, value: -day, to: .now)!, count: 0)
+            return Self.init(date: Calendar.current.date(byAdding: .day, value: 1 - day, to: today)!, count: 0)
         }.reversed()
     }()
 }

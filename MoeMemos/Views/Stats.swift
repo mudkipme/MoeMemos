@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct Stats: View {
+    @EnvironmentObject private var memosViewModel: MemosViewModel
+    
     var body: some View {
         HStack {
             VStack {
-                Text("0")
+                Text("\(memosViewModel.memoList.count)")
                     .font(.title2)
                 Text("Memo")
                     .textCase(.uppercase)
@@ -20,7 +22,7 @@ struct Stats: View {
             }
             Spacer()
             VStack {
-                Text("0")
+                Text("\(memosViewModel.tags.count)")
                     .font(.title2)
                 Text("Tag")
                     .textCase(.uppercase)
@@ -29,7 +31,7 @@ struct Stats: View {
             }
             Spacer()
             VStack {
-                Text("0")
+                Text("\(days())")
                     .font(.title2)
                 Text("Day")
                     .textCase(.uppercase)
@@ -38,10 +40,16 @@ struct Stats: View {
             }
         }
     }
+    
+    func days() -> Int {
+        guard let user = memosViewModel.currentUser else { return 0 }
+        return Calendar.current.dateComponents([.day], from: user.createdTs, to: .now).day!
+    }
 }
 
 struct Stats_Previews: PreviewProvider {
     static var previews: some View {
         Stats()
+            .environmentObject(MemosViewModel())
     }
 }

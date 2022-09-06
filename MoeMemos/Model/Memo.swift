@@ -18,18 +18,19 @@ enum MemosRowStatus: String, Decodable, Encodable {
     case archived = "ARCHIVED"
 }
 
-struct Memo: Decodable {
+struct Memo: Decodable, Equatable {
     let id: Int
     let createdTs: Date
     let creatorId: Int
-    let content: String
-    let pinned: Bool
+    var content: String
+    var pinned: Bool
     let rowStatus: MemosRowStatus
     let updatedTs: Date
     let visibility: MemosVisibility
+}
+
+struct Tag: Identifiable {
+    let name: String
     
-    static let samples: [Memo] = [
-        Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private),
-        Memo(id: 2, createdTs: .now, creatorId: 1, content: "Hello Memos", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private)
-    ]
+    var id: String { name }
 }

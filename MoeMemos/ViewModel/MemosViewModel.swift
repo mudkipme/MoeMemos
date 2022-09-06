@@ -11,7 +11,30 @@ import Foundation
 class MemosViewModel: ObservableObject {
     private var memos: Memos?
     @Published private(set) var currentUser: MemosUser?
-    @Published private(set) var memoList: [Memo] = []
+    @Published private(set) var memoList: [Memo] = [] {
+        didSet {
+            matrix = calculateMatrix()
+        }
+    }
+    @Published private(set) var tags: [Tag] = []
+    @Published private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
+    @Published private(set) var archivedMemoList: [Memo] = []
+    
+    private func calculateMatrix() -> [DailyUsageStat] {
+        var result = DailyUsageStat.initialMatrix
+        var countDict = [String: Int]()
+        
+        for memo in memoList {
+            let key = memo.createdTs.formatted(date: .numeric, time: .omitted)
+            countDict[key] = (countDict[key] ?? 0) + 1
+        }
+        
+        for (i, day) in result.enumerated() {
+            result[i].count = countDict[day.id] ?? 0
+        }
+        
+        return result
+    }
     
     func reset(memosHost: String) throws {
         if memosHost == "" {
@@ -51,7 +74,53 @@ class MemosViewModel: ObservableObject {
     
     func loadMemos() async throws {
         guard let memos = memos else { throw MemosError.notLogin }
+        
         let response = try await memos.listMemos(data: nil)
-        memoList = response.data
+        memoList = response.data.filter({ memo in
+            memo.rowStatus != .archived
+        })
+    }
+    
+    func loadTags() async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+        
+        let response = try await memos.tags(data: nil)
+        tags = response.data.map({ name in
+            Tag(name: name)
+        })
+    }
+    
+    func createMemo(content: String) async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+
+        let response = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: nil))
+        memoList.insert(response.data, at: 0)
+    }
+    
+    private func updateMemo(_ memo: Memo) {
+        for (i, item) in memoList.enumerated() {
+            if item.id == memo.id {
+                memoList[i] = memo
+                break
+            }
+        }
+    }
+    
+    func loadArchivedMemos() async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+        
+        let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .archived, visibility: nil))
+        archivedMemoList = response.data
+    }
+    
+    func updateMemoOrganizer(id: Int, pinned: Bool) async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+        
+        let response = try await memos.updateMemoOrganizer(memoId: id, data: MemosOrganizer.Input(pinned: pinned))
+        // the response might be incorrect
+        var memo = response.data
+        memo.pinned = pinned
+        
+        updateMemo(memo)
     }
 }

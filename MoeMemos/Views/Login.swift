@@ -29,10 +29,14 @@ struct Login: View {
             TextField("Host", text: $host)
                 .textContentType(.URL)
                 .keyboardType(.URL)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
                 .textFieldStyle(.roundedBorder)
             TextField("Email", text: $email)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
                 .textFieldStyle(.roundedBorder)
             SecureField("Password", text: $password)
                 .textFieldStyle(.roundedBorder)
@@ -65,6 +69,7 @@ struct Login: View {
         
         try await memosViewModel.signIn(memosHost: host, input: MemosSignIn.Input(email: email.trimmingCharacters(in: .whitespaces), password: password))
         memosHost = host
+        try await memosViewModel.loadMemos()
         dismiss()
     }
 }

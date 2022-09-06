@@ -49,7 +49,7 @@ enum HTTPBodyEncodeMode {
         case .json:
             return try JSONEncoder().encode(data)
         default:
-            return nil
+            return data as? Data
         }
     }
 }
@@ -57,6 +57,15 @@ enum HTTPBodyEncodeMode {
 enum HTTPBodyDecodeMode {
     case json
     case none
+    
+    func contentType() -> String? {
+        switch self {
+        case .json:
+            return "application/json"
+        default:
+            return nil
+        }
+    }
     
     func decode<T: Decodable>(_ data: Data) throws -> T {
         switch self {

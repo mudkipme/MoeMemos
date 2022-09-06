@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
 		193DE92128C5CFBB002651E0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92028C5CFBB002651E0 /* User.swift */; };
 		193DE92328C5E267002651E0 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92228C5E267002651E0 /* Settings.swift */; };
 		193DE92828C61488002651E0 /* MemosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92728C61488002651E0 /* MemosAPI.swift */; };
@@ -20,6 +21,9 @@
 		194B274228C3973600A48675 /* MoeMemosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274128C3973600A48675 /* MoeMemosTests.swift */; };
 		194B274C28C3973600A48675 /* MoeMemosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274B28C3973600A48675 /* MoeMemosUITests.swift */; };
 		194B274E28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */; };
+		195E5D6B28C704AC00784EF5 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6A28C704AC00784EF5 /* Date.swift */; };
+		195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
+		195E5D7128C70A3800784EF5 /* HeatmapStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D7028C70A3800784EF5 /* HeatmapStat.swift */; };
 		1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1995E9CD28C46DC9004F2EDB /* Heatmap.swift */; };
 		199A657B28C474BA00C39994 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657A28C474BA00C39994 /* Color.swift */; };
 		199A657D28C4761100C39994 /* Usage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657C28C4761100C39994 /* Usage.swift */; };
@@ -50,6 +54,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
 		193DE92028C5CFBB002651E0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		193DE92228C5E267002651E0 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		193DE92728C61488002651E0 /* MemosAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosAPI.swift; sourceTree = "<group>"; };
@@ -66,6 +71,9 @@
 		194B274728C3973600A48675 /* MoeMemosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoeMemosUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		194B274B28C3973600A48675 /* MoeMemosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosUITests.swift; sourceTree = "<group>"; };
 		194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		195E5D6A28C704AC00784EF5 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		195E5D6C28C7051F00784EF5 /* Memos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memos.swift; sourceTree = "<group>"; };
+		195E5D7028C70A3800784EF5 /* HeatmapStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapStat.swift; sourceTree = "<group>"; };
 		1995E9CD28C46DC9004F2EDB /* Heatmap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Heatmap.swift; sourceTree = "<group>"; };
 		199A657A28C474BA00C39994 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		199A657C28C4761100C39994 /* Usage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Usage.swift; sourceTree = "<group>"; };
@@ -107,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				193DE92728C61488002651E0 /* MemosAPI.swift */,
+				195E5D6C28C7051F00784EF5 /* Memos.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -116,6 +125,7 @@
 			children = (
 				193DE92A28C619D9002651E0 /* HTTP.swift */,
 				193DE93128C652F7002651E0 /* Error.swift */,
+				195E5D6A28C704AC00784EF5 /* Date.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -158,7 +168,6 @@
 				19F31BF928C3E990000C5207 /* Model */,
 				19F31BF828C3E286000C5207 /* Views */,
 				194B273028C3973400A48675 /* MoeMemosApp.swift */,
-				194B273228C3973400A48675 /* ContentView.swift */,
 				194B273428C3973600A48675 /* Assets.xcassets */,
 				194B273628C3973600A48675 /* Preview Content */,
 			);
@@ -201,14 +210,17 @@
 		19F31BF828C3E286000C5207 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				19F31BF628C3E26D000C5207 /* MemosList.swift */,
-				19F31BFC28C3ED11000C5207 /* MemoCard.swift */,
+				194B273228C3973400A48675 /* ContentView.swift */,
 				1995E9CD28C46DC9004F2EDB /* Heatmap.swift */,
-				199A657E28C47D7C00C39994 /* Sidebar.swift */,
+				195E5D7028C70A3800784EF5 /* HeatmapStat.swift */,
 				199A658028C48A6200C39994 /* Login.swift */,
-				19E1C5BD28C4F6410072CEEF /* Stats.swift */,
+				19F31BFC28C3ED11000C5207 /* MemoCard.swift */,
 				19E1C5BF28C5191D0072CEEF /* MemoInput.swift */,
+				19F31BF628C3E26D000C5207 /* MemosList.swift */,
 				193DE92228C5E267002651E0 /* Settings.swift */,
+				199A657E28C47D7C00C39994 /* Sidebar.swift */,
+				19E1C5BD28C4F6410072CEEF /* Stats.swift */,
+				192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -360,15 +372,19 @@
 				199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */,
 				193DE92128C5CFBB002651E0 /* User.swift in Sources */,
 				193DE93028C65104002651E0 /* MemosViewModel.swift in Sources */,
+				192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */,
 				199A657B28C474BA00C39994 /* Color.swift in Sources */,
 				199A657D28C4761100C39994 /* Usage.swift in Sources */,
 				193DE92328C5E267002651E0 /* Settings.swift in Sources */,
 				193DE92B28C619D9002651E0 /* HTTP.swift in Sources */,
+				195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */,
 				1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */,
+				195E5D7128C70A3800784EF5 /* HeatmapStat.swift in Sources */,
 				19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */,
 				194B273328C3973400A48675 /* ContentView.swift in Sources */,
 				193DE92828C61488002651E0 /* MemosAPI.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
+				195E5D6B28C704AC00784EF5 /* Date.swift in Sources */,
 				19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */,
 				193DE93228C652F7002651E0 /* Error.swift in Sources */,
 			);

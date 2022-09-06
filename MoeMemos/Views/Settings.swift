@@ -71,5 +71,6 @@ struct Settings_Previews: PreviewProvider {
 
     static var previews: some View {
         Settings(showingLogin: $showingLogin)
+            .environmentObject(MemosViewModel())
     }
 }

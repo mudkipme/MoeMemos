@@ -10,41 +10,35 @@ import SwiftUI
 struct MemoCard: View {
     let memo: Memo
     
+    @EnvironmentObject private var memosViewModel: MemosViewModel
+    
     init(_ memo: Memo) {
         self.memo = memo
     }
     
     var body: some View {
         VStack {
-            HStack(alignment: .bottom) {
+            HStack {
                 Text(renderTime())
                     .font(.footnote)
                     .foregroundColor(.secondary)
+                
+                if memo.pinned {
+                    Image(systemName: "flag.fill")
+                        .renderingMode(.original)
+                }
+                
                 Spacer()
                 
                 Menu {
-                    Button {
-                        
-                    } label: {
-                        Label("Pin", systemImage: "flag")
+                    if memo.rowStatus == .archived {
+                        archivedMenu()
+                    } else {
+                        normalMenu()
                     }
-                    Button {
-                        
-                    } label: {
-                        Label("Edit", systemImage: "pencil")
-                    }
-                    Button {
-                        
-                    } label: {
-                        Label("Share", systemImage: "square.and.arrow.up")
-                    }
-                    Button(role: .destructive, action: {
-                        
-                    }, label: {
-                        Label("Archive", systemImage: "archivebox")
-                    })
                 } label: {
-                    Image(systemName: "ellipsis").frame(minHeight: 20)
+                    Image(systemName: "ellipsis")
+                        .padding([.leading, .top, .bottom], 10)
                 }
             }
             
@@ -61,6 +55,55 @@ struct MemoCard: View {
             }
         }
         .padding([.top, .bottom], 5)
+    }
+    
+    
+    @ViewBuilder
+    private func normalMenu() -> some View {
+        Button {
+            Task {
+                do {
+                    try await memosViewModel.updateMemoOrganizer(id: memo.id, pinned: !memo.pinned)
+                } catch {
+                    print(error)
+                }
+            }
+        } label: {
+            if memo.pinned {
+                Label("Unpin", systemImage: "flag.slash")
+            } else {
+                Label("Pin", systemImage: "flag")
+            }
+        }
+        Button {
+            
+        } label: {
+            Label("Edit", systemImage: "pencil")
+        }
+        Button {
+            
+        } label: {
+            Label("Share", systemImage: "square.and.arrow.up")
+        }
+        Button(role: .destructive, action: {
+            
+        }, label: {
+            Label("Archive", systemImage: "archivebox")
+        })
+    }
+    
+    @ViewBuilder
+    private func archivedMenu() -> some View {
+        Button {
+            
+        } label: {
+            Label("Restore", systemImage: "tray.and.arrow.up")
+        }
+        Button(role: .destructive, action: {
+            
+        }, label: {
+            Label("Delete", systemImage: "trash")
+        })
     }
     
     private func renderTime() -> String {
@@ -87,6 +130,7 @@ struct MemoCard: View {
 
 struct MemoCard_Previews: PreviewProvider {
     static var previews: some View {
-        MemoCard(Memo.samples[0])
+        MemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private))
+            .environmentObject(MemosViewModel())
     }
 }

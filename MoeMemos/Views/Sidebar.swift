@@ -11,6 +11,7 @@ fileprivate let weekDaySymbols = Calendar.current.shortWeekdaySymbols
 
 struct Sidebar: View {
     @State private var toMemosList = true
+    @EnvironmentObject private var memosViewModel: MemosViewModel
 
     var body: some View {
         List {
@@ -39,11 +40,11 @@ struct Sidebar: View {
             .listRowBackground(EmptyView())
             
             Section {
-                NavigationLink(destination: MemosList(), isActive: $toMemosList) {
+                NavigationLink(destination: MemosList(tag: nil), isActive: $toMemosList) {
                     Label("Memos", systemImage: "rectangle.grid.1x2")
                 }
                 NavigationLink(destination: {
-                    
+                    ArchivedMemosList()
                 }) {
                     Label("Archived", systemImage: "archivebox")
                 }
@@ -52,19 +53,31 @@ struct Sidebar: View {
             }
             
             Section {
-                NavigationLink(destination: {}) {
-                    Label("Games", systemImage: "number")
+                ForEach(memosViewModel.tags) { tag in
+                    NavigationLink(destination: {
+                        MemosList(tag: tag)
+                    }) {
+                        Label(tag.name, systemImage: "number")
+                    }
                 }
             } header: {
                 Text("Tags")
             }
         }
         .listStyle(.sidebar)
+        .task {
+            do {
+                try await memosViewModel.loadTags()
+            } catch {
+                print(error)
+            }
+        }
     }
 }
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
         Sidebar()
+            .environmentObject(MemosViewModel())
     }
 }

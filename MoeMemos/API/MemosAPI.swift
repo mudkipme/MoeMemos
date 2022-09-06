@@ -69,6 +69,56 @@ struct MemosListMemo: MemosAPI {
     static func path(_ params: Void) -> String { "/api/memo" }
 }
 
+struct MemosTag: MemosAPI {
+    struct Input: Encodable {
+        let creatorId: Int?
+    }
+
+    struct Output: Decodable {
+        let data: [String]
+    }
+    
+    static let method: HTTPMethod = .get
+    static let encodeMode: HTTPBodyEncodeMode = .urlencoded
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static func path(_ params: Void) -> String { "/api/tag" }
+}
+
+
+struct MemosCreate: MemosAPI {
+    struct Input: Encodable {
+        let content: String
+        let visibility: MemosVisibility?
+    }
+
+    struct Output: Decodable {
+        let data: Memo
+    }
+    
+    static let method: HTTPMethod = .post
+    static let encodeMode: HTTPBodyEncodeMode = .json
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static func path(_ params: Void) -> String { "/api/memo" }
+}
+
+struct MemosOrganizer: MemosAPI {
+    struct Input: Encodable {
+        let pinned: Bool
+    }
+
+    struct Output: Decodable {
+        let data: Memo
+    }
+    
+    typealias Param = Int
+    
+    static let method: HTTPMethod = .post
+    static let encodeMode: HTTPBodyEncodeMode = .json
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static func path(_ params: Int) -> String { "/api/memo/\(params)/organizer" }
+}
+
+
 extension MemosAPI {
     static func request(_ memos: Memos, data: Input?, param: Param) async throws -> Output {
         var url = memos.host.appendingPathComponent(path(param))
@@ -81,7 +131,10 @@ extension MemosAPI {
         
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        if let accept = decodeMode.contentType() {
+            request.setValue(accept, forHTTPHeaderField: "Accept")
+        }
 
         if (method == .post || method == .put || method == .patch) && data != nil {
             if let contentType = encodeMode.contentType() {
@@ -102,32 +155,5 @@ extension MemosAPI {
         }
         
         return try decodeMode.decode(data)
-    }
-}
-
-class Memos {
-    let host: URL
-    let session: URLSession
-    
-    init(host: URL) {
-        self.host = host
-        session = URLSession.shared
-    }
-    
-    func signIn(data: MemosSignIn.Input) async throws -> MemosSignIn.Output {
-        return try await MemosSignIn.request(self, data: data, param: ())
-    }
-    
-    func logout() async throws {
-        _ = try await MemosLogout.request(self, data: nil, param: ())
-        session.configuration.httpCookieStorage?.removeCookies(since: .distantPast)
-    }
-    
-    func me() async throws -> MemosMe.Output {
-        return try await MemosMe.request(self, data: nil, param: ())
-    }
-    
-    func listMemos(data: MemosListMemo.Input?) async throws -> MemosListMemo.Output {
-        return try await MemosListMemo.request(self, data: data, param: ())
     }
 }

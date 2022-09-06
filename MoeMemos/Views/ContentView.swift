@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showingLogin = false
-    @StateObject private var memosViewModel = MemosViewModel()
     @AppStorage("memosHost") private var memosHost = ""
+    @EnvironmentObject private var memosViewModel: MemosViewModel
     
     var body: some View {
         NavigationView {
@@ -23,7 +23,6 @@ struct ContentView: View {
                     }
                 }
                 .navigationTitle(memosViewModel.currentUser?.name ?? "Memos")
-            MemosList()
         }
         .tint(.green)
         .task {
@@ -32,7 +31,6 @@ struct ContentView: View {
         .sheet(isPresented: $showingLogin) {
             Login()
         }
-        .environmentObject(memosViewModel)
     }
     
     func loadCurrentUser() async {
@@ -51,5 +49,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(MemosViewModel())
     }
 }
