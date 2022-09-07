@@ -40,6 +40,12 @@ struct ContentView: View {
         } catch MemosError.notLogin {
             showingLogin = true
             return
+        } catch MemosError.invalidStatusCode(let statusCode, let message) {
+            if statusCode == 401 {
+                showingLogin = true
+                return
+            }
+            print("status: \(statusCode), message: \(message ?? "")")
         } catch {
             print(error)
         }

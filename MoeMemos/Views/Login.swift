@@ -14,6 +14,9 @@ struct Login: View {
     @State private var password = ""
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject private var memosViewModel: MemosViewModel
+    @State private var loginError: Error?
+    @State private var showingErrorToast = false
+    @State private var showLoadingToast = false
     
     var body: some View {
         VStack {
@@ -21,7 +24,8 @@ struct Login: View {
                 .font(.largeTitle)
                 .fontWeight(.semibold)
                 .padding(.bottom, 10)
-            Text("Please input the login information of your Memos instance.")
+            Text("Please input the login information of your\n[✍️memos](https://github.com/usememos/memos) instance.")
+                .multilineTextAlignment(.center)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .padding(.bottom, 20)
@@ -43,7 +47,15 @@ struct Login: View {
             
             Button {
                 Task {
-                    try await doLogin()
+                    do {
+                        showLoadingToast = true
+                        try await doLogin()
+                        loginError = nil
+                    } catch {
+                        loginError = error
+                        showingErrorToast = true
+                    }
+                    showLoadingToast = false
                 }
             } label: {
                 Text("Sign in")
@@ -58,13 +70,15 @@ struct Login: View {
                 host = memosHost
             }
         }
+        .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", loginError?.localizedDescription))
+        .toast(isPresenting: $showLoadingToast, alertType: .loading)
     }
     
     func doLogin() async throws {
         if host.isEmpty ||
             email.trimmingCharacters(in: .whitespaces).isEmpty ||
             password.isEmpty {
-            return
+            throw MemosError.invalidParams
         }
         
         try await memosViewModel.signIn(memosHost: host, input: MemosSignIn.Input(email: email.trimmingCharacters(in: .whitespaces), password: password))

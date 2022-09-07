@@ -22,6 +22,7 @@
 		194B274228C3973600A48675 /* MoeMemosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274128C3973600A48675 /* MoeMemosTests.swift */; };
 		194B274C28C3973600A48675 /* MoeMemosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274B28C3973600A48675 /* MoeMemosUITests.swift */; };
 		194B274E28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */; };
+		195E5AD328C84E4F00CD4674 /* AlertToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5AD228C84E4F00CD4674 /* AlertToast.swift */; };
 		195E5D6B28C704AC00784EF5 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6A28C704AC00784EF5 /* Date.swift */; };
 		195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
 		195E5D7128C70A3800784EF5 /* HeatmapStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D7028C70A3800784EF5 /* HeatmapStat.swift */; };
@@ -73,6 +74,7 @@
 		194B274728C3973600A48675 /* MoeMemosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoeMemosUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		194B274B28C3973600A48675 /* MoeMemosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosUITests.swift; sourceTree = "<group>"; };
 		194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		195E5AD228C84E4F00CD4674 /* AlertToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertToast.swift; sourceTree = "<group>"; };
 		195E5D6A28C704AC00784EF5 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		195E5D6C28C7051F00784EF5 /* Memos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memos.swift; sourceTree = "<group>"; };
 		195E5D7028C70A3800784EF5 /* HeatmapStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapStat.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				193DE93128C652F7002651E0 /* Error.swift */,
 				195E5D6A28C704AC00784EF5 /* Date.swift */,
 				192DF0F428C7B71D0077E785 /* ShareSheet.swift */,
+				195E5AD228C84E4F00CD4674 /* AlertToast.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */,
 				199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */,
 				193DE92128C5CFBB002651E0 /* User.swift in Sources */,
+				195E5AD328C84E4F00CD4674 /* AlertToast.swift in Sources */,
 				193DE93028C65104002651E0 /* MemosViewModel.swift in Sources */,
 				192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */,
 				199A657B28C474BA00C39994 /* Color.swift in Sources */,
@@ -557,6 +561,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -586,6 +591,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

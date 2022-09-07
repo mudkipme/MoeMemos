@@ -24,19 +24,27 @@ struct MemosList: View {
             }
             .listStyle(InsetGroupedListStyle())
             
-            Button {
-                showingNewPost = true
-            } label: {
-                Circle().overlay {
-                    Image(systemName: "plus")
-                        .resizable()
-                        .frame(width: 25, height: 25)
-                        .foregroundColor(.white)
+            if memosViewModel.currentUser != nil {
+                Button {
+                    showingNewPost = true
+                } label: {
+                    Circle().overlay {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.white)
+                    }
+                    .shadow(radius: 1)
+                    .frame(width: 60, height: 60)
                 }
-                .shadow(radius: 1)
-                .frame(width: 60, height: 60)
-            }.padding(20)
+                .padding(20)
+            }
         }
+        .overlay(content: {
+            if memosViewModel.loading && !memosViewModel.inited {
+                ProgressView()
+            }
+        })
         .searchable(text: $searchString)
         .navigationTitle(tag?.name ?? "Memos")
         .sheet(isPresented: $showingNewPost) {

@@ -149,6 +149,11 @@ struct MemosDelete: MemosAPI {
     static func path(_ params: Int) -> String { "/api/memo/\(params)" }
 }
 
+struct MemosErrorOutput: Decodable {
+    let error: String
+    let message: String
+}
+
 extension MemosAPI {
     static func request(_ memos: Memos, data: Input?, param: Param) async throws -> Output {
         var url = memos.host.appendingPathComponent(path(param))
@@ -178,10 +183,12 @@ extension MemosAPI {
             throw MemosError.unknown
         }
         if response.statusCode < 200 || response.statusCode >= 300 {
-            if response.statusCode == 401 {
-                throw MemosError.notLogin
+            do {
+                let errorOutput: MemosErrorOutput = try decodeMode.decode(data)
+                throw MemosError.invalidStatusCode(response.statusCode, errorOutput.message)
+            } catch {
+                throw MemosError.invalidStatusCode(response.statusCode, error.localizedDescription)
             }
-            throw MemosError.invalidStatusCode(response.statusCode)
         }
         
         return try decodeMode.decode(data)

@@ -19,6 +19,8 @@ class MemosViewModel: ObservableObject {
     @Published private(set) var tags: [Tag] = []
     @Published private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
     @Published private(set) var archivedMemoList: [Memo] = []
+    @Published private(set) var inited = false
+    @Published private(set) var loading = false
     
     private func calculateMatrix() -> [DailyUsageStat] {
         var result = DailyUsageStat.initialMatrix
@@ -75,10 +77,18 @@ class MemosViewModel: ObservableObject {
     func loadMemos() async throws {
         guard let memos = memos else { throw MemosError.notLogin }
         
-        let response = try await memos.listMemos(data: nil)
-        memoList = response.data.filter({ memo in
-            memo.rowStatus != .archived
-        })
+        do {
+            loading = true
+            let response = try await memos.listMemos(data: nil)
+            memoList = response.data.filter({ memo in
+                memo.rowStatus != .archived
+            })
+            loading = false
+            inited = true
+        } catch {
+            loading = false
+            throw error
+        }
     }
     
     func loadTags() async throws {
@@ -95,6 +105,7 @@ class MemosViewModel: ObservableObject {
 
         let response = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: nil))
         memoList.insert(response.data, at: 0)
+        try await loadTags()
     }
     
     private func updateMemo(_ memo: Memo) {
@@ -148,6 +159,7 @@ class MemosViewModel: ObservableObject {
 
         let response = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: nil, content: content, visibility: nil))
         updateMemo(response.data)
+        try await loadTags()
     }
     
     func deleteMemo(id: Int) async throws {

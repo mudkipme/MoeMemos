@@ -15,6 +15,8 @@ struct MemoInput: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @AppStorage("draft") private var draft = ""
+    @State private var submitError: Error?
+    @State private var showingErrorToast = false
 
     var body: some View {
         VStack {
@@ -51,11 +53,18 @@ struct MemoInput: View {
                 Spacer()
                 Button {
                     Task {
-                        try await saveMemo()
+                        do {
+                            try await saveMemo()
+                            submitError = nil
+                        } catch {
+                            submitError = error
+                            showingErrorToast = true
+                        }
                     }
                 } label: {
                     Label("Save", systemImage: "paperplane")
                 }
+                .disabled(text.isEmpty)
                 .buttonStyle(.borderedProminent)
             }
             .padding([.leading, .trailing, .bottom])
@@ -87,6 +96,7 @@ struct MemoInput: View {
                 draft = text
             }
         }
+        .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
     }
     
     func saveMemo() async throws {
