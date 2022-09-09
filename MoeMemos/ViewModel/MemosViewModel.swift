@@ -22,6 +22,10 @@ class MemosViewModel: ObservableObject {
     @Published private(set) var inited = false
     @Published private(set) var loading = false
     
+    var hostURL: URL? {
+        memos?.host
+    }
+    
     private func calculateMatrix() -> [DailyUsageStat] {
         var result = DailyUsageStat.initialMatrix
         var countDict = [String: Int]()

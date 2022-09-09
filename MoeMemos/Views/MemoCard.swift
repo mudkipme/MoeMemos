@@ -9,6 +9,20 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct MemoCard: View {
+    private enum MemoContent: Identifiable {
+        case text(AttributedString)
+        case image(URL)
+        
+        var id: String {
+            switch self {
+            case .text(let attributedString):
+                return String(attributedString.characters)
+            case .image(let url):
+                return url.absoluteString
+            }
+        }
+    }
+    
     let memo: Memo
     
     @EnvironmentObject private var memosViewModel: MemosViewModel
@@ -21,7 +35,7 @@ struct MemoCard: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             HStack {
                 Text(renderTime())
                     .font(.footnote)
@@ -46,10 +60,27 @@ struct MemoCard: View {
                 }
             }
             
-            Text(renderContent())
-                .font(.body)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            ForEach(renderContent()) { content in
+                if case let .text(attributedString) = content {
+                    Text(attributedString)
+                        .font(.body)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                if case let .image(url) = content {
+                    AsyncImage(url: url) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: 160, height: 160)
+                    .cornerRadius(8)
+                    .padding([.bottom], 10)
+                    .clipped()
+                }
+            }
         }
         .contextMenu {
             Button {
@@ -148,14 +179,38 @@ struct MemoCard: View {
         return formatter.localizedString(for: memo.createdTs, relativeTo: .now)
     }
     
-    private func renderContent() -> AttributedString {
+    private func renderContent() -> [MemoContent] {
         do {
-            return try AttributedString(markdown: memo.content, options: AttributedString.MarkdownParsingOptions(
+            let attributedString = try AttributedString(markdown: memo.content, options: AttributedString.MarkdownParsingOptions(
                     allowsExtendedAttributes: true,
                     interpretedSyntax: .inlineOnlyPreservingWhitespace))
             
+            var contents = [MemoContent]()
+            var lastAttributed = AttributedString()
+            for i in attributedString.runs {
+                if let imageURL = i.imageURL {
+                    if !lastAttributed.characters.isEmpty {
+                        contents.append(.text(lastAttributed))
+                        lastAttributed = AttributedString()
+                    }
+                    
+                    var url = imageURL
+                    if url.host == nil, let hostURL = memosViewModel.hostURL {
+                        url = hostURL.appendingPathComponent(url.path)
+                    }
+                    contents.append(.image(url))
+                    continue
+                }
+                lastAttributed += attributedString[i.range]
+            }
+            
+            if !lastAttributed.characters.isEmpty {
+                contents.append(.text(lastAttributed))
+            }
+            
+            return contents
         } catch {
-            return AttributedString(memo.content)
+            return [.text(AttributedString(memo.content))]
         }
     }
 }

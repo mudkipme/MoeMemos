@@ -24,7 +24,7 @@ struct Login: View {
                 .font(.largeTitle)
                 .fontWeight(.semibold)
                 .padding(.bottom, 10)
-            Text("Please input the login information of your\n[✍️memos](https://github.com/usememos/memos) instance.")
+            Text("Please input the login information of your\n[✍️memos](https://github.com/usememos/memos) server.")
                 .multilineTextAlignment(.center)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
