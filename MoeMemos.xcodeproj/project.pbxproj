@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
 		192DF0F528C7B71D0077E785 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F428C7B71D0077E785 /* ShareSheet.swift */; };
+		193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89A28CCD34A00FF7EB6 /* Resources.swift */; };
+		193AA89D28CCD38100FF7EB6 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89C28CCD38100FF7EB6 /* Resource.swift */; };
 		193DE92128C5CFBB002651E0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92028C5CFBB002651E0 /* User.swift */; };
 		193DE92328C5E267002651E0 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92228C5E267002651E0 /* Settings.swift */; };
 		193DE92828C61488002651E0 /* MemosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92728C61488002651E0 /* MemosAPI.swift */; };
@@ -58,6 +60,8 @@
 /* Begin PBXFileReference section */
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
 		192DF0F428C7B71D0077E785 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		193AA89A28CCD34A00FF7EB6 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
+		193AA89C28CCD38100FF7EB6 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		193DE92028C5CFBB002651E0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		193DE92228C5E267002651E0 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		193DE92728C61488002651E0 /* MemosAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosAPI.swift; sourceTree = "<group>"; };
@@ -216,6 +220,7 @@
 		19F31BF828C3E286000C5207 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */,
 				194B273228C3973400A48675 /* ContentView.swift */,
 				1995E9CD28C46DC9004F2EDB /* Heatmap.swift */,
 				195E5D7028C70A3800784EF5 /* HeatmapStat.swift */,
@@ -223,10 +228,10 @@
 				19F31BFC28C3ED11000C5207 /* MemoCard.swift */,
 				19E1C5BF28C5191D0072CEEF /* MemoInput.swift */,
 				19F31BF628C3E26D000C5207 /* MemosList.swift */,
+				193AA89A28CCD34A00FF7EB6 /* Resources.swift */,
 				193DE92228C5E267002651E0 /* Settings.swift */,
 				199A657E28C47D7C00C39994 /* Sidebar.swift */,
 				19E1C5BD28C4F6410072CEEF /* Stats.swift */,
-				192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -237,6 +242,7 @@
 				19F31BFA28C3E9B2000C5207 /* Memo.swift */,
 				199A657C28C4761100C39994 /* Usage.swift */,
 				193DE92028C5CFBB002651E0 /* User.swift */,
+				193AA89C28CCD38100FF7EB6 /* Resource.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -384,6 +390,7 @@
 				199A657D28C4761100C39994 /* Usage.swift in Sources */,
 				193DE92328C5E267002651E0 /* Settings.swift in Sources */,
 				193DE92B28C619D9002651E0 /* HTTP.swift in Sources */,
+				193AA89D28CCD38100FF7EB6 /* Resource.swift in Sources */,
 				195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */,
 				1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */,
 				195E5D7128C70A3800784EF5 /* HeatmapStat.swift in Sources */,
@@ -394,6 +401,7 @@
 				195E5D6B28C704AC00784EF5 /* Date.swift in Sources */,
 				192DF0F528C7B71D0077E785 /* ShareSheet.swift in Sources */,
 				19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */,
+				193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */,
 				193DE93228C652F7002651E0 /* Error.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

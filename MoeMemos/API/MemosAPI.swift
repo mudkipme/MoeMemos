@@ -149,6 +149,17 @@ struct MemosDelete: MemosAPI {
     static func path(_ params: Int) -> String { "/api/memo/\(params)" }
 }
 
+struct MemosListResource: MemosAPI {
+    struct Output: Decodable {
+        let data: [Resource]
+    }
+    
+    static let method: HTTPMethod = .get
+    static let encodeMode: HTTPBodyEncodeMode = .none
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static func path(_ params: Void) -> String { "/api/resource" }
+}
+
 struct MemosErrorOutput: Decodable {
     let error: String
     let message: String

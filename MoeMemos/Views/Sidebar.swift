@@ -44,6 +44,11 @@ struct Sidebar: View {
                     Label("Memos", systemImage: "rectangle.grid.1x2")
                 }
                 NavigationLink(destination: {
+                    Resources()
+                }) {
+                    Label("Resources", systemImage: "photo.on.rectangle")
+                }
+                NavigationLink(destination: {
                     ArchivedMemosList()
                 }) {
                     Label("Archived", systemImage: "archivebox")

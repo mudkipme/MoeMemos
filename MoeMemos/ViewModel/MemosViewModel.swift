@@ -19,6 +19,7 @@ class MemosViewModel: ObservableObject {
     @Published private(set) var tags: [Tag] = []
     @Published private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
     @Published private(set) var archivedMemoList: [Memo] = []
+    @Published private(set) var resourceList: [Resource] = []
     @Published private(set) var inited = false
     @Published private(set) var loading = false
     
@@ -168,12 +169,22 @@ class MemosViewModel: ObservableObject {
     
     func deleteMemo(id: Int) async throws {
         guard let memos = memos else { throw MemosError.notLogin }
+        
         _ = try await memos.deleteMemo(id: id)
         memoList = memoList.filter({ memo in
             memo.id != id
         })
         archivedMemoList = archivedMemoList.filter({ memo in
             memo.id != id
+        })
+    }
+    
+    func loadResources() async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+
+        let response = try await memos.listResources()
+        resourceList = response.data.filter({ resource in
+            resource.type.hasPrefix("image/")
         })
     }
 }

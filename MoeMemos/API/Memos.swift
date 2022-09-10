@@ -52,4 +52,8 @@ class Memos {
     func deleteMemo(id: Int) async throws -> MemosDelete.Output {
         return try await MemosDelete.request(self, data: nil, param: id)
     }
+    
+    func listResources() async throws -> MemosListResource.Output {
+        return try await MemosListResource.request(self, data: nil, param: ())
+    }
 }
