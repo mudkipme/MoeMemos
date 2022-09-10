@@ -108,8 +108,23 @@ struct MemoInput: View {
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
         .fullScreenCover(isPresented: $showingPhotoPicker) {
             PhotoPicker { images in
-                print(images)
+                Task {
+                    do {
+                        try await upload(images: images)
+                        submitError = nil
+                    } catch {
+                        submitError = error
+                        showingErrorToast = true
+                    }
+                }
             }
+        }
+    }
+    
+    func upload(images: [UIImage]) async throws {
+        for image in images {
+            let resource = try await memosViewModel.upload(image: image)
+            text += "![](/o/r/\(resource.id)/\(resource.filename))"
         }
     }
     

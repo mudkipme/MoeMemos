@@ -10,7 +10,7 @@ import SwiftUI
 
 struct PhotoPicker: UIViewControllerRepresentable {
     let onComplete: ([UIImage]) -> Void
-    let selectionLimit = 4
+    let selectionLimit = 1
 
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var config = PHPickerConfiguration()

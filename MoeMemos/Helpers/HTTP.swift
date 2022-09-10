@@ -31,15 +31,20 @@ enum HTTPMethod: String {
     case patch = "PATCH"
 }
 
-enum HTTPBodyEncodeMode {
+enum HTTPBodyEncodeMode: Equatable {
     case json
     case urlencoded
+    case multipart(boundary: String)
     case none
     
     func contentType() -> String? {
         switch self {
         case .json:
             return "application/json"
+        case .urlencoded:
+            return "application/x-www-form-urlencoded"
+        case .multipart(let boundary):
+            return "multipart/form-data; boundary=\(boundary)"
         default:
             return nil
         }
@@ -54,6 +59,11 @@ enum HTTPBodyEncodeMode {
             return components.percentEncodedQuery?.data(using: .utf8)
         case .json:
             return try memosJsonEncoder.encode(data)
+        case .multipart(let boundary):
+            if let data = data as? [Multipart] {
+                return encodeFormData(multiparts: data, boundary: boundary)
+            }
+            throw MemosError.invalidParams
         default:
             return data as? Data
         }

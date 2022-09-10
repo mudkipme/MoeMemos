@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 @MainActor
 class MemosViewModel: ObservableObject {
@@ -186,5 +187,18 @@ class MemosViewModel: ObservableObject {
         resourceList = response.data.filter({ resource in
             resource.type.hasPrefix("image/")
         })
+    }
+    
+    func upload(image: UIImage) async throws -> Resource {
+        guard let memos = memos else { throw MemosError.notLogin }
+        
+        var image = image
+        if image.size.height > 1024 || image.size.width > 1024 {
+            image = image.scale(to: CGSize(width: 1024, height: 1024))
+        }
+        
+        guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
+        let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
+        return response.data
     }
 }

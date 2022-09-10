@@ -56,4 +56,8 @@ class Memos {
     func listResources() async throws -> MemosListResource.Output {
         return try await MemosListResource.request(self, data: nil, param: ())
     }
+    
+    func uploadResource(imageData: Data, filename: String, contentType: String) async throws -> MemosUploadResource.Output {
+        return try await MemosUploadResource.request(self, data: [Multipart(name: "file", filename: filename, contentType: contentType, data: imageData)], param: ())
+    }
 }

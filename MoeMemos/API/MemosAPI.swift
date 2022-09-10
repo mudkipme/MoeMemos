@@ -160,6 +160,18 @@ struct MemosListResource: MemosAPI {
     static func path(_ params: Void) -> String { "/api/resource" }
 }
 
+struct MemosUploadResource: MemosAPI {
+    typealias Input = [Multipart]
+    struct Output: Decodable {
+        let data: Resource
+    }
+    
+    static let method: HTTPMethod = .post
+    static let encodeMode: HTTPBodyEncodeMode = .multipart(boundary: UUID().uuidString)
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static func path(_ params: Void) -> String { "/api/resource" }
+}
+
 struct MemosErrorOutput: Decodable {
     let error: String
     let message: String
@@ -198,7 +210,7 @@ extension MemosAPI {
                 let errorOutput: MemosErrorOutput = try decodeMode.decode(data)
                 throw MemosError.invalidStatusCode(response.statusCode, errorOutput.message)
             } catch {
-                throw MemosError.invalidStatusCode(response.statusCode, error.localizedDescription)
+                throw MemosError.invalidStatusCode(response.statusCode, String(data: data, encoding: .utf8))
             }
         }
         
