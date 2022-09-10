@@ -11,6 +11,7 @@
 		192DF0F528C7B71D0077E785 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F428C7B71D0077E785 /* ShareSheet.swift */; };
 		193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89A28CCD34A00FF7EB6 /* Resources.swift */; };
 		193AA89D28CCD38100FF7EB6 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89C28CCD38100FF7EB6 /* Resource.swift */; };
+		193AA89F28CD080000FF7EB6 /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89E28CD080000FF7EB6 /* PhotoPicker.swift */; };
 		193DE92128C5CFBB002651E0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92028C5CFBB002651E0 /* User.swift */; };
 		193DE92328C5E267002651E0 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92228C5E267002651E0 /* Settings.swift */; };
 		193DE92828C61488002651E0 /* MemosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92728C61488002651E0 /* MemosAPI.swift */; };
@@ -62,6 +63,7 @@
 		192DF0F428C7B71D0077E785 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		193AA89A28CCD34A00FF7EB6 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		193AA89C28CCD38100FF7EB6 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
+		193AA89E28CD080000FF7EB6 /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		193DE92028C5CFBB002651E0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		193DE92228C5E267002651E0 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		193DE92728C61488002651E0 /* MemosAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosAPI.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				195E5D6A28C704AC00784EF5 /* Date.swift */,
 				192DF0F428C7B71D0077E785 /* ShareSheet.swift */,
 				195E5AD228C84E4F00CD4674 /* AlertToast.swift */,
+				193AA89E28CD080000FF7EB6 /* PhotoPicker.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -397,6 +400,7 @@
 				19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */,
 				194B273328C3973400A48675 /* ContentView.swift in Sources */,
 				193DE92828C61488002651E0 /* MemosAPI.swift in Sources */,
+				193AA89F28CD080000FF7EB6 /* PhotoPicker.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
 				195E5D6B28C704AC00784EF5 /* Date.swift in Sources */,
 				192DF0F528C7B71D0077E785 /* ShareSheet.swift in Sources */,

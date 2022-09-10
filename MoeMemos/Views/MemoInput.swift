@@ -9,12 +9,16 @@ import SwiftUI
 
 struct MemoInput: View {
     let memo: Memo?
+    @EnvironmentObject private var memosViewModel: MemosViewModel
+    
     @State private var text = ""
     @State private var placeholderText = "Any thoughts…"
+    @AppStorage("draft") private var draft = ""
+    
     @FocusState private var focused: Bool
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject private var memosViewModel: MemosViewModel
-    @AppStorage("draft") private var draft = ""
+    
+    @State private var showingPhotoPicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
 
@@ -49,6 +53,11 @@ struct MemoInput: View {
                     } label: {
                         Image(systemName: "number")
                     }
+                }
+                Button {
+                    showingPhotoPicker = true
+                } label: {
+                    Image(systemName: "photo.on.rectangle")
                 }
                 Spacer()
                 Button {
@@ -97,6 +106,11 @@ struct MemoInput: View {
             }
         }
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
+        .fullScreenCover(isPresented: $showingPhotoPicker) {
+            PhotoPicker { images in
+                print(images)
+            }
+        }
     }
     
     func saveMemo() async throws {
