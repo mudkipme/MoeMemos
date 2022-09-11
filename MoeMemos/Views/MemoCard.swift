@@ -29,6 +29,7 @@ struct MemoCard: View {
     @State private var showingEdit = false
     @State private var showingShareSheet = false
     @State private var showingDeleteConfirmation = false
+    @State private var imagePreviewURL: URL?
     
     init(_ memo: Memo) {
         self.memo = memo
@@ -72,6 +73,9 @@ struct MemoCard: View {
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
+                            .onTapGesture {
+                                imagePreviewURL = url
+                            }
                     } placeholder: {
                         ProgressView()
                     }
@@ -103,6 +107,11 @@ struct MemoCard: View {
                 }
             }
             Button("No", role: .cancel) {}
+        }
+        .fullScreenCover(item: $imagePreviewURL) { url in
+            if let url = url {
+                ImageViewer(imageURL: url)
+            }
         }
     }
     

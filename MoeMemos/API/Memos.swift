@@ -60,4 +60,8 @@ class Memos {
     func uploadResource(imageData: Data, filename: String, contentType: String) async throws -> MemosUploadResource.Output {
         return try await MemosUploadResource.request(self, data: [Multipart(name: "file", filename: filename, contentType: contentType, data: imageData)], param: ())
     }
+    
+    func deleteResource(id: Int) async throws -> MemosDeleteResource.Output {
+        return try await MemosDeleteResource.request(self, data: nil, param: id)
+    }
 }

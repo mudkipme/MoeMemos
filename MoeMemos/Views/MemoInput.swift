@@ -106,7 +106,7 @@ struct MemoInput: View {
             }
         }
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
-        .fullScreenCover(isPresented: $showingPhotoPicker) {
+        .sheet(isPresented: $showingPhotoPicker) {
             PhotoPicker { images in
                 Task {
                     do {

@@ -201,4 +201,13 @@ class MemosViewModel: ObservableObject {
         let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
         return response.data
     }
+    
+    func deleteResource(id: Int) async throws {
+        guard let memos = memos else { throw MemosError.notLogin }
+        
+        _ = try await memos.deleteResource(id: id)
+        resourceList = resourceList.filter({ resource in
+            resource.id != id
+        })
+    }
 }
