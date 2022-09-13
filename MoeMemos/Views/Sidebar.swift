@@ -10,7 +10,12 @@ import SwiftUI
 fileprivate let weekDaySymbols = Calendar.current.shortWeekdaySymbols
 
 struct Sidebar: View {
-    @State private var toMemosList = true
+    @State private var toMemosList = {
+        if #available(iOS 16, *), UIDevice.current.userInterfaceIdiom == .pad {
+            return false
+        }
+        return true
+    }()
     @EnvironmentObject private var memosViewModel: MemosViewModel
 
     var body: some View {

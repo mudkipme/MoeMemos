@@ -21,104 +21,128 @@ struct MemoInput: View {
     @State private var showingPhotoPicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
+    
+    @ViewBuilder
+    private func toolbar() -> some View {
+        if !memosViewModel.tags.isEmpty {
+            Menu {
+                ForEach(memosViewModel.tags) { tag in
+                    Button(tag.name) {
+                        text += "#\(tag.name) "
+                    }
+                }
+            } label: {
+                Image(systemName: "number")
+            }
+        } else {
+            Button {
+                text += "#"
+            } label: {
+                Image(systemName: "number")
+            }
+        }
+        Button {
+            showingPhotoPicker = true
+        } label: {
+            Image(systemName: "photo.on.rectangle")
+        }
+        Spacer()
+    }
+    
+    @ViewBuilder
+    private func editor() -> some View {
+        ZStack {
+            if text.isEmpty {
+                TextEditor(text: $placeholderText)
+                    .foregroundColor(.secondary)
+                    .disabled(true)
+                    
+            }
+            TextEditor(text: $text)
+                .focused($focused)
+                .opacity(text.isEmpty ? 0.25 : 1)
+        }
+        .padding()
+    }
 
     var body: some View {
-        VStack {
-            ZStack {
-                if text.isEmpty {
-                    TextEditor(text: $placeholderText)
-                        .foregroundColor(.secondary)
-                        .disabled(true)
-                        
+        NavigationView {
+            editor()
+                .onAppear {
+                    if let memo = memo {
+                        text = memo.content
+                    } else {
+                        text = draft
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                        focused = true
+                    }
                 }
-                TextEditor(text: $text)
-                    .focused($focused)
-                    .opacity(text.isEmpty ? 0.25 : 1)
-            }
-            .padding()
-            HStack {
-                if !memosViewModel.tags.isEmpty {
-                    Menu {
-                        ForEach(memosViewModel.tags) { tag in
-                            Button(tag.name) {
-                                text += "#\(tag.name) "
+                .task {
+                    do {
+                        try await memosViewModel.loadTags()
+                    } catch {
+                        print(error)
+                    }
+                }
+                .onDisappear {
+                    if memo == nil {
+                        draft = text
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+                    if memo == nil {
+                        draft = text
+                    }
+                }
+                .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
+                .sheet(isPresented: $showingPhotoPicker) {
+                    PhotoPicker { images in
+                        Task {
+                            do {
+                                try await upload(images: images)
+                                submitError = nil
+                            } catch {
+                                submitError = error
+                                showingErrorToast = true
                             }
                         }
-                    } label: {
-                        Image(systemName: "number")
-                    }
-                } else {
-                    Button {
-                        text += "#"
-                    } label: {
-                        Image(systemName: "number")
                     }
                 }
-                Button {
-                    showingPhotoPicker = true
-                } label: {
-                    Image(systemName: "photo.on.rectangle")
-                }
-                Spacer()
-                Button {
-                    Task {
-                        do {
-                            try await saveMemo()
-                            submitError = nil
-                        } catch {
-                            submitError = error
-                            showingErrorToast = true
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle(memo == nil ? "Compose" : "Edit Memo")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Text("Close")
                         }
                     }
-                } label: {
-                    Label("Save", systemImage: "paperplane")
-                }
-                .disabled(text.isEmpty)
-                .buttonStyle(.borderedProminent)
-            }
-            .padding([.leading, .trailing, .bottom])
-        }
-        .onAppear {
-            if let memo = memo {
-                text = memo.content
-            } else {
-                text = draft
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                focused = true
-            }
-        }
-        .task {
-            do {
-                try await memosViewModel.loadTags()
-            } catch {
-                print(error)
-            }
-        }
-        .onDisappear {
-            if memo == nil {
-                draft = text
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-            if memo == nil {
-                draft = text
-            }
-        }
-        .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
-        .sheet(isPresented: $showingPhotoPicker) {
-            PhotoPicker { images in
-                Task {
-                    do {
-                        try await upload(images: images)
-                        submitError = nil
-                    } catch {
-                        submitError = error
-                        showingErrorToast = true
+                    
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            Task {
+                                do {
+                                    try await saveMemo()
+                                    submitError = nil
+                                } catch {
+                                    submitError = error
+                                    showingErrorToast = true
+                                }
+                            }
+                        } label: {
+                            Label("Save", systemImage: "paperplane")
+                        }
+                        .disabled(text.isEmpty)
+                    }
+                    
+                    ToolbarItemGroup(placement: .keyboard) {
+                        toolbar()
                     }
                 }
-            }
         }
+        
     }
     
     func upload(images: [UIImage]) async throws {

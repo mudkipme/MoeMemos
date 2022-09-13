@@ -12,25 +12,43 @@ struct ContentView: View {
     @AppStorage("memosHost") private var memosHost = ""
     @EnvironmentObject private var memosViewModel: MemosViewModel
     
-    var body: some View {
-        NavigationView {
-            Sidebar()
-                .toolbar {
-                    NavigationLink {
-                        Settings(showingLogin: $showingLogin)
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
+    @ViewBuilder
+    private func sidebar() -> some View {
+        Sidebar()
+            .toolbar {
+                NavigationLink {
+                    Settings(showingLogin: $showingLogin)
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
-                .navigationTitle(memosViewModel.currentUser?.name ?? "Memos")
+            }
+            .navigationTitle(memosViewModel.currentUser?.name ?? "Memos")
+    }
+    
+    @ViewBuilder
+    private func navigation() -> some View {
+        if #available(iOS 16, *), UIDevice.current.userInterfaceIdiom == .pad {
+            NavigationSplitView(sidebar: {
+                sidebar()
+            }) {
+                MemosList(tag: nil)
+            }
+        } else {
+            NavigationView {
+                sidebar()
+            }
         }
-        .tint(.green)
-        .task {
-            await loadCurrentUser()
-        }
-        .sheet(isPresented: $showingLogin) {
-            Login()
-        }
+    }
+    
+    var body: some View {
+        navigation()
+            .tint(.green)
+            .task {
+                await loadCurrentUser()
+            }
+            .sheet(isPresented: $showingLogin) {
+                Login()
+            }
     }
     
     func loadCurrentUser() async {
