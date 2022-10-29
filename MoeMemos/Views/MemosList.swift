@@ -24,7 +24,7 @@ struct MemosList: View {
             }
             .listStyle(InsetGroupedListStyle())
             
-            if memosViewModel.currentUser != nil {
+            if memosViewModel.currentUser != nil && tag == nil {
                 Button {
                     showingNewPost = true
                 } label: {

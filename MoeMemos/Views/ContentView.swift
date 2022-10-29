@@ -11,31 +11,15 @@ struct ContentView: View {
     @State private var showingLogin = false
     @AppStorage("memosHost") private var memosHost = ""
     @EnvironmentObject private var memosViewModel: MemosViewModel
-    
-    @ViewBuilder
-    private func sidebar() -> some View {
-        Sidebar()
-            .toolbar {
-                NavigationLink {
-                    Settings(showingLogin: $showingLogin)
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                }
-            }
-            .navigationTitle(memosViewModel.currentUser?.name ?? "Memos")
-    }
+    @State private var selection: Route? = .memos
     
     @ViewBuilder
     private func navigation() -> some View {
-        if #available(iOS 16, *), UIDevice.current.userInterfaceIdiom == .pad {
-            NavigationSplitView(sidebar: {
-                sidebar()
-            }) {
-                MemosList(tag: nil)
-            }
+        if #available(iOS 16, *) {
+            Navigation(showingLogin: $showingLogin, selection: $selection)
         } else {
             NavigationView {
-                sidebar()
+                Sidebar(showingLogin: $showingLogin, selection: $selection)
             }
         }
     }

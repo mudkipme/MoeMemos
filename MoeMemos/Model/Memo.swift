@@ -27,9 +27,10 @@ struct Memo: Decodable, Equatable {
     let rowStatus: MemosRowStatus
     let updatedTs: Date
     let visibility: MemosVisibility
+    let resourceList: [Resource]?
 }
 
-struct Tag: Identifiable {
+struct Tag: Identifiable, Hashable {
     let name: String
     
     var id: String { name }

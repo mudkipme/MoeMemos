@@ -148,7 +148,7 @@ struct MemoInput: View {
     func upload(images: [UIImage]) async throws {
         for image in images {
             let resource = try await memosViewModel.upload(image: image)
-            text += "![](/o/r/\(resource.id)/\(resource.filename))"
+            text += "![](\(resource.path()))"
         }
     }
     

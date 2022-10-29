@@ -44,6 +44,8 @@
 		19F31BF728C3E26D000C5207 /* MemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BF628C3E26D000C5207 /* MemosList.swift */; };
 		19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFA28C3E9B2000C5207 /* Memo.swift */; };
 		19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFC28C3ED11000C5207 /* MemoCard.swift */; };
+		19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FC1C7B290DA47C0078A7F2 /* Route.swift */; };
+		19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FC1C7D290DA6E90078A7F2 /* Navigation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +106,8 @@
 		19F31BF628C3E26D000C5207 /* MemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosList.swift; sourceTree = "<group>"; };
 		19F31BFA28C3E9B2000C5207 /* Memo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memo.swift; sourceTree = "<group>"; };
 		19F31BFC28C3ED11000C5207 /* MemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCard.swift; sourceTree = "<group>"; };
+		19FC1C7B290DA47C0078A7F2 /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
+		19FC1C7D290DA6E90078A7F2 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +154,7 @@
 				195E5AD228C84E4F00CD4674 /* AlertToast.swift */,
 				193AA89E28CD080000FF7EB6 /* PhotoPicker.swift */,
 				193AA8A028CD12CD00FF7EB6 /* FormData.swift */,
+				19FC1C7B290DA47C0078A7F2 /* Route.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -250,6 +255,7 @@
 				193DE92228C5E267002651E0 /* Settings.swift */,
 				199A657E28C47D7C00C39994 /* Sidebar.swift */,
 				19E1C5BD28C4F6410072CEEF /* Stats.swift */,
+				19FC1C7D290DA6E90078A7F2 /* Navigation.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -419,6 +425,8 @@
 				193AA8A328CD1C9300FF7EB6 /* UIImage.swift in Sources */,
 				193AA8A728CD9ED700FF7EB6 /* URL.swift in Sources */,
 				193AA8A128CD12CD00FF7EB6 /* FormData.swift in Sources */,
+				19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */,
+				19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */,
 				193DE92828C61488002651E0 /* MemosAPI.swift in Sources */,
 				193AA89F28CD080000FF7EB6 /* PhotoPicker.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
@@ -598,7 +606,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -628,7 +636,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

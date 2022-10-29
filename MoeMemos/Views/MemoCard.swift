@@ -217,6 +217,12 @@ struct MemoCard: View {
                 contents.append(.text(lastAttributed))
             }
             
+            if let resourceList = memo.resourceList, let hostURL = memosViewModel.hostURL {
+                contents += resourceList.map { resource in
+                    .image(hostURL.appendingPathComponent(resource.path()))
+                }
+            }
+            
             return contents
         } catch {
             return [.text(AttributedString(memo.content))]
@@ -226,7 +232,7 @@ struct MemoCard: View {
 
 struct MemoCard_Previews: PreviewProvider {
     static var previews: some View {
-        MemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private))
+        MemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil))
             .environmentObject(MemosViewModel())
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Resource: Decodable, Identifiable {
+struct Resource: Decodable, Identifiable, Equatable {
     let id: Int
     let createdTs: Date
     let creatorId: Int
@@ -15,4 +15,8 @@ struct Resource: Decodable, Identifiable {
     let size: Int
     let type: String
     let updatedTs: Date
+    
+    func path() -> String {
+        return "/o/r/\(id)/\(filename)"
+    }
 }
