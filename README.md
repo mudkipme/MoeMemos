@@ -39,6 +39,6 @@ Any contributions are greatly appreciated.
 
 ## License
 
-"Moe Memos" and the app icon are proprietary to the original developer [Mudkip](https://github.com/mudkipme). All source code are under [MPLv2](LICENSE) license.
+The iOS version of Moe Memos is under [MPLv2](LICENSE).
 
 While the open source license doesn't prevent anyone rename and repackage this app to distribute, it violates App Store Review Guidelines 4.1 to do so. It's welcome to build apps based off of the code in this repository and make it meaningfully different.
