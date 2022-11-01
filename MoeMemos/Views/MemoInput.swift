@@ -10,6 +10,7 @@ import SwiftUI
 struct MemoInput: View {
     let memo: Memo?
     @EnvironmentObject private var memosViewModel: MemosViewModel
+    @StateObject private var viewModel = MemoInputViewModel()
     
     @State private var text = ""
     @State private var placeholderText = "Any thoughts…"
@@ -51,18 +52,20 @@ struct MemoInput: View {
     
     @ViewBuilder
     private func editor() -> some View {
-        ZStack {
-            if text.isEmpty {
-                TextEditor(text: $placeholderText)
-                    .foregroundColor(.secondary)
-                    .disabled(true)
-                    
+        VStack {
+            ZStack {
+                if text.isEmpty {
+                    TextEditor(text: $placeholderText)
+                        .foregroundColor(.secondary)
+                        .disabled(true)
+                        
+                }
+                TextEditor(text: $text)
+                    .focused($focused)
+                    .opacity(text.isEmpty ? 0.25 : 1)
             }
-            TextEditor(text: $text)
-                .focused($focused)
-                .opacity(text.isEmpty ? 0.25 : 1)
+            .padding([.leading, .trailing])
         }
-        .padding()
     }
 
     var body: some View {
@@ -141,13 +144,14 @@ struct MemoInput: View {
                         toolbar()
                     }
                 }
+                .interactiveDismissDisabled()
         }
         
     }
     
     func upload(images: [UIImage]) async throws {
         for image in images {
-            let resource = try await memosViewModel.upload(image: image)
+            let resource = try await viewModel.upload(image: image)
             text += "![](\(resource.path()))"
         }
     }
@@ -168,5 +172,6 @@ struct MemoInput_Previews: PreviewProvider {
     static var previews: some View {
         MemoInput(memo: nil)
             .environmentObject(MemosViewModel())
+            .environmentObject(MemoInputViewModel())
     }
 }

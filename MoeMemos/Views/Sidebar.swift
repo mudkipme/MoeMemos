@@ -12,7 +12,7 @@ fileprivate let weekDaySymbols = Calendar.current.shortWeekdaySymbols
 struct Sidebar: View {
     @State private var toMemosList = true
     @EnvironmentObject private var memosViewModel: MemosViewModel
-    @Binding var showingLogin: Bool
+    @EnvironmentObject private var userState: UserState
     @Binding var selection: Route?
 
     var body: some View {
@@ -51,27 +51,11 @@ struct Sidebar: View {
                         Label("Memos", systemImage: "rectangle.grid.1x2")
                     }
                 }
-                if #available(iOS 16, *) {
-                    NavigationLink(value: Route.resources) {
-                        Label("Resources", systemImage: "photo.on.rectangle")
-                    }
-                } else {
-                    NavigationLink(destination: {
-                        Resources()
-                    }) {
-                        Label("Resources", systemImage: "photo.on.rectangle")
-                    }
+                NavLink(route: .resources) {
+                    Label("Resources", systemImage: "photo.on.rectangle")
                 }
-                if #available(iOS 16, *) {
-                    NavigationLink(value: Route.archived) {
-                        Label("Archived", systemImage: "archivebox")
-                    }
-                } else {
-                    NavigationLink(destination: {
-                        ArchivedMemosList()
-                    }) {
-                        Label("Archived", systemImage: "archivebox")
-                    }
+                NavLink(route: .archived) {
+                    Label("Archived", systemImage: "archivebox")
                 }
             } header: {
                 Text("Moe Memos")
@@ -79,16 +63,8 @@ struct Sidebar: View {
             
             Section {
                 ForEach(memosViewModel.tags) { tag in
-                    if #available(iOS 16, *) {
-                        NavigationLink(value: Route.tag(tag)) {
-                            Label(tag.name, systemImage: "number")
-                        }
-                    } else {
-                        NavigationLink(destination: {
-                            MemosList(tag: tag)
-                        }) {
-                            Label(tag.name, systemImage: "number")
-                        }
+                    NavLink(route: .tag(tag)) {
+                        Label(tag.name, systemImage: "number")
                     }
                 }
             } header: {
@@ -103,19 +79,13 @@ struct Sidebar: View {
                 }) {
                     Image(systemName: "ellipsis.circle")
                 }
-            } else if #available(iOS 16, *) {
-                NavigationLink(value: Route.settings) {
-                    Image(systemName: "ellipsis.circle")
-                }
             } else {
-                NavigationLink {
-                    Settings(showingLogin: $showingLogin)
-                } label: {
+                NavLink(route: .settings) {
                     Image(systemName: "ellipsis.circle")
                 }
             }
         }
-        .navigationTitle(memosViewModel.currentUser?.name ?? "Memos")
+        .navigationTitle(userState.currentUser?.name ?? "Memos")
         .task {
             do {
                 try await memosViewModel.loadTags()
@@ -127,11 +97,11 @@ struct Sidebar: View {
 }
 
 struct SwiftUIView_Previews: PreviewProvider {
-    @State static var showingLogin = true
     @State static var route: Route? = .memos
 
     static var previews: some View {
-        Sidebar(showingLogin: $showingLogin, selection: $route)
+        Sidebar(selection: $route)
             .environmentObject(MemosViewModel())
+            .environmentObject(UserState())
     }
 }

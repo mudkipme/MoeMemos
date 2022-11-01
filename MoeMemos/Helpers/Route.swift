@@ -5,7 +5,7 @@
 //  Created by Mudkip on 2022/10/30.
 //
 
-import Foundation
+import SwiftUI
 
 enum Route: Hashable {
     case memos
@@ -13,4 +13,21 @@ enum Route: Hashable {
     case archived
     case tag(Tag)
     case settings
+    
+    
+    @ViewBuilder
+    func destination() -> some View {
+        switch self {
+        case .memos:
+            MemosList(tag: nil)
+        case .resources:
+            Resources()
+        case .archived:
+            ArchivedMemosList()
+        case .tag(let tag):
+            MemosList(tag: tag)
+        case .settings:
+            Settings()
+        }
+    }
 }

@@ -18,15 +18,17 @@ protocol MemosAPI {
     static func path(_ param: Param) -> String
 }
 
+struct MemosOutput<T: Decodable>: Decodable {
+    let data: T
+}
+
 struct MemosSignIn: MemosAPI {
     struct Input: Encodable {
         let email: String
         let password: String
     }
 
-    struct Output: Decodable {
-        let data: MemosUser
-    }
+    typealias Output = MemosOutput<MemosUser>
     
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .json
@@ -42,9 +44,7 @@ struct MemosLogout: MemosAPI {
 }
 
 struct MemosMe: MemosAPI {
-    struct Output: Decodable {
-        let data: MemosUser
-    }
+    typealias Output = MemosOutput<MemosUser>
     
     static let method: HTTPMethod = .get
     static let encodeMode: HTTPBodyEncodeMode = .none
@@ -59,9 +59,7 @@ struct MemosListMemo: MemosAPI {
         let visibility: MemosVisibility?
     }
 
-    struct Output: Decodable {
-        let data: [Memo]
-    }
+    typealias Output = MemosOutput<[Memo]>
     
     static let method: HTTPMethod = .get
     static let encodeMode: HTTPBodyEncodeMode = .urlencoded
@@ -74,9 +72,7 @@ struct MemosTag: MemosAPI {
         let creatorId: Int?
     }
 
-    struct Output: Decodable {
-        let data: [String]
-    }
+    typealias Output = MemosOutput<[String]>
     
     static let method: HTTPMethod = .get
     static let encodeMode: HTTPBodyEncodeMode = .urlencoded
@@ -91,9 +87,7 @@ struct MemosCreate: MemosAPI {
         let visibility: MemosVisibility?
     }
 
-    struct Output: Decodable {
-        let data: Memo
-    }
+    typealias Output = MemosOutput<Memo>
     
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .json
@@ -106,10 +100,7 @@ struct MemosOrganizer: MemosAPI {
         let pinned: Bool
     }
 
-    struct Output: Decodable {
-        let data: Memo
-    }
-    
+    typealias Output = MemosOutput<Memo>
     typealias Param = Int
     
     static let method: HTTPMethod = .post
@@ -127,10 +118,7 @@ struct MemosPatch: MemosAPI {
         let visibility: MemosVisibility?
     }
 
-    struct Output: Decodable {
-        let data: Memo
-    }
-    
+    typealias Output = MemosOutput<Memo>
     typealias Param = Int
     
     static let method: HTTPMethod = .patch
@@ -150,9 +138,7 @@ struct MemosDelete: MemosAPI {
 }
 
 struct MemosListResource: MemosAPI {
-    struct Output: Decodable {
-        let data: [Resource]
-    }
+    typealias Output = MemosOutput<[Resource]>
     
     static let method: HTTPMethod = .get
     static let encodeMode: HTTPBodyEncodeMode = .none
@@ -162,9 +148,7 @@ struct MemosListResource: MemosAPI {
 
 struct MemosUploadResource: MemosAPI {
     typealias Input = [Multipart]
-    struct Output: Decodable {
-        let data: Resource
-    }
+    typealias Output = MemosOutput<Resource>
     
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .multipart(boundary: UUID().uuidString)

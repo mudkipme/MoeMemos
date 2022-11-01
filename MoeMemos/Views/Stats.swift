@@ -9,6 +9,7 @@ import SwiftUI
 
 struct Stats: View {
     @EnvironmentObject private var memosViewModel: MemosViewModel
+    @EnvironmentObject private var userState: UserState
     
     var body: some View {
         HStack {
@@ -42,7 +43,7 @@ struct Stats: View {
     }
     
     func days() -> Int {
-        guard let user = memosViewModel.currentUser else { return 0 }
+        guard let user = userState.currentUser else { return 0 }
         return Calendar.current.dateComponents([.day], from: user.createdTs, to: .now).day!
     }
 }
@@ -51,5 +52,6 @@ struct Stats_Previews: PreviewProvider {
     static var previews: some View {
         Stats()
             .environmentObject(MemosViewModel())
+            .environmentObject(UserState())
     }
 }

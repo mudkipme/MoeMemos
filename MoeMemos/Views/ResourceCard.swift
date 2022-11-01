@@ -11,6 +11,7 @@ struct ResourceCard: View {
     let resource: Resource
     
     @EnvironmentObject private var memosViewModel: MemosViewModel
+    @EnvironmentObject private var memosManager: MemosManager
     @State private var imagePreviewURL: URL?
     @State private var showingDeleteConfirmation = false
 
@@ -60,7 +61,7 @@ struct ResourceCard: View {
     }
     
     private func url(for resource: Resource) -> URL? {
-        memosViewModel.hostURL?
+        memosManager.hostURL?
             .appendingPathComponent("/o/r")
             .appendingPathComponent("\(resource.id)")
             .appendingPathComponent(resource.filename)
@@ -71,5 +72,6 @@ struct ResourceCard_Previews: PreviewProvider {
     static var previews: some View {
         ResourceCard(resource: Resource(id: 1, createdTs: .now, creatorId: 0, filename: "", size: 0, type: "image/jpeg", updatedTs: .now))
             .environmentObject(MemosViewModel())
+            .environmentObject(MemosManager())
     }
 }

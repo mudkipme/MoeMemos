@@ -6,12 +6,15 @@
 //
 
 import Foundation
-import UIKit
 
 @MainActor
 class MemosViewModel: ObservableObject {
-    private var memos: Memos?
-    @Published private(set) var currentUser: MemosUser?
+    let memosManager: MemosManager
+    init(memosManager: MemosManager = .shared) {
+        self.memosManager = memosManager
+    }
+    var memos: Memos { get throws { try memosManager.api } }
+
     @Published private(set) var memoList: [Memo] = [] {
         didSet {
             matrix = calculateMatrix()
@@ -23,10 +26,6 @@ class MemosViewModel: ObservableObject {
     @Published private(set) var resourceList: [Resource] = []
     @Published private(set) var inited = false
     @Published private(set) var loading = false
-    
-    var hostURL: URL? {
-        memos?.host
-    }
     
     private func calculateMatrix() -> [DailyUsageStat] {
         var result = DailyUsageStat.initialMatrix
@@ -44,45 +43,7 @@ class MemosViewModel: ObservableObject {
         return result
     }
     
-    func reset(memosHost: String) throws {
-        if memosHost == "" {
-            throw MemosError.notLogin
-        }
-        
-        guard let url = URL(string: memosHost) else {
-            throw MemosError.notLogin
-        }
-        
-        memos = Memos(host: url)
-        currentUser = nil
-    }
-    
-    func loadCurrentUser() async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-        
-        let response = try await memos.me()
-        currentUser = response.data
-    }
-    
-    func signIn(memosHost: String, input: MemosSignIn.Input) async throws {
-        guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
-        
-        let client = Memos(host: url)
-        let response = try await client.signIn(data: input)
-        memos = client
-        currentUser = response.data
-    }
-    
-    func logout() async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-
-        try await memos.logout()
-        currentUser = nil
-    }
-    
     func loadMemos() async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-        
         do {
             loading = true
             let response = try await memos.listMemos(data: nil)
@@ -98,8 +59,6 @@ class MemosViewModel: ObservableObject {
     }
     
     func loadTags() async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-        
         let response = try await memos.tags(data: nil)
         tags = response.data.map({ name in
             Tag(name: name)
@@ -107,8 +66,6 @@ class MemosViewModel: ObservableObject {
     }
     
     func createMemo(content: String) async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-
         let response = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: nil))
         memoList.insert(response.data, at: 0)
         try await loadTags()
@@ -124,15 +81,11 @@ class MemosViewModel: ObservableObject {
     }
     
     func loadArchivedMemos() async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-        
         let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .archived, visibility: nil))
         archivedMemoList = response.data
     }
     
     func updateMemoOrganizer(id: Int, pinned: Bool) async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-        
         let response = try await memos.updateMemoOrganizer(memoId: id, data: MemosOrganizer.Input(pinned: pinned))
         // the response might be incorrect
         var memo = response.data
@@ -142,8 +95,6 @@ class MemosViewModel: ObservableObject {
     }
     
     func archiveMemo(id: Int) async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-
         _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .archived, content: nil, visibility: nil))
         memoList = memoList.filter({ memo in
             memo.id != id
@@ -151,8 +102,6 @@ class MemosViewModel: ObservableObject {
     }
     
     func restoreMemo(id: Int) async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-
         _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .normal, content: nil, visibility: nil))
         archivedMemoList = archivedMemoList.filter({ memo in
             memo.id != id
@@ -161,16 +110,12 @@ class MemosViewModel: ObservableObject {
     }
     
     func editMemo(id: Int, content: String) async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-
         let response = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: nil, content: content, visibility: nil))
         updateMemo(response.data)
         try await loadTags()
     }
     
     func deleteMemo(id: Int) async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-        
         _ = try await memos.deleteMemo(id: id)
         memoList = memoList.filter({ memo in
             memo.id != id
@@ -181,30 +126,13 @@ class MemosViewModel: ObservableObject {
     }
     
     func loadResources() async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-
         let response = try await memos.listResources()
         resourceList = response.data.filter({ resource in
             resource.type.hasPrefix("image/")
         })
     }
-    
-    func upload(image: UIImage) async throws -> Resource {
-        guard let memos = memos else { throw MemosError.notLogin }
         
-        var image = image
-        if image.size.height > 1024 || image.size.width > 1024 {
-            image = image.scale(to: CGSize(width: 1024, height: 1024))
-        }
-        
-        guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
-        let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
-        return response.data
-    }
-    
     func deleteResource(id: Int) async throws {
-        guard let memos = memos else { throw MemosError.notLogin }
-        
         _ = try await memos.deleteResource(id: id)
         resourceList = resourceList.filter({ resource in
             resource.id != id

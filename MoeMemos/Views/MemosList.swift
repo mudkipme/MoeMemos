@@ -12,6 +12,7 @@ struct MemosList: View {
 
     @State private var searchString = ""
     @State private var showingNewPost = false
+    @EnvironmentObject private var userState: UserState
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var filteredMemoList: [Memo] = []
     
@@ -24,7 +25,7 @@ struct MemosList: View {
             }
             .listStyle(InsetGroupedListStyle())
             
-            if memosViewModel.currentUser != nil && tag == nil {
+            if userState.currentUser != nil && tag == nil {
                 Button {
                     showingNewPost = true
                 } label: {
@@ -100,5 +101,6 @@ struct MemosList_Previews: PreviewProvider {
     static var previews: some View {
         MemosList(tag: nil)
             .environmentObject(MemosViewModel())
+            .environmentObject(UserState())
     }
 }

@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var showingLogin = false
     @AppStorage("memosHost") private var memosHost = ""
-    @EnvironmentObject private var memosViewModel: MemosViewModel
+    @EnvironmentObject private var userState: UserState
     @State private var selection: Route? = .memos
+    @StateObject private var memosViewModel = MemosViewModel()
     
     @ViewBuilder
     private func navigation() -> some View {
         if #available(iOS 16, *) {
-            Navigation(showingLogin: $showingLogin, selection: $selection)
+            Navigation(selection: $selection)
         } else {
             NavigationView {
-                Sidebar(showingLogin: $showingLogin, selection: $selection)
+                Sidebar(selection: $selection)
             }
         }
     }
@@ -30,21 +30,22 @@ struct ContentView: View {
             .task {
                 await loadCurrentUser()
             }
-            .sheet(isPresented: $showingLogin) {
+            .sheet(isPresented: $userState.showingLogin) {
                 Login()
             }
+            .environmentObject(memosViewModel)
     }
     
     func loadCurrentUser() async {
         do {
-            try memosViewModel.reset(memosHost: memosHost)
-            try await memosViewModel.loadCurrentUser()
+            try userState.reset(memosHost: memosHost)
+            try await userState.loadCurrentUser()
         } catch MemosError.notLogin {
-            showingLogin = true
+            userState.showingLogin = true
             return
         } catch MemosError.invalidStatusCode(let statusCode, let message) {
             if statusCode == 401 {
-                showingLogin = true
+                userState.showingLogin = true
                 return
             }
             print("status: \(statusCode), message: \(message ?? "")")
@@ -57,6 +58,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .environmentObject(MemosViewModel())
+            .environmentObject(UserState())
     }
 }

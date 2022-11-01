@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct Settings: View {
-    @EnvironmentObject var memosViewModel: MemosViewModel
-    @Binding var showingLogin: Bool
+    @EnvironmentObject var userState: UserState
 
     var body: some View {
         List {
-            if let user = memosViewModel.currentUser {
+            if let user = userState.currentUser {
                 VStack(alignment: .leading) {
                     Text(user.name)
                         .font(.title3)
@@ -26,7 +25,7 @@ struct Settings: View {
                 .padding([.top, .bottom], 10)
             } else {
                 Button {
-                    showingLogin = true
+                    userState.showingLogin = true
                 } label: {
                     HStack {
                         Spacer()
@@ -47,11 +46,11 @@ struct Settings: View {
                 Text("About Moe Memos")
             }
             
-            if memosViewModel.currentUser != nil {
+            if userState.currentUser != nil {
                 Button(role: .destructive) {
                     Task {
-                        try await memosViewModel.logout()
-                        showingLogin = true
+                        try await userState.logout()
+                        userState.showingLogin = true
                     }
                 } label: {
                     HStack {
@@ -67,10 +66,8 @@ struct Settings: View {
 }
 
 struct Settings_Previews: PreviewProvider {
-    @State static var showingLogin = true
-
     static var previews: some View {
-        Settings(showingLogin: $showingLogin)
-            .environmentObject(MemosViewModel())
+        Settings()
+            .environmentObject(UserState())
     }
 }

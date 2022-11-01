@@ -25,6 +25,7 @@ struct MemoCard: View {
     
     let memo: Memo
     
+    @EnvironmentObject private var memosManager: MemosManager
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var showingEdit = false
     @State private var showingShareSheet = false
@@ -204,7 +205,7 @@ struct MemoCard: View {
                     }
                     
                     var url = imageURL
-                    if url.host == nil, let hostURL = memosViewModel.hostURL {
+                    if url.host == nil, let hostURL = memosManager.hostURL {
                         url = hostURL.appendingPathComponent(url.path)
                     }
                     contents.append(.image(url))
@@ -217,7 +218,7 @@ struct MemoCard: View {
                 contents.append(.text(lastAttributed))
             }
             
-            if let resourceList = memo.resourceList, let hostURL = memosViewModel.hostURL {
+            if let resourceList = memo.resourceList, let hostURL = memosManager.hostURL {
                 contents += resourceList.map { resource in
                     .image(hostURL.appendingPathComponent(resource.path()))
                 }
@@ -234,5 +235,6 @@ struct MemoCard_Previews: PreviewProvider {
     static var previews: some View {
         MemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil))
             .environmentObject(MemosViewModel())
+            .environmentObject(MemosManager())
     }
 }

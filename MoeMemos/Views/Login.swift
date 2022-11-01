@@ -13,6 +13,7 @@ struct Login: View {
     @State private var email = ""
     @State private var password = ""
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject private var userState: UserState
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var loginError: Error?
     @State private var showingErrorToast = false
@@ -81,7 +82,7 @@ struct Login: View {
             throw MemosError.invalidParams
         }
         
-        try await memosViewModel.signIn(memosHost: host, input: MemosSignIn.Input(email: email.trimmingCharacters(in: .whitespaces), password: password))
+        try await userState.signIn(memosHost: host, input: MemosSignIn.Input(email: email.trimmingCharacters(in: .whitespaces), password: password))
         memosHost = host
         try await memosViewModel.loadMemos()
         dismiss()
@@ -92,5 +93,6 @@ struct Login_Previews: PreviewProvider {
     static var previews: some View {
         Login()
             .environmentObject(MemosViewModel())
+            .environmentObject(UserState())
     }
 }
