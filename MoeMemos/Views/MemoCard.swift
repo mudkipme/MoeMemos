@@ -24,16 +24,18 @@ struct MemoCard: View {
     }
     
     let memo: Memo
+    let archivedViewModel: ArchivedMemoListViewModel?
     
     @EnvironmentObject private var memosManager: MemosManager
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var showingEdit = false
-    @State private var showingShareSheet = false
+    @State private var showingLegacyShareSheet = false
     @State private var showingDeleteConfirmation = false
     @State private var imagePreviewURL: URL?
     
-    init(_ memo: Memo) {
+    init(_ memo: Memo, archivedViewModel: ArchivedMemoListViewModel? = nil) {
         self.memo = memo
+        self.archivedViewModel = archivedViewModel
     }
     
     var body: some View {
@@ -98,13 +100,10 @@ struct MemoCard: View {
         .sheet(isPresented: $showingEdit) {
             MemoInput(memo: memo)
         }
-        .sheet(isPresented: $showingShareSheet) {
-            ShareSheet(activityItems: [memo.content])
-        }
         .confirmationDialog("Delete this memo?", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("Yes", role: .destructive) {
                 Task {
-                    try await memosViewModel.deleteMemo(id: memo.id)
+                    try await archivedViewModel?.deleteMemo(id: memo.id)
                 }
             }
             Button("No", role: .cancel) {}
@@ -138,10 +137,16 @@ struct MemoCard: View {
         } label: {
             Label("Edit", systemImage: "pencil")
         }
-        Button {
-            showingShareSheet = true
-        } label: {
-            Label("Share", systemImage: "square.and.arrow.up")
+        if #available(iOS 16, *) {
+            ShareLink(item: memo.content) {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
+        } else {
+            Button {
+                showingLegacyShareSheet = true
+            } label: {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
         }
         Button(role: .destructive, action: {
             Task {
@@ -161,7 +166,8 @@ struct MemoCard: View {
         Button {
             Task {
                 do {
-                    try await memosViewModel.restoreMemo(id: memo.id)
+                    try await archivedViewModel?.restoreMemo(id: memo.id)
+                    try await memosViewModel.loadMemos()
                 } catch {
                     print(error)
                 }

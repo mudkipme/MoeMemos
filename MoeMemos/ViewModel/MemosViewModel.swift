@@ -22,8 +22,6 @@ class MemosViewModel: ObservableObject {
     }
     @Published private(set) var tags: [Tag] = []
     @Published private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
-    @Published private(set) var archivedMemoList: [Memo] = []
-    @Published private(set) var resourceList: [Resource] = []
     @Published private(set) var inited = false
     @Published private(set) var loading = false
     
@@ -46,10 +44,8 @@ class MemosViewModel: ObservableObject {
     func loadMemos() async throws {
         do {
             loading = true
-            let response = try await memos.listMemos(data: nil)
-            memoList = response.data.filter({ memo in
-                memo.rowStatus != .archived
-            })
+            let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
+            memoList = response.data
             loading = false
             inited = true
         } catch {
@@ -65,8 +61,8 @@ class MemosViewModel: ObservableObject {
         })
     }
     
-    func createMemo(content: String) async throws {
-        let response = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: nil))
+    func createMemo(content: String, resourceIdList: [Int]? = nil) async throws {
+        let response = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: nil, resourceIdList: resourceIdList))
         memoList.insert(response.data, at: 0)
         try await loadTags()
     }
@@ -80,11 +76,6 @@ class MemosViewModel: ObservableObject {
         }
     }
     
-    func loadArchivedMemos() async throws {
-        let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .archived, visibility: nil))
-        archivedMemoList = response.data
-    }
-    
     func updateMemoOrganizer(id: Int, pinned: Bool) async throws {
         let response = try await memos.updateMemoOrganizer(memoId: id, data: MemosOrganizer.Input(pinned: pinned))
         // the response might be incorrect
@@ -95,47 +86,15 @@ class MemosViewModel: ObservableObject {
     }
     
     func archiveMemo(id: Int) async throws {
-        _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .archived, content: nil, visibility: nil))
+        _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .archived, content: nil, visibility: nil, resourceIdList: nil))
         memoList = memoList.filter({ memo in
             memo.id != id
         })
     }
     
-    func restoreMemo(id: Int) async throws {
-        _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .normal, content: nil, visibility: nil))
-        archivedMemoList = archivedMemoList.filter({ memo in
-            memo.id != id
-        })
-        try await loadMemos()
-    }
-    
-    func editMemo(id: Int, content: String) async throws {
-        let response = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: nil, content: content, visibility: nil))
+    func editMemo(id: Int, content: String, resourceIdList: [Int]? = nil) async throws {
+        let response = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: nil, content: content, visibility: nil, resourceIdList: resourceIdList))
         updateMemo(response.data)
         try await loadTags()
-    }
-    
-    func deleteMemo(id: Int) async throws {
-        _ = try await memos.deleteMemo(id: id)
-        memoList = memoList.filter({ memo in
-            memo.id != id
-        })
-        archivedMemoList = archivedMemoList.filter({ memo in
-            memo.id != id
-        })
-    }
-    
-    func loadResources() async throws {
-        let response = try await memos.listResources()
-        resourceList = response.data.filter({ resource in
-            resource.type.hasPrefix("image/")
-        })
-    }
-        
-    func deleteResource(id: Int) async throws {
-        _ = try await memos.deleteResource(id: id)
-        resourceList = resourceList.filter({ resource in
-            resource.id != id
-        })
     }
 }

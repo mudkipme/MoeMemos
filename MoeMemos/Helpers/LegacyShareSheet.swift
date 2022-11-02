@@ -8,7 +8,8 @@
 import SwiftUI
 import UIKit
 
-struct ShareSheet: UIViewControllerRepresentable {
+@available(iOS, deprecated: 16.0, message: "Use ShareLink")
+struct LegacyShareSheet: UIViewControllerRepresentable {
     typealias Callback = (_ activityType: UIActivity.ActivityType?, _ completed: Bool, _ returnedItems: [Any]?, _ error: Error?) -> Void
     
     let activityItems: [Any]
@@ -30,8 +31,8 @@ struct ShareSheet: UIViewControllerRepresentable {
     }
 }
 
-struct ShareSheet_Previews: PreviewProvider {
+struct LegacyShareSheet_Previews: PreviewProvider {
     static var previews: some View {
-        ShareSheet(activityItems: ["A string" as NSString])
+        LegacyShareSheet(activityItems: ["A string" as NSString])
     }
 }

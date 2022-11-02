@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct MemoInput: View {
     let memo: Memo?
@@ -22,6 +23,7 @@ struct MemoInput: View {
     @State private var showingPhotoPicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
+    @State private var imageUploading = false
     
     @ViewBuilder
     private func toolbar() -> some View {
@@ -42,11 +44,13 @@ struct MemoInput: View {
                 Image(systemName: "number")
             }
         }
+        
         Button {
             showingPhotoPicker = true
         } label: {
             Image(systemName: "photo.on.rectangle")
         }
+        
         Spacer()
     }
     
@@ -65,106 +69,168 @@ struct MemoInput: View {
                     .opacity(text.isEmpty ? 0.25 : 1)
             }
             .padding([.leading, .trailing])
+            
+            if !viewModel.resourceList.isEmpty || imageUploading {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack {
+                        ForEach(viewModel.resourceList, id: \.id) { resource in
+                            ResourceCard(resource: resource, resourceManager: viewModel)
+                        }
+                        if imageUploading {
+                            Color.clear
+                                .scaledToFill()
+                                .aspectRatio(1, contentMode: .fit)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        }
+                    }
+                    .frame(height: 80)
+                    .padding([.leading, .trailing, .bottom])
+                }
+            }
         }
+        .onAppear {
+            if let memo = memo {
+                text = memo.content
+            } else {
+                text = draft
+            }
+            if let resourceList = memo?.resourceList {
+                viewModel.resourceList = resourceList
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                focused = true
+            }
+        }
+        .task {
+            do {
+                try await memosViewModel.loadTags()
+            } catch {
+                print(error)
+            }
+        }
+        .onDisappear {
+            if memo == nil {
+                draft = text
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+            if memo == nil {
+                draft = text
+            }
+        }
+        .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(memo == nil ? "Compose" : "Edit Memo")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Close")
+                }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    Task {
+                        try await saveMemo()
+                    }
+                } label: {
+                    Label("Save", systemImage: "paperplane")
+                }
+                .disabled(text.isEmpty || imageUploading)
+            }
+            
+            ToolbarItemGroup(placement: .keyboard) {
+                toolbar()
+            }
+        }
+        .interactiveDismissDisabled()
     }
 
     var body: some View {
-        NavigationView {
-            editor()
-                .onAppear {
-                    if let memo = memo {
-                        text = memo.content
-                    } else {
-                        text = draft
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                        focused = true
-                    }
-                }
-                .task {
-                    do {
-                        try await memosViewModel.loadTags()
-                    } catch {
-                        print(error)
-                    }
-                }
-                .onDisappear {
-                    if memo == nil {
-                        draft = text
-                    }
-                }
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-                    if memo == nil {
-                        draft = text
-                    }
-                }
-                .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
-                .sheet(isPresented: $showingPhotoPicker) {
-                    PhotoPicker { images in
+        if #available(iOS 16, *) {
+            NavigationStack {
+                editor()
+                    .photosPicker(isPresented: $showingPhotoPicker, selection: Binding(get: {
+                        viewModel.photos ?? []
+                    }, set: { photos in
+                        viewModel.photos = photos
+                    }))
+                    .onChange(of: viewModel.photos) { newValue in
                         Task {
-                            do {
-                                try await upload(images: images)
-                                submitError = nil
-                            } catch {
-                                submitError = error
-                                showingErrorToast = true
+                            guard let newValue = newValue else { return }
+                            
+                            if !newValue.isEmpty {
+                                try await upload(images: newValue)
+                                viewModel.photos = []
                             }
                         }
                     }
-                }
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle(memo == nil ? "Compose" : "Edit Memo")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Text("Close")
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            Task {
-                                do {
-                                    try await saveMemo()
-                                    submitError = nil
-                                } catch {
-                                    submitError = error
-                                    showingErrorToast = true
-                                }
-                            }
-                        } label: {
-                            Label("Save", systemImage: "paperplane")
-                        }
-                        .disabled(text.isEmpty)
-                    }
-                    
-                    ToolbarItemGroup(placement: .keyboard) {
-                        toolbar()
-                    }
-                }
-                .interactiveDismissDisabled()
-        }
-        
-    }
-    
-    func upload(images: [UIImage]) async throws {
-        for image in images {
-            let resource = try await viewModel.upload(image: image)
-            text += "![](\(resource.path()))"
-        }
-    }
-    
-    func saveMemo() async throws {
-        if let memo = memo {
-            try await memosViewModel.editMemo(id: memo.id, content: text)
+            }
         } else {
-            try await memosViewModel.createMemo(content: text)
-            draft = ""
+            NavigationView {
+                editor()
+                    .sheet(isPresented: $showingPhotoPicker) {
+                        LegacyPhotoPicker { images in
+                            Task {
+                                try await upload(images: images)
+                            }
+                        }
+                    }
+            }
         }
-        text = ""
-        dismiss()
+    }
+    
+    @available(iOS 16, *)
+    private func upload(images: [PhotosPickerItem]) async throws {
+        do {
+            imageUploading = true
+            for item in images {
+                let imageData = try await item.loadTransferable(type: Data.self)
+                if let imageData = imageData, let image = UIImage(data: imageData) {
+                    try await viewModel.upload(image: image)
+                }
+            }
+            submitError = nil
+        } catch {
+            submitError = error
+            showingErrorToast = true
+        }
+        imageUploading = false
+    }
+    
+    private func upload(images: [UIImage]) async throws {
+        do {
+            imageUploading = true
+            for image in images {
+                try await viewModel.upload(image: image)
+            }
+            submitError = nil
+        } catch {
+            submitError = error
+            showingErrorToast = true
+        }
+        imageUploading = false
+    }
+    
+    private func saveMemo() async throws {
+        do {
+            if let memo = memo {
+                try await memosViewModel.editMemo(id: memo.id, content: text, resourceIdList: viewModel.resourceList.map { $0.id })
+            } else {
+                try await memosViewModel.createMemo(content: text, resourceIdList: viewModel.resourceList.map { $0.id })
+                draft = ""
+            }
+            text = ""
+            dismiss()
+            submitError = nil
+        } catch {
+            submitError = error
+            showingErrorToast = true
+        }
     }
 }
 

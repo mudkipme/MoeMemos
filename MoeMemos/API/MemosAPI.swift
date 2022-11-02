@@ -85,6 +85,7 @@ struct MemosCreate: MemosAPI {
     struct Input: Encodable {
         let content: String
         let visibility: MemosVisibility?
+        let resourceIdList: [Int]?
     }
 
     typealias Output = MemosOutput<Memo>
@@ -116,6 +117,7 @@ struct MemosPatch: MemosAPI {
         let rowStatus: MemosRowStatus?
         let content: String?
         let visibility: MemosVisibility?
+        let resourceIdList: [Int]?
     }
 
     typealias Output = MemosOutput<Memo>

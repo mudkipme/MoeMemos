@@ -9,11 +9,16 @@ import SwiftUI
 
 struct ResourceCard: View {
     let resource: Resource
+    let resourceManager: ResourceManager
+    
+    init(resource: Resource, resourceManager: ResourceManager) {
+        self.resource = resource
+        self.resourceManager = resourceManager
+    }
     
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @EnvironmentObject private var memosManager: MemosManager
     @State private var imagePreviewURL: URL?
-    @State private var showingDeleteConfirmation = false
 
     var body: some View {
         Color.clear
@@ -41,20 +46,14 @@ struct ResourceCard: View {
                     ImageViewer(imageURL: url)
                 }
             }
-            .confirmationDialog("Delete this resource?", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
-                Button("Yes", role: .destructive) {
-                    Task {
-                        try await memosViewModel.deleteResource(id: resource.id)
-                    }
-                }
-                Button("No", role: .cancel) {}
-            }
     }
     
     @ViewBuilder
     func menu(for resource: Resource) -> some View {
         Button(role: .destructive, action: {
-            showingDeleteConfirmation = true
+            Task {
+                try await resourceManager.deleteResource(id: resource.id)
+            }
         }, label: {
             Label("Delete", systemImage: "trash")
         })
@@ -70,7 +69,7 @@ struct ResourceCard: View {
 
 struct ResourceCard_Previews: PreviewProvider {
     static var previews: some View {
-        ResourceCard(resource: Resource(id: 1, createdTs: .now, creatorId: 0, filename: "", size: 0, type: "image/jpeg", updatedTs: .now))
+        ResourceCard(resource: Resource(id: 1, createdTs: .now, creatorId: 0, filename: "", size: 0, type: "image/jpeg", updatedTs: .now), resourceManager: ResourceListViewModel())
             .environmentObject(MemosViewModel())
             .environmentObject(MemosManager())
     }

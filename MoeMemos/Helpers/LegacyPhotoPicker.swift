@@ -8,7 +8,8 @@
 import PhotosUI
 import SwiftUI
 
-struct PhotoPicker: UIViewControllerRepresentable {
+@available(iOS, deprecated: 16.0, message: "Use PhotosPicker")
+struct LegacyPhotoPicker: UIViewControllerRepresentable {
     let onComplete: ([UIImage]) -> Void
     let selectionLimit = 1
 
@@ -30,9 +31,9 @@ struct PhotoPicker: UIViewControllerRepresentable {
     }
 
     class Coordinator: NSObject, PHPickerViewControllerDelegate {
-        let parent: PhotoPicker
+        let parent: LegacyPhotoPicker
 
-        init(_ parent: PhotoPicker) {
+        init(_ parent: LegacyPhotoPicker) {
             self.parent = parent
         }
 

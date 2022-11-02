@@ -12,12 +12,13 @@ fileprivate let columns = [GridItem(.adaptive(minimum: 125, maximum: 200), spaci
 
 struct Resources: View {
     @EnvironmentObject private var memosViewModel: MemosViewModel
+    @StateObject private var viewModel = ResourceListViewModel()
 
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columns) {
-                ForEach(memosViewModel.resourceList) { resource in
-                    ResourceCard(resource: resource)
+                ForEach(viewModel.resourceList) { resource in
+                    ResourceCard(resource: resource, resourceManager: viewModel)
                 }
             }
             .padding()
@@ -25,7 +26,7 @@ struct Resources: View {
         .navigationTitle("Resources")
         .task {
             do {
-                try await memosViewModel.loadResources()
+                try await viewModel.loadResources()
             } catch {
                 print(error)
             }

@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
-		192DF0F528C7B71D0077E785 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F428C7B71D0077E785 /* ShareSheet.swift */; };
+		192DF0F528C7B71D0077E785 /* LegacyShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */; };
 		193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89A28CCD34A00FF7EB6 /* Resources.swift */; };
 		193AA89D28CCD38100FF7EB6 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89C28CCD38100FF7EB6 /* Resource.swift */; };
-		193AA89F28CD080000FF7EB6 /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89E28CD080000FF7EB6 /* PhotoPicker.swift */; };
+		193AA89F28CD080000FF7EB6 /* LegacyPhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */; };
 		193AA8A128CD12CD00FF7EB6 /* FormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A028CD12CD00FF7EB6 /* FormData.swift */; };
 		193AA8A328CD1C9300FF7EB6 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A228CD1C9300FF7EB6 /* UIImage.swift */; };
 		193AA8A528CD9AE200FF7EB6 /* ImagePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A428CD9AE200FF7EB6 /* ImagePreview.swift */; };
@@ -40,6 +40,9 @@
 		199A657D28C4761100C39994 /* Usage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657C28C4761100C39994 /* Usage.swift */; };
 		199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657E28C47D7C00C39994 /* Sidebar.swift */; };
 		199A658128C48A6200C39994 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A658028C48A6200C39994 /* Login.swift */; };
+		19C569A42912493A00745F9D /* ArchivedMemoListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */; };
+		19C569AA29125BB200745F9D /* ResourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569A929125BB200745F9D /* ResourceManager.swift */; };
+		19C569AC29125C0700745F9D /* ResourceListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569AB29125C0700745F9D /* ResourceListViewModel.swift */; };
 		19E1C5BE28C4F6410072CEEF /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E1C5BD28C4F6410072CEEF /* Stats.swift */; };
 		19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E1C5BF28C5191D0072CEEF /* MemoInput.swift */; };
 		19E6EF1F29113EC900C998F5 /* MemoInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF1E29113EC900C998F5 /* MemoInputViewModel.swift */; };
@@ -71,10 +74,10 @@
 
 /* Begin PBXFileReference section */
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
-		192DF0F428C7B71D0077E785 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyShareSheet.swift; sourceTree = "<group>"; };
 		193AA89A28CCD34A00FF7EB6 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		193AA89C28CCD38100FF7EB6 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
-		193AA89E28CD080000FF7EB6 /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
+		193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyPhotoPicker.swift; sourceTree = "<group>"; };
 		193AA8A028CD12CD00FF7EB6 /* FormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormData.swift; sourceTree = "<group>"; };
 		193AA8A228CD1C9300FF7EB6 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		193AA8A428CD9AE200FF7EB6 /* ImagePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreview.swift; sourceTree = "<group>"; };
@@ -106,6 +109,9 @@
 		199A657C28C4761100C39994 /* Usage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Usage.swift; sourceTree = "<group>"; };
 		199A657E28C47D7C00C39994 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		199A658028C48A6200C39994 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemoListViewModel.swift; sourceTree = "<group>"; };
+		19C569A929125BB200745F9D /* ResourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceManager.swift; sourceTree = "<group>"; };
+		19C569AB29125C0700745F9D /* ResourceListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceListViewModel.swift; sourceTree = "<group>"; };
 		19E1C5BD28C4F6410072CEEF /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		19E1C5BF28C5191D0072CEEF /* MemoInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInput.swift; sourceTree = "<group>"; };
 		19E6EF1E29113EC900C998F5 /* MemoInputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInputViewModel.swift; sourceTree = "<group>"; };
@@ -146,8 +152,8 @@
 		193DE92628C61464002651E0 /* API */ = {
 			isa = PBXGroup;
 			children = (
-				193DE92728C61488002651E0 /* MemosAPI.swift */,
 				195E5D6C28C7051F00784EF5 /* Memos.swift */,
+				193DE92728C61488002651E0 /* MemosAPI.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -155,15 +161,15 @@
 		193DE92928C619CE002651E0 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				193DE92A28C619D9002651E0 /* HTTP.swift */,
-				193DE93128C652F7002651E0 /* Error.swift */,
-				195E5D6A28C704AC00784EF5 /* Date.swift */,
-				192DF0F428C7B71D0077E785 /* ShareSheet.swift */,
 				195E5AD228C84E4F00CD4674 /* AlertToast.swift */,
-				193AA89E28CD080000FF7EB6 /* PhotoPicker.swift */,
+				195E5D6A28C704AC00784EF5 /* Date.swift */,
+				193DE93128C652F7002651E0 /* Error.swift */,
 				193AA8A028CD12CD00FF7EB6 /* FormData.swift */,
-				19FC1C7B290DA47C0078A7F2 /* Route.swift */,
+				193DE92A28C619D9002651E0 /* HTTP.swift */,
+				193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */,
+				192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */,
 				19E6EF2229115A2800C998F5 /* MemosManager.swift */,
+				19FC1C7B290DA47C0078A7F2 /* Route.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -171,8 +177,11 @@
 		193DE92E28C650F8002651E0 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				193DE92F28C65104002651E0 /* MemosViewModel.swift */,
+				19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */,
 				19E6EF1E29113EC900C998F5 /* MemoInputViewModel.swift */,
+				193DE92F28C65104002651E0 /* MemosViewModel.swift */,
+				19C569AB29125C0700745F9D /* ResourceListViewModel.swift */,
+				19C569A929125BB200745F9D /* ResourceManager.swift */,
 				19E6EF2029113FDA00C998F5 /* UserState.swift */,
 			);
 			path = ViewModel;
@@ -201,15 +210,15 @@
 		194B272F28C3973400A48675 /* MoeMemos */ = {
 			isa = PBXGroup;
 			children = (
-				193DE92E28C650F8002651E0 /* ViewModel */,
-				193DE92928C619CE002651E0 /* Helpers */,
 				193DE92628C61464002651E0 /* API */,
-				199A657928C4749800C39994 /* Extensions */,
-				19F31BF928C3E990000C5207 /* Model */,
-				19F31BF828C3E286000C5207 /* Views */,
-				194B273028C3973400A48675 /* MoeMemosApp.swift */,
 				194B273428C3973600A48675 /* Assets.xcassets */,
+				199A657928C4749800C39994 /* Extensions */,
+				193DE92928C619CE002651E0 /* Helpers */,
+				19F31BF928C3E990000C5207 /* Model */,
+				194B273028C3973400A48675 /* MoeMemosApp.swift */,
 				194B273628C3973600A48675 /* Preview Content */,
+				193DE92E28C650F8002651E0 /* ViewModel */,
+				19F31BF828C3E286000C5207 /* Views */,
 			);
 			path = MoeMemos;
 			sourceTree = "<group>";
@@ -261,13 +270,13 @@
 				19F31BFC28C3ED11000C5207 /* MemoCard.swift */,
 				19E1C5BF28C5191D0072CEEF /* MemoInput.swift */,
 				19F31BF628C3E26D000C5207 /* MemosList.swift */,
+				19FC1C7D290DA6E90078A7F2 /* Navigation.swift */,
+				19996E5F29118AF6001E3583 /* NavLink.swift */,
 				193AA8A828CDB27F00FF7EB6 /* ResourceCard.swift */,
 				193AA89A28CCD34A00FF7EB6 /* Resources.swift */,
 				193DE92228C5E267002651E0 /* Settings.swift */,
 				199A657E28C47D7C00C39994 /* Sidebar.swift */,
 				19E1C5BD28C4F6410072CEEF /* Stats.swift */,
-				19FC1C7D290DA6E90078A7F2 /* Navigation.swift */,
-				19996E5F29118AF6001E3583 /* NavLink.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -276,9 +285,9 @@
 			isa = PBXGroup;
 			children = (
 				19F31BFA28C3E9B2000C5207 /* Memo.swift */,
+				193AA89C28CCD38100FF7EB6 /* Resource.swift */,
 				199A657C28C4761100C39994 /* Usage.swift */,
 				193DE92028C5CFBB002651E0 /* User.swift */,
-				193AA89C28CCD38100FF7EB6 /* Resource.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -413,6 +422,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19C569AC29125C0700745F9D /* ResourceListViewModel.swift in Sources */,
 				19F31BF728C3E26D000C5207 /* MemosList.swift in Sources */,
 				19E1C5BE28C4F6410072CEEF /* Stats.swift in Sources */,
 				199A658128C48A6200C39994 /* Login.swift in Sources */,
@@ -443,12 +453,14 @@
 				19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */,
 				19E6EF2129113FDA00C998F5 /* UserState.swift in Sources */,
 				193DE92828C61488002651E0 /* MemosAPI.swift in Sources */,
-				193AA89F28CD080000FF7EB6 /* PhotoPicker.swift in Sources */,
+				193AA89F28CD080000FF7EB6 /* LegacyPhotoPicker.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
+				19C569AA29125BB200745F9D /* ResourceManager.swift in Sources */,
 				195E5D6B28C704AC00784EF5 /* Date.swift in Sources */,
 				19996E6029118AF6001E3583 /* NavLink.swift in Sources */,
-				192DF0F528C7B71D0077E785 /* ShareSheet.swift in Sources */,
+				192DF0F528C7B71D0077E785 /* LegacyShareSheet.swift in Sources */,
 				19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */,
+				19C569A42912493A00745F9D /* ArchivedMemoListViewModel.swift in Sources */,
 				193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */,
 				193DE93228C652F7002651E0 /* Error.swift in Sources */,
 			);
@@ -607,7 +619,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"MoeMemos/Preview Content\"";
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				ENABLE_PREVIEWS = YES;
@@ -637,7 +649,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"MoeMemos/Preview Content\"";
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				ENABLE_PREVIEWS = YES;

@@ -9,25 +9,26 @@ import SwiftUI
 
 struct ArchivedMemosList: View {
     @EnvironmentObject private var memosViewModel: MemosViewModel
+    @StateObject private var viewModel = ArchivedMemoListViewModel()
 
     var body: some View {
-        List(memosViewModel.archivedMemoList, id: \.id) { memo in
+        List(viewModel.archivedMemoList, id: \.id) { memo in
             Section {
-                MemoCard(memo)
+                MemoCard(memo, archivedViewModel: viewModel)
             }
         }
         .listStyle(InsetGroupedListStyle())
         .navigationTitle("Archived")
         .task {
             do {
-                try await memosViewModel.loadArchivedMemos()
+                try await viewModel.loadArchivedMemos()
             } catch {
                 print(error)
             }
         }
         .refreshable {
             do {
-                try await memosViewModel.loadArchivedMemos()
+                try await viewModel.loadArchivedMemos()
             } catch {
                 print(error)
             }
