@@ -7,13 +7,29 @@
 
 import Foundation
 
+private let cookieStorage = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: groupContainerIdentifier)
+
+private let urlSessionConfiguration = {
+    let configuration = URLSessionConfiguration.default
+    configuration.httpCookieStorage = cookieStorage
+    return configuration
+}()
+
 class Memos {
     let host: URL
     let session: URLSession
     
     init(host: URL) {
         self.host = host
-        session = URLSession.shared
+        
+        // Migrate cookies to group container
+        let legacyCookieStorage = HTTPCookieStorage.shared
+        if let legacyCookies = legacyCookieStorage.cookies(for: host), !legacyCookies.isEmpty {
+            cookieStorage.setCookies(legacyCookies, for: host, mainDocumentURL: nil)
+            legacyCookieStorage.removeCookies(since: .distantPast)
+        }
+        
+        session = URLSession(configuration: urlSessionConfiguration)
     }
     
     func signIn(data: MemosSignIn.Input) async throws -> MemosSignIn.Output {
