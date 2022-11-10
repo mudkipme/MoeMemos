@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Login: View {
-    @AppStorage("memosHost") var memosHost = ""
+    @AppStorage("memosHost", store: UserDefaults(suiteName: groupContainerIdentifier)) var memosHost = ""
     @State private var host = ""
     @State private var email = ""
     @State private var password = ""
@@ -73,6 +73,7 @@ struct Login: View {
         }
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", loginError?.localizedDescription))
         .toast(isPresenting: $showLoadingToast, alertType: .loading)
+        .interactiveDismissDisabled()
     }
     
     func doLogin() async throws {

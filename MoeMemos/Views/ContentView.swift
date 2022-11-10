@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @AppStorage("memosHost") private var memosHost = ""
+    @AppStorage("memosHost", store: UserDefaults(suiteName: groupContainerIdentifier)) private var memosHost = ""
     @EnvironmentObject private var userState: UserState
     @State private var selection: Route? = .memos
     @StateObject private var memosViewModel = MemosViewModel()
@@ -38,6 +38,11 @@ struct ContentView: View {
     
     func loadCurrentUser() async {
         do {
+            if let legacyMemosHost = UserDefaults.standard.string(forKey: "memosHost"), !legacyMemosHost.isEmpty {
+                memosHost = legacyMemosHost
+                UserDefaults.standard.removeObject(forKey: "memosHost")
+            }
+            
             try userState.reset(memosHost: memosHost)
             try await userState.loadCurrentUser()
         } catch MemosError.notLogin {
