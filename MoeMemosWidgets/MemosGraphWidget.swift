@@ -56,7 +56,7 @@ struct MemosGraphEntry: TimelineEntry {
     let matrix: [DailyUsageStat]?
 }
 
-struct MoeMemosWidgetsEntryView : View {
+struct MemosGraphEntryView : View {
     var entry: Provider.Entry
 
     var body: some View {
@@ -70,7 +70,7 @@ struct MemosGraphWidget: Widget {
 
     var body: some WidgetConfiguration {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
-            MoeMemosWidgetsEntryView(entry: entry)
+            MemosGraphEntryView(entry: entry)
         }
         .supportedFamilies([.systemSmall, .systemMedium])
         .configurationDisplayName("Memos Graph")
@@ -80,7 +80,7 @@ struct MemosGraphWidget: Widget {
 
 struct MemosGraphWidget_Previews: PreviewProvider {
     static var previews: some View {
-        MoeMemosWidgetsEntryView(entry: MemosGraphEntry(date: Date(), configuration: ConfigurationIntent(), matrix: nil))
+        MemosGraphEntryView(entry: MemosGraphEntry(date: Date(), configuration: ConfigurationIntent(), matrix: nil))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }

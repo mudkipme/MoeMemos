@@ -12,5 +12,6 @@ import SwiftUI
 struct MoeMemosWidgetsBundle: WidgetBundle {
     var body: some Widget {
         MemosGraphWidget()
+        MemoryWidget()
     }
 }
