@@ -17,29 +17,13 @@ class MemosViewModel: ObservableObject {
 
     @Published private(set) var memoList: [Memo] = [] {
         didSet {
-            matrix = calculateMatrix()
+            matrix = DailyUsageStat.calculateMatrix(memoList: memoList)
         }
     }
     @Published private(set) var tags: [Tag] = []
     @Published private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
     @Published private(set) var inited = false
     @Published private(set) var loading = false
-    
-    private func calculateMatrix() -> [DailyUsageStat] {
-        var result = DailyUsageStat.initialMatrix
-        var countDict = [String: Int]()
-        
-        for memo in memoList {
-            let key = memo.createdTs.formatted(date: .numeric, time: .omitted)
-            countDict[key] = (countDict[key] ?? 0) + 1
-        }
-        
-        for (i, day) in result.enumerated() {
-            result[i].count = countDict[day.id] ?? 0
-        }
-        
-        return result
-    }
     
     func loadMemos() async throws {
         do {

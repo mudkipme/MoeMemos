@@ -12,12 +12,12 @@ fileprivate let defaultRows = [GridItem](repeating: GridItem(.flexible(minimum: 
 
 struct Heatmap: View {
     let rows = defaultRows
-    @EnvironmentObject private var memosViewModel: MemosViewModel
+    let matrix: [DailyUsageStat]
     
     var body: some View {
         GeometryReader { geometry in
             LazyHGrid(rows: rows, alignment: .top, spacing: gridSpacing) {
-                ForEach(memosViewModel.matrix.suffix(count(in: geometry.frame(in: .local).size))) { day in
+                ForEach(matrix.suffix(count(in: geometry.frame(in: .local).size))) { day in
                     HeatmapStat(day: day)
                 }
             }
@@ -25,12 +25,12 @@ struct Heatmap: View {
     }
         
     private func count(in size: CGSize) -> Int {
-        let cellHeight = (size.height + gridSpacing) / CGFloat(daysInWeek) - gridSpacing
+        let cellHeight = size.height / CGFloat(daysInWeek)
         if cellHeight <= 0 {
             return 0
         }
         let cellWidth = cellHeight
-        let columns = Int(floor(size.width / (cellWidth + gridSpacing)))
+        let columns = Int(floor(size.width / cellWidth))
         let fullCells = Int(columns) * daysInWeek
         
         let today = Calendar.current.startOfDay(for: .now)
@@ -45,7 +45,6 @@ struct Heatmap: View {
 
 struct HeatMap_Previews: PreviewProvider {
     static var previews: some View {
-        Heatmap()
-            .environmentObject(MemosViewModel())
+        Heatmap(matrix: DailyUsageStat.initialMatrix)
     }
 }
