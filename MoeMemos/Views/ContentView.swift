@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
-    @AppStorage("memosHost") private var memosHost = ""
+    @AppStorage("memosHost", store: UserDefaults(suiteName: groupContainerIdentifier)) private var memosHost = ""
     @EnvironmentObject private var userState: UserState
     @State private var selection: Route? = .memos
     @StateObject private var memosViewModel = MemosViewModel()
+    @Environment(\.scenePhase) var scenePhase
     
     @ViewBuilder
     private func navigation() -> some View {
@@ -34,10 +35,28 @@ struct ContentView: View {
                 Login()
             }
             .environmentObject(memosViewModel)
+            .onChange(of: scenePhase) { newValue in
+                if newValue == .active && userState.currentUser != nil {
+                    Task {
+                        do {
+                            try await userState.loadCurrentUser()
+                        } catch MemosError.invalidStatusCode(let statusCode, _) {
+                            if statusCode == 401 {
+                                userState.showingLogin = true
+                            }
+                        }
+                    }
+                }
+            }
     }
     
     func loadCurrentUser() async {
         do {
+            if let legacyMemosHost = UserDefaults.standard.string(forKey: "memosHost"), !legacyMemosHost.isEmpty {
+                memosHost = legacyMemosHost
+                UserDefaults.standard.removeObject(forKey: "memosHost")
+            }
+            
             try userState.reset(memosHost: memosHost)
             try await userState.loadCurrentUser()
         } catch MemosError.notLogin {

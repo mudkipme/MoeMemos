@@ -2,12 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>NSUserActivityTypes</key>
+	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>MemoryWidgetConfigurationIntent</string>
-		<string>MemosGraphWidgetConfigurationIntent</string>
+		<string>group.me.mudkip.MoeMemos</string>
 	</array>
 </dict>
 </plist>

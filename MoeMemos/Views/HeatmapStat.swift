@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HeatmapStat: View {
     let day: DailyUsageStat
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         if Calendar.current.isDateInToday(day.date) {
@@ -27,7 +28,9 @@ struct HeatmapStat: View {
     func color(of day: DailyUsageStat) -> Color {
         switch day.count {
         case 0:
-            return Color(0xeaeaea)
+            return colorScheme == .dark
+                ? Color(uiColor: .secondarySystemBackground)
+                : Color(0xeaeaea)
         case 1:
             return Color(0x9be9a8)
         case 2:
