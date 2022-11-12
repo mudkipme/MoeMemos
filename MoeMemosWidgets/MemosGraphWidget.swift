@@ -11,10 +11,10 @@ import Intents
 
 struct Provider: IntentTimelineProvider {
     func placeholder(in context: Context) -> MemosGraphEntry {
-        MemosGraphEntry(date: Date(), configuration: ConfigurationIntent(), matrix: nil)
+        MemosGraphEntry(date: Date(), configuration: MemosGraphWidgetConfigurationIntent(), matrix: nil)
     }
 
-    func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (MemosGraphEntry) -> ()) {
+    func getSnapshot(for configuration: MemosGraphWidgetConfigurationIntent, in context: Context, completion: @escaping (MemosGraphEntry) -> ()) {
         Task { @MainActor in
             var matrix: [DailyUsageStat]?
             if !context.isPreview {
@@ -39,7 +39,7 @@ struct Provider: IntentTimelineProvider {
         return DailyUsageStat.calculateMatrix(memoList: response.data)
     }
 
-    func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+    func getTimeline(for configuration: MemosGraphWidgetConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         Task { @MainActor in
             let matrix = try? await getMatrix()
             let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
@@ -52,7 +52,7 @@ struct Provider: IntentTimelineProvider {
 
 struct MemosGraphEntry: TimelineEntry {
     let date: Date
-    let configuration: ConfigurationIntent
+    let configuration: MemosGraphWidgetConfigurationIntent
     let matrix: [DailyUsageStat]?
 }
 
@@ -69,18 +69,18 @@ struct MemosGraphWidget: Widget {
     let kind: String = "MemosGraphWidget"
 
     var body: some WidgetConfiguration {
-        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
+        IntentConfiguration(kind: kind, intent: MemosGraphWidgetConfigurationIntent.self, provider: Provider()) { entry in
             MemosGraphEntryView(entry: entry)
         }
         .supportedFamilies([.systemSmall, .systemMedium])
         .configurationDisplayName("Memos Graph")
-        .description("The graph to display how much memos you composed every day in recent weeks, updates hourly.")
+        .description("The graph to display how much memos you composed every day in recent weeks.")
     }
 }
 
 struct MemosGraphWidget_Previews: PreviewProvider {
     static var previews: some View {
-        MemosGraphEntryView(entry: MemosGraphEntry(date: Date(), configuration: ConfigurationIntent(), matrix: nil))
+        MemosGraphEntryView(entry: MemosGraphEntry(date: Date(), configuration: MemosGraphWidgetConfigurationIntent(), matrix: nil))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }

@@ -21,20 +21,34 @@ let sampleMemo = Memo(
     resourceList: nil
 )
 
+extension MemoryUpdatePeriod {
+    var memosPerDay: Int {
+        switch self {
+        case .daily: return 1
+        case .hourly: return 24
+        default: return 4
+        }
+    }
+    
+    var interval: Int {
+        return 24 / memosPerDay
+    }
+}
+
 struct MemoryProvider: IntentTimelineProvider {
     
     func placeholder(in context: Context) -> MemoryEntry {
-        MemoryEntry(date: Date(), configuration: ConfigurationIntent(), memo: sampleMemo)
+        MemoryEntry(date: Date(), configuration: MemoryWidgetConfigurationIntent(), memo: sampleMemo)
     }
 
-    func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (MemoryEntry) -> ()) {
+    func getSnapshot(for configuration: MemoryWidgetConfigurationIntent, in context: Context, completion: @escaping (MemoryEntry) -> ()) {
         Task { @MainActor in
             let entry = MemoryEntry(date: Date(), configuration: configuration, memo: sampleMemo)
             completion(entry)
         }
     }
     
-    func getMemos() async throws -> [Memo]? {
+    func getMemos(_ frequency: MemoryUpdatePeriod) async throws -> [Memo]? {
         guard let host = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: "memosHost") else {
             return nil
         }
@@ -44,17 +58,17 @@ struct MemoryProvider: IntentTimelineProvider {
         let memos = Memos(host: hostURL)
         
         let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
-        return [Memo](response.data.shuffled().prefix(4))
+        return [Memo](response.data.shuffled().prefix(frequency.memosPerDay))
     }
 
-    func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+    func getTimeline(for configuration: MemoryWidgetConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         Task { @MainActor in
-            let memos = try? await getMemos()
+            let memos = try? await getMemos(configuration.frequency)
             var entries = [Entry]()
             
             if let memos = memos {
                 for (i, memo) in memos.enumerated() {
-                    let entryDate = Calendar.current.date(byAdding: .hour, value: i * 6, to: Date())!
+                    let entryDate = Calendar.current.date(byAdding: .hour, value: i * configuration.frequency.interval, to: Date())!
                     entries.append(MemoryEntry(date: entryDate, configuration: configuration, memo: memo))
                 }
             } else {
@@ -70,7 +84,7 @@ struct MemoryProvider: IntentTimelineProvider {
 
 struct MemoryEntry: TimelineEntry {
     let date: Date
-    let configuration: ConfigurationIntent
+    let configuration: MemoryWidgetConfigurationIntent
     let memo: Memo
 }
 
@@ -113,18 +127,18 @@ struct MemoryWidget: Widget {
     let kind: String = "MemoryWidget"
 
     var body: some WidgetConfiguration {
-        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: MemoryProvider()) { entry in
+        IntentConfiguration(kind: kind, intent: MemoryWidgetConfigurationIntent.self, provider: MemoryProvider()) { entry in
             MemoryEntryView(entry: entry)
         }
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .configurationDisplayName("Memories")
-        .description("Remember your past memos, updates 4 times each day.")
+        .description("Remember your past memos.")
     }
 }
 
 struct MemoryWidget_Previews: PreviewProvider {
     static var previews: some View {
-        MemoryEntryView(entry: MemoryEntry(date: Date(), configuration: ConfigurationIntent(), memo: sampleMemo))
+        MemoryEntryView(entry: MemoryEntry(date: Date(), configuration: MemoryWidgetConfigurationIntent(), memo: sampleMemo))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }
