@@ -12,6 +12,7 @@ struct ContentView: View {
     @EnvironmentObject private var userState: UserState
     @State private var selection: Route? = .memos
     @StateObject private var memosViewModel = MemosViewModel()
+    @Environment(\.scenePhase) var scenePhase
     
     @ViewBuilder
     private func navigation() -> some View {
@@ -34,6 +35,19 @@ struct ContentView: View {
                 Login()
             }
             .environmentObject(memosViewModel)
+            .onChange(of: scenePhase) { newValue in
+                if newValue == .active && userState.currentUser != nil {
+                    Task {
+                        do {
+                            try await userState.loadCurrentUser()
+                        } catch MemosError.invalidStatusCode(let statusCode, _) {
+                            if statusCode == 401 {
+                                userState.showingLogin = true
+                            }
+                        }
+                    }
+                }
+            }
     }
     
     func loadCurrentUser() async {
