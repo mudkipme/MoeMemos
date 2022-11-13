@@ -12,6 +12,7 @@ struct MemoCard: View {
     private enum MemoContent: Identifiable {
         case text(AttributedString)
         case image(URL)
+        case attachment(Resource)
         
         var id: String {
             switch self {
@@ -19,6 +20,8 @@ struct MemoCard: View {
                 return String(attributedString.characters)
             case .image(let url):
                 return url.absoluteString
+            case .attachment(let resource):
+                return "\(resource.id)"
             }
         }
     }
@@ -86,6 +89,9 @@ struct MemoCard: View {
                     .cornerRadius(8)
                     .padding([.bottom], 10)
                     .clipped()
+                }
+                if case let .attachment(resource) = content {
+                    Attachment(resource: resource)
                 }
             }
         }
@@ -196,12 +202,13 @@ struct MemoCard: View {
     }
     
     private func renderContent() -> [MemoContent] {
+        var contents = [MemoContent]()
+
         do {
             let attributedString = try AttributedString(markdown: memo.content, options: AttributedString.MarkdownParsingOptions(
                     allowsExtendedAttributes: true,
                     interpretedSyntax: .inlineOnlyPreservingWhitespace))
-            
-            var contents = [MemoContent]()
+
             var lastAttributed = AttributedString()
             for i in attributedString.runs {
                 if let imageURL = i.imageURL {
@@ -224,16 +231,21 @@ struct MemoCard: View {
                 contents.append(.text(lastAttributed))
             }
             
-            if let resourceList = memo.resourceList, let hostURL = memosManager.hostURL {
-                contents += resourceList.map { resource in
-                    .image(hostURL.appendingPathComponent(resource.path()))
+        } catch {
+            contents = [.text(AttributedString(memo.content))]
+        }
+        
+        if let resourceList = memo.resourceList, let hostURL = memosManager.hostURL {
+            contents += resourceList.map { resource in
+                if resource.type.hasPrefix("image/") {
+                    return .image(hostURL.appendingPathComponent(resource.path()))
+                } else {
+                    return .attachment(resource)
                 }
             }
-            
-            return contents
-        } catch {
-            return [.text(AttributedString(memo.content))]
         }
+        
+        return contents
     }
 }
 

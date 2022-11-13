@@ -175,34 +175,16 @@
 		<dict>
 			<key>INIntentCategory</key>
 			<string>generic</string>
-			<key>INIntentConfigurable</key>
-			<true/>
 			<key>INIntentDescription</key>
 			<string>Configurate memos graph widget</string>
 			<key>INIntentDescriptionID</key>
 			<string>CXq76H</string>
-			<key>INIntentManagedParameterCombinations</key>
-			<dict>
-				<key></key>
-				<dict>
-					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
-					<true/>
-					<key>INIntentParameterCombinationUpdatesLinked</key>
-					<true/>
-				</dict>
-			</dict>
+			<key>INIntentEligibleForWidgets</key>
+			<true/>
+			<key>INIntentIneligibleForSuggestions</key>
+			<true/>
 			<key>INIntentName</key>
 			<string>MemosGraphWidgetConfiguration</string>
-			<key>INIntentParameterCombinations</key>
-			<dict>
-				<key></key>
-				<dict>
-					<key>INIntentParameterCombinationIsPrimary</key>
-					<true/>
-					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
-					<true/>
-				</dict>
-			</dict>
 			<key>INIntentResponse</key>
 			<dict>
 				<key>INIntentResponseCodes</key>
