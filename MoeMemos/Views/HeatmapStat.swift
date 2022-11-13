@@ -29,7 +29,7 @@ struct HeatmapStat: View {
         switch day.count {
         case 0:
             return colorScheme == .dark
-                ? Color(uiColor: .secondarySystemBackground)
+                ? Color(uiColor: .secondarySystemGroupedBackground)
                 : Color(0xeaeaea)
         case 1:
             return Color(0x9be9a8)
