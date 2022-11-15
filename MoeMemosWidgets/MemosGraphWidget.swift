@@ -27,13 +27,15 @@ struct Provider: IntentTimelineProvider {
     }
     
     func getMatrix() async throws -> [DailyUsageStat]? {
-        guard let host = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: "memosHost") else {
+        guard let host = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosHostKey) else {
             return nil
         }
         guard let hostURL = URL(string: host) else {
             return nil
         }
-        let memos = Memos(host: hostURL)
+        
+        let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
+        let memos = Memos(host: hostURL, openId: openId)
         
         let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
         return DailyUsageStat.calculateMatrix(memoList: response.data)

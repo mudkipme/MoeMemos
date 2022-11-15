@@ -8,7 +8,14 @@
 import SwiftUI
 
 struct Login: View {
-    @AppStorage("memosHost", store: UserDefaults(suiteName: groupContainerIdentifier)) var memosHost = ""
+    private enum LoginMethod: Hashable {
+        case usernamdAndPassword
+        case openAPI
+    }
+    
+    @AppStorage(memosHostKey, store: UserDefaults(suiteName: groupContainerIdentifier)) var memosHost = ""
+    @AppStorage(memosOpenIdKey, store: UserDefaults(suiteName: groupContainerIdentifier)) var memosOpenId: String?
+
     @State private var host = ""
     @State private var email = ""
     @State private var password = ""
@@ -18,6 +25,7 @@ struct Login: View {
     @State private var loginError: Error?
     @State private var showingErrorToast = false
     @State private var showLoadingToast = false
+    @State private var loginMethod: LoginMethod = .usernamdAndPassword
     
     var body: some View {
         VStack {
@@ -31,20 +39,39 @@ struct Login: View {
                 .foregroundStyle(.secondary)
                 .padding(.bottom, 20)
             
-            TextField("Host", text: $host)
-                .textContentType(.URL)
-                .keyboardType(.URL)
-                .textInputAutocapitalization(.never)
-                .disableAutocorrection(true)
-                .textFieldStyle(.roundedBorder)
-            TextField("Email", text: $email)
-                .textContentType(.emailAddress)
-                .keyboardType(.emailAddress)
-                .textInputAutocapitalization(.never)
-                .disableAutocorrection(true)
-                .textFieldStyle(.roundedBorder)
-            SecureField("Password", text: $password)
-                .textFieldStyle(.roundedBorder)
+            Picker("Login method", selection: $loginMethod) {
+                Text("Username and password").tag(LoginMethod.usernamdAndPassword)
+                Text("Open API").tag(LoginMethod.openAPI)
+            }
+            .pickerStyle(.segmented)
+            .padding(.bottom, 10)
+            
+            if loginMethod == .usernamdAndPassword {
+                TextField("Host", text: $host)
+                    .textContentType(.URL)
+                    .keyboardType(.URL)
+                    .textInputAutocapitalization(.never)
+                    .disableAutocorrection(true)
+                    .textFieldStyle(.roundedBorder)
+                TextField("Email", text: $email)
+                    .textContentType(.emailAddress)
+                    .keyboardType(.emailAddress)
+                    .textInputAutocapitalization(.never)
+                    .disableAutocorrection(true)
+                    .textFieldStyle(.roundedBorder)
+                SecureField("Password", text: $password)
+                    .textFieldStyle(.roundedBorder)
+            } else {
+                TextField("Open API", text: $host)
+                    .textContentType(.URL)
+                    .keyboardType(.URL)
+                    .textInputAutocapitalization(.never)
+                    .disableAutocorrection(true)
+                    .textFieldStyle(.roundedBorder)
+                Text("Copy “Open API” from Setting in ✍️memos.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
             
             Button {
                 Task {
@@ -77,14 +104,23 @@ struct Login: View {
     }
     
     func doLogin() async throws {
-        if host.isEmpty ||
-            email.trimmingCharacters(in: .whitespaces).isEmpty ||
-            password.isEmpty {
+        if host.isEmpty {
             throw MemosError.invalidParams
         }
         
-        try await userState.signIn(memosHost: host, input: MemosSignIn.Input(email: email.trimmingCharacters(in: .whitespaces), password: password))
-        memosHost = host
+        if loginMethod == .usernamdAndPassword {
+            if email.trimmingCharacters(in: .whitespaces).isEmpty ||
+                password.isEmpty {
+                throw MemosError.invalidParams
+            }
+            try await userState.signIn(memosHost: host, input: MemosSignIn.Input(email: email.trimmingCharacters(in: .whitespaces), password: password))
+            memosHost = host
+        } else {
+            try await userState.signIn(memosOpenAPI: host)
+            memosHost = try userState.memos.host.absoluteString
+            memosOpenId = try userState.memos.openId
+        }
+        
         try await memosViewModel.loadMemos()
         dismiss()
     }

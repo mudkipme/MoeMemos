@@ -23,11 +23,11 @@ class MemosManager: ObservableObject {
         }
     }
     
-    func reset(memosHost: URL) {
-        memos = Memos(host: memosHost)
+    func reset(memosHost: URL, openId: String?) {
+        memos = Memos(host: memosHost, openId: openId)
     }
     
-    func reset(memosHost: String) throws {
+    func reset(memosHost: String, openId: String?) throws {
         if memosHost == "" {
             throw MemosError.notLogin
         }
@@ -36,6 +36,6 @@ class MemosManager: ObservableObject {
             throw MemosError.notLogin
         }
         
-        reset(memosHost: url)
+        reset(memosHost: url, openId: openId)
     }
 }

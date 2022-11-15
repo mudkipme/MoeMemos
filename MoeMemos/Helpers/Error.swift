@@ -12,6 +12,7 @@ enum MemosError: LocalizedError {
     case notLogin
     case invalidStatusCode(Int, String?)
     case invalidParams
+    case invalidOpenAPI
     
     public var errorDescription: String? {
         switch self {
@@ -26,6 +27,8 @@ enum MemosError: LocalizedError {
             return "Network error."
         case .invalidParams:
             return "Please enter a valid input."
+        case .invalidOpenAPI:
+            return "The Open API URL is incorrect."
         }
     }
 }
