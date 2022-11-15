@@ -8,3 +8,5 @@
 import Foundation
 
 let groupContainerIdentifier = "group.me.mudkip.MoeMemos"
+let memosHostKey = "memosHost"
+let memosOpenIdKey = "memosOpenId"

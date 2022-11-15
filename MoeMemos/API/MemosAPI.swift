@@ -183,6 +183,14 @@ extension MemosAPI {
             url = components.url!
         }
         
+        if let openId = memos.openId, !openId.isEmpty {
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+            var queryItems = components.queryItems ?? []
+            queryItems.append(URLQueryItem(name: "openId", value: openId))
+            components.queryItems = queryItems
+            url = components.url!
+        }
+        
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         
@@ -202,12 +210,13 @@ extension MemosAPI {
             throw MemosError.unknown
         }
         if response.statusCode < 200 || response.statusCode >= 300 {
+            let errorOutput: MemosErrorOutput
             do {
-                let errorOutput: MemosErrorOutput = try decodeMode.decode(data)
-                throw MemosError.invalidStatusCode(response.statusCode, errorOutput.message)
+                errorOutput = try decodeMode.decode(data)
             } catch {
                 throw MemosError.invalidStatusCode(response.statusCode, String(data: data, encoding: .utf8))
             }
+            throw MemosError.invalidStatusCode(response.statusCode, errorOutput.message)
         }
         
         return try decodeMode.decode(data)

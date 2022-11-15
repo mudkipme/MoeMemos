@@ -17,19 +17,25 @@ private let urlSessionConfiguration = {
 
 class Memos {
     let host: URL
+    let openId: String?
     let session: URLSession
     
-    init(host: URL) {
+    init(host: URL, openId: String?) {
         self.host = host
+        self.openId = (openId?.isEmpty ?? true) ? nil : openId
+        session = URLSession(configuration: urlSessionConfiguration)
         
         // Migrate cookies to group container
         let legacyCookieStorage = HTTPCookieStorage.shared
         if let legacyCookies = legacyCookieStorage.cookies(for: host), !legacyCookies.isEmpty {
             cookieStorage.setCookies(legacyCookies, for: host, mainDocumentURL: nil)
-            legacyCookieStorage.removeCookies(since: .distantPast)
+            legacyCookies.forEach(legacyCookieStorage.deleteCookie)
         }
         
-        session = URLSession(configuration: urlSessionConfiguration)
+        // No longer uses cookie when logged-in with Open API
+        if let openId = openId, !openId.isEmpty {
+            session.configuration.httpCookieStorage?.removeCookies(since: .distantPast)
+        }
     }
     
     func signIn(data: MemosSignIn.Input) async throws -> MemosSignIn.Output {
