@@ -12,14 +12,8 @@ enum MemosRole: String, Decodable {
     case user = "USER"
 }
 
-enum MemosUserSettingKey: String, Decodable {
-    case locale
-    case memoVisibility
-    case editorFontStyle
-}
-
 struct MemosUserSetting: Decodable {
-    let key: MemosUserSettingKey
+    let key: String
     let value: String
 }
 

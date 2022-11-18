@@ -71,6 +71,9 @@ struct MemosList: View {
         .onChange(of: memosViewModel.memoList, perform: { newValue in
             filteredMemoList = filterMemoList(newValue)
         })
+        .onChange(of: tag, perform: { newValue in
+            filteredMemoList = filterMemoList(memosViewModel.memoList)
+        })
         .onChange(of: searchString, perform: { newValue in
             filteredMemoList = filterMemoList(memosViewModel.memoList)
         })
