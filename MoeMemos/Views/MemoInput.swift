@@ -21,6 +21,7 @@ struct MemoInput: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var showingPhotoPicker = false
+    @State private var showingImagePicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
     @State private var imageUploading = false
@@ -49,6 +50,12 @@ struct MemoInput: View {
             showingPhotoPicker = true
         } label: {
             Image(systemName: "photo.on.rectangle")
+        }
+        
+        Button {
+            showingImagePicker = true
+        } label: {
+            Image(systemName: "camera")
         }
         
         Spacer()
@@ -151,6 +158,13 @@ struct MemoInput: View {
                 toolbar()
             }
         }
+        .fullScreenCover(isPresented: $showingImagePicker, content: {
+            ImagePicker { image in
+                Task {
+                    try await upload(images: [image])
+                }
+            }
+        })
         .interactiveDismissDisabled()
     }
 
