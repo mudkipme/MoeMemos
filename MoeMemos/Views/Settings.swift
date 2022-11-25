@@ -14,9 +14,9 @@ struct Settings: View {
         List {
             if let user = userState.currentUser {
                 VStack(alignment: .leading) {
-                    Text(user.name)
+                    Text(user.displayName)
                         .font(.title3)
-                    if user.name != user.email {
+                    if user.displayName != user.email {
                         Text(user.email)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
