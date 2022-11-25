@@ -85,7 +85,7 @@ struct Sidebar: View {
                 }
             }
         }
-        .navigationTitle(userState.currentUser?.name ?? "Memos")
+        .navigationTitle(userState.currentUser?.displayName ?? "Memos")
         .task {
             do {
                 try await memosViewModel.loadTags()

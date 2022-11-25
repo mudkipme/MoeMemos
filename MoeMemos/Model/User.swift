@@ -21,10 +21,15 @@ struct MemosUser: Decodable {
     let createdTs: Date
     let email: String
     let id: Int
-    let name: String
+    let name: String?
+    let nickname: String?
     let openId: String
     let role: MemosRole
     let rowStatus: MemosRowStatus
     let updatedTs: Date
     let userSettingList: [MemosUserSetting]?
+    
+    var displayName: String {
+        name ?? nickname ?? ""
+    }
 }
