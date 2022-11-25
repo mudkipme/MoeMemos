@@ -25,6 +25,7 @@ struct MemosOutput<T: Decodable>: Decodable {
 struct MemosSignIn: MemosAPI {
     struct Input: Encodable {
         let email: String
+        let username: String
         let password: String
     }
 

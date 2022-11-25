@@ -53,7 +53,7 @@ struct Login: View {
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
                     .textFieldStyle(.roundedBorder)
-                TextField("Email", text: $email)
+                TextField("Username", text: $email)
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
@@ -113,7 +113,12 @@ struct Login: View {
                 password.isEmpty {
                 throw MemosError.invalidParams
             }
-            try await userState.signIn(memosHost: host, input: MemosSignIn.Input(email: email.trimmingCharacters(in: .whitespaces), password: password))
+            try await userState.signIn(
+                memosHost: host,
+                input: MemosSignIn.Input(
+                    email: email.trimmingCharacters(in: .whitespaces),
+                    username: email.trimmingCharacters(in: .whitespaces),
+                    password: password))
             memosHost = host
         } else {
             try await userState.signIn(memosOpenAPI: host)

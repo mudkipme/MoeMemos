@@ -19,7 +19,8 @@ struct MemosUserSetting: Decodable {
 
 struct MemosUser: Decodable {
     let createdTs: Date
-    let email: String
+    let email: String?
+    let username: String?
     let id: Int
     let name: String?
     let nickname: String?
@@ -30,6 +31,10 @@ struct MemosUser: Decodable {
     let userSettingList: [MemosUserSetting]?
     
     var displayName: String {
-        name ?? nickname ?? ""
+        nickname ?? name ?? ""
+    }
+    
+    var displayEmail: String {
+        email ?? username ?? ""
     }
 }

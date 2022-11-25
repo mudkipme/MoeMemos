@@ -16,8 +16,8 @@ struct Settings: View {
                 VStack(alignment: .leading) {
                     Text(user.displayName)
                         .font(.title3)
-                    if user.displayName != user.email {
-                        Text(user.email)
+                    if user.displayName != user.displayEmail && !user.displayEmail.isEmpty {
+                        Text(user.displayEmail)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
