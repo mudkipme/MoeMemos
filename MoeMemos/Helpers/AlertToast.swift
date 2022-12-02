@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-fileprivate let loadingMaxWidth: CGFloat = 150
-fileprivate let loadingMaxHeight: CGFloat = 150
-fileprivate let errorMaxWidth: CGFloat = 300
+fileprivate let loadingWidth: CGFloat = 150
+fileprivate let loadingHeight: CGFloat = 150
+fileprivate let textMaxWidth: CGFloat = 300
 
 enum AlertType: Equatable {
     case systemImage(_ name: String, _ title: String?)
@@ -27,8 +27,9 @@ struct AlertToast: View {
                 if let title = title {
                     Text(title)
                         .lineLimit(3)
+                        .frame(maxWidth: textMaxWidth)
+                        .fixedSize(horizontal: true, vertical: false)
                 }
-                
             }
             .padding()
             .background(.regularMaterial)
@@ -37,7 +38,7 @@ struct AlertToast: View {
             ProgressView()
                 .scaleEffect(2)
                 .padding()
-                .frame(maxWidth: loadingMaxWidth, maxHeight: loadingMaxHeight)
+                .frame(width: loadingWidth, height: loadingHeight)
                 .background(.regularMaterial)
                 .cornerRadius(10)
         }

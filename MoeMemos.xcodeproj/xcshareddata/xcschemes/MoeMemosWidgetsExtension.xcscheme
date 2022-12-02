@@ -43,6 +43,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "194B274628C3973600A48675"
+               BuildableName = "MoeMemosUITests.xctest"
+               BlueprintName = "MoeMemosUITests"
+               ReferencedContainer = "container:MoeMemos.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "194B273C28C3973600A48675"
+               BuildableName = "MoeMemosTests.xctest"
+               BlueprintName = "MoeMemosTests"
+               ReferencedContainer = "container:MoeMemos.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
