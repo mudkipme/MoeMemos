@@ -77,6 +77,13 @@ struct MemosList: View {
         .onChange(of: searchString, perform: { newValue in
             filteredMemoList = filterMemoList(memosViewModel.memoList)
         })
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            Task {
+                if memosViewModel.inited {
+                    try await memosViewModel.loadMemos()
+                }
+            }
+        }
     }
     
     private func filterMemoList(_ memoList: [Memo]) -> [Memo] {
