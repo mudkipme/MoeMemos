@@ -108,20 +108,25 @@ struct Login: View {
             throw MemosError.invalidParams
         }
         
+        var hostAddress = host.trimmingCharacters(in: .whitespaces)
+        if !hostAddress.contains("//") {
+            hostAddress = "https://" + hostAddress
+        }
+        
         if loginMethod == .usernamdAndPassword {
             if email.trimmingCharacters(in: .whitespaces).isEmpty ||
                 password.isEmpty {
                 throw MemosError.invalidParams
             }
             try await userState.signIn(
-                memosHost: host,
+                memosHost: hostAddress,
                 input: MemosSignIn.Input(
                     email: email.trimmingCharacters(in: .whitespaces),
                     username: email.trimmingCharacters(in: .whitespaces),
                     password: password))
-            memosHost = host
+            memosHost = hostAddress
         } else {
-            try await userState.signIn(memosOpenAPI: host)
+            try await userState.signIn(memosOpenAPI: hostAddress)
             memosHost = try userState.memos.host.absoluteString
             memosOpenId = try userState.memos.openId
         }
