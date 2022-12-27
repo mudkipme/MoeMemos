@@ -19,13 +19,14 @@ struct ResourceCard: View {
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @EnvironmentObject private var memosManager: MemosManager
     @State private var imagePreviewURL: URL?
-
+    @State private var downloadedURL: URL?
+    
     var body: some View {
         Color.clear
             .aspectRatio(1, contentMode: .fit)
             .overlay {
-                if let url = url(for: resource) {
-                    AsyncImage(url: url) { image in
+                if let downloadedURL = downloadedURL {
+                    AsyncImage(url: downloadedURL) { image in
                         image
                             .resizable()
                             .scaledToFill()
@@ -33,7 +34,7 @@ struct ResourceCard: View {
                         ProgressView()
                     }
                     .onTapGesture {
-                        imagePreviewURL = url
+                        imagePreviewURL = downloadedURL
                     }
                 }
             }
@@ -41,11 +42,14 @@ struct ResourceCard: View {
             .contextMenu {
                 menu(for: resource)
             }
-            .fullScreenCover(item: $imagePreviewURL) { url in
-                if let url = url {
-                    ImageViewer(imageURL: url)
-                }
+            .task {
+                do {
+                    if downloadedURL == nil, let memos = memosManager.memos {
+                        downloadedURL = try await memos.download(url: memos.url(for: resource))
+                    }
+                } catch {}
             }
+            .quickLookPreview($imagePreviewURL)
     }
     
     @ViewBuilder
@@ -57,13 +61,6 @@ struct ResourceCard: View {
         }, label: {
             Label("Delete", systemImage: "trash")
         })
-    }
-    
-    private func url(for resource: Resource) -> URL? {
-        memosManager.hostURL?
-            .appendingPathComponent("/o/r")
-            .appendingPathComponent("\(resource.id)")
-            .appendingPathComponent(resource.filename)
     }
 }
 

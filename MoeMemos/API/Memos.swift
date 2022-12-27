@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CryptoKit
 
 private let cookieStorage = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: groupContainerIdentifier)
 
@@ -85,5 +86,47 @@ class Memos {
     
     func deleteResource(id: Int) async throws -> MemosDeleteResource.Output {
         return try await MemosDeleteResource.request(self, data: nil, param: id)
+    }
+    
+    func url(for resource: Resource) -> URL {
+        // to be compatible with future Memos release with resource visibility
+        var url = host.appendingPathComponent(resource.path())
+        if let openId = openId, !openId.isEmpty {
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+            var queryItems = components.queryItems ?? []
+            queryItems.append(URLQueryItem(name: "openId", value: openId))
+            components.queryItems = queryItems
+            url = components.url!
+        }
+        return url
+    }
+    
+    func download(url: URL) async throws -> URL {
+        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupContainerIdentifier) else { throw MemosError.unknown }
+        
+        let hash = SHA256.hash(data: url.absoluteString.data(using: .utf8)!)
+        let hex = hash.map { String(format: "%02X", $0) }[0...10].joined()
+        
+        let downloadDestination = containerURL.appendingPathComponent("Library/Caches")
+            .appendingPathComponent(hex).appendingPathExtension(url.pathExtension)
+        
+        try FileManager.default.createDirectory(at: downloadDestination.deletingLastPathComponent(), withIntermediateDirectories: true)
+
+        do {
+            if try downloadDestination.checkResourceIsReachable() {
+                return downloadDestination
+            }
+        } catch {}
+        
+        let (tmpURL, response) = try await session.download(for: URLRequest(url: url))
+        guard let response = response as? HTTPURLResponse else {
+            throw MemosError.unknown
+        }
+        if response.statusCode < 200 || response.statusCode >= 300 {
+            throw MemosError.invalidStatusCode(response.statusCode, url.absoluteString)
+        }
+        
+        try FileManager.default.moveItem(at: tmpURL, to: downloadDestination)
+        return downloadDestination
     }
 }

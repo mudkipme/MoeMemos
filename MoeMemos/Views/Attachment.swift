@@ -24,8 +24,8 @@ struct Attachment: View {
         .buttonStyle(BorderlessButtonStyle())
         .padding([.top, .bottom], 5)
         .sheet(isPresented: $showingAttachment) {
-            if let hostURL = memosManager.hostURL {
-                SafariView(url: hostURL.appendingPathComponent(resource.path()))
+            if let memos = memosManager.memos {
+                SafariView(url: memos.url(for: resource))
             }
         }
     }

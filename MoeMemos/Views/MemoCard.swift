@@ -11,15 +11,15 @@ import UniformTypeIdentifiers
 struct MemoCard: View {
     private enum MemoContent: Identifiable {
         case text(AttributedString)
-        case image(URL)
+        case images([URL])
         case attachment(Resource)
         
         var id: String {
             switch self {
             case .text(let attributedString):
                 return String(attributedString.characters)
-            case .image(let url):
-                return url.absoluteString
+            case .images(let urls):
+                return urls.map { $0.absoluteString }.joined(separator: ",")
             case .attachment(let resource):
                 return "\(resource.id)"
             }
@@ -34,7 +34,6 @@ struct MemoCard: View {
     @State private var showingEdit = false
     @State private var showingLegacyShareSheet = false
     @State private var showingDeleteConfirmation = false
-    @State private var imagePreviewURL: URL?
     
     init(_ memo: Memo, archivedViewModel: ArchivedMemoListViewModel? = nil) {
         self.memo = memo
@@ -74,21 +73,8 @@ struct MemoCard: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                if case let .image(url) = content {
-                    AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .onTapGesture {
-                                imagePreviewURL = url
-                            }
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .frame(width: 160, height: 160)
-                    .cornerRadius(8)
-                    .padding([.bottom], 10)
-                    .clipped()
+                if case let .images(urls) = content {
+                    MemoCardImageView(images: urls)
                 }
                 if case let .attachment(resource) = content {
                     Attachment(resource: resource)
@@ -113,11 +99,6 @@ struct MemoCard: View {
                 }
             }
             Button("No", role: .cancel) {}
-        }
-        .fullScreenCover(item: $imagePreviewURL) { url in
-            if let url = url {
-                ImageViewer(imageURL: url)
-            }
         }
     }
     
@@ -210,6 +191,7 @@ struct MemoCard: View {
                     interpretedSyntax: .inlineOnlyPreservingWhitespace))
 
             var lastAttributed = AttributedString()
+            var lastImages = [URL]()
             for i in attributedString.runs {
                 if let imageURL = i.imageURL {
                     if !lastAttributed.characters.isEmpty {
@@ -221,8 +203,12 @@ struct MemoCard: View {
                     if url.host == nil, let hostURL = memosManager.hostURL {
                         url = hostURL.appendingPathComponent(url.path)
                     }
-                    contents.append(.image(url))
+                    lastImages.append(url)
                     continue
+                }
+                if !lastImages.isEmpty {
+                    contents.append(.images(lastImages))
+                    lastImages.removeAll()
                 }
                 lastAttributed += attributedString[i.range]
             }
@@ -230,19 +216,27 @@ struct MemoCard: View {
             if !lastAttributed.characters.isEmpty {
                 contents.append(.text(lastAttributed))
             }
+            if !lastImages.isEmpty {
+                contents.append(.images(lastImages))
+            }
             
         } catch {
             contents = [.text(AttributedString(memo.content))]
         }
         
-        if let resourceList = memo.resourceList, let hostURL = memosManager.hostURL {
-            contents += resourceList.map { resource in
-                if resource.type.hasPrefix("image/") {
-                    return .image(hostURL.appendingPathComponent(resource.path()))
-                } else {
-                    return .attachment(resource)
-                }
+        if let resourceList = memo.resourceList, let memos = memosManager.memos {
+            let imageResources = resourceList.filter { resource in
+                resource.type.hasPrefix("image/")
             }
+            let otherResources = resourceList.filter { resource in
+                !resource.type.hasPrefix("image/")
+            }
+            
+            if !imageResources.isEmpty {
+                contents.append(.images(imageResources.map { memos.url(for: $0) }))
+            }
+            
+            contents += otherResources.map { .attachment($0) }
         }
         
         return contents
