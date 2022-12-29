@@ -22,11 +22,8 @@ struct MemoCardImageView: View {
                 image
                     .resizable()
                     .scaledToFill()
-                    .onTapGesture {
-                        Task {
-                            imagePreviewURL = downloaded
-                        }
-                    }
+                    .allowsHitTesting(false)
+                    .clipped()
             } placeholder: {
                 ProgressView()
             }
@@ -44,14 +41,26 @@ struct MemoCardImageView: View {
     
     @ViewBuilder
     private func imageItem(url: URL, aspectRatio: CGFloat, contentMode: ContentMode) -> some View {
-        Color.clear.overlay {
+        // Workaround of a SwiftUI Bug:
+        // - The hit testing of image need to disabled to prevent affecting the menu button
+        //   in the top right of memo card.
+        // - I tried using `.contentShape(Rectangle())`, it does prevent image being tapped
+        //   outside the image, but also prevent the menu button from hit.
+        // - If I use `Color.clear` here, SwiftUI will optimize to pass the tap gesture to
+        //   the image, and it will be untapable because hit testing is disabled on image.
+        // - So I use some thing should be invisible to cheat SwiftUI not to optimize.
+        //
+        // Please submit a pull request if you have a better solution
+        Color(white: 1, opacity: 0.00001).overlay {
             asyncImage(url: url)
         }
         .aspectRatio(aspectRatio, contentMode: contentMode)
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
         .cornerRadius(8)
-        .clipped()
+        .onTapGesture {
+            imagePreviewURL = downloads[url]
+        }
     }
     
     @ViewBuilder
