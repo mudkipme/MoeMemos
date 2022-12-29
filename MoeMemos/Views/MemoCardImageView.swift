@@ -12,17 +12,16 @@ struct MemoCardImageView: View {
     let images: [URL]
     
     @State private var imagePreviewURL: URL?
-    @State private var loadError: Error?
     @EnvironmentObject private var memosManager: MemosManager
     @State private var downloads = [URL: URL]()
     
     @ViewBuilder
-    func asyncImage(url: URL) -> some View {
+    private func asyncImage(url: URL) -> some View {
         if let downloaded = downloads[url] {
             AsyncImage(url: downloaded) { image in
                 image
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
+                    .scaledToFill()
                     .onTapGesture {
                         Task {
                             imagePreviewURL = downloaded
@@ -43,17 +42,44 @@ struct MemoCardImageView: View {
         }
     }
     
-    var body: some View {
-        VStack {
-            ForEach(images) { url in
-                asyncImage(url: url)
-                .frame(width: 160, height: 160)
-                .cornerRadius(8)
-                .padding([.bottom], 10)
-                .clipped()
+    @ViewBuilder
+    private func imageItem(url: URL, aspectRatio: CGFloat, contentMode: ContentMode) -> some View {
+        Color.clear.overlay {
+            asyncImage(url: url)
+        }
+        .aspectRatio(aspectRatio, contentMode: contentMode)
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
+        .cornerRadius(8)
+        .clipped()
+    }
+    
+    @ViewBuilder
+    private var content: some View {
+        switch images.count {
+        case 1:
+            imageItem(url: images[0], aspectRatio: 16.0 / 9.0, contentMode: .fit)
+        case 2...3:
+            HStack(spacing: 5) {
+                ForEach(images) { url in
+                    imageItem(url: url, aspectRatio: 1.0, contentMode: .fill)
+                }
+            }
+            .aspectRatio(contentMode: .fit)
+            .frame(maxWidth: .infinity)
+        default:
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: images.count == 4 ? 120 : 90, maximum: 150), spacing: 5)], spacing: 5) {
+                ForEach(images) { url in
+                    imageItem(url: url, aspectRatio: 1.0, contentMode: .fill)
+                }
             }
         }
-        .quickLookPreview($imagePreviewURL, in: images.compactMap { downloads[$0] })
+    }
+    
+    var body: some View {
+        content
+            .padding([.bottom], 10)
+            .quickLookPreview($imagePreviewURL, in: images.compactMap { downloads[$0] })
     }
 }
 

@@ -81,6 +81,7 @@ struct MemoCard: View {
                 }
             }
         }
+        .padding([.top, .bottom], 5)
         .contextMenu {
             Button {
                 UIPasteboard.general.setValue(memo.content, forPasteboardType: UTType.plainText.identifier)
@@ -88,7 +89,6 @@ struct MemoCard: View {
                 Label("Copy", systemImage: "doc.on.doc")
             }
         }
-        .padding([.top, .bottom], 5)
         .sheet(isPresented: $showingEdit) {
             MemoInput(memo: memo)
         }
@@ -186,7 +186,7 @@ struct MemoCard: View {
         var contents = [MemoContent]()
 
         do {
-            let attributedString = try AttributedString(markdown: memo.content, options: AttributedString.MarkdownParsingOptions(
+            let attributedString = try AttributedString(markdown: memo.content.trimmingCharacters(in: .whitespacesAndNewlines), options: AttributedString.MarkdownParsingOptions(
                     allowsExtendedAttributes: true,
                     interpretedSyntax: .inlineOnlyPreservingWhitespace))
 
