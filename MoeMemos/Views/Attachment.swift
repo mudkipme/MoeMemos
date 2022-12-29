@@ -11,10 +11,25 @@ struct Attachment: View {
     let resource: Resource
     @State var showingAttachment = false
     @EnvironmentObject private var memosManager: MemosManager
+    @State private var downloadedURL: URL?
+    @State private var downloadError: Error?
+    @State private var showingErrorToast = false
+    @State private var downloading = false
     
     var body: some View {
         Button {
-            showingAttachment = true
+            Task {
+                do {
+                    downloading = true
+                    if let memos = memosManager.memos {
+                        downloadedURL = try await memos.download(url: memos.url(for: resource))
+                    }
+                } catch {
+                    showingErrorToast = true
+                    downloadError = error
+                }
+                downloading = false
+            }
         } label: {
             HStack {
                 Image(systemName: "paperclip")
@@ -23,11 +38,9 @@ struct Attachment: View {
         }
         .buttonStyle(BorderlessButtonStyle())
         .padding([.top, .bottom], 5)
-        .sheet(isPresented: $showingAttachment) {
-            if let hostURL = memosManager.hostURL {
-                SafariView(url: hostURL.appendingPathComponent(resource.path()))
-            }
-        }
+        .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", downloadError?.localizedDescription))
+        .toast(isPresenting: $downloading, alertType: .loading)
+        .quickLookPreview($downloadedURL)
     }
 }
 

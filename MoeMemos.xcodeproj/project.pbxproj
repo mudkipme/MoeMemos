@@ -33,14 +33,12 @@
 		191339DC291D8F15001F2B2E /* MemoryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191339DB291D8F15001F2B2E /* MemoryWidget.swift */; };
 		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
 		192DF0F528C7B71D0077E785 /* LegacyShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */; };
-		1934C77A2921666000A169EC /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1934C7792921666000A169EC /* SafariView.swift */; };
 		1934C77C2921670600A169EC /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1934C77B2921670600A169EC /* Attachment.swift */; };
 		193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89A28CCD34A00FF7EB6 /* Resources.swift */; };
 		193AA89D28CCD38100FF7EB6 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89C28CCD38100FF7EB6 /* Resource.swift */; };
 		193AA89F28CD080000FF7EB6 /* LegacyPhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */; };
 		193AA8A128CD12CD00FF7EB6 /* FormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A028CD12CD00FF7EB6 /* FormData.swift */; };
 		193AA8A328CD1C9300FF7EB6 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A228CD1C9300FF7EB6 /* UIImage.swift */; };
-		193AA8A528CD9AE200FF7EB6 /* ImagePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A428CD9AE200FF7EB6 /* ImagePreview.swift */; };
 		193AA8A728CD9ED700FF7EB6 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A628CD9ED700FF7EB6 /* URL.swift */; };
 		193AA8A928CDB27F00FF7EB6 /* ResourceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A828CDB27F00FF7EB6 /* ResourceCard.swift */; };
 		193DE92128C5CFBB002651E0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92028C5CFBB002651E0 /* User.swift */; };
@@ -61,6 +59,7 @@
 		195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
 		195E5D7128C70A3800784EF5 /* HeatmapStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D7028C70A3800784EF5 /* HeatmapStat.swift */; };
 		1973B7D72916308D003C3710 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1973B7D62916308D003C3710 /* Constants.swift */; };
+		197A4D3329599C300027427E /* MemoCardImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197A4D3229599C300027427E /* MemoCardImageView.swift */; };
 		197C21A6293A2DCC00110EE5 /* AlertToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5AD228C84E4F00CD4674 /* AlertToast.swift */; };
 		197D9D47292D4B160033AF33 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197D9D46292D4B160033AF33 /* ImagePicker.swift */; };
 		1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1995E9CD28C46DC9004F2EDB /* Heatmap.swift */; };
@@ -159,14 +158,12 @@
 		191339DB291D8F15001F2B2E /* MemoryWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemoryWidget.swift; sourceTree = "<group>"; };
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
 		192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyShareSheet.swift; sourceTree = "<group>"; };
-		1934C7792921666000A169EC /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
 		1934C77B2921670600A169EC /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		193AA89A28CCD34A00FF7EB6 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		193AA89C28CCD38100FF7EB6 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyPhotoPicker.swift; sourceTree = "<group>"; };
 		193AA8A028CD12CD00FF7EB6 /* FormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormData.swift; sourceTree = "<group>"; };
 		193AA8A228CD1C9300FF7EB6 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
-		193AA8A428CD9AE200FF7EB6 /* ImagePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreview.swift; sourceTree = "<group>"; };
 		193AA8A628CD9ED700FF7EB6 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		193AA8A828CDB27F00FF7EB6 /* ResourceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceCard.swift; sourceTree = "<group>"; };
 		193DE92028C5CFBB002651E0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -192,6 +189,7 @@
 		195E5D7028C70A3800784EF5 /* HeatmapStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapStat.swift; sourceTree = "<group>"; };
 		1973B7D529160F48003C3710 /* MoeMemos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MoeMemos.entitlements; sourceTree = "<group>"; };
 		1973B7D62916308D003C3710 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		197A4D3229599C300027427E /* MemoCardImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCardImageView.swift; sourceTree = "<group>"; };
 		197D9D46292D4B160033AF33 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		1995E9CD28C46DC9004F2EDB /* Heatmap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Heatmap.swift; sourceTree = "<group>"; };
 		19996E5F29118AF6001E3583 /* NavLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavLink.swift; sourceTree = "<group>"; };
@@ -307,7 +305,6 @@
 				192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */,
 				19E6EF2229115A2800C998F5 /* MemosManager.swift */,
 				19FC1C7B290DA47C0078A7F2 /* Route.swift */,
-				1934C7792921666000A169EC /* SafariView.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -425,9 +422,9 @@
 				194B273228C3973400A48675 /* ContentView.swift */,
 				1995E9CD28C46DC9004F2EDB /* Heatmap.swift */,
 				195E5D7028C70A3800784EF5 /* HeatmapStat.swift */,
-				193AA8A428CD9AE200FF7EB6 /* ImagePreview.swift */,
 				199A658028C48A6200C39994 /* Login.swift */,
 				19F31BFC28C3ED11000C5207 /* MemoCard.swift */,
+				197A4D3229599C300027427E /* MemoCardImageView.swift */,
 				19E1C5BF28C5191D0072CEEF /* MemoInput.swift */,
 				19F31BF628C3E26D000C5207 /* MemosList.swift */,
 				19FC1C7D290DA6E90078A7F2 /* Navigation.swift */,
@@ -674,14 +671,12 @@
 				19E1C5BE28C4F6410072CEEF /* Stats.swift in Sources */,
 				199A658128C48A6200C39994 /* Login.swift in Sources */,
 				19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */,
-				193AA8A528CD9AE200FF7EB6 /* ImagePreview.swift in Sources */,
 				199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */,
 				193DE92128C5CFBB002651E0 /* User.swift in Sources */,
 				195E5AD328C84E4F00CD4674 /* AlertToast.swift in Sources */,
 				19E6EF1F29113EC900C998F5 /* MemoInputViewModel.swift in Sources */,
 				193DE93028C65104002651E0 /* MemosViewModel.swift in Sources */,
 				1973B7D72916308D003C3710 /* Constants.swift in Sources */,
-				1934C77A2921666000A169EC /* SafariView.swift in Sources */,
 				197D9D47292D4B160033AF33 /* ImagePicker.swift in Sources */,
 				19E6EF2329115A2800C998F5 /* MemosManager.swift in Sources */,
 				192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */,
@@ -693,6 +688,7 @@
 				193DE92B28C619D9002651E0 /* HTTP.swift in Sources */,
 				193AA89D28CCD38100FF7EB6 /* Resource.swift in Sources */,
 				19E29A7D2939A94400BE9C32 /* NSItemProvider.swift in Sources */,
+				197A4D3329599C300027427E /* MemoCardImageView.swift in Sources */,
 				193AA8A928CDB27F00FF7EB6 /* ResourceCard.swift in Sources */,
 				195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */,
 				1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */,
