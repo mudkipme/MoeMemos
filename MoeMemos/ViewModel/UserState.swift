@@ -35,6 +35,8 @@ class UserState: ObservableObject {
         guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
         
         let client = Memos(host: url, openId: nil)
+        
+        try await client.auth()
         let response = try await client.signIn(data: input)
         memosManager.reset(memosHost: url, openId: nil)
         currentUser = response.data

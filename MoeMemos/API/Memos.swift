@@ -86,4 +86,8 @@ class Memos {
     func deleteResource(id: Int) async throws -> MemosDeleteResource.Output {
         return try await MemosDeleteResource.request(self, data: nil, param: id)
     }
+    
+    func auth() async throws {
+        _ = try await MemosAuth.request(self, data: nil, param: ())
+    }
 }
