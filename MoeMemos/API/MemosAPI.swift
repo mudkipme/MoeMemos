@@ -169,6 +169,13 @@ struct MemosDeleteResource: MemosAPI {
     static func path(_ params: Int) -> String { "/api/resource/\(params)" }
 }
 
+struct MemosAuth: MemosAPI {
+    static let method: HTTPMethod = .get
+    static let encodeMode: HTTPBodyEncodeMode = .none
+    static let decodeMode: HTTPBodyDecodeMode = .none
+    static func path(_ params: Void) -> String { "/auth" }
+}
+
 struct MemosErrorOutput: Decodable {
     let error: String
     let message: String
