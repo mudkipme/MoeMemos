@@ -88,6 +88,10 @@ class Memos {
         return try await MemosDeleteResource.request(self, data: nil, param: id)
     }
     
+    func auth() async throws {
+        _ = try await MemosAuth.request(self, data: nil, param: ())
+    }
+    
     func url(for resource: Resource) -> URL {
         // to be compatible with future Memos release with resource visibility
         var url = host.appendingPathComponent(resource.path())
