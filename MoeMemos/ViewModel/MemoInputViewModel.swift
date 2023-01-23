@@ -19,6 +19,7 @@ class MemoInputViewModel: ObservableObject, ResourceManager {
     var memos: Memos { get throws { try memosManager.api } }
     
     @Published var resourceList = [Resource]()
+    @Published var imageUploading = false
     
     private var anyPhotos: Any?
     @available(iOS 16, *) var photos: [PhotosPickerItem]? {

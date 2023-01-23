@@ -24,83 +24,85 @@ struct MemoInput: View {
     @State private var showingImagePicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
-    @State private var imageUploading = false
     
     @ViewBuilder
     private func toolbar() -> some View {
-        if !memosViewModel.tags.isEmpty {
-            Menu {
-                ForEach(memosViewModel.tags) { tag in
-                    Button(tag.name) {
-                        text += "#\(tag.name) "
+        VStack(spacing: 0) {
+            Divider()
+            HStack(alignment: .center) {
+                if !memosViewModel.tags.isEmpty {
+                    ZStack {
+                        Menu {
+                            ForEach(memosViewModel.tags) { tag in
+                                Button(tag.name) {
+                                    text += "#\(tag.name) "
+                                }
+                            }
+                        } label: {
+                            // On iOS 16, the position of menu label is unstable after keyboard change,
+                            // So we use a transparent menu label here
+                            Color.clear.frame(width: 15)
+                        }
+                        Button {
+                            // Do nothing, pass through to the menu
+                        } label: {
+                            Image(systemName: "number")
+                        }
+                        .allowsHitTesting(false)
+                    }
+                    
+                } else {
+                    Button {
+                        text += "#"
+                    } label: {
+                        Image(systemName: "number")
                     }
                 }
-            } label: {
-                Image(systemName: "number")
+                
+                Button {
+                    showingPhotoPicker = true
+                } label: {
+                    Image(systemName: "photo.on.rectangle")
+                }
+                
+                Button {
+                    showingImagePicker = true
+                } label: {
+                    Image(systemName: "camera")
+                }
+                
+                Spacer()
             }
-        } else {
-            Button {
-                text += "#"
-            } label: {
-                Image(systemName: "number")
-            }
+            .frame(height: 20)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(.ultraThinMaterial)
         }
-        
-        Button {
-            showingPhotoPicker = true
-        } label: {
-            Image(systemName: "photo.on.rectangle")
-        }
-        
-        Button {
-            showingImagePicker = true
-        } label: {
-            Image(systemName: "camera")
-        }
-        
-        Spacer()
     }
     
     @ViewBuilder
     private func editor() -> some View {
-        VStack {
-            ZStack {
-                if text.isEmpty {
-                    TextEditor(text: $placeholderText)
-                        .foregroundColor(.secondary)
-                        .disabled(true)
-                        
-                }
-                TextEditor(text: $text)
-                    .focused($focused)
-                    .opacity(text.isEmpty ? 0.25 : 1)
-            }
-            .padding([.leading, .trailing])
-            
-            if !viewModel.resourceList.isEmpty || imageUploading {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack {
-                        ForEach(viewModel.resourceList, id: \.id) { resource in
-                            if resource.type.hasPrefix("image/") {
-                                ResourceCard(resource: resource, resourceManager: viewModel)
-                            } else {
-                                Attachment(resource: resource)
-                            }
-                        }
-                        if imageUploading {
-                            Color.clear
-                                .scaledToFill()
-                                .aspectRatio(1, contentMode: .fit)
-                                .overlay {
-                                    ProgressView()
-                                }
-                        }
+        ZStack(alignment: .bottom) {
+            VStack {
+                ZStack {
+                    if text.isEmpty {
+                        TextEditor(text: $placeholderText)
+                            .foregroundColor(.secondary)
+                            .disabled(true)
+                            
                     }
-                    .frame(height: 80)
-                    .padding([.leading, .trailing, .bottom])
+                    TextEditor(text: $text)
+                        .focused($focused)
+                        .opacity(text.isEmpty ? 0.25 : 1)
                 }
+                .padding([.leading, .trailing])
+                
+                MemoInputResourceView(viewModel: viewModel)
             }
+            .padding(.bottom, 40)
+            toolbar()
         }
+        
         .onAppear {
             if let memo = memo {
                 text = memo.content
@@ -151,11 +153,7 @@ struct MemoInput: View {
                 } label: {
                     Label("Save", systemImage: "paperplane")
                 }
-                .disabled(text.isEmpty || imageUploading)
-            }
-            
-            ToolbarItemGroup(placement: .keyboard) {
-                toolbar()
+                .disabled(text.isEmpty || viewModel.imageUploading)
             }
         }
         .fullScreenCover(isPresented: $showingImagePicker, content: {
@@ -164,6 +162,7 @@ struct MemoInput: View {
                     try await upload(images: [image])
                 }
             }
+            .edgesIgnoringSafeArea(.all)
         })
         .interactiveDismissDisabled()
     }
@@ -205,7 +204,7 @@ struct MemoInput: View {
     @available(iOS 16, *)
     private func upload(images: [PhotosPickerItem]) async throws {
         do {
-            imageUploading = true
+            viewModel.imageUploading = true
             for item in images {
                 let imageData = try await item.loadTransferable(type: Data.self)
                 if let imageData = imageData, let image = UIImage(data: imageData) {
@@ -217,12 +216,12 @@ struct MemoInput: View {
             submitError = error
             showingErrorToast = true
         }
-        imageUploading = false
+        viewModel.imageUploading = false
     }
     
     private func upload(images: [UIImage]) async throws {
         do {
-            imageUploading = true
+            viewModel.imageUploading = true
             for image in images {
                 try await viewModel.upload(image: image)
             }
@@ -231,7 +230,7 @@ struct MemoInput: View {
             submitError = error
             showingErrorToast = true
         }
-        imageUploading = false
+        viewModel.imageUploading = false
     }
     
     private func saveMemo() async throws {
