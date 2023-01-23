@@ -14,6 +14,7 @@ struct MemoCardImageView: View {
     @State private var imagePreviewURL: URL?
     @EnvironmentObject private var memosManager: MemosManager
     @State private var downloads = [URL: URL]()
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     @ViewBuilder
     private func asyncImage(url: URL) -> some View {
@@ -65,21 +66,29 @@ struct MemoCardImageView: View {
     
     @ViewBuilder
     private var content: some View {
-        switch images.count {
-        case 1:
-            imageItem(url: images[0], aspectRatio: 16.0 / 9.0, contentMode: .fit)
-        case 2...3:
-            HStack(spacing: 5) {
+        if horizontalSizeClass == .regular {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 200), spacing: 5)], spacing: 5) {
                 ForEach(images) { url in
                     imageItem(url: url, aspectRatio: 1.0, contentMode: .fill)
                 }
             }
-            .aspectRatio(contentMode: .fit)
-            .frame(maxWidth: .infinity)
-        default:
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: images.count == 4 ? 120 : 90, maximum: 150), spacing: 5)], spacing: 5) {
-                ForEach(images) { url in
-                    imageItem(url: url, aspectRatio: 1.0, contentMode: .fill)
+        } else {
+            switch images.count {
+            case 1:
+                imageItem(url: images[0], aspectRatio: 16.0 / 9.0, contentMode: .fit)
+            case 2...3:
+                HStack(spacing: 5) {
+                    ForEach(images) { url in
+                        imageItem(url: url, aspectRatio: 1.0, contentMode: .fill)
+                    }
+                }
+                .aspectRatio(contentMode: .fit)
+                .frame(maxWidth: .infinity)
+            default:
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: images.count == 4 ? 120 : 90, maximum: 150), spacing: 5)], spacing: 5) {
+                    ForEach(images) { url in
+                        imageItem(url: url, aspectRatio: 1.0, contentMode: .fill)
+                    }
                 }
             }
         }
