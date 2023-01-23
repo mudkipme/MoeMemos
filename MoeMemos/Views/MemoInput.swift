@@ -14,7 +14,6 @@ struct MemoInput: View {
     @StateObject private var viewModel = MemoInputViewModel()
     
     @State private var text = ""
-    @State private var placeholderText = "Any thoughts…"
     @AppStorage("draft") private var draft = ""
     
     @FocusState private var focused: Bool
@@ -84,19 +83,16 @@ struct MemoInput: View {
     private func editor() -> some View {
         ZStack(alignment: .bottom) {
             VStack {
-                ZStack {
-                    if text.isEmpty {
-                        TextEditor(text: $placeholderText)
-                            .foregroundColor(.secondary)
-                            .disabled(true)
-                            
+                TextEditor(text: $text)
+                    .focused($focused)
+                    .overlay(alignment: .topLeading) {
+                        if text.isEmpty {
+                            Text("Any thoughts…")
+                                .foregroundColor(.secondary)
+                                .padding(EdgeInsets(top: 8, leading: 5, bottom: 8, trailing: 5))
+                        }
                     }
-                    TextEditor(text: $text)
-                        .focused($focused)
-                        .opacity(text.isEmpty ? 0.25 : 1)
-                }
-                .padding([.leading, .trailing])
-                
+                    .padding([.leading, .trailing])
                 MemoInputResourceView(viewModel: viewModel)
             }
             .padding(.bottom, 40)
