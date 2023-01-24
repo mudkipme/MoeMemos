@@ -97,7 +97,10 @@ struct MemoCardImageView: View {
     var body: some View {
         content
             .padding([.bottom], 10)
-            .quickLookPreview($imagePreviewURL, in: images.compactMap { downloads[$0] })
+            .sheet(item: $imagePreviewURL) { url in
+                QuickLookPreview(selectedURL: url, urls: images.compactMap { downloads[$0] })
+                    .edgesIgnoringSafeArea(.bottom)
+            }
     }
 }
 
