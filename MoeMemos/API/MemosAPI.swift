@@ -41,7 +41,7 @@ struct MemosLogout: MemosAPI {
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .none
     static let decodeMode: HTTPBodyDecodeMode = .none
-    static func path(_ params: Void) -> String { "/api/auth/logout" }
+    static func path(_ params: Void) -> String { "/api/auth/signout" }
 }
 
 struct MemosMe: MemosAPI {

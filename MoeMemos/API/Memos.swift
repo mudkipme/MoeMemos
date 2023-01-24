@@ -44,7 +44,11 @@ class Memos {
     }
     
     func logout() async throws {
-        _ = try await MemosLogout.request(self, data: nil, param: ())
+        do {
+            _ = try await MemosLogout.request(self, data: nil, param: ())
+        } catch {
+            print(error)
+        }
         session.configuration.httpCookieStorage?.removeCookies(since: .distantPast)
     }
     
