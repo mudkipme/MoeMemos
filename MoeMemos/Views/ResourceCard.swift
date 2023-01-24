@@ -49,7 +49,10 @@ struct ResourceCard: View {
                     }
                 } catch {}
             }
-            .quickLookPreview($imagePreviewURL)
+            .sheet(item: $imagePreviewURL) { url in
+                QuickLookPreview(selectedURL: url, urls: [url])
+                    .edgesIgnoringSafeArea(.bottom)
+            }
     }
     
     @ViewBuilder
