@@ -64,6 +64,11 @@ class ShareViewController: SLComposeServiceViewController {
 
     private func handleShare() async throws {
         let memos = try await getMemos()
+        do {
+            try await memos.loadStatus()
+        } catch {
+            print(error)
+        }
         var resourceList = [Resource]()
         var contentTextList = [String]()
         contentTextList.append(contentText)

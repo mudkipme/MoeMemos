@@ -17,12 +17,13 @@ class UserState: ObservableObject {
     static let shared = UserState()
     
     var memos: Memos { get throws { try memosManager.api } }
+    var status: MemosServerStatus? { memosManager.memos?.status }
     
     @Published private(set) var currentUser: MemosUser?
     @Published var showingLogin = false
     
-    func reset(memosHost: String, openId: String?) throws {
-        try memosManager.reset(memosHost: memosHost, openId: openId)
+    func reset(memosHost: String, openId: String?) async throws {
+        try await memosManager.reset(memosHost: memosHost, openId: openId)
         currentUser = nil
     }
     
@@ -38,7 +39,7 @@ class UserState: ObservableObject {
         
         try await client.auth()
         let response = try await client.signIn(data: input)
-        memosManager.reset(memosHost: url, openId: nil)
+        await memosManager.reset(memosHost: url, openId: nil)
         currentUser = response.data
     }
     
@@ -55,7 +56,7 @@ class UserState: ObservableObject {
         
         let client = Memos(host: components.url!, openId: openId)
         let response = try await client.me()
-        memosManager.reset(memosHost: components.url!, openId: openId)
+        await memosManager.reset(memosHost: components.url!, openId: openId)
         currentUser = response.data
     }
     

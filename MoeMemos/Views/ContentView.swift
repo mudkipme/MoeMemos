@@ -59,7 +59,7 @@ struct ContentView: View {
                 UserDefaults.standard.removeObject(forKey: memosHostKey)
             }
             
-            try userState.reset(memosHost: memosHost, openId: memosOpenId)
+            try await userState.reset(memosHost: memosHost, openId: memosOpenId)
             try await userState.loadCurrentUser()
         } catch MemosError.notLogin {
             userState.showingLogin = true
