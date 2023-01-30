@@ -70,6 +70,9 @@
 		199A657D28C4761100C39994 /* Usage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657C28C4761100C39994 /* Usage.swift */; };
 		199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657E28C47D7C00C39994 /* Sidebar.swift */; };
 		199A658128C48A6200C39994 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A658028C48A6200C39994 /* Login.swift */; };
+		19A547822986E3670000E71A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A547812986E3670000E71A /* Status.swift */; };
+		19A547832986E4C10000E71A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A547812986E3670000E71A /* Status.swift */; };
+		19A547842986E4C20000E71A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A547812986E3670000E71A /* Status.swift */; };
 		19B5CFFA2939BB9700140294 /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
 		19B5CFFB2939BB9B00140294 /* MemosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92728C61488002651E0 /* MemosAPI.swift */; };
 		19B5CFFC2939BBCA00140294 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE93128C652F7002651E0 /* Error.swift */; };
@@ -201,6 +204,7 @@
 		199A657C28C4761100C39994 /* Usage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Usage.swift; sourceTree = "<group>"; };
 		199A657E28C47D7C00C39994 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		199A658028C48A6200C39994 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		19A547812986E3670000E71A /* Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
 		19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemoListViewModel.swift; sourceTree = "<group>"; };
 		19C569A929125BB200745F9D /* ResourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceManager.swift; sourceTree = "<group>"; };
 		19C569AB29125C0700745F9D /* ResourceListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceListViewModel.swift; sourceTree = "<group>"; };
@@ -449,6 +453,7 @@
 			children = (
 				19F31BFA28C3E9B2000C5207 /* Memo.swift */,
 				193AA89C28CCD38100FF7EB6 /* Resource.swift */,
+				19A547812986E3670000E71A /* Status.swift */,
 				199A657C28C4761100C39994 /* Usage.swift */,
 				193DE92028C5CFBB002651E0 /* User.swift */,
 			);
@@ -657,6 +662,7 @@
 				191339C9291D7672001F2B2E /* Resource.swift in Sources */,
 				191339CA291D7675001F2B2E /* Usage.swift in Sources */,
 				191339D2291D7785001F2B2E /* Date.swift in Sources */,
+				19A547832986E4C10000E71A /* Status.swift in Sources */,
 				191339CB291D7699001F2B2E /* HTTP.swift in Sources */,
 				191339CC291D769C001F2B2E /* FormData.swift in Sources */,
 				191339CD291D76BB001F2B2E /* Error.swift in Sources */,
@@ -681,6 +687,7 @@
 				193DE92128C5CFBB002651E0 /* User.swift in Sources */,
 				195E5AD328C84E4F00CD4674 /* AlertToast.swift in Sources */,
 				19E6EF1F29113EC900C998F5 /* MemoInputViewModel.swift in Sources */,
+				19A547822986E3670000E71A /* Status.swift in Sources */,
 				193DE93028C65104002651E0 /* MemosViewModel.swift in Sources */,
 				1973B7D72916308D003C3710 /* Constants.swift in Sources */,
 				197D9D47292D4B160033AF33 /* ImagePicker.swift in Sources */,
@@ -755,6 +762,7 @@
 				19B5CFFF2939BC2F00140294 /* Memo.swift in Sources */,
 				19B5D0002939BC3200140294 /* User.swift in Sources */,
 				19B5D0012939BC3D00140294 /* Resource.swift in Sources */,
+				19A547842986E4C20000E71A /* Status.swift in Sources */,
 				19B5D0022939BC4800140294 /* FormData.swift in Sources */,
 				19BA69502939EA5200CFF4F9 /* UIImage.swift in Sources */,
 				197C21A6293A2DCC00110EE5 /* AlertToast.swift in Sources */,
@@ -806,7 +814,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosWidgets/Info.plist;
@@ -818,7 +826,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -836,7 +844,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosWidgets/Info.plist;
@@ -848,7 +856,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -980,7 +988,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MoeMemos/MoeMemos.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_ASSET_PATHS = "\"MoeMemos/Preview Content\"";
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				ENABLE_PREVIEWS = YES;
@@ -998,7 +1006,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1015,7 +1023,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MoeMemos/MoeMemos.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_ASSET_PATHS = "\"MoeMemos/Preview Content\"";
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				ENABLE_PREVIEWS = YES;
@@ -1033,7 +1041,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1124,7 +1132,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosShareExtension/MoeMemosShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosShareExtension/Info.plist;
@@ -1136,7 +1144,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1152,7 +1160,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosShareExtension/MoeMemosShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosShareExtension/Info.plist;
@@ -1164,7 +1172,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.3.2;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

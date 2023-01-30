@@ -20,6 +20,7 @@ class Memos {
     let host: URL
     let openId: String?
     let session: URLSession
+    private(set) var status: MemosServerStatus? = nil
     
     init(host: URL, openId: String?) {
         self.host = host
@@ -94,6 +95,11 @@ class Memos {
     
     func auth() async throws {
         _ = try await MemosAuth.request(self, data: nil, param: ())
+    }
+    
+    func loadStatus() async throws {
+        let response = try await MemosStatus.request(self, data: nil, param: ())
+        status = response.data
     }
     
     func url(for resource: Resource) -> URL {

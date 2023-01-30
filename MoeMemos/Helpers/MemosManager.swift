@@ -23,11 +23,16 @@ class MemosManager: ObservableObject {
         }
     }
     
-    func reset(memosHost: URL, openId: String?) {
+    func reset(memosHost: URL, openId: String?) async {
         memos = Memos(host: memosHost, openId: openId)
+        do {
+            try await memos?.loadStatus()
+        } catch {
+            print(error)
+        }
     }
     
-    func reset(memosHost: String, openId: String?) throws {
+    func reset(memosHost: String, openId: String?) async throws {
         if memosHost == "" {
             throw MemosError.notLogin
         }
@@ -36,6 +41,6 @@ class MemosManager: ObservableObject {
             throw MemosError.notLogin
         }
         
-        reset(memosHost: url, openId: openId)
+        await reset(memosHost: url, openId: openId)
     }
 }

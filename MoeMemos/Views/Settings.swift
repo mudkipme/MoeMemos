@@ -35,12 +35,21 @@ struct Settings: View {
                 }
             }
             
+            if let status = userState.status {
+                Text("✍️memos v\(status.profile.version)")
+                    .foregroundStyle(.secondary)
+            }
+            
+            
             Section {
                 Link(destination: URL(string: "https://memos.moe")!) {
                     Label("Website", systemImage: "globe")
                 }
                 Link(destination: URL(string: "https://memos.moe/privacy")!) {
                     Label("Privacy Policy", systemImage: "lock")
+                }
+                Link(destination: URL(string: "https://github.com/mudkipme/MoeMemos/issues")!) {
+                    Label("Report an Issue", systemImage: "smallcircle.filled.circle")
                 }
             } header: {
                 Text("About Moe Memos")
