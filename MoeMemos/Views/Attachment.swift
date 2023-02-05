@@ -40,9 +40,10 @@ struct Attachment: View {
         .padding([.top, .bottom], 5)
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", downloadError?.localizedDescription))
         .toast(isPresenting: $downloading, alertType: .loading)
-        .sheet(item: $downloadedURL) { url in
+        .fullScreenCover(item: $downloadedURL) { url in
             QuickLookPreview(selectedURL: url, urls: [url])
                 .edgesIgnoringSafeArea(.bottom)
+                .background(TransparentBackground())
         }
     }
 }
