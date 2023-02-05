@@ -49,9 +49,10 @@ struct ResourceCard: View {
                     }
                 } catch {}
             }
-            .sheet(item: $imagePreviewURL) { url in
+            .fullScreenCover(item: $imagePreviewURL) { url in
                 QuickLookPreview(selectedURL: url, urls: [url])
                     .edgesIgnoringSafeArea(.bottom)
+                    .background(TransparentBackground())
             }
     }
     
