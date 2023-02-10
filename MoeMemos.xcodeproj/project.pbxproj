@@ -180,6 +180,11 @@
 		193DE92F28C65104002651E0 /* MemosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosViewModel.swift; sourceTree = "<group>"; };
 		193DE93128C652F7002651E0 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		1948CCAE2996B3FA00AB1986 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1948CCB12996BB6C00AB1986 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		1948CCB32996BEEA00AB1986 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		1948CCB82996BFBF00AB1986 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		1948CCB92996BFDF00AB1986 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MainInterface.strings"; sourceTree = "<group>"; };
+		1948CCBA2996BFE200AB1986 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/MainInterface.strings"; sourceTree = "<group>"; };
 		194B272D28C3973400A48675 /* MoeMemos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoeMemos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		194B273028C3973400A48675 /* MoeMemosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosApp.swift; sourceTree = "<group>"; };
 		194B273228C3973400A48675 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -214,7 +219,6 @@
 		19E1C5BF28C5191D0072CEEF /* MemoInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInput.swift; sourceTree = "<group>"; };
 		19E29A682938FBCD00BE9C32 /* MoeMemosShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MoeMemosShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		19E29A6A2938FBCD00BE9C32 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		19E29A6D2938FBCD00BE9C32 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		19E29A6F2938FBCD00BE9C32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		19E29A762938FC1400BE9C32 /* MoeMemosShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MoeMemosShareExtension.entitlements; sourceTree = "<group>"; };
 		19E29A772938FCE000BE9C32 /* MoeMemosShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosShareView.swift; sourceTree = "<group>"; };
@@ -607,7 +611,8 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				Base,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 194B272428C3973400A48675;
 			productRefGroup = 194B272E28C3973400A48675 /* Products */;
@@ -819,6 +824,8 @@
 			isa = PBXVariantGroup;
 			children = (
 				1948CCAE2996B3FA00AB1986 /* en */,
+				1948CCB12996BB6C00AB1986 /* zh-Hans */,
+				1948CCB32996BEEA00AB1986 /* zh-Hant */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -826,7 +833,9 @@
 		19E29A6C2938FBCD00BE9C32 /* MainInterface.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				19E29A6D2938FBCD00BE9C32 /* Base */,
+				1948CCB82996BFBF00AB1986 /* en */,
+				1948CCB92996BFDF00AB1986 /* zh-Hans */,
+				1948CCBA2996BFE200AB1986 /* zh-Hant */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
@@ -898,6 +907,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -958,6 +968,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
