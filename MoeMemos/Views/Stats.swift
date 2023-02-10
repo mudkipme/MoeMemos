@@ -16,7 +16,7 @@ struct Stats: View {
             VStack {
                 Text("\(memosViewModel.memoList.count)")
                     .font(.title2)
-                Text("Memo")
+                Text("stats.memo")
                     .textCase(.uppercase)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -25,7 +25,7 @@ struct Stats: View {
             VStack {
                 Text("\(memosViewModel.tags.count)")
                     .font(.title2)
-                Text("Tag")
+                Text("stats.tag")
                     .textCase(.uppercase)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -34,7 +34,7 @@ struct Stats: View {
             VStack {
                 Text("\(days())")
                     .font(.title2)
-                Text("Day")
+                Text("stats.day")
                     .textCase(.uppercase)
                     .font(.caption)
                     .foregroundStyle(.secondary)

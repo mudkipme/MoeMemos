@@ -44,21 +44,21 @@ struct Sidebar: View {
             Section {
                 if #available(iOS 16, *) {
                     NavigationLink(value: Route.memos) {
-                        Label("Memos", systemImage: "rectangle.grid.1x2")
+                        Label("memo.memos", systemImage: "rectangle.grid.1x2")
                     }
                 } else {
                     NavigationLink(destination: MemosList(tag: nil), isActive: $toMemosList) {
-                        Label("Memos", systemImage: "rectangle.grid.1x2")
+                        Label("memo.memos", systemImage: "rectangle.grid.1x2")
                     }
                 }
                 NavLink(route: .resources) {
-                    Label("Resources", systemImage: "photo.on.rectangle")
+                    Label("resources", systemImage: "photo.on.rectangle")
                 }
                 NavLink(route: .archived) {
-                    Label("Archived", systemImage: "archivebox")
+                    Label("memo.archived", systemImage: "archivebox")
                 }
             } header: {
-                Text("Moe Memos")
+                Text("moe-memos")
             }
             
             Section {
@@ -68,7 +68,7 @@ struct Sidebar: View {
                     }
                 }
             } header: {
-                Text("Tags")
+                Text("tags")
             }
         }
         .listStyle(.sidebar)
@@ -85,7 +85,7 @@ struct Sidebar: View {
                 }
             }
         }
-        .navigationTitle(userState.currentUser?.displayName ?? "Memos")
+        .navigationTitle(userState.currentUser?.displayName ?? NSLocalizedString("memo.memos", comment: "Memos"))
         .task {
             do {
                 try await memosViewModel.loadTags()

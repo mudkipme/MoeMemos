@@ -1,0 +1,53 @@
+/* 
+  Localizable.strings
+  MoeMemos
+
+  Created by Mudkip on 2023/2/11.
+*/
+
+"moe-memos" = "Moe Memos";
+
+"memo.archive" = "Archive";
+"memo.archived" = "Archived";
+"memo.copy" = "Copy";
+"memo.delete" = "Delete";
+"memo.delete.confirm" = "Delete this memo?";
+"memo.edit" = "Edit";
+"memo.memos" = "Memos";
+"memo.action.cancel" = "No";
+"memo.pin" = "Pin";
+"memo.restore" = "Restore";
+"memo.share" = "Share";
+"memo.unpin" = "Unpin";
+"memo.action.ok" = "Yes";
+
+"settings" = "Settings";
+"settings.about" = "About Moe Memos";
+"settings.privacy" = "Privacy Policy";
+"settings.report" = "Report an Issue";
+"settings.sign-out" = "Sign out";
+"settings.website" = "Website";
+
+"input.placeholder" = "Any thoughts…";
+"input.close" = "Close";
+"input.compose" = "Compose";
+"input.edit" = "Edit Memo";
+"input.save" = "Save";
+
+"login.open-api.hint" = "Copy “Open API” from Setting in ✍️memos.";
+"login.host" = "Host";
+"login.method" = "Login method";
+"login.open-api" = "Open API";
+"login.password" = "Password";
+"login.hint" = "Please input the login information of your\n[✍️memos](https://github.com/usememos/memos) server.";
+"login.username" = "Username";
+"login.username-and-password" = "Username and password";
+"login.sign-in" = "Sign in";
+
+"stats.day" = "Day";
+"stats.memo" = "Memo";
+"stats.tag" = "Tag";
+
+"resources" = "Resources";
+
+"tags" = "Tags";

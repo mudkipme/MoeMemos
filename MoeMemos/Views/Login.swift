@@ -29,46 +29,46 @@ struct Login: View {
     
     var body: some View {
         VStack {
-            Text("Moe Memos")
+            Text("moe-memos")
                 .font(.largeTitle)
                 .fontWeight(.semibold)
                 .padding(.bottom, 10)
-            Text("Please input the login information of your\n[✍️memos](https://github.com/usememos/memos) server.")
+            Text("login.hint")
                 .multilineTextAlignment(.center)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .padding(.bottom, 20)
             
-            Picker("Login method", selection: $loginMethod) {
-                Text("Username and password").tag(LoginMethod.usernamdAndPassword)
-                Text("Open API").tag(LoginMethod.openAPI)
+            Picker("login.method", selection: $loginMethod) {
+                Text("login.username-and-password").tag(LoginMethod.usernamdAndPassword)
+                Text("login.open-api").tag(LoginMethod.openAPI)
             }
             .pickerStyle(.segmented)
             .padding(.bottom, 10)
             
             if loginMethod == .usernamdAndPassword {
-                TextField("Host", text: $host)
+                TextField("login.host", text: $host)
                     .textContentType(.URL)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
                     .textFieldStyle(.roundedBorder)
-                TextField("Username", text: $email)
+                TextField("login.username", text: $email)
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
                     .textFieldStyle(.roundedBorder)
-                SecureField("Password", text: $password)
+                SecureField("login.password", text: $password)
                     .textFieldStyle(.roundedBorder)
             } else {
-                TextField("Open API", text: $host)
+                TextField("login.open-api", text: $host)
                     .textContentType(.URL)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
                     .textFieldStyle(.roundedBorder)
-                Text("Copy “Open API” from Setting in ✍️memos.")
+                Text("login.open-api.hint")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -86,7 +86,7 @@ struct Login: View {
                     showLoadingToast = false
                 }
             } label: {
-                Text("Sign in")
+                Text("login.sign-in")
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)

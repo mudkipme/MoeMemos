@@ -48,6 +48,7 @@
 		193DE92B28C619D9002651E0 /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92A28C619D9002651E0 /* HTTP.swift */; };
 		193DE93028C65104002651E0 /* MemosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92F28C65104002651E0 /* MemosViewModel.swift */; };
 		193DE93228C652F7002651E0 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE93128C652F7002651E0 /* Error.swift */; };
+		1948CCAD2996B3FA00AB1986 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.strings */; };
 		194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B273028C3973400A48675 /* MoeMemosApp.swift */; };
 		194B273328C3973400A48675 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B273228C3973400A48675 /* ContentView.swift */; };
 		194B273528C3973600A48675 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 194B273428C3973600A48675 /* Assets.xcassets */; };
@@ -178,6 +179,7 @@
 		193DE92A28C619D9002651E0 /* HTTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTP.swift; sourceTree = "<group>"; };
 		193DE92F28C65104002651E0 /* MemosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosViewModel.swift; sourceTree = "<group>"; };
 		193DE93128C652F7002651E0 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		1948CCAE2996B3FA00AB1986 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		194B272D28C3973400A48675 /* MoeMemos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoeMemos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		194B273028C3973400A48675 /* MoeMemosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosApp.swift; sourceTree = "<group>"; };
 		194B273228C3973400A48675 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -331,6 +333,22 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		1948CCA92996B29500AB1986 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1948CCAA2996B2B100AB1986 /* Localization */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		1948CCAA2996B2B100AB1986 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				1948CCAF2996B3FA00AB1986 /* Localizable.strings */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
 		194B272428C3973400A48675 = {
 			isa = PBXGroup;
 			children = (
@@ -360,6 +378,7 @@
 		194B272F28C3973400A48675 /* MoeMemos */ = {
 			isa = PBXGroup;
 			children = (
+				1948CCA92996B29500AB1986 /* Resources */,
 				193DE92628C61464002651E0 /* API */,
 				194B273428C3973600A48675 /* Assets.xcassets */,
 				199A657928C4749800C39994 /* Extensions */,
@@ -618,6 +637,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				194B273828C3973600A48675 /* Preview Assets.xcassets in Resources */,
+				1948CCAD2996B3FA00AB1986 /* Localizable.strings in Resources */,
 				194B273528C3973600A48675 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -795,6 +815,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		1948CCAF2996B3FA00AB1986 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1948CCAE2996B3FA00AB1986 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		19E29A6C2938FBCD00BE9C32 /* MainInterface.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
