@@ -1,0 +1,53 @@
+/* 
+  Localizable.strings
+  MoeMemos
+
+  Created by Mudkip on 2023/2/11.
+*/
+
+"moe-memos" = "Moe Memos";
+
+"memo.archive" = "归档";
+"memo.archived" = "归档";
+"memo.copy" = "拷贝";
+"memo.delete" = "删除";
+"memo.delete.confirm" = "确认删除这条 MEMO 吗？";
+"memo.edit" = "编辑";
+"memo.memos" = "灵感";
+"memo.action.cancel" = "取消";
+"memo.pin" = "置顶";
+"memo.restore" = "恢复";
+"memo.share" = "分享";
+"memo.unpin" = "取消置顶";
+"memo.action.ok" = "确认";
+
+"settings" = "设置";
+"settings.about" = "关于 Moe Memos";
+"settings.privacy" = "隐私政策";
+"settings.report" = "反馈 Bug";
+"settings.sign-out" = "退出登录";
+"settings.website" = "官网";
+
+"input.placeholder" = "现在的想法是…";
+"input.close" = "关闭";
+"input.compose" = "撰写";
+"input.edit" = "编辑";
+"input.save" = "记下";
+
+"login.open-api.hint" = "从 ✍️memos 设置中拷贝 Open API。";
+"login.host" = "服务器地址";
+"login.method" = "登录方式";
+"login.open-api" = "Open API";
+"login.password" = "密码";
+"login.hint" = "Please input the login information of your\n[✍️memos](https://github.com/usememos/memos) server.";
+"login.username" = "用户名";
+"login.username-and-password" = "用户名和密码";
+"login.sign-in" = "登录";
+
+"stats.day" = "天";
+"stats.memo" = "灵感";
+"stats.tag" = "标签";
+
+"resources" = "资源";
+
+"tags" = "标签";

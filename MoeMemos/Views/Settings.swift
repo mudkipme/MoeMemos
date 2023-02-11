@@ -29,7 +29,7 @@ struct Settings: View {
                 } label: {
                     HStack {
                         Spacer()
-                        Text("Sign in")
+                        Text("login.sign-in")
                         Spacer()
                     }
                 }
@@ -43,16 +43,16 @@ struct Settings: View {
             
             Section {
                 Link(destination: URL(string: "https://memos.moe")!) {
-                    Label("Website", systemImage: "globe")
+                    Label("settings.website", systemImage: "globe")
                 }
                 Link(destination: URL(string: "https://memos.moe/privacy")!) {
-                    Label("Privacy Policy", systemImage: "lock")
+                    Label("settings.privacy", systemImage: "lock")
                 }
                 Link(destination: URL(string: "https://github.com/mudkipme/MoeMemos/issues")!) {
-                    Label("Report an Issue", systemImage: "smallcircle.filled.circle")
+                    Label("settings.report", systemImage: "smallcircle.filled.circle")
                 }
             } header: {
-                Text("About Moe Memos")
+                Text("settings.about")
             }
             
             if userState.currentUser != nil {
@@ -64,13 +64,13 @@ struct Settings: View {
                 } label: {
                     HStack {
                         Spacer()
-                        Text("Sign out")
+                        Text("settings.sign-out")
                         Spacer()
                     }
                 }
             }
         }
-        .navigationTitle("Settings")
+        .navigationTitle("settings")
     }
 }
 

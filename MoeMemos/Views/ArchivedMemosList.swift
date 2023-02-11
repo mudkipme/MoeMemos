@@ -18,7 +18,7 @@ struct ArchivedMemosList: View {
             }
         }
         .listStyle(InsetGroupedListStyle())
-        .navigationTitle("Archived")
+        .navigationTitle("memo.archived")
         .task {
             do {
                 try await viewModel.loadArchivedMemos()

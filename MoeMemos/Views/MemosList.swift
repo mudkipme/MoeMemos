@@ -47,7 +47,7 @@ struct MemosList: View {
             }
         })
         .searchable(text: $searchString)
-        .navigationTitle(tag?.name ?? "Memos")
+        .navigationTitle(tag?.name ?? NSLocalizedString("memo.memos", comment: "Memos"))
         .sheet(isPresented: $showingNewPost) {
             MemoInput(memo: nil)
         }

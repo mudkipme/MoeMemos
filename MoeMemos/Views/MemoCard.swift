@@ -86,19 +86,19 @@ struct MemoCard: View {
             Button {
                 UIPasteboard.general.setValue(memo.content, forPasteboardType: UTType.plainText.identifier)
             } label: {
-                Label("Copy", systemImage: "doc.on.doc")
+                Label("memo.copy", systemImage: "doc.on.doc")
             }
         }
         .sheet(isPresented: $showingEdit) {
             MemoInput(memo: memo)
         }
-        .confirmationDialog("Delete this memo?", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
-            Button("Yes", role: .destructive) {
+        .confirmationDialog("memo.delete.confirm", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
+            Button("memo.action.ok", role: .destructive) {
                 Task {
                     try await archivedViewModel?.deleteMemo(id: memo.id)
                 }
             }
-            Button("No", role: .cancel) {}
+            Button("memo.action.cancel", role: .cancel) {}
         }
     }
     
@@ -114,25 +114,25 @@ struct MemoCard: View {
             }
         } label: {
             if memo.pinned {
-                Label("Unpin", systemImage: "flag.slash")
+                Label("memo.unpin", systemImage: "flag.slash")
             } else {
-                Label("Pin", systemImage: "flag")
+                Label("memo.pin", systemImage: "flag")
             }
         }
         Button {
             showingEdit = true
         } label: {
-            Label("Edit", systemImage: "pencil")
+            Label("memo.edit", systemImage: "pencil")
         }
         if #available(iOS 16, *) {
             ShareLink(item: memo.content) {
-                Label("Share", systemImage: "square.and.arrow.up")
+                Label("memo.share", systemImage: "square.and.arrow.up")
             }
         } else {
             Button {
                 showingLegacyShareSheet = true
             } label: {
-                Label("Share", systemImage: "square.and.arrow.up")
+                Label("memo.share", systemImage: "square.and.arrow.up")
             }
         }
         Button(role: .destructive, action: {
@@ -144,7 +144,7 @@ struct MemoCard: View {
                 }
             }
         }, label: {
-            Label("Archive", systemImage: "archivebox")
+            Label("memo.archive", systemImage: "archivebox")
         })
     }
     
@@ -160,12 +160,12 @@ struct MemoCard: View {
                 }
             }
         } label: {
-            Label("Restore", systemImage: "tray.and.arrow.up")
+            Label("memo.restore", systemImage: "tray.and.arrow.up")
         }
         Button(role: .destructive, action: {
             showingDeleteConfirmation = true
         }, label: {
-            Label("Delete", systemImage: "trash")
+            Label("memo.delete", systemImage: "trash")
         })
     }
     

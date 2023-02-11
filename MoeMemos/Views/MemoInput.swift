@@ -87,7 +87,7 @@ struct MemoInput: View {
                     .focused($focused)
                     .overlay(alignment: .topLeading) {
                         if text.isEmpty {
-                            Text("Any thoughts…")
+                            Text("input.placeholder")
                                 .foregroundColor(.secondary)
                                 .padding(EdgeInsets(top: 8, leading: 5, bottom: 8, trailing: 5))
                         }
@@ -131,13 +131,13 @@ struct MemoInput: View {
         }
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(memo == nil ? "Compose" : "Edit Memo")
+        .navigationTitle(memo == nil ? NSLocalizedString("input.compose", comment: "Compose") : NSLocalizedString("input.edit", comment: "Edit"))
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     dismiss()
                 } label: {
-                    Text("Close")
+                    Text("input.close")
                 }
             }
             
@@ -147,7 +147,7 @@ struct MemoInput: View {
                         try await saveMemo()
                     }
                 } label: {
-                    Label("Save", systemImage: "paperplane")
+                    Label("input.save", systemImage: "paperplane")
                 }
                 .disabled(text.isEmpty || viewModel.imageUploading)
             }

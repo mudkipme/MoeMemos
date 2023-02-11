@@ -23,7 +23,7 @@ struct Resources: View {
             }
             .padding()
         }
-        .navigationTitle("Resources")
+        .navigationTitle("resources")
         .task {
             do {
                 try await viewModel.loadResources()
