@@ -171,7 +171,7 @@ struct MemosUploadResource: MemosAPI {
     static let decodeMode: HTTPBodyDecodeMode = .json
     static func path(_ memos: Memos, _ params: ()) -> String {
         memos.status != nil && memos.status?.profile.version.compare("0.10.2", options: .numeric)
-            != .orderedDescending ? "/api/resource/blob" : "/api/resource"
+            != .orderedAscending ? "/api/resource/blob" : "/api/resource"
     }
 }
 
