@@ -39,7 +39,7 @@
 "login.method" = "登录方式";
 "login.open-api" = "Open API";
 "login.password" = "密码";
-"login.hint" = "Please input the login information of your\n[✍️memos](https://github.com/usememos/memos) server.";
+"login.hint" = "请输入您的 [✍️memos](https://github.com/usememos/memos) 服务器的登录信息。";
 "login.username" = "用户名";
 "login.username-and-password" = "用户名和密码";
 "login.sign-in" = "登录";
