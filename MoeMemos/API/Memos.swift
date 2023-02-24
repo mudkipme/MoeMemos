@@ -103,6 +103,9 @@ class Memos {
     }
     
     func url(for resource: Resource) -> URL {
+        if let externalLink = resource.externalLink, let url = URL(string: externalLink) {
+            return url
+        }
         // to be compatible with future Memos release with resource visibility
         var url = host.appendingPathComponent(resource.path())
         if let openId = openId, !openId.isEmpty {

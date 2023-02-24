@@ -15,6 +15,7 @@ struct Resource: Decodable, Identifiable, Equatable {
     let size: Int
     let type: String
     let updatedTs: Date
+    let externalLink: String?
     
     func path() -> String {
         return "/o/r/\(id)/\(filename)"

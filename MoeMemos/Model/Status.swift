@@ -8,10 +8,7 @@
 import Foundation
 
 struct MemosProfile: Decodable {
-    let data: String
-    let dsn: String
     let mode: String
-    let port: Int
     let version: String
 }
 
