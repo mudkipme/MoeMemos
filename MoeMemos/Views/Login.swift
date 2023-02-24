@@ -125,6 +125,7 @@ struct Login: View {
                     username: email.trimmingCharacters(in: .whitespaces),
                     password: password))
             memosHost = hostAddress
+            memosOpenId = nil
         } else {
             try await userState.signIn(memosOpenAPI: hostAddress)
             memosHost = try userState.memos.host.absoluteString
