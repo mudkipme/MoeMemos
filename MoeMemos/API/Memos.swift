@@ -103,7 +103,7 @@ class Memos {
     }
     
     func url(for resource: Resource) -> URL {
-        if let externalLink = resource.externalLink, let url = URL(string: externalLink) {
+        if let externalLink = resource.externalLink?.encodeUrlPath(), let url = URL(string: externalLink) {
             return url
         }
         // to be compatible with future Memos release with resource visibility
@@ -145,5 +145,23 @@ class Memos {
         
         try FileManager.default.moveItem(at: tmpURL, to: downloadDestination)
         return downloadDestination
+    }
+}
+
+extension String {
+    // encode url path
+    func encodeUrlPath() -> String {
+        guard self.hasPrefix("http") else { return self}
+        guard let index = self.lastIndex(of: "/") else { return self }
+        
+        let pos = self.index(after: index);
+        guard pos != self.endIndex else { return self }
+        
+        let substring = self.suffix(from: pos)
+        if let result = substring.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) {
+            return self.replacingCharacters(in: pos..., with: result)
+        }
+        
+        return self
     }
 }
