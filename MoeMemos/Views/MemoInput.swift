@@ -149,7 +149,7 @@ struct MemoInput: View {
                 } label: {
                     Label("input.save", systemImage: "paperplane")
                 }
-                .disabled(text.isEmpty || viewModel.imageUploading)
+                .disabled((text.isEmpty && viewModel.resourceList.isEmpty) || viewModel.imageUploading)
             }
         }
         .fullScreenCover(isPresented: $showingImagePicker, content: {
