@@ -15,10 +15,6 @@ class ShareViewController: SLComposeServiceViewController {
     
     override func isContentValid() -> Bool {
         // Do validation of contentText and/or NSExtensionContext attachments here
-        if !contentText.isEmpty {
-            return true
-        }
-        
         if let item = self.extensionContext!.inputItems.first as? NSExtensionItem, let attachments = item.attachments {
             for attachment in attachments {
                 if attachment.canLoadObject(ofClass: NSURL.self) {
@@ -30,7 +26,8 @@ class ShareViewController: SLComposeServiceViewController {
                 }
             }
         }
-        return false
+        
+        return !contentText.isEmpty
     }
 
     override func didSelectPost() {
@@ -95,12 +92,9 @@ class ShareViewController: SLComposeServiceViewController {
             }
         }
         
-        var content = contentTextList.joined(separator: "\n")
-        if content.trimmingCharacters(in: .whitespaces).isEmpty {
-            if resourceList.isEmpty {
-                throw MemosError.invalidParams
-            }
-            content = "Save picture"
+        let content = contentTextList.joined(separator: "\n").trimmingCharacters(in: .whitespaces)
+        if content.isEmpty && resourceList.isEmpty {
+            throw MemosError.invalidParams
         }
         _ = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: nil, resourceIdList: resourceList.map { $0.id }))
     }
