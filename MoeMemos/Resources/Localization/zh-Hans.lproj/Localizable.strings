@@ -20,6 +20,9 @@
 "memo.share" = "分享";
 "memo.unpin" = "取消置顶";
 "memo.action.ok" = "确认";
+"memo.visibility.public" = "访客可见";
+"memo.visibility.protected" = "本地用户可见";
+"memo.visibility.private" = "仅自己可见";
 
 "settings" = "设置";
 "settings.about" = "关于 Moe Memos";
@@ -33,6 +36,7 @@
 "input.compose" = "撰写";
 "input.edit" = "编辑";
 "input.save" = "记下";
+"input.visibility" = "MEMO 可见性";
 
 "login.open-api.hint" = "从 ✍️memos 设置中拷贝 Open API。";
 "login.host" = "服务器地址";

@@ -8,6 +8,7 @@
 import Foundation
 
 struct MemosUserSetting: Decodable {
+    static let memoVisibilityKey = "memoVisibility"
     let key: String
     let value: String
 }
@@ -31,5 +32,16 @@ struct MemosUser: Decodable {
     
     var displayEmail: String {
         email ?? username ?? ""
+    }
+}
+
+extension MemosUser {
+    var defaultMemoVisibility: MemosVisibility {
+        guard let visibilityJson = self.userSettingList?.first(where: { $0.key == MemosUserSetting.memoVisibilityKey })?.value.data(using: .utf8) else { return .private }
+        do {
+            return try JSONDecoder().decode(MemosVisibility.self, from: visibilityJson)
+        } catch {
+            return .private
+        }
     }
 }

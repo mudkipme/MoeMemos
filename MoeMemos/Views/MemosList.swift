@@ -17,10 +17,12 @@ struct MemosList: View {
     @State private var filteredMemoList: [Memo] = []
     
     var body: some View {
+        let defaultMemoVisibility = userState.currentUser?.defaultMemoVisibility ?? .private
+        
         ZStack(alignment: .bottomTrailing) {
             List(filteredMemoList, id: \.id) { memo in
                 Section {
-                    MemoCard(memo)
+                    MemoCard(memo, defaultMemoVisibility: defaultMemoVisibility)
                 }
             }
             .listStyle(InsetGroupedListStyle())

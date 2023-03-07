@@ -11,8 +11,9 @@ import PhotosUI
 struct MemoInput: View {
     let memo: Memo?
     @EnvironmentObject private var memosViewModel: MemosViewModel
+    @EnvironmentObject var userState: UserState
     @StateObject private var viewModel = MemoInputViewModel()
-    
+
     @State private var text = ""
     @AppStorage("draft") private var draft = ""
     
@@ -23,7 +24,7 @@ struct MemoInput: View {
     @State private var showingImagePicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
-    
+        
     @ViewBuilder
     private func toolbar() -> some View {
         VStack(spacing: 0) {
@@ -82,7 +83,9 @@ struct MemoInput: View {
     @ViewBuilder
     private func editor() -> some View {
         ZStack(alignment: .bottom) {
-            VStack {
+            VStack(alignment: .leading) {
+                privacyMenu
+                    .padding(.horizontal)
                 TextEditor(text: $text)
                     .focused($focused)
                     .overlay(alignment: .topLeading) {
@@ -92,7 +95,7 @@ struct MemoInput: View {
                                 .padding(EdgeInsets(top: 8, leading: 5, bottom: 8, trailing: 5))
                         }
                     }
-                    .padding([.leading, .trailing])
+                    .padding(.horizontal)
                 MemoInputResourceView(viewModel: viewModel)
             }
             .padding(.bottom, 40)
@@ -102,8 +105,10 @@ struct MemoInput: View {
         .onAppear {
             if let memo = memo {
                 text = memo.content
+                viewModel.visibility = memo.visibility
             } else {
                 text = draft
+                viewModel.visibility = userState.currentUser?.defaultMemoVisibility ?? .private
             }
             if let resourceList = memo?.resourceList {
                 viewModel.resourceList = resourceList
@@ -232,9 +237,9 @@ struct MemoInput: View {
     private func saveMemo() async throws {
         do {
             if let memo = memo {
-                try await memosViewModel.editMemo(id: memo.id, content: text, resourceIdList: viewModel.resourceList.map { $0.id })
+                try await memosViewModel.editMemo(id: memo.id, content: text, visibility: viewModel.visibility, resourceIdList: viewModel.resourceList.map { $0.id })
             } else {
-                try await memosViewModel.createMemo(content: text, resourceIdList: viewModel.resourceList.map { $0.id })
+                try await memosViewModel.createMemo(content: text, visibility: viewModel.visibility, resourceIdList: viewModel.resourceList.map { $0.id })
                 draft = ""
             }
             text = ""
@@ -244,6 +249,31 @@ struct MemoInput: View {
             submitError = error
             showingErrorToast = true
         }
+    }
+    
+    private var privacyMenu: some View {
+      Menu {
+        Section("input.visibility") {
+          ForEach(MemosVisibility.allCases, id: \.self) { visibility in
+            Button {
+              viewModel.visibility = visibility
+            } label: {
+              Label(visibility.title, systemImage: visibility.iconName)
+            }
+          }
+        }
+      } label: {
+        HStack {
+          Label(viewModel.visibility.title, systemImage: viewModel.visibility.iconName)
+          Image(systemName: "chevron.down")
+        }
+        .font(.footnote)
+        .padding(4)
+        .overlay(
+          RoundedRectangle(cornerRadius: 8)
+            .stroke(.green, lineWidth: 1)
+        )
+      }
     }
 }
 

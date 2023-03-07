@@ -76,6 +76,10 @@ extension AppQLPreviewController: QLPreviewControllerDelegate {
   func previewControllerWillDismiss(_: QLPreviewController) {
     dismiss(animated: true)
   }
+    
+  func previewControllerDidDismiss(_ controller: QLPreviewController) {
+    dismiss(animated: true)
+  }
 }
 
 struct TransparentBackground: UIViewControllerRepresentable {

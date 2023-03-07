@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import SwiftUI
 
-enum MemosVisibility: String, Decodable, Encodable {
+enum MemosVisibility: String, Decodable, Encodable, CaseIterable {
     case `public` = "PUBLIC"
     case `protected` = "PROTECTED"
     case `private` = "PRIVATE"
@@ -34,4 +35,28 @@ struct Tag: Identifiable, Hashable {
     let name: String
     
     var id: String { name }
+}
+
+extension MemosVisibility {
+    var title: LocalizedStringKey {
+        switch self {
+        case .public:
+            return "memo.visibility.public"
+        case .protected:
+            return "memo.visibility.protected"
+        case .private:
+            return "memo.visibility.private"
+        }
+    }
+    
+    var iconName: String {
+        switch self {
+        case .public:
+            return "globe"
+        case .protected:
+            return "house"
+        case .private:
+            return "lock"
+        }
+    }
 }
