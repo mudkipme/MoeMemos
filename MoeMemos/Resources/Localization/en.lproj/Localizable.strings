@@ -20,6 +20,9 @@
 "memo.share" = "Share";
 "memo.unpin" = "Unpin";
 "memo.action.ok" = "Yes";
+"memo.visibility.public" = "Visible to guests";
+"memo.visibility.protected" = "Visible to local members";
+"memo.visibility.private" = "Only visible to you";
 
 "settings" = "Settings";
 "settings.about" = "About Moe Memos";
@@ -33,6 +36,7 @@
 "input.compose" = "Compose";
 "input.edit" = "Edit Memo";
 "input.save" = "Save";
+"input.visibility" = "Memo visibility";
 
 "login.open-api.hint" = "Copy “Open API” from Setting in ✍️memos.";
 "login.host" = "Host";

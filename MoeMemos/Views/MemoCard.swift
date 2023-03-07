@@ -27,6 +27,7 @@ struct MemoCard: View {
     }
     
     let memo: Memo
+    let defaultMemoVisilibity: MemosVisibility?
     let archivedViewModel: ArchivedMemoListViewModel?
     
     @EnvironmentObject private var memosManager: MemosManager
@@ -35,9 +36,16 @@ struct MemoCard: View {
     @State private var showingLegacyShareSheet = false
     @State private var showingDeleteConfirmation = false
     
-    init(_ memo: Memo, archivedViewModel: ArchivedMemoListViewModel? = nil) {
+    init(_ memo: Memo, archivedViewModel: ArchivedMemoListViewModel) {
         self.memo = memo
         self.archivedViewModel = archivedViewModel
+        self.defaultMemoVisilibity = nil
+    }
+    
+    init(_ memo: Memo, defaultMemoVisibility: MemosVisibility) {
+        self.memo = memo
+        self.defaultMemoVisilibity = defaultMemoVisibility
+        self.archivedViewModel = nil
     }
     
     var body: some View {
@@ -46,6 +54,11 @@ struct MemoCard: View {
                 Text(renderTime())
                     .font(.footnote)
                     .foregroundColor(.secondary)
+                
+                if defaultMemoVisilibity != nil && memo.visibility != defaultMemoVisilibity {
+                    Image(systemName: memo.visibility.iconName)
+                        .foregroundColor(.secondary)
+                }
                 
                 if memo.pinned {
                     Image(systemName: "flag.fill")
@@ -245,7 +258,7 @@ struct MemoCard: View {
 
 struct MemoCard_Previews: PreviewProvider {
     static var previews: some View {
-        MemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil))
+        MemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil), defaultMemoVisibility: .private)
             .environmentObject(MemosViewModel())
             .environmentObject(MemosManager())
     }

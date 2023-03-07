@@ -45,8 +45,8 @@ class MemosViewModel: ObservableObject {
         })
     }
     
-    func createMemo(content: String, resourceIdList: [Int]? = nil) async throws {
-        let response = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: nil, resourceIdList: resourceIdList))
+    func createMemo(content: String, visibility: MemosVisibility = .private, resourceIdList: [Int]? = nil) async throws {
+        let response = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: visibility, resourceIdList: resourceIdList))
         memoList.insert(response.data, at: 0)
         try await loadTags()
     }
@@ -76,8 +76,8 @@ class MemosViewModel: ObservableObject {
         })
     }
     
-    func editMemo(id: Int, content: String, resourceIdList: [Int]? = nil) async throws {
-        let response = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: nil, content: content, visibility: nil, resourceIdList: resourceIdList))
+    func editMemo(id: Int, content: String, visibility: MemosVisibility = .private, resourceIdList: [Int]? = nil) async throws {
+        let response = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: nil, content: content, visibility: visibility, resourceIdList: resourceIdList))
         updateMemo(response.data)
         try await loadTags()
     }
