@@ -17,7 +17,7 @@ struct LazyImageProvider: ImageProvider {
           Color(.secondarySystemBackground)
       }
       .resizable()
-      .aspectRatio(self.aspectRatio, contentMode: .fill)
+      .aspectRatio(self.aspectRatio, contentMode: .fit)
     }
 }
 

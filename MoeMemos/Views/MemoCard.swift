@@ -80,7 +80,9 @@ struct MemoCard: View {
                 }
             }
             
-            markdownRenderContent
+            VStack {
+                markdownRenderContent
+            }
 
             ForEach(renderContent()) { content in
 //                if case let .text(attributedString) = content {
@@ -246,6 +248,15 @@ struct MemoCard: View {
             
         } catch {
             contents = [.text(AttributedString(memo.content))]
+        }
+        
+        // filter inline images
+        contents = contents.filter { item in
+            if case .images = item {
+                return false
+            } else {
+                return true
+            }
         }
         
         if let resourceList = memo.resourceList, let memos = memosManager.memos {
