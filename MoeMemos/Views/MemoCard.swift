@@ -124,8 +124,9 @@ struct MemoCard: View {
     
     private var markdownRenderContent: some View {
         Markdown(memo.content)
-                .markdownTheme(.gitHub)
+            .markdownTheme(.gitHub)
             .markdownImageProvider(.lazyImage(aspectRatio: 4 / 3))
+            .markdownCodeSyntaxHighlighter(.default())
     }
     
     @ViewBuilder
