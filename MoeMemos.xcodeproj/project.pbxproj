@@ -103,6 +103,11 @@
 		19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFC28C3ED11000C5207 /* MemoCard.swift */; };
 		19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FC1C7B290DA47C0078A7F2 /* Route.swift */; };
 		19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FC1C7D290DA6E90078A7F2 /* Navigation.swift */; };
+		31EE785129B83969005F62D0 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 31EE785029B83969005F62D0 /* MarkdownUI */; };
+		31EE785629B83D1B005F62D0 /* LazyImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EE785529B83D1B005F62D0 /* LazyImageProvider.swift */; };
+		31EE785929B83DFA005F62D0 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 31EE785829B83DFA005F62D0 /* Kingfisher */; };
+		31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */ = {isa = PBXBuildFile; productRef = 31EE785E29B9E6F4005F62D0 /* Highlightr */; };
+		31EE786129B9F3A2005F62D0 /* Highlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EE786029B9F3A2005F62D0 /* Highlighter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -231,6 +236,8 @@
 		19F31BFC28C3ED11000C5207 /* MemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCard.swift; sourceTree = "<group>"; };
 		19FC1C7B290DA47C0078A7F2 /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		19FC1C7D290DA6E90078A7F2 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
+		31EE785529B83D1B005F62D0 /* LazyImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyImageProvider.swift; sourceTree = "<group>"; };
+		31EE786029B9F3A2005F62D0 /* Highlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Highlighter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,6 +254,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31EE785929B83DFA005F62D0 /* Kingfisher in Frameworks */,
+				31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */,
+				31EE785129B83969005F62D0 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +466,8 @@
 				195E5D7028C70A3800784EF5 /* HeatmapStat.swift */,
 				199A658028C48A6200C39994 /* Login.swift */,
 				19F31BFC28C3ED11000C5207 /* MemoCard.swift */,
+				31EE786029B9F3A2005F62D0 /* Highlighter.swift */,
+				31EE785529B83D1B005F62D0 /* LazyImageProvider.swift */,
 				197A4D3229599C300027427E /* MemoCardImageView.swift */,
 				19E1C5BF28C5191D0072CEEF /* MemoInput.swift */,
 				19709CFB297F2C1900F6A144 /* MemoInputResourceView.swift */,
@@ -519,6 +531,11 @@
 				19E29A712938FBCD00BE9C32 /* PBXTargetDependency */,
 			);
 			name = MoeMemos;
+			packageProductDependencies = (
+				31EE785029B83969005F62D0 /* MarkdownUI */,
+				31EE785829B83DFA005F62D0 /* Kingfisher */,
+				31EE785E29B9E6F4005F62D0 /* Highlightr */,
+			);
 			productName = MoeMemos;
 			productReference = 194B272D28C3973400A48675 /* MoeMemos.app */;
 			productType = "com.apple.product-type.application";
@@ -615,6 +632,11 @@
 				"zh-Hant",
 			);
 			mainGroup = 194B272428C3973400A48675;
+			packageReferences = (
+				31EE784F29B83969005F62D0 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				31EE785729B83DFA005F62D0 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */,
+			);
 			productRefGroup = 194B272E28C3973400A48675 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -703,6 +725,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31EE785629B83D1B005F62D0 /* LazyImageProvider.swift in Sources */,
 				19C569AC29125C0700745F9D /* ResourceListViewModel.swift in Sources */,
 				19F31BF728C3E26D000C5207 /* MemosList.swift in Sources */,
 				19E1C5BE28C4F6410072CEEF /* Stats.swift in Sources */,
@@ -742,6 +765,7 @@
 				19E6EF2129113FDA00C998F5 /* UserState.swift in Sources */,
 				193DE92828C61488002651E0 /* MemosAPI.swift in Sources */,
 				1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */,
+				31EE786129B9F3A2005F62D0 /* Highlighter.swift in Sources */,
 				193AA89F28CD080000FF7EB6 /* LegacyPhotoPicker.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
 				19C569AA29125BB200745F9D /* ResourceManager.swift in Sources */,
@@ -1279,6 +1303,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		31EE784F29B83969005F62D0 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		31EE785729B83DFA005F62D0 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/raspu/Highlightr";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		31EE785029B83969005F62D0 /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 31EE784F29B83969005F62D0 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
+		};
+		31EE785829B83DFA005F62D0 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 31EE785729B83DFA005F62D0 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		31EE785E29B9E6F4005F62D0 /* Highlightr */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */;
+			productName = Highlightr;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 194B272528C3973400A48675 /* Project object */;
 }

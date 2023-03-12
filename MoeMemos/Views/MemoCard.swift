@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import MarkdownUI
 
 struct MemoCard: View {
     private enum MemoContent: Identifiable {
@@ -79,13 +80,19 @@ struct MemoCard: View {
                 }
             }
             
+            VStack {
+                markdownRenderContent
+            }
+
             ForEach(renderContent()) { content in
-                if case let .text(attributedString) = content {
-                    Text(attributedString)
-                        .font(.body)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+//                if case let .text(attributedString) = content {
+//                    Text(attributedString)
+//                        .font(.body)
+//                        .fixedSize(horizontal: false, vertical: true)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
+//                }
+                
+                // TODO: May duplicated
                 if case let .images(urls) = content {
                     MemoCardImageView(images: urls)
                 }
@@ -113,6 +120,13 @@ struct MemoCard: View {
             }
             Button("memo.action.cancel", role: .cancel) {}
         }
+    }
+    
+    private var markdownRenderContent: some View {
+        Markdown(memo.content)
+            .markdownTheme(.gitHub)
+            .markdownImageProvider(.lazyImage(aspectRatio: 4 / 3))
+            .markdownCodeSyntaxHighlighter(.default())
     }
     
     @ViewBuilder
@@ -235,6 +249,15 @@ struct MemoCard: View {
             
         } catch {
             contents = [.text(AttributedString(memo.content))]
+        }
+        
+        // filter inline images
+        contents = contents.filter { item in
+            if case .images = item {
+                return false
+            } else {
+                return true
+            }
         }
         
         if let resourceList = memo.resourceList, let memos = memosManager.memos {
