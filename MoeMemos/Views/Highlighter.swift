@@ -10,10 +10,18 @@ import SwiftUI
 import MarkdownUI
 
 class Highlighter: CodeSyntaxHighlighter {
+    static let dark = Highlighter(colorScheme: .dark)
+    static let light = Highlighter(colorScheme: .light)
+    
+    let colorScheme: ColorScheme
+    
+    init(colorScheme: ColorScheme) {
+        self.colorScheme = colorScheme
+    }
     
     func highlightCode(_ code: String, language: String?) -> Text {
         guard let highlightr = Highlightr() else { fatalError("") }
-        highlightr.setTheme(to: "github")
+        highlightr.setTheme(to: colorScheme == .dark ? "atom-one-dark-reasonable" : "github")
         let result = highlightr.highlight(code, as: language?.lowercased()) ?? NSAttributedString()
         guard let attrString = try? AttributedString(result, including: \.uiKit) else {
             fatalError("Convert failed")
@@ -23,8 +31,11 @@ class Highlighter: CodeSyntaxHighlighter {
 }
 
 extension CodeSyntaxHighlighter where Self == Highlighter {
-    // TODO: support dark mode
-    static func `default`() -> Self {
-        return Highlighter()
+    static func light() -> Self {
+        return .light
+    }
+    
+    static func dark() -> Self {
+        return .dark
     }
 }
