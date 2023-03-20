@@ -102,6 +102,10 @@ class Memos {
         status = response.data
     }
     
+    func upsertTag(name: String) async throws -> MemosUpsertTag.Output {
+        return try await MemosUpsertTag.request(self, data: MemosUpsertTag.Input(name: name), param: ())
+    }
+    
     func url(for resource: Resource) -> URL {
         if let externalLink = resource.externalLink?.encodeUrlPath(), let url = URL(string: externalLink) {
             return url

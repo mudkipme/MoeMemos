@@ -113,9 +113,15 @@ struct MemoCard: View {
     }
     
     private var markdownRenderContent: some View {
-        Markdown(memo.content)
+        MarkdownView(memo.content)
             .markdownImageProvider(.lazyImage(aspectRatio: 4 / 3))
             .markdownCodeSyntaxHighlighter(colorScheme == .dark ? .dark() : .light())
+            .markdownTaskListMarker(BlockStyle { configuration in
+                Image(systemName: configuration.isCompleted ? "checkmark.square.fill" : "square")
+                    .symbolRenderingMode(.hierarchical)
+                    .imageScale(.small)
+                    .relativeFrame(minWidth: .em(1.5), alignment: .trailing)
+            })
     }
     
     @ViewBuilder

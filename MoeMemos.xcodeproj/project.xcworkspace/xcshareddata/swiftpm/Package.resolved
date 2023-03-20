@@ -19,12 +19,30 @@
       }
     },
     {
+      "identity" : "swift-cmark",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-cmark.git",
+      "state" : {
+        "branch" : "gfm",
+        "revision" : "86aeb491675de6f077a3a6df6cbcac1a25dcbee1"
+      }
+    },
+    {
+      "identity" : "swift-markdown",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-markdown.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ad0b81fed55c4a72fdaeb5535884bd2886de96f4"
+      }
+    },
+    {
       "identity" : "swift-markdown-ui",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/gonzalezreal/swift-markdown-ui",
+      "location" : "https://github.com/mudkipme/swift-markdown-ui",
       "state" : {
-        "revision" : "5e15c0d75e42b9840301503e0df681027d4bea05",
-        "version" : "2.0.1"
+        "branch" : "main",
+        "revision" : "b635df6e92f138a2aad01317a2cc27f7e2d139b0"
       }
     }
   ],

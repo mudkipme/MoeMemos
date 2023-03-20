@@ -235,6 +235,13 @@ struct MemoInput: View {
     }
     
     private func saveMemo() async throws {
+        let tags = viewModel.extractCustomTags(from: text)
+        do {
+            try await memosViewModel.upsertTags(names: tags)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
         do {
             if let memo = memo {
                 try await memosViewModel.editMemo(id: memo.id, content: text, visibility: viewModel.visibility, resourceIdList: viewModel.resourceList.map { $0.id })
