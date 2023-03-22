@@ -119,8 +119,13 @@ struct MemoCard: View {
             .markdownTaskListMarker(BlockStyle { configuration in
                 Image(systemName: configuration.isCompleted ? "checkmark.square.fill" : "square")
                     .symbolRenderingMode(.hierarchical)
-                    .imageScale(.small)
-                    .relativeFrame(minWidth: .em(1.5), alignment: .trailing)
+                    .imageScale(.medium)
+                    .relativeFrame(minWidth: .em(1), alignment: .leading)
+                    .onTapGesture {
+                        Task {
+                            await toggleTaskItem(configuration)
+                        }
+                    }
             })
     }
     
@@ -222,6 +227,17 @@ struct MemoCard: View {
         }
         
         return attachments
+    }
+    
+    private func toggleTaskItem(_ configuration: TaskListMarkerConfiguration) async {
+        do {
+            guard var node = configuration.node else { return }
+            node.checkbox = configuration.isCompleted ? .unchecked : .checked
+            
+            try await memosViewModel.editMemo(id: memo.id, content: node.root.format(), visibility: memo.visibility, resourceIdList: memo.resourceList?.map { $0.id })
+        } catch {
+            print(error)
+        }
     }
 }
 

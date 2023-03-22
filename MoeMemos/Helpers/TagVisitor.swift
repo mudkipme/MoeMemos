@@ -15,7 +15,7 @@ struct TagVisitor: MarkupWalker {
     mutating func visitText(_ node: Markdown.Text) -> () {
         let fullRange = NSRange(location: 0, length: node.plainText.utf16.count)
         hashPattern.enumerateMatches(in: node.plainText, range: fullRange) { result, _, _ in
-            if let matchRange = result?.range {
+            if let matchRange = result?.range(at: 1) {
                 if !isInsideCodeBlock(node) && !isInsideLink(node) {
                     let tag = node.plainText[Range(matchRange, in: node.plainText)!]
                     tags.append(String(tag))
