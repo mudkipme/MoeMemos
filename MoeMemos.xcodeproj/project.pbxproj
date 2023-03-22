@@ -42,6 +42,8 @@
 		193AA8A328CD1C9300FF7EB6 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A228CD1C9300FF7EB6 /* UIImage.swift */; };
 		193AA8A728CD9ED700FF7EB6 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A628CD9ED700FF7EB6 /* URL.swift */; };
 		193AA8A928CDB27F00FF7EB6 /* ResourceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A828CDB27F00FF7EB6 /* ResourceCard.swift */; };
+		193D274D29C8D1EB00BDE4A2 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 193D274C29C8D1EB00BDE4A2 /* MarkdownUI */; };
+		193D274F29C8D85700BDE4A2 /* TagVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D274E29C8D85700BDE4A2 /* TagVisitor.swift */; };
 		193DE92128C5CFBB002651E0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92028C5CFBB002651E0 /* User.swift */; };
 		193DE92328C5E267002651E0 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92228C5E267002651E0 /* Settings.swift */; };
 		193DE92828C61488002651E0 /* MemosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92728C61488002651E0 /* MemosAPI.swift */; };
@@ -103,7 +105,6 @@
 		19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFC28C3ED11000C5207 /* MemoCard.swift */; };
 		19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FC1C7B290DA47C0078A7F2 /* Route.swift */; };
 		19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FC1C7D290DA6E90078A7F2 /* Navigation.swift */; };
-		31EE785129B83969005F62D0 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 31EE785029B83969005F62D0 /* MarkdownUI */; };
 		31EE785629B83D1B005F62D0 /* LazyImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EE785529B83D1B005F62D0 /* LazyImageProvider.swift */; };
 		31EE785929B83DFA005F62D0 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 31EE785829B83DFA005F62D0 /* Kingfisher */; };
 		31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */ = {isa = PBXBuildFile; productRef = 31EE785E29B9E6F4005F62D0 /* Highlightr */; };
@@ -178,6 +179,7 @@
 		193AA8A228CD1C9300FF7EB6 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		193AA8A628CD9ED700FF7EB6 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		193AA8A828CDB27F00FF7EB6 /* ResourceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceCard.swift; sourceTree = "<group>"; };
+		193D274E29C8D85700BDE4A2 /* TagVisitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagVisitor.swift; sourceTree = "<group>"; };
 		193DE92028C5CFBB002651E0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		193DE92228C5E267002651E0 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		193DE92728C61488002651E0 /* MemosAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosAPI.swift; sourceTree = "<group>"; };
@@ -254,9 +256,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				193D274D29C8D1EB00BDE4A2 /* MarkdownUI in Frameworks */,
 				31EE785929B83DFA005F62D0 /* Kingfisher in Frameworks */,
 				31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */,
-				31EE785129B83969005F62D0 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,8 +330,9 @@
 				193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */,
 				192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */,
 				19E6EF2229115A2800C998F5 /* MemosManager.swift */,
-				19FC1C7B290DA47C0078A7F2 /* Route.swift */,
 				1911568929802F200058F18B /* QuickLookRepresentable.swift */,
+				19FC1C7B290DA47C0078A7F2 /* Route.swift */,
+				193D274E29C8D85700BDE4A2 /* TagVisitor.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -532,9 +535,9 @@
 			);
 			name = MoeMemos;
 			packageProductDependencies = (
-				31EE785029B83969005F62D0 /* MarkdownUI */,
 				31EE785829B83DFA005F62D0 /* Kingfisher */,
 				31EE785E29B9E6F4005F62D0 /* Highlightr */,
+				193D274C29C8D1EB00BDE4A2 /* MarkdownUI */,
 			);
 			productName = MoeMemos;
 			productReference = 194B272D28C3973400A48675 /* MoeMemos.app */;
@@ -633,9 +636,9 @@
 			);
 			mainGroup = 194B272428C3973400A48675;
 			packageReferences = (
-				31EE784F29B83969005F62D0 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				31EE785729B83DFA005F62D0 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */,
+				193D274B29C8D1EB00BDE4A2 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 			);
 			productRefGroup = 194B272E28C3973400A48675 /* Products */;
 			projectDirPath = "";
@@ -740,6 +743,7 @@
 				1973B7D72916308D003C3710 /* Constants.swift in Sources */,
 				197D9D47292D4B160033AF33 /* ImagePicker.swift in Sources */,
 				19E6EF2329115A2800C998F5 /* MemosManager.swift in Sources */,
+				193D274F29C8D85700BDE4A2 /* TagVisitor.swift in Sources */,
 				192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */,
 				199A657B28C474BA00C39994 /* Color.swift in Sources */,
 				199A657D28C4761100C39994 /* Usage.swift in Sources */,
@@ -1305,20 +1309,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		31EE784F29B83969005F62D0 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+		193D274B29C8D1EB00BDE4A2 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
+			repositoryURL = "https://github.com/mudkipme/swift-markdown-ui";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 		31EE785729B83DFA005F62D0 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.6.2;
 			};
 		};
 		31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */ = {
@@ -1326,15 +1330,15 @@
 			repositoryURL = "https://github.com/raspu/Highlightr";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 2.1.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		31EE785029B83969005F62D0 /* MarkdownUI */ = {
+		193D274C29C8D1EB00BDE4A2 /* MarkdownUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 31EE784F29B83969005F62D0 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			package = 193D274B29C8D1EB00BDE4A2 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
 		};
 		31EE785829B83DFA005F62D0 /* Kingfisher */ = {

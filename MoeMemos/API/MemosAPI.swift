@@ -94,7 +94,6 @@ struct MemosTag: MemosAPI {
     static let path = "/api/tag"
 }
 
-
 struct MemosCreate: MemosAPI {
     struct Input: Encodable {
         let content: String
@@ -199,6 +198,19 @@ struct MemosStatus: MemosAPI {
     static let encodeMode: HTTPBodyEncodeMode = .none
     static let decodeMode: HTTPBodyDecodeMode = .json
     static let path = "/api/status"
+}
+
+struct MemosUpsertTag: MemosAPI {
+    struct Input: Encodable {
+        let name: String
+    }
+
+    typealias Output = MemosOutput<String>
+    
+    static let method: HTTPMethod = .post
+    static let encodeMode: HTTPBodyEncodeMode = .json
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static let path = "/api/tag"
 }
 
 struct MemosErrorOutput: Decodable {

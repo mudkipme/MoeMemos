@@ -10,15 +10,12 @@ import UniformTypeIdentifiers
 import MarkdownUI
 
 struct MemoCard: View {
-    private enum MemoContent: Identifiable {
-        case text(AttributedString)
+    private enum MemoResource: Identifiable {
         case images([URL])
         case attachment(Resource)
         
         var id: String {
             switch self {
-            case .text(let attributedString):
-                return String(attributedString.characters)
             case .images(let urls):
                 return urls.map { $0.absoluteString }.joined(separator: ",")
             case .attachment(let resource):
@@ -33,6 +30,7 @@ struct MemoCard: View {
     
     @EnvironmentObject private var memosManager: MemosManager
     @EnvironmentObject private var memosViewModel: MemosViewModel
+    @Environment(\.colorScheme) var colorScheme
     @State private var showingEdit = false
     @State private var showingLegacyShareSheet = false
     @State private var showingDeleteConfirmation = false
@@ -84,15 +82,7 @@ struct MemoCard: View {
                 markdownRenderContent
             }
 
-            ForEach(renderContent()) { content in
-//                if case let .text(attributedString) = content {
-//                    Text(attributedString)
-//                        .font(.body)
-//                        .fixedSize(horizontal: false, vertical: true)
-//                        .frame(maxWidth: .infinity, alignment: .leading)
-//                }
-                
-                // TODO: May duplicated
+            ForEach(resources()) { content in
                 if case let .images(urls) = content {
                     MemoCardImageView(images: urls)
                 }
@@ -123,10 +113,20 @@ struct MemoCard: View {
     }
     
     private var markdownRenderContent: some View {
-        Markdown(memo.content)
-            .markdownTheme(.gitHub)
+        MarkdownView(memo.content)
             .markdownImageProvider(.lazyImage(aspectRatio: 4 / 3))
-            .markdownCodeSyntaxHighlighter(.default())
+            .markdownCodeSyntaxHighlighter(colorScheme == .dark ? .dark() : .light())
+            .markdownTaskListMarker(BlockStyle { configuration in
+                Image(systemName: configuration.isCompleted ? "checkmark.square.fill" : "square")
+                    .symbolRenderingMode(.hierarchical)
+                    .imageScale(.medium)
+                    .relativeFrame(minWidth: .em(1), alignment: .leading)
+                    .onTapGesture {
+                        Task {
+                            await toggleTaskItem(configuration)
+                        }
+                    }
+            })
     }
     
     @ViewBuilder
@@ -209,57 +209,8 @@ struct MemoCard: View {
         return formatter.localizedString(for: memo.createdTs, relativeTo: .now)
     }
     
-    private func renderContent() -> [MemoContent] {
-        var contents = [MemoContent]()
-
-        do {
-            let attributedString = try AttributedString(markdown: memo.content.trimmingCharacters(in: .whitespacesAndNewlines), options: AttributedString.MarkdownParsingOptions(
-                    allowsExtendedAttributes: true,
-                    interpretedSyntax: .inlineOnlyPreservingWhitespace))
-
-            var lastAttributed = AttributedString()
-            var lastImages = [URL]()
-            for i in attributedString.runs {
-                if let imageURL = i.imageURL {
-                    if !lastAttributed.characters.isEmpty {
-                        contents.append(.text(lastAttributed))
-                        lastAttributed = AttributedString()
-                    }
-                    
-                    var url = imageURL
-                    if url.host == nil, let hostURL = memosManager.hostURL {
-                        url = hostURL.appendingPathComponent(url.path)
-                    }
-                    lastImages.append(url)
-                    continue
-                }
-                if !lastImages.isEmpty {
-                    contents.append(.images(lastImages))
-                    lastImages.removeAll()
-                }
-                lastAttributed += attributedString[i.range]
-            }
-            
-            if !lastAttributed.characters.isEmpty {
-                contents.append(.text(lastAttributed))
-            }
-            if !lastImages.isEmpty {
-                contents.append(.images(lastImages))
-            }
-            
-        } catch {
-            contents = [.text(AttributedString(memo.content))]
-        }
-        
-        // filter inline images
-        contents = contents.filter { item in
-            if case .images = item {
-                return false
-            } else {
-                return true
-            }
-        }
-        
+    private func resources() -> [MemoResource] {
+        var attachments = [MemoResource]()
         if let resourceList = memo.resourceList, let memos = memosManager.memos {
             let imageResources = resourceList.filter { resource in
                 resource.type.hasPrefix("image/")
@@ -269,13 +220,24 @@ struct MemoCard: View {
             }
             
             if !imageResources.isEmpty {
-                contents.append(.images(imageResources.map { memos.url(for: $0) }))
+                attachments.append(.images(imageResources.map { memos.url(for: $0) }))
             }
             
-            contents += otherResources.map { .attachment($0) }
+            attachments += otherResources.map { .attachment($0) }
         }
         
-        return contents
+        return attachments
+    }
+    
+    private func toggleTaskItem(_ configuration: TaskListMarkerConfiguration) async {
+        do {
+            guard var node = configuration.node else { return }
+            node.checkbox = configuration.isCompleted ? .unchecked : .checked
+            
+            try await memosViewModel.editMemo(id: memo.id, content: node.root.format(), visibility: memo.visibility, resourceIdList: memo.resourceList?.map { $0.id })
+        } catch {
+            print(error)
+        }
     }
 }
 

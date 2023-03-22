@@ -81,4 +81,12 @@ class MemosViewModel: ObservableObject {
         updateMemo(response.data)
         try await loadTags()
     }
+    
+    func upsertTags(names: [String]) async throws {
+        for name in names {
+            _ = try await memos.upsertTag(name: name)
+        }
+        
+        try await loadTags()
+    }
 }
