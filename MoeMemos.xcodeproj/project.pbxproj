@@ -106,7 +106,6 @@
 		19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FC1C7B290DA47C0078A7F2 /* Route.swift */; };
 		19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FC1C7D290DA6E90078A7F2 /* Navigation.swift */; };
 		31EE785629B83D1B005F62D0 /* LazyImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EE785529B83D1B005F62D0 /* LazyImageProvider.swift */; };
-		31EE785929B83DFA005F62D0 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 31EE785829B83DFA005F62D0 /* Kingfisher */; };
 		31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */ = {isa = PBXBuildFile; productRef = 31EE785E29B9E6F4005F62D0 /* Highlightr */; };
 		31EE786129B9F3A2005F62D0 /* Highlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EE786029B9F3A2005F62D0 /* Highlighter.swift */; };
 /* End PBXBuildFile section */
@@ -257,7 +256,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				193D274D29C8D1EB00BDE4A2 /* MarkdownUI in Frameworks */,
-				31EE785929B83DFA005F62D0 /* Kingfisher in Frameworks */,
 				31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -535,7 +533,6 @@
 			);
 			name = MoeMemos;
 			packageProductDependencies = (
-				31EE785829B83DFA005F62D0 /* Kingfisher */,
 				31EE785E29B9E6F4005F62D0 /* Highlightr */,
 				193D274C29C8D1EB00BDE4A2 /* MarkdownUI */,
 			);
@@ -636,7 +633,6 @@
 			);
 			mainGroup = 194B272428C3973400A48675;
 			packageReferences = (
-				31EE785729B83DFA005F62D0 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */,
 				193D274B29C8D1EB00BDE4A2 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 			);
@@ -1317,14 +1313,6 @@
 				kind = branch;
 			};
 		};
-		31EE785729B83DFA005F62D0 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 7.6.2;
-			};
-		};
 		31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/raspu/Highlightr";
@@ -1340,11 +1328,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 193D274B29C8D1EB00BDE4A2 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
-		};
-		31EE785829B83DFA005F62D0 /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 31EE785729B83DFA005F62D0 /* XCRemoteSwiftPackageReference "Kingfisher" */;
-			productName = Kingfisher;
 		};
 		31EE785E29B9E6F4005F62D0 /* Highlightr */ = {
 			isa = XCSwiftPackageProductDependency;
