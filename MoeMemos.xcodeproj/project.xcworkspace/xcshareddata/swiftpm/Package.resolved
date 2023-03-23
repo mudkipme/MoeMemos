@@ -10,15 +10,6 @@
       }
     },
     {
-      "identity" : "kingfisher",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/onevcat/Kingfisher",
-      "state" : {
-        "revision" : "af4be924ad984cf4d16f4ae4df424e79a443d435",
-        "version" : "7.6.2"
-      }
-    },
-    {
       "identity" : "swift-cmark",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-cmark.git",
@@ -30,7 +21,7 @@
     {
       "identity" : "swift-markdown",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-markdown.git",
+      "location" : "https://github.com/mudkipme/swift-markdown.git",
       "state" : {
         "branch" : "main",
         "revision" : "ad0b81fed55c4a72fdaeb5535884bd2886de96f4"
@@ -42,7 +33,7 @@
       "location" : "https://github.com/mudkipme/swift-markdown-ui",
       "state" : {
         "branch" : "main",
-        "revision" : "b635df6e92f138a2aad01317a2cc27f7e2d139b0"
+        "revision" : "546a16ded56b83bb2ea48ec177f60a236931099f"
       }
     }
   ],

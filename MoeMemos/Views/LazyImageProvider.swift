@@ -7,18 +7,15 @@
 
 import SwiftUI
 import MarkdownUI
-import Kingfisher
 
 struct LazyImageProvider: ImageProvider {
     let aspectRatio: CGFloat
 
     @MainActor
     func makeImage(url: URL?) -> some View {
-        KFImage(makeURL(url)).placeholder { _ in
-            ProgressView()
+        if let url = makeURL(url) {
+            MemoCardImageView(images: [url])
         }
-        .resizable()
-        .aspectRatio(self.aspectRatio, contentMode: .fit)
     }
     
     @MainActor
