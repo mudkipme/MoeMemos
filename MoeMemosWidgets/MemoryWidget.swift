@@ -133,8 +133,8 @@ struct MemoryWidget: Widget {
             MemoryEntryView(entry: entry)
         }
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
-        .configurationDisplayName("Memories")
-        .description("Remember your past memos.")
+        .configurationDisplayName("widget.memories")
+        .description("widget.memories.description")
     }
 }
 

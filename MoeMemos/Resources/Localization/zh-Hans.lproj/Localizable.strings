@@ -30,6 +30,7 @@
 "settings.report" = "反馈 Bug";
 "settings.sign-out" = "退出登录";
 "settings.website" = "官网";
+"settings.acknowledgements" = "致谢";
 
 "input.placeholder" = "现在的想法是…";
 "input.close" = "关闭";
@@ -55,3 +56,10 @@
 "resources" = "资源";
 
 "tags" = "标签";
+
+"widget.memories" = "回忆";
+"widget.memories.description" = "回忆过去的 MEMO。";
+"widget.memo-graph" = "日记方格";
+"widget.memo-graph.description" = "用方格显示每天写下的 MEMO 数量。";
+
+"share.memo-saved" = "已保存 MEMO";

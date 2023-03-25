@@ -76,6 +76,8 @@
 		19A547822986E3670000E71A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A547812986E3670000E71A /* Status.swift */; };
 		19A547832986E4C10000E71A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A547812986E3670000E71A /* Status.swift */; };
 		19A547842986E4C20000E71A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A547812986E3670000E71A /* Status.swift */; };
+		19B3B79529CEB9C5007E2997 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.strings */; };
+		19B3B79629CEBCC0007E2997 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.strings */; };
 		19B5CFFA2939BB9700140294 /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
 		19B5CFFB2939BB9B00140294 /* MemosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92728C61488002651E0 /* MemosAPI.swift */; };
 		19B5CFFC2939BBCA00140294 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE93128C652F7002651E0 /* Error.swift */; };
@@ -658,6 +660,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				191339B9291D7289001F2B2E /* Assets.xcassets in Resources */,
+				19B3B79529CEB9C5007E2997 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -690,6 +693,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				19E29A6E2938FBCD00BE9C32 /* MainInterface.storyboard in Resources */,
+				19B3B79629CEBCC0007E2997 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

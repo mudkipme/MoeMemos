@@ -30,6 +30,7 @@
 "settings.report" = "反饋 Bug";
 "settings.sign-out" = "退出登入";
 "settings.website" = "官網";
+"settings.acknowledgements" = "致謝";
 
 "input.placeholder" = "現在的想法是…";
 "input.close" = "關閉";
@@ -55,3 +56,10 @@
 "resources" = "資源";
 
 "tags" = "標籤";
+
+"widget.memories" = "回憶";
+"widget.memories.description" = "回憶過去的 MEMO。";
+"widget.memo-graph" = "日記方格";
+"widget.memo-graph.description" = "用方格顯示每天寫下的 MEMO 數量。";
+
+"share.memo-saved" = "已儲存 MEMO";

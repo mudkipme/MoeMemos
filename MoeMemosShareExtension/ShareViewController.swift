@@ -43,7 +43,7 @@ class ShareViewController: SLComposeServiceViewController {
                 ])
                 try await handleShare()
                 
-                self.shareViewHostingController.rootView = MoeMemosShareView(alertType: .systemImage("checkmark.circle", "Memo saved."))
+                self.shareViewHostingController.rootView = MoeMemosShareView(alertType: .systemImage("checkmark.circle", NSLocalizedString("share.memo-saved", comment: "")))
                 try await Task.sleep(nanoseconds: 2_000_000_000)
                 self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
             } catch {

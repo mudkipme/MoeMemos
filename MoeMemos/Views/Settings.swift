@@ -48,6 +48,9 @@ struct Settings: View {
                 Link(destination: URL(string: "https://memos.moe/privacy")!) {
                     Label("settings.privacy", systemImage: "lock")
                 }
+                Link(destination: URL(string: "https://memos.moe/ios-acknowledgements")!) {
+                    Label("settings.acknowledgements", systemImage: "info.bubble")
+                }
                 Link(destination: URL(string: "https://github.com/mudkipme/MoeMemos/issues")!) {
                     Label("settings.report", systemImage: "smallcircle.filled.circle")
                 }
