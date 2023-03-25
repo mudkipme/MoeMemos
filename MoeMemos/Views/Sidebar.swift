@@ -51,6 +51,9 @@ struct Sidebar: View {
                         Label("memo.memos", systemImage: "rectangle.grid.1x2")
                     }
                 }
+                NavLink(route: .explore) {
+                    Label("explore", systemImage: "house")
+                }
                 NavLink(route: .resources) {
                     Label("resources", systemImage: "photo.on.rectangle")
                 }

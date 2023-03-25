@@ -13,6 +13,7 @@ let sampleMemo = Memo(
     id: 0,
     createdTs: Date(),
     creatorId: 0,
+    creatorName: nil,
     content: "Make your wonderful dream a reality, and it will become your truth.",
     pinned: false,
     rowStatus: .normal,
@@ -133,8 +134,8 @@ struct MemoryWidget: Widget {
             MemoryEntryView(entry: entry)
         }
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
-        .configurationDisplayName("Memories")
-        .description("Remember your past memos.")
+        .configurationDisplayName("widget.memories")
+        .description("widget.memories.description")
     }
 }
 

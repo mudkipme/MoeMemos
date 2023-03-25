@@ -75,8 +75,8 @@ struct MemosGraphWidget: Widget {
             MemosGraphEntryView(entry: entry)
         }
         .supportedFamilies([.systemSmall, .systemMedium])
-        .configurationDisplayName("Memos Graph")
-        .description("The graph to display how much memos you composed every day in recent weeks.")
+        .configurationDisplayName("widget.memo-graph")
+        .description("widget.memo-graph.description")
     }
 }
 

@@ -213,6 +213,23 @@ struct MemosUpsertTag: MemosAPI {
     static let path = "/api/tag"
 }
 
+struct MemosListAllMemo: MemosAPI {
+    struct Input: Encodable {
+        let pinned: Bool?
+        let tag: String?
+        let visibility: MemosVisibility?
+        let limit: Int?
+        let offset: Int?
+    }
+    
+    typealias Output = MemosOutput<[Memo]>
+
+    static let method: HTTPMethod = .get
+    static let encodeMode: HTTPBodyEncodeMode = .urlencoded
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static let path = "/api/memo/all"
+}
+
 struct MemosErrorOutput: Decodable {
     let error: String
     let message: String

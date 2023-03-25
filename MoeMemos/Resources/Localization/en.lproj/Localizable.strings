@@ -30,6 +30,7 @@
 "settings.report" = "Report an Issue";
 "settings.sign-out" = "Sign out";
 "settings.website" = "Website";
+"settings.acknowledgements" = "Acknowledgements";
 
 "input.placeholder" = "Any thoughts…";
 "input.close" = "Close";
@@ -55,3 +56,12 @@
 "resources" = "Resources";
 
 "tags" = "Tags";
+
+"widget.memories" = "Memories";
+"widget.memories.description" = "Remember your past memos.";
+"widget.memo-graph" = "Memos Graph";
+"widget.memo-graph.description" = "The graph to display how much memos you composed every day in recent weeks.";
+
+"share.memo-saved" = "Memo saved.";
+
+"explore" = "Explore";

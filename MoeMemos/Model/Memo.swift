@@ -19,10 +19,11 @@ enum MemosRowStatus: String, Decodable, Encodable {
     case archived = "ARCHIVED"
 }
 
-struct Memo: Decodable, Equatable {
+struct Memo: Decodable, Equatable, Identifiable {
     let id: Int
     let createdTs: Date
     let creatorId: Int
+    let creatorName: String?
     var content: String
     var pinned: Bool
     let rowStatus: MemosRowStatus
@@ -58,5 +59,20 @@ extension MemosVisibility {
         case .private:
             return "lock"
         }
+    }
+}
+
+extension Memo {
+    func renderTime() -> String {
+        if Calendar.current.dateComponents([.day], from: createdTs, to: .now).day! > 7 {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .long
+            formatter.timeStyle = .short
+            return formatter.string(from: createdTs)
+        }
+        
+        let formatter = RelativeDateTimeFormatter()
+        formatter.dateTimeStyle = .named
+        return formatter.localizedString(for: createdTs, relativeTo: .now)
     }
 }

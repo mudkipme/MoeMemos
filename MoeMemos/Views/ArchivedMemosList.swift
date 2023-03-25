@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct ArchivedMemosList: View {
-    @EnvironmentObject private var memosViewModel: MemosViewModel
     @StateObject private var viewModel = ArchivedMemoListViewModel()
 
     var body: some View {
         List(viewModel.archivedMemoList, id: \.id) { memo in
             Section {
-                MemoCard(memo, archivedViewModel: viewModel)
+                ArchivedMemoCard(memo, archivedViewModel: viewModel)
             }
         }
         .listStyle(InsetGroupedListStyle())
@@ -39,6 +38,5 @@ struct ArchivedMemosList: View {
 struct ArchivedMemosList_Previews: PreviewProvider {
     static var previews: some View {
         ArchivedMemosList()
-            .environmentObject(MemosViewModel())
     }
 }
