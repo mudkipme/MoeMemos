@@ -13,7 +13,7 @@ enum Route: Hashable {
     case archived
     case tag(Tag)
     case settings
-    
+    case explore
     
     @ViewBuilder
     func destination() -> some View {
@@ -28,6 +28,8 @@ enum Route: Hashable {
             MemosList(tag: tag)
         case .settings:
             Settings()
+        case .explore:
+            Explore()
         }
     }
 }

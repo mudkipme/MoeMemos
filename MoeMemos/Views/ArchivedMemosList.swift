@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ArchivedMemosList: View {
-    @EnvironmentObject private var memosViewModel: MemosViewModel
     @StateObject private var viewModel = ArchivedMemoListViewModel()
 
     var body: some View {
@@ -39,6 +38,5 @@ struct ArchivedMemosList: View {
 struct ArchivedMemosList_Previews: PreviewProvider {
     static var previews: some View {
         ArchivedMemosList()
-            .environmentObject(MemosViewModel())
     }
 }

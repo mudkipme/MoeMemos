@@ -19,10 +19,11 @@ enum MemosRowStatus: String, Decodable, Encodable {
     case archived = "ARCHIVED"
 }
 
-struct Memo: Decodable, Equatable {
+struct Memo: Decodable, Equatable, Identifiable {
     let id: Int
     let createdTs: Date
     let creatorId: Int
+    let creatorName: String?
     var content: String
     var pinned: Bool
     let rowStatus: MemosRowStatus

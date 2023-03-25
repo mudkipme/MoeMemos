@@ -63,3 +63,5 @@
 "widget.memo-graph.description" = "用方格显示每天写下的 MEMO 数量。";
 
 "share.memo-saved" = "已保存 MEMO";
+
+"explore" = "探索";

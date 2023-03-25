@@ -13,6 +13,7 @@ let sampleMemo = Memo(
     id: 0,
     createdTs: Date(),
     creatorId: 0,
+    creatorName: nil,
     content: "Make your wonderful dream a reality, and it will become your truth.",
     pinned: false,
     rowStatus: .normal,

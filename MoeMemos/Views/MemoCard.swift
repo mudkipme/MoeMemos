@@ -124,7 +124,7 @@ struct MemoCard: View {
 
 struct MemoCard_Previews: PreviewProvider {
     static var previews: some View {
-        MemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil), defaultMemoVisibility: .private)
+        MemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, creatorName: nil, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil), defaultMemoVisibility: .private)
             .environmentObject(MemosViewModel())
     }
 }

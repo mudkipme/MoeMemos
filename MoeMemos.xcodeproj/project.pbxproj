@@ -31,6 +31,9 @@
 		191339D2291D7785001F2B2E /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6A28C704AC00784EF5 /* Date.swift */; };
 		191339DC291D8F15001F2B2E /* MemoryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191339DB291D8F15001F2B2E /* MemoryWidget.swift */; };
 		1919FBE329CF6BDD00FEF570 /* ArchivedMemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE229CF6BDD00FEF570 /* ArchivedMemoCard.swift */; };
+		1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE429CF738300FEF570 /* ExploreViewModel.swift */; };
+		1919FBE729CF77C900FEF570 /* ExploreMemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */; };
+		1919FBE929CF78BE00FEF570 /* Explore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE829CF78BE00FEF570 /* Explore.swift */; };
 		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
 		192DF0F528C7B71D0077E785 /* LegacyShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */; };
 		1934C77C2921670600A169EC /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1934C77B2921670600A169EC /* Attachment.swift */; };
@@ -172,6 +175,9 @@
 		191339D3291D7F13001F2B2E /* MoeMemosWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MoeMemosWidgetsExtension.entitlements; sourceTree = "<group>"; };
 		191339DB291D8F15001F2B2E /* MemoryWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemoryWidget.swift; sourceTree = "<group>"; };
 		1919FBE229CF6BDD00FEF570 /* ArchivedMemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemoCard.swift; sourceTree = "<group>"; };
+		1919FBE429CF738300FEF570 /* ExploreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewModel.swift; sourceTree = "<group>"; };
+		1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreMemoCard.swift; sourceTree = "<group>"; };
+		1919FBE829CF78BE00FEF570 /* Explore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Explore.swift; sourceTree = "<group>"; };
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
 		192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyShareSheet.swift; sourceTree = "<group>"; };
 		1934C77B2921670600A169EC /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
@@ -347,6 +353,7 @@
 			isa = PBXGroup;
 			children = (
 				19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */,
+				1919FBE429CF738300FEF570 /* ExploreViewModel.swift */,
 				19E6EF1E29113EC900C998F5 /* MemoInputViewModel.swift */,
 				193DE92F28C65104002651E0 /* MemosViewModel.swift */,
 				19C569AB29125C0700745F9D /* ResourceListViewModel.swift */,
@@ -472,6 +479,8 @@
 				192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */,
 				1934C77B2921670600A169EC /* Attachment.swift */,
 				194B273228C3973400A48675 /* ContentView.swift */,
+				1919FBE829CF78BE00FEF570 /* Explore.swift */,
+				1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */,
 				1995E9CD28C46DC9004F2EDB /* Heatmap.swift */,
 				195E5D7028C70A3800784EF5 /* HeatmapStat.swift */,
 				31EE786029B9F3A2005F62D0 /* Highlighter.swift */,
@@ -768,6 +777,7 @@
 				193AA8A928CDB27F00FF7EB6 /* ResourceCard.swift in Sources */,
 				195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */,
 				1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */,
+				1919FBE729CF77C900FEF570 /* ExploreMemoCard.swift in Sources */,
 				193938DC29CF682D0027939F /* MemoCardContent.swift in Sources */,
 				195E5D7128C70A3800784EF5 /* HeatmapStat.swift in Sources */,
 				19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */,
@@ -778,6 +788,7 @@
 				19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */,
 				19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */,
 				19E6EF2129113FDA00C998F5 /* UserState.swift in Sources */,
+				1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */,
 				193DE92828C61488002651E0 /* MemosAPI.swift in Sources */,
 				1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */,
 				31EE786129B9F3A2005F62D0 /* Highlighter.swift in Sources */,
@@ -791,6 +802,7 @@
 				19C569A42912493A00745F9D /* ArchivedMemoListViewModel.swift in Sources */,
 				193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */,
 				193DE93228C652F7002651E0 /* Error.swift in Sources */,
+				1919FBE929CF78BE00FEF570 /* Explore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

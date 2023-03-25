@@ -63,3 +63,5 @@
 "widget.memo-graph.description" = "The graph to display how much memos you composed every day in recent weeks.";
 
 "share.memo-saved" = "Memo saved.";
+
+"explore" = "Explore";

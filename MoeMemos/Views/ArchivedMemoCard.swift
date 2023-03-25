@@ -81,7 +81,7 @@ struct ArchivedMemoCard: View {
 
 struct ArchivedMemoCard_Previews: PreviewProvider {
     static var previews: some View {
-        ArchivedMemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil), archivedViewModel: ArchivedMemoListViewModel())
+        ArchivedMemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, creatorName: nil, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil), archivedViewModel: ArchivedMemoListViewModel())
             .environmentObject(MemosViewModel())
     }
 }
