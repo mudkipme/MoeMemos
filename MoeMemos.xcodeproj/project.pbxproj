@@ -30,9 +30,11 @@
 		191339D1291D7765001F2B2E /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657A28C474BA00C39994 /* Color.swift */; };
 		191339D2291D7785001F2B2E /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6A28C704AC00784EF5 /* Date.swift */; };
 		191339DC291D8F15001F2B2E /* MemoryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191339DB291D8F15001F2B2E /* MemoryWidget.swift */; };
+		1919FBE329CF6BDD00FEF570 /* ArchivedMemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE229CF6BDD00FEF570 /* ArchivedMemoCard.swift */; };
 		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
 		192DF0F528C7B71D0077E785 /* LegacyShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */; };
 		1934C77C2921670600A169EC /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1934C77B2921670600A169EC /* Attachment.swift */; };
+		193938DC29CF682D0027939F /* MemoCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193938DB29CF682D0027939F /* MemoCardContent.swift */; };
 		193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89A28CCD34A00FF7EB6 /* Resources.swift */; };
 		193AA89D28CCD38100FF7EB6 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89C28CCD38100FF7EB6 /* Resource.swift */; };
 		193AA89F28CD080000FF7EB6 /* LegacyPhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */; };
@@ -169,9 +171,11 @@
 		191339BA291D7289001F2B2E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		191339D3291D7F13001F2B2E /* MoeMemosWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MoeMemosWidgetsExtension.entitlements; sourceTree = "<group>"; };
 		191339DB291D8F15001F2B2E /* MemoryWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemoryWidget.swift; sourceTree = "<group>"; };
+		1919FBE229CF6BDD00FEF570 /* ArchivedMemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemoCard.swift; sourceTree = "<group>"; };
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
 		192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyShareSheet.swift; sourceTree = "<group>"; };
 		1934C77B2921670600A169EC /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
+		193938DB29CF682D0027939F /* MemoCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCardContent.swift; sourceTree = "<group>"; };
 		193AA89A28CCD34A00FF7EB6 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		193AA89C28CCD38100FF7EB6 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyPhotoPicker.swift; sourceTree = "<group>"; };
@@ -464,15 +468,17 @@
 		19F31BF828C3E286000C5207 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1919FBE229CF6BDD00FEF570 /* ArchivedMemoCard.swift */,
 				192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */,
 				1934C77B2921670600A169EC /* Attachment.swift */,
 				194B273228C3973400A48675 /* ContentView.swift */,
 				1995E9CD28C46DC9004F2EDB /* Heatmap.swift */,
 				195E5D7028C70A3800784EF5 /* HeatmapStat.swift */,
-				199A658028C48A6200C39994 /* Login.swift */,
-				19F31BFC28C3ED11000C5207 /* MemoCard.swift */,
 				31EE786029B9F3A2005F62D0 /* Highlighter.swift */,
 				31EE785529B83D1B005F62D0 /* LazyImageProvider.swift */,
+				199A658028C48A6200C39994 /* Login.swift */,
+				19F31BFC28C3ED11000C5207 /* MemoCard.swift */,
+				193938DB29CF682D0027939F /* MemoCardContent.swift */,
 				197A4D3229599C300027427E /* MemoCardImageView.swift */,
 				19E1C5BF28C5191D0072CEEF /* MemoInput.swift */,
 				19709CFB297F2C1900F6A144 /* MemoInputResourceView.swift */,
@@ -758,9 +764,11 @@
 				19709CFC297F2C1900F6A144 /* MemoInputResourceView.swift in Sources */,
 				19E29A7D2939A94400BE9C32 /* NSItemProvider.swift in Sources */,
 				197A4D3329599C300027427E /* MemoCardImageView.swift in Sources */,
+				1919FBE329CF6BDD00FEF570 /* ArchivedMemoCard.swift in Sources */,
 				193AA8A928CDB27F00FF7EB6 /* ResourceCard.swift in Sources */,
 				195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */,
 				1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */,
+				193938DC29CF682D0027939F /* MemoCardContent.swift in Sources */,
 				195E5D7128C70A3800784EF5 /* HeatmapStat.swift in Sources */,
 				19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */,
 				194B273328C3973400A48675 /* ContentView.swift in Sources */,

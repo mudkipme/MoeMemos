@@ -14,7 +14,7 @@ struct ArchivedMemosList: View {
     var body: some View {
         List(viewModel.archivedMemoList, id: \.id) { memo in
             Section {
-                MemoCard(memo, archivedViewModel: viewModel)
+                ArchivedMemoCard(memo, archivedViewModel: viewModel)
             }
         }
         .listStyle(InsetGroupedListStyle())
