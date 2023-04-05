@@ -70,7 +70,7 @@ struct ResourceCard: View {
 
 struct ResourceCard_Previews: PreviewProvider {
     static var previews: some View {
-        ResourceCard(resource: Resource(id: 1, createdTs: .now, creatorId: 0, filename: "", size: 0, type: "image/jpeg", updatedTs: .now, externalLink: nil), resourceManager: ResourceListViewModel())
+        ResourceCard(resource: Resource(id: 1, createdTs: .now, creatorId: 0, filename: "", size: 0, type: "image/jpeg", updatedTs: .now, externalLink: nil, publicId: nil), resourceManager: ResourceListViewModel())
             .environmentObject(MemosViewModel())
             .environmentObject(MemosManager())
     }
