@@ -114,15 +114,17 @@ class Memos {
         if let externalLink = resource.externalLink?.encodeUrlPath(), let url = URL(string: externalLink) {
             return url
         }
-        // to be compatible with future Memos release with resource visibility
+        
         var url = host.appendingPathComponent(resource.path())
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        var queryItems = components.queryItems ?? []
         if let openId = openId, !openId.isEmpty {
-            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-            var queryItems = components.queryItems ?? []
+            // to be compatible with future Memos release with resource visibility
             queryItems.append(URLQueryItem(name: "openId", value: openId))
-            components.queryItems = queryItems
-            url = components.url!
         }
+        queryItems.append(URLQueryItem(name: "extension", value: URL(fileURLWithPath: resource.filename).pathExtension))
+        components.queryItems = queryItems
+        url = components.url!
         return url
     }
     
@@ -132,8 +134,9 @@ class Memos {
         let hash = SHA256.hash(data: url.absoluteString.data(using: .utf8)!)
         let hex = hash.map { String(format: "%02X", $0) }[0...10].joined()
         
+        let pathExtension = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "extension" }?.value
         let downloadDestination = containerURL.appendingPathComponent("Library/Caches")
-            .appendingPathComponent(hex).appendingPathExtension(url.pathExtension)
+            .appendingPathComponent(hex).appendingPathExtension(pathExtension ?? url.pathExtension)
         
         try FileManager.default.createDirectory(at: downloadDestination.deletingLastPathComponent(), withIntermediateDirectories: true)
 
