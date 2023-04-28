@@ -8,7 +8,7 @@
 import Foundation
 
 struct MemosUserSetting: Decodable {
-    static let memoVisibilityKey = "memoVisibility"
+    static let memoVisibilityKey = "memo-visibility"
     let key: String
     let value: String
 }
