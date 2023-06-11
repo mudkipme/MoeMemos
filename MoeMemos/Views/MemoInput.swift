@@ -15,6 +15,7 @@ struct MemoInput: View {
     @StateObject private var viewModel = MemoInputViewModel()
 
     @State private var text = ""
+    @State private var selection: Range<String.Index>? = nil
     @AppStorage("draft") private var draft = ""
     
     @FocusState private var focused: Bool
@@ -35,7 +36,7 @@ struct MemoInput: View {
                         Menu {
                             ForEach(memosViewModel.tags) { tag in
                                 Button(tag.name) {
-                                    text += "#\(tag.name) "
+                                    insert(tag: tag)
                                 }
                             }
                         } label: {
@@ -53,7 +54,7 @@ struct MemoInput: View {
                     
                 } else {
                     Button {
-                        text += "#"
+                        insert(tag: nil)
                     } label: {
                         Image(systemName: "number")
                     }
@@ -86,7 +87,7 @@ struct MemoInput: View {
             VStack(alignment: .leading) {
                 privacyMenu
                     .padding(.horizontal)
-                TextEditor(text: $text)
+                TextView(text: $text, selection: $selection)
                     .focused($focused)
                     .overlay(alignment: .topLeading) {
                         if text.isEmpty {
@@ -283,6 +284,18 @@ struct MemoInput: View {
             .stroke(.green, lineWidth: 1)
         )
       }
+    }
+    
+    private func insert(tag: Tag?) {
+        let tagText = "#\(tag?.name ?? "")"
+        guard let selection = selection else {
+            text += tagText
+            return
+        }
+        
+        text = text.replacingCharacters(in: selection, with: tagText)
+        let index = text.index(selection.lowerBound, offsetBy: tagText.count)
+        self.selection = index..<text.index(selection.lowerBound, offsetBy: tagText.count)
     }
 }
 
