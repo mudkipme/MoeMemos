@@ -288,6 +288,6 @@ struct MemoInput_Previews: PreviewProvider {
     static var previews: some View {
         MemoInput(memo: nil)
             .environmentObject(MemosViewModel())
-            .environmentObject(MemoInputViewModel())
+            .environmentObject(UserState())
     }
 }
