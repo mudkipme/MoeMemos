@@ -24,7 +24,7 @@ struct MemoInput: View {
     @State private var showingImagePicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
-        
+    
     @ViewBuilder
     private func toolbar() -> some View {
         VStack(spacing: 0) {
@@ -154,7 +154,7 @@ struct MemoInput: View {
                 } label: {
                     Label("input.save", systemImage: "paperplane")
                 }
-                .disabled((text.isEmpty && viewModel.resourceList.isEmpty) || viewModel.imageUploading)
+                .disabled((text.isEmpty && viewModel.resourceList.isEmpty) || viewModel.imageUploading || viewModel.saving)
             }
         }
         .fullScreenCover(isPresented: $showingImagePicker, content: {
@@ -235,6 +235,7 @@ struct MemoInput: View {
     }
     
     private func saveMemo() async throws {
+        viewModel.saving = true
         let tags = viewModel.extractCustomTags(from: text)
         do {
             try await memosViewModel.upsertTags(names: tags)
@@ -256,6 +257,7 @@ struct MemoInput: View {
             submitError = error
             showingErrorToast = true
         }
+        viewModel.saving = false
     }
     
     private var privacyMenu: some View {
