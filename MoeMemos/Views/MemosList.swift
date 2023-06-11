@@ -96,6 +96,8 @@ struct MemosList: View {
         if let tag = tag {
             fullList = fullList.filter({ memo in
                 memo.content.contains("#\(tag.name) ") || memo.content.contains("#\(tag.name)/")
+                || memo.content.contains("#\(tag.name)\n")
+                || memo.content.hasSuffix("#\(tag.name)")
             })
         }
         
