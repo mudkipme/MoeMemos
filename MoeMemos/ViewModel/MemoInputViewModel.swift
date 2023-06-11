@@ -21,6 +21,7 @@ class MemoInputViewModel: ObservableObject, ResourceManager {
     
     @Published var resourceList = [Resource]()
     @Published var imageUploading = false
+    @Published var saving = false
     @Published var visibility: MemosVisibility = .private
 
     private var anyPhotos: Any?
