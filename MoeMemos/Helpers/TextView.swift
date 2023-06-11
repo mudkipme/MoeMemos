@@ -1,4 +1,3 @@
-//
 //  TextView.swift
 //  MoeMemos
 //
@@ -9,6 +8,7 @@ import SwiftUI
 
 struct TextView: UIViewRepresentable {
     @Binding var text: String
+    @Binding var selection: Range<String.Index>?
     
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView(frame: CGRectZero)
@@ -23,6 +23,12 @@ struct TextView: UIViewRepresentable {
     
     func updateUIView(_ uiView: UITextView, context: Context) {
         uiView.text = text
+        
+        if let selection = selection {
+            uiView.selectedRange = NSRange(selection, in: text)
+        } else {
+            uiView.selectedRange = NSRange()
+        }
     }
     
     class Coordinator: NSObject, UITextViewDelegate {
@@ -35,13 +41,18 @@ struct TextView: UIViewRepresentable {
         func textViewDidChange(_ textView: UITextView) {
             parent.text = textView.text
         }
+        
+        func textViewDidChangeSelection(_ textView: UITextView) {
+            parent.selection = Range(textView.selectedRange, in: textView.text)
+        }
     }
 }
 
 struct TextView_Previews: PreviewProvider {
     @State static var text = "Hello world"
+    @State static var selection: Range<String.Index>? = nil
     
     static var previews: some View {
-        TextView(text: $text)
+        TextView(text: $text, selection: $selection)
     }
 }
