@@ -86,7 +86,7 @@ struct MemoInput: View {
             VStack(alignment: .leading) {
                 privacyMenu
                     .padding(.horizontal)
-                TextEditor(text: $text)
+                TextView(text: $text)
                     .focused($focused)
                     .overlay(alignment: .topLeading) {
                         if text.isEmpty {

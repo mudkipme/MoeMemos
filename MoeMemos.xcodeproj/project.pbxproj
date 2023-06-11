@@ -55,6 +55,7 @@
 		193DE93228C652F7002651E0 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE93128C652F7002651E0 /* Error.swift */; };
 		193F04E229CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 193F04E529CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition */; };
 		193F04E329CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 193F04E529CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition */; };
+		194502F52A36341D00A70A03 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194502F42A36341D00A70A03 /* TextView.swift */; };
 		1948CCAD2996B3FA00AB1986 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.strings */; };
 		194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B273028C3973400A48675 /* MoeMemosApp.swift */; };
 		194B273328C3973400A48675 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B273228C3973400A48675 /* ContentView.swift */; };
@@ -200,6 +201,7 @@
 		193F04E429CCBA9C0010E3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/MoeMemosWidgets.intentdefinition; sourceTree = "<group>"; };
 		193F04E729CCBAB40010E3BF /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MoeMemosWidgets.strings"; sourceTree = "<group>"; };
 		193F04E929CCBAB70010E3BF /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/MoeMemosWidgets.strings"; sourceTree = "<group>"; };
+		194502F42A36341D00A70A03 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		1948CCAE2996B3FA00AB1986 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1948CCB12996BB6C00AB1986 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		1948CCB32996BEEA00AB1986 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -345,6 +347,7 @@
 				1911568929802F200058F18B /* QuickLookRepresentable.swift */,
 				19FC1C7B290DA47C0078A7F2 /* Route.swift */,
 				193D274E29C8D85700BDE4A2 /* TagVisitor.swift */,
+				194502F42A36341D00A70A03 /* TextView.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -765,6 +768,7 @@
 				192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */,
 				199A657B28C474BA00C39994 /* Color.swift in Sources */,
 				199A657D28C4761100C39994 /* Usage.swift in Sources */,
+				194502F52A36341D00A70A03 /* TextView.swift in Sources */,
 				193DE92328C5E267002651E0 /* Settings.swift in Sources */,
 				193F04E229CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */,
 				1934C77C2921670600A169EC /* Attachment.swift in Sources */,
