@@ -13,7 +13,7 @@ struct Navigation: View {
     @State private var path: NavigationPath = NavigationPath([Route.memos])
 
     var body: some View {
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        if UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .reality {
             NavigationSplitView(sidebar: {
                 Sidebar(selection: $selection)
             }) {

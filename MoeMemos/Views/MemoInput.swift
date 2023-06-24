@@ -170,36 +170,23 @@ struct MemoInput: View {
     }
 
     var body: some View {
-        if #available(iOS 16, *) {
-            NavigationStack {
-                editor()
-                    .photosPicker(isPresented: $showingPhotoPicker, selection: Binding(get: {
-                        viewModel.photos ?? []
-                    }, set: { photos in
-                        viewModel.photos = photos
-                    }))
-                    .onChange(of: viewModel.photos) { newValue in
-                        Task {
-                            guard let newValue = newValue else { return }
-                            
-                            if !newValue.isEmpty {
-                                try await upload(images: newValue)
-                                viewModel.photos = []
-                            }
+        NavigationStack {
+            editor()
+                .photosPicker(isPresented: $showingPhotoPicker, selection: Binding(get: {
+                    viewModel.photos ?? []
+                }, set: { photos in
+                    viewModel.photos = photos
+                }))
+                .onChange(of: viewModel.photos) { newValue in
+                    Task {
+                        guard let newValue = newValue else { return }
+                        
+                        if !newValue.isEmpty {
+                            try await upload(images: newValue)
+                            viewModel.photos = []
                         }
                     }
-            }
-        } else {
-            NavigationView {
-                editor()
-                    .sheet(isPresented: $showingPhotoPicker) {
-                        LegacyPhotoPicker { images in
-                            Task {
-                                try await upload(images: images)
-                            }
-                        }
-                    }
-            }
+                }
         }
     }
     

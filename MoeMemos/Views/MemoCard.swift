@@ -15,7 +15,6 @@ struct MemoCard: View {
     
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var showingEdit = false
-    @State private var showingLegacyShareSheet = false
     
     init(_ memo: Memo, defaultMemoVisibility: MemosVisibility) {
         self.memo = memo
@@ -86,16 +85,8 @@ struct MemoCard: View {
         } label: {
             Label("memo.edit", systemImage: "pencil")
         }
-        if #available(iOS 16, *) {
-            ShareLink(item: memo.content) {
-                Label("memo.share", systemImage: "square.and.arrow.up")
-            }
-        } else {
-            Button {
-                showingLegacyShareSheet = true
-            } label: {
-                Label("memo.share", systemImage: "square.and.arrow.up")
-            }
+        ShareLink(item: memo.content) {
+            Label("memo.share", systemImage: "square.and.arrow.up")
         }
         Button(role: .destructive, action: {
             Task {

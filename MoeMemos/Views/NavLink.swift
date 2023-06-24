@@ -12,10 +12,6 @@ struct NavLink<Label> : View where Label : View {
     let label: () -> Label
     
     var body: some View {
-        if #available(iOS 16, *) {
-            NavigationLink(value: route, label: label)
-        } else {
-            NavigationLink(destination: route.destination(), label: label)
-        }
+        NavigationLink(value: route, label: label)
     }
 }

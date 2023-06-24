@@ -18,13 +18,7 @@ struct ContentView: View {
     
     @ViewBuilder
     private func navigation() -> some View {
-        if #available(iOS 16, *) {
-            Navigation(selection: $selection)
-        } else {
-            NavigationView {
-                Sidebar(selection: $selection)
-            }
-        }
+        Navigation(selection: $selection)
     }
     
     var body: some View {

@@ -13,7 +13,7 @@
 		191339B4291D7288001F2B2E /* MoeMemosWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191339B3291D7288001F2B2E /* MoeMemosWidgetsBundle.swift */; };
 		191339B6291D7288001F2B2E /* MemosGraphWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191339B5291D7288001F2B2E /* MemosGraphWidget.swift */; };
 		191339B9291D7289001F2B2E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 191339B8291D7289001F2B2E /* Assets.xcassets */; };
-		191339BF291D7289001F2B2E /* MoeMemosWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		191339BF291D7289001F2B2E /* MoeMemosWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		191339C4291D763A001F2B2E /* MemosManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF2229115A2800C998F5 /* MemosManager.swift */; };
 		191339C5291D765B001F2B2E /* Memo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFA28C3E9B2000C5207 /* Memo.swift */; };
 		191339C6291D7660001F2B2E /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
@@ -35,12 +35,10 @@
 		1919FBE729CF77C900FEF570 /* ExploreMemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */; };
 		1919FBE929CF78BE00FEF570 /* Explore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE829CF78BE00FEF570 /* Explore.swift */; };
 		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
-		192DF0F528C7B71D0077E785 /* LegacyShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */; };
 		1934C77C2921670600A169EC /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1934C77B2921670600A169EC /* Attachment.swift */; };
 		193938DC29CF682D0027939F /* MemoCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193938DB29CF682D0027939F /* MemoCardContent.swift */; };
 		193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89A28CCD34A00FF7EB6 /* Resources.swift */; };
 		193AA89D28CCD38100FF7EB6 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89C28CCD38100FF7EB6 /* Resource.swift */; };
-		193AA89F28CD080000FF7EB6 /* LegacyPhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */; };
 		193AA8A128CD12CD00FF7EB6 /* FormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A028CD12CD00FF7EB6 /* FormData.swift */; };
 		193AA8A328CD1C9300FF7EB6 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A228CD1C9300FF7EB6 /* UIImage.swift */; };
 		193AA8A728CD9ED700FF7EB6 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A628CD9ED700FF7EB6 /* URL.swift */; };
@@ -101,7 +99,7 @@
 		19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E1C5BF28C5191D0072CEEF /* MemoInput.swift */; };
 		19E29A6B2938FBCD00BE9C32 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A6A2938FBCD00BE9C32 /* ShareViewController.swift */; };
 		19E29A6E2938FBCD00BE9C32 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19E29A6C2938FBCD00BE9C32 /* MainInterface.storyboard */; };
-		19E29A722938FBCD00BE9C32 /* MoeMemosShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 19E29A682938FBCD00BE9C32 /* MoeMemosShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		19E29A722938FBCD00BE9C32 /* MoeMemosShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 19E29A682938FBCD00BE9C32 /* MoeMemosShareExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		19E29A782938FCE000BE9C32 /* MoeMemosShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A772938FCE000BE9C32 /* MoeMemosShareView.swift */; };
 		19E29A7D2939A94400BE9C32 /* NSItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A7C2939A94400BE9C32 /* NSItemProvider.swift */; };
 		19E29A7E2939AC5000BE9C32 /* NSItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A7C2939A94400BE9C32 /* NSItemProvider.swift */; };
@@ -180,12 +178,10 @@
 		1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreMemoCard.swift; sourceTree = "<group>"; };
 		1919FBE829CF78BE00FEF570 /* Explore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Explore.swift; sourceTree = "<group>"; };
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
-		192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyShareSheet.swift; sourceTree = "<group>"; };
 		1934C77B2921670600A169EC /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		193938DB29CF682D0027939F /* MemoCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCardContent.swift; sourceTree = "<group>"; };
 		193AA89A28CCD34A00FF7EB6 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		193AA89C28CCD38100FF7EB6 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
-		193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyPhotoPicker.swift; sourceTree = "<group>"; };
 		193AA8A028CD12CD00FF7EB6 /* FormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormData.swift; sourceTree = "<group>"; };
 		193AA8A228CD1C9300FF7EB6 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		193AA8A628CD9ED700FF7EB6 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
@@ -341,8 +337,6 @@
 				193AA8A028CD12CD00FF7EB6 /* FormData.swift */,
 				193DE92A28C619D9002651E0 /* HTTP.swift */,
 				197D9D46292D4B160033AF33 /* ImagePicker.swift */,
-				193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */,
-				192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */,
 				19E6EF2229115A2800C998F5 /* MemosManager.swift */,
 				1911568929802F200058F18B /* QuickLookRepresentable.swift */,
 				19FC1C7B290DA47C0078A7F2 /* Route.swift */,
@@ -796,12 +790,10 @@
 				193DE92828C61488002651E0 /* MemosAPI.swift in Sources */,
 				1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */,
 				31EE786129B9F3A2005F62D0 /* Highlighter.swift in Sources */,
-				193AA89F28CD080000FF7EB6 /* LegacyPhotoPicker.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
 				19C569AA29125BB200745F9D /* ResourceManager.swift in Sources */,
 				195E5D6B28C704AC00784EF5 /* Date.swift in Sources */,
 				19996E6029118AF6001E3583 /* NavLink.swift in Sources */,
-				192DF0F528C7B71D0077E785 /* LegacyShareSheet.swift in Sources */,
 				19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */,
 				19C569A42912493A00745F9D /* ArchivedMemoListViewModel.swift in Sources */,
 				193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */,
@@ -854,6 +846,7 @@
 /* Begin PBXTargetDependency section */
 		191339BE291D7289001F2B2E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 191339AB291D7288001F2B2E /* MoeMemosWidgetsExtension */;
 			targetProxy = 191339BD291D7289001F2B2E /* PBXContainerItemProxy */;
 		};
@@ -869,6 +862,7 @@
 		};
 		19E29A712938FBCD00BE9C32 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 19E29A672938FBCD00BE9C32 /* MoeMemosShareExtension */;
 			targetProxy = 19E29A702938FBCD00BE9C32 /* PBXContainerItemProxy */;
 		};
@@ -932,6 +926,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -962,6 +960,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1105,7 +1107,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1113,6 +1115,10 @@
 				MARKETING_VERSION = 1.5.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1140,7 +1146,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1148,6 +1154,10 @@
 				MARKETING_VERSION = 1.5.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1252,6 +1262,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1280,6 +1294,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

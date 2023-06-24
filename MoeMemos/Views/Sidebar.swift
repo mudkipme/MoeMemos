@@ -16,7 +16,7 @@ struct Sidebar: View {
     @Binding var selection: Route?
 
     var body: some View {
-        List(selection: UIDevice.current.userInterfaceIdiom == .pad ? $selection : nil) {
+        List(selection: UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .reality ? $selection : nil) {
             VStack {
                 Stats()
                     .padding(20)
@@ -42,14 +42,8 @@ struct Sidebar: View {
             .listRowBackground(EmptyView())
             
             Section {
-                if #available(iOS 16, *) {
-                    NavigationLink(value: Route.memos) {
-                        Label("memo.memos", systemImage: "rectangle.grid.1x2")
-                    }
-                } else {
-                    NavigationLink(destination: MemosList(tag: nil), isActive: $toMemosList) {
-                        Label("memo.memos", systemImage: "rectangle.grid.1x2")
-                    }
+                NavigationLink(value: Route.memos) {
+                    Label("memo.memos", systemImage: "rectangle.grid.1x2")
                 }
                 NavLink(route: .explore) {
                     Label("explore", systemImage: "house")
@@ -76,7 +70,7 @@ struct Sidebar: View {
         }
         .listStyle(.sidebar)
         .toolbar {
-            if #available(iOS 16, *), UIDevice.current.userInterfaceIdiom == .pad {
+            if UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .reality {
                 Button(action: {
                     selection = .settings
                 }) {
