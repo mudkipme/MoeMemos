@@ -38,7 +38,14 @@ class UserState: ObservableObject {
         let client = Memos(host: url, openId: nil)
         
         try await client.auth()
-        let response = try await client.signIn(data: input)
+        do {
+            try await client.loadStatus()
+        } catch {
+            print(error)
+        }
+        try await client.signIn(data: input)
+        
+        let response = try await client.me()
         await memosManager.reset(memosHost: url, openId: nil)
         currentUser = response.data
     }
