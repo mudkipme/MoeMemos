@@ -24,13 +24,14 @@ struct TextView: UIViewRepresentable {
     func updateUIView(_ uiView: UITextView, context: Context) {
         uiView.text = text
         
-        if let selection = selection {
+        if let selection = selection, selection.upperBound <= text.endIndex {
             uiView.selectedRange = NSRange(selection, in: text)
         } else {
             uiView.selectedRange = NSRange()
         }
     }
     
+    @MainActor
     class Coordinator: NSObject, UITextViewDelegate {
         let parent: TextView
         
@@ -39,11 +40,11 @@ struct TextView: UIViewRepresentable {
         }
         
         func textViewDidChange(_ textView: UITextView) {
-            parent.text = textView.text
+            parent._text.wrappedValue = textView.text
         }
         
         func textViewDidChangeSelection(_ textView: UITextView) {
-            parent.selection = Range(textView.selectedRange, in: textView.text)
+            parent._selection.wrappedValue = Range(textView.selectedRange, in: textView.text)
         }
     }
 }
