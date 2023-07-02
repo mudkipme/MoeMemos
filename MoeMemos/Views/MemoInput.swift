@@ -287,7 +287,7 @@ struct MemoInput: View {
     }
     
     private func insert(tag: Tag?) {
-        let tagText = "#\(tag?.name ?? "")"
+        let tagText = "#\(tag?.name ?? "") "
         guard let selection = selection else {
             text += tagText
             return
