@@ -41,13 +41,15 @@ struct MemosSignIn: MemosAPI {
         let username: String
         let password: String
     }
-
-    typealias Output = MemosOutput<MemosUser>
     
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .json
-    static let decodeMode: HTTPBodyDecodeMode = .json
-    static let path = "/api/auth/signin"
+    static let decodeMode: HTTPBodyDecodeMode = .none
+    
+    static func path(_ memos: Memos, _ params: ()) -> String {
+        memos.status != nil && memos.status?.profile.version.compare("0.13.2", options: .numeric)
+            != .orderedAscending ? "/api/v1/auth/signin" : "/api/auth/signin"
+    }
 }
 
 struct MemosLogout: MemosAPI {

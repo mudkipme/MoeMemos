@@ -40,8 +40,8 @@ class Memos {
         }
     }
     
-    func signIn(data: MemosSignIn.Input) async throws -> MemosSignIn.Output {
-        return try await MemosSignIn.request(self, data: data, param: ())
+    func signIn(data: MemosSignIn.Input) async throws {
+        _ = try await MemosSignIn.request(self, data: data, param: ())
     }
     
     func logout() async throws {
