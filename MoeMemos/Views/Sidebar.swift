@@ -96,6 +96,11 @@ struct Sidebar: View {
                 print(error)
             }
         }
+        .onChange(of: userState.currentUser?.id) { newValue in
+            Task {
+                try await memosViewModel.loadTags()
+            }
+        }
     }
 }
 

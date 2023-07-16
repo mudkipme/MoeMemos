@@ -29,7 +29,7 @@ class MemosViewModel: ObservableObject {
         do {
             loading = true
             let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
-            memoList = response.data
+            memoList = response
             loading = false
             inited = true
         } catch {
@@ -40,14 +40,14 @@ class MemosViewModel: ObservableObject {
     
     func loadTags() async throws {
         let response = try await memos.tags(data: nil)
-        tags = response.data.map({ name in
+        tags = response.map({ name in
             Tag(name: name)
         })
     }
     
     func createMemo(content: String, visibility: MemosVisibility = .private, resourceIdList: [Int]? = nil) async throws {
         let response = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: visibility, resourceIdList: resourceIdList))
-        memoList.insert(response.data, at: 0)
+        memoList.insert(response, at: 0)
         try await loadTags()
     }
     
@@ -63,7 +63,7 @@ class MemosViewModel: ObservableObject {
     func updateMemoOrganizer(id: Int, pinned: Bool) async throws {
         let response = try await memos.updateMemoOrganizer(memoId: id, data: MemosOrganizer.Input(pinned: pinned))
         // the response might be incorrect
-        var memo = response.data
+        var memo = response
         memo.pinned = pinned
         
         updateMemo(memo)
@@ -78,7 +78,7 @@ class MemosViewModel: ObservableObject {
     
     func editMemo(id: Int, content: String, visibility: MemosVisibility = .private, resourceIdList: [Int]? = nil) async throws {
         let response = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: nil, content: content, visibility: visibility, resourceIdList: resourceIdList))
-        updateMemo(response.data)
+        updateMemo(response)
         try await loadTags()
     }
     

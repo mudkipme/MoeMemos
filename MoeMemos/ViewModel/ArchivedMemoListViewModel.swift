@@ -19,7 +19,7 @@ class ArchivedMemoListViewModel: ObservableObject {
     
     func loadArchivedMemos() async throws {
         let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .archived, visibility: nil))
-        archivedMemoList = response.data
+        archivedMemoList = response
     }
     
     func restoreMemo(id: Int) async throws {

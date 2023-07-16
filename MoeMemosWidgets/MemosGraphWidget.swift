@@ -35,10 +35,10 @@ struct Provider: IntentTimelineProvider {
         }
         
         let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
-        let memos = Memos(host: hostURL, openId: openId)
+        let memos = try await Memos.create(host: hostURL, openId: openId)
         
         let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
-        return DailyUsageStat.calculateMatrix(memoList: response.data)
+        return DailyUsageStat.calculateMatrix(memoList: response)
     }
 
     func getTimeline(for configuration: MemosGraphWidgetConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {

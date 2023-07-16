@@ -24,9 +24,8 @@ class MemosManager: ObservableObject {
     }
     
     func reset(memosHost: URL, openId: String?) async {
-        memos = Memos(host: memosHost, openId: openId)
         do {
-            try await memos?.loadStatus()
+            memos = try await Memos.create(host: memosHost, openId: openId)
         } catch {
             print(error)
         }

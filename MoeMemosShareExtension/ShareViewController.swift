@@ -87,7 +87,7 @@ class ShareViewController: SLComposeServiceViewController {
                     
                     guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
                     let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
-                    resourceList.append(response.data)
+                    resourceList.append(response)
                 }
             }
         }
@@ -108,6 +108,6 @@ class ShareViewController: SLComposeServiceViewController {
         }
         
         let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
-        return Memos(host: hostURL, openId: openId)
+        return try await Memos.create(host: hostURL, openId: openId)
     }
 }

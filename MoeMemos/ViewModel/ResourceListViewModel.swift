@@ -19,7 +19,7 @@ class ResourceListViewModel: ObservableObject, ResourceManager {
     
     func loadResources() async throws {
         let response = try await memos.listResources()
-        resourceList = response.data.filter({ resource in
+        resourceList = response.filter({ resource in
             resource.type.hasPrefix("image/")
         })
     }
