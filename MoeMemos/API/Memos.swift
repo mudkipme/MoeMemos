@@ -22,22 +22,21 @@ class Memos {
     let session: URLSession
     private(set) var status: MemosServerStatus? = nil
     
-    init(host: URL, openId: String?) {
+    private init(host: URL, openId: String?) {
         self.host = host
         self.openId = (openId?.isEmpty ?? true) ? nil : openId
         session = URLSession(configuration: urlSessionConfiguration)
-        
-        // Migrate cookies to group container
-        let legacyCookieStorage = HTTPCookieStorage.shared
-        if let legacyCookies = legacyCookieStorage.cookies(for: host), !legacyCookies.isEmpty {
-            cookieStorage.setCookies(legacyCookies, for: host, mainDocumentURL: nil)
-            legacyCookies.forEach(legacyCookieStorage.deleteCookie)
-        }
         
         // No longer uses cookie when logged-in with Open API
         if let openId = openId, !openId.isEmpty {
             session.configuration.httpCookieStorage?.removeCookies(since: .distantPast)
         }
+    }
+    
+    static func create(host: URL, openId: String?) async throws -> Memos {
+        let memos = Memos(host: host, openId: openId)
+        try await memos.loadStatus()
+        return memos
     }
     
     func signIn(data: MemosSignIn.Input) async throws {
@@ -86,6 +85,11 @@ class Memos {
     }
     
     func uploadResource(imageData: Data, filename: String, contentType: String) async throws -> MemosUploadResource.Output {
+        if self.status?.profile.version.compare("0.10.2", options: .numeric) == .orderedAscending {
+            let response = try await MemosUploadResourceLegacy.request(self, data: [Multipart(name: "file", filename: filename, contentType: contentType, data: imageData)], param: ())
+            return response.data
+        }
+        
         return try await MemosUploadResource.request(self, data: [Multipart(name: "file", filename: filename, contentType: contentType, data: imageData)], param: ())
     }
     
@@ -93,13 +97,16 @@ class Memos {
         return try await MemosDeleteResource.request(self, data: nil, param: id)
     }
     
-    func auth() async throws {
-        _ = try await MemosAuth.request(self, data: nil, param: ())
-    }
-    
     func loadStatus() async throws {
-        let response = try await MemosStatus.request(self, data: nil, param: ())
-        status = response.data
+        do {
+            let response = try await MemosStatus.request(self, data: nil, param: ())
+            status = response
+        } catch MemosError.invalidStatusCode(let code, _) {
+            if code >= 400 && code < 500 {
+                let response = try await MemosV0Status.request(self, data: nil, param: ())
+                status = response.data
+            }
+        }
     }
     
     func upsertTag(name: String) async throws -> MemosUpsertTag.Output {

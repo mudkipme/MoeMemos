@@ -24,9 +24,9 @@ class ExploreViewModel: ObservableObject {
         do {
             loading = true
             let response = try await memos.listAllMemo(data: MemosListAllMemo.Input(pinned: nil, tag: nil, visibility: nil, limit: 20, offset: nil))
-            memoList = response.data
+            memoList = response
             loading = false
-            hasMore = response.data.count >= 20
+            hasMore = response.count >= 20
         } catch {
             loading = false
             throw error
@@ -38,9 +38,9 @@ class ExploreViewModel: ObservableObject {
         do {
             loading = true
             let response = try await memos.listAllMemo(data: MemosListAllMemo.Input(pinned: nil, tag: nil, visibility: nil, limit: 20, offset: memoList.count))
-            memoList += response.data
+            memoList += response
             loading = false
-            hasMore = response.data.count >= 20
+            hasMore = response.count >= 20
         } catch {
             loading = false
             throw error

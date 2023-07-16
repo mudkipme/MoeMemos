@@ -41,7 +41,7 @@ class MemoInputViewModel: ObservableObject, ResourceManager {
         
         guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
         let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
-        resourceList.append(response.data)
+        resourceList.append(response)
     }
     
     func deleteResource(id: Int) async throws {

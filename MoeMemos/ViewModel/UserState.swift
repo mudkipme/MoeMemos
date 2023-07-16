@@ -29,25 +29,18 @@ class UserState: ObservableObject {
     
     func loadCurrentUser() async throws {
         let response = try await memos.me()
-        currentUser = response.data
+        currentUser = response
     }
     
     func signIn(memosHost: String, input: MemosSignIn.Input) async throws {
         guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
         
-        let client = Memos(host: url, openId: nil)
-        
-        try await client.auth()
-        do {
-            try await client.loadStatus()
-        } catch {
-            print(error)
-        }
+        let client = try await Memos.create(host: url, openId: nil)
         try await client.signIn(data: input)
         
         let response = try await client.me()
         await memosManager.reset(memosHost: url, openId: nil)
-        currentUser = response.data
+        currentUser = response
     }
     
     func signIn(memosOpenAPI: String) async throws {
@@ -61,10 +54,10 @@ class UserState: ObservableObject {
         components.query = nil
         components.fragment = nil
         
-        let client = Memos(host: components.url!, openId: openId)
+        let client = try await Memos.create(host: components.url!, openId: openId)
         let response = try await client.me()
         await memosManager.reset(memosHost: components.url!, openId: openId)
-        currentUser = response.data
+        currentUser = response
     }
     
     func logout() async throws {

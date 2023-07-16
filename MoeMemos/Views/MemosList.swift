@@ -70,6 +70,11 @@ struct MemosList: View {
                 print(error)
             }
         }
+        .onChange(of: userState.currentUser?.id, perform: { newValue in
+            Task {
+                try await memosViewModel.loadMemos()
+            }
+        })
         .onChange(of: memosViewModel.memoList, perform: { newValue in
             filteredMemoList = filterMemoList(newValue)
         })
