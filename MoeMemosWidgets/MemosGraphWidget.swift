@@ -62,7 +62,7 @@ struct MemosGraphEntryView : View {
     var entry: Provider.Entry
 
     var body: some View {
-        Heatmap(matrix: entry.matrix ?? DailyUsageStat.initialMatrix)
+        Heatmap(matrix: entry.matrix ?? DailyUsageStat.initialMatrix, alignment: .center)
             .padding()
     }
 }

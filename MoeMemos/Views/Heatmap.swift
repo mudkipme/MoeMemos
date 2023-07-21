@@ -13,6 +13,7 @@ fileprivate let defaultRows = [GridItem](repeating: GridItem(.flexible(minimum: 
 struct Heatmap: View {
     let rows = defaultRows
     let matrix: [DailyUsageStat]
+    let alignment: HorizontalAlignment
     
     var body: some View {
         GeometryReader { geometry in
@@ -21,16 +22,26 @@ struct Heatmap: View {
                     HeatmapStat(day: day)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: frameAlignment)
+        }
+    }
+    
+    private var frameAlignment: Alignment {
+        switch alignment {
+        case .center: return .center
+        case .leading: return .leading
+        case .trailing: return .trailing
+        default: return .center
         }
     }
         
     private func count(in size: CGSize) -> Int {
-        let cellHeight = size.height / CGFloat(daysInWeek)
+        let cellHeight = (size.height + gridSpacing) / CGFloat(daysInWeek)
         if cellHeight <= 0 {
             return 0
         }
         let cellWidth = cellHeight
-        let columns = Int(floor(size.width / cellWidth))
+        let columns = Int(floor((size.width + gridSpacing) / cellWidth))
         let fullCells = Int(columns) * daysInWeek
         
         let today = Calendar.current.startOfDay(for: .now)
@@ -45,6 +56,6 @@ struct Heatmap: View {
 
 struct HeatMap_Previews: PreviewProvider {
     static var previews: some View {
-        Heatmap(matrix: DailyUsageStat.initialMatrix)
+        Heatmap(matrix: DailyUsageStat.initialMatrix, alignment: .center)
     }
 }
