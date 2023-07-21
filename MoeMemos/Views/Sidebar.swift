@@ -32,7 +32,7 @@ struct Sidebar: View {
                         Text(weekDaySymbols.last ?? "")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
-                    Heatmap(matrix: memosViewModel.matrix)
+                    Heatmap(matrix: memosViewModel.matrix, alignment: .trailing)
                 }
                 .frame(minHeight: 120, maxHeight: 120)
                 .padding(.bottom, 10)
