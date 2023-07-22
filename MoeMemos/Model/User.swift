@@ -22,7 +22,6 @@ struct MemosUser: Decodable {
     let nickname: String?
     let openId: String
     let role: String
-    let rowStatus: MemosRowStatus
     let updatedTs: Date
     let userSettingList: [MemosUserSetting]?
     
