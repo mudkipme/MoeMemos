@@ -129,6 +129,9 @@ struct Login: View {
             memosHost = hostAddress
             memosOpenId = nil
         } else {
+            if openId.trimmingCharacters(in: .whitespaces).isEmpty {
+                throw MemosError.invalidParams
+            }
             try await userState.signIn(memosHost: hostAddress, openId: openId.trimmingCharacters(in: .whitespaces))
             memosHost = try userState.memos.host.absoluteString
             memosOpenId = try userState.memos.openId
