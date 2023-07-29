@@ -39,10 +39,10 @@
 "input.save" = "記下";
 "input.visibility" = "MEMO 可見性";
 
-"login.open-api.hint" = "從 ✍️memos 設定中複製 Open API。";
+"login.open-id.hint" = "從 ✍️memos 設定中複製 Open ID。";
 "login.host" = "伺服器地址";
 "login.method" = "登入方式";
-"login.open-api" = "Open API";
+"login.open-id" = "Open ID";
 "login.password" = "密碼";
 "login.hint" = "請輸入您的 [✍️memos](https://github.com/usememos/memos) 伺服器的登入資訊。";
 "login.username" = "使用者名稱";
