@@ -39,10 +39,10 @@
 "input.save" = "Save";
 "input.visibility" = "Memo visibility";
 
-"login.open-api.hint" = "Copy “Open API” from Setting in ✍️memos.";
+"login.open-id.hint" = "Copy “Open ID” from Setting in ✍️memos.";
 "login.host" = "Host";
 "login.method" = "Login method";
-"login.open-api" = "Open API";
+"login.open-id" = "Open ID";
 "login.password" = "Password";
 "login.hint" = "Please input the login information of your\n[✍️memos](https://github.com/usememos/memos) server.";
 "login.username" = "Username";

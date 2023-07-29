@@ -43,20 +43,11 @@ class UserState: ObservableObject {
         currentUser = response
     }
     
-    func signIn(memosOpenAPI: String) async throws {
-        guard let url = URL(string: memosOpenAPI) else { throw MemosError.invalidParams }
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { throw MemosError.invalidParams }
-        guard let openId = components.queryItems?
-            .first(where: { queryItem in queryItem.name == "openId" })?
-            .value else { throw MemosError.invalidOpenAPI }
-        
-        components.path = ""
-        components.query = nil
-        components.fragment = nil
-        
-        let client = try await Memos.create(host: components.url!, openId: openId)
+    func signIn(memosHost: String, openId: String) async throws {
+        guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
+        let client = try await Memos.create(host: url, openId: openId)
         let response = try await client.me()
-        await memosManager.reset(memosHost: components.url!, openId: openId)
+        await memosManager.reset(memosHost: url, openId: openId)
         currentUser = response
     }
     

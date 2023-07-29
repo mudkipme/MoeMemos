@@ -19,6 +19,7 @@ struct Login: View {
     @State private var host = ""
     @State private var email = ""
     @State private var password = ""
+    @State private var openId = ""
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject private var userState: UserState
     @EnvironmentObject private var memosViewModel: MemosViewModel
@@ -41,18 +42,19 @@ struct Login: View {
             
             Picker("login.method", selection: $loginMethod) {
                 Text("login.username-and-password").tag(LoginMethod.usernamdAndPassword)
-                Text("login.open-api").tag(LoginMethod.openAPI)
+                Text("login.open-id").tag(LoginMethod.openAPI)
             }
             .pickerStyle(.segmented)
             .padding(.bottom, 10)
             
+            TextField("login.host", text: $host)
+                .textContentType(.URL)
+                .keyboardType(.URL)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
+                .textFieldStyle(.roundedBorder)
+            
             if loginMethod == .usernamdAndPassword {
-                TextField("login.host", text: $host)
-                    .textContentType(.URL)
-                    .keyboardType(.URL)
-                    .textInputAutocapitalization(.never)
-                    .disableAutocorrection(true)
-                    .textFieldStyle(.roundedBorder)
                 TextField("login.username", text: $email)
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
@@ -62,13 +64,13 @@ struct Login: View {
                 SecureField("login.password", text: $password)
                     .textFieldStyle(.roundedBorder)
             } else {
-                TextField("login.open-api", text: $host)
+                TextField("login.open-id", text: $openId)
                     .textContentType(.URL)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
                     .textFieldStyle(.roundedBorder)
-                Text("login.open-api.hint")
+                Text("login.open-id.hint")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -127,7 +129,7 @@ struct Login: View {
             memosHost = hostAddress
             memosOpenId = nil
         } else {
-            try await userState.signIn(memosOpenAPI: hostAddress)
+            try await userState.signIn(memosHost: hostAddress, openId: openId.trimmingCharacters(in: .whitespaces))
             memosHost = try userState.memos.host.absoluteString
             memosOpenId = try userState.memos.openId
         }
