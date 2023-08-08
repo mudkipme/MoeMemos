@@ -165,6 +165,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		190322DC2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MainInterface.strings; sourceTree = "<group>"; };
+		190322DD2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
+		190322DE2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1911568929802F200058F18B /* QuickLookRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLookRepresentable.swift; sourceTree = "<group>"; };
 		191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MoeMemosWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		191339AE291D7288001F2B2E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -653,6 +656,7 @@
 				"zh-Hans",
 				"zh-Hant",
 				Base,
+				de,
 			);
 			mainGroup = 194B272428C3973400A48675;
 			packageReferences = (
@@ -881,6 +885,7 @@
 				193F04E429CCBA9C0010E3BF /* Base */,
 				193F04E729CCBAB40010E3BF /* zh-Hans */,
 				193F04E929CCBAB70010E3BF /* zh-Hant */,
+				190322DD2A82929300CAA50D /* de */,
 			);
 			name = MoeMemosWidgets.intentdefinition;
 			sourceTree = "<group>";
@@ -891,6 +896,7 @@
 				1948CCAE2996B3FA00AB1986 /* en */,
 				1948CCB12996BB6C00AB1986 /* zh-Hans */,
 				1948CCB32996BEEA00AB1986 /* zh-Hant */,
+				190322DE2A82929300CAA50D /* de */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -901,6 +907,7 @@
 				1948CCB92996BFDF00AB1986 /* zh-Hans */,
 				1948CCBA2996BFE200AB1986 /* zh-Hant */,
 				193F04E129CCBA320010E3BF /* Base */,
+				190322DC2A82929300CAA50D /* de */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
