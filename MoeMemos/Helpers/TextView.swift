@@ -22,12 +22,19 @@ struct TextView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UITextView, context: Context) {
-        uiView.text = text
+        if text != uiView.text {
+            uiView.text = text
+        }
         
         if let selection = selection, selection.upperBound <= text.endIndex {
-            uiView.selectedRange = NSRange(selection, in: text)
+            let range = NSRange(selection, in: text)
+            if uiView.selectedRange != range {
+                uiView.selectedRange = range
+            }
         } else {
-            uiView.selectedRange = NSRange()
+            if uiView.selectedRange.upperBound != 0 {
+                uiView.selectedRange = NSRange()
+            }
         }
     }
     
