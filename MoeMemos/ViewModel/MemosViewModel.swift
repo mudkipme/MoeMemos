@@ -89,4 +89,12 @@ class MemosViewModel: ObservableObject {
         
         try await loadTags()
     }
+    
+    func deleteTag(name: String) async throws {
+        _ = try await memos.deleteTag(name: name)
+        
+        tags.removeAll { tag in
+            tag.name == name
+        }
+    }
 }

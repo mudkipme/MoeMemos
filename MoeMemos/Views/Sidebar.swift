@@ -69,6 +69,13 @@ struct Sidebar: View {
                     NavLink(route: .tag(tag)) {
                         Label(tag.name, systemImage: "number")
                     }
+                }.onDelete { indexSet in
+                    let toDeleteTags = indexSet.map { memosViewModel.tags[$0].name }
+                    Task {
+                        for tag in toDeleteTags {
+                            try await memosViewModel.deleteTag(name: tag)
+                        }
+                    }
                 }
             } header: {
                 Text("tags")
