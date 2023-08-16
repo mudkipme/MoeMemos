@@ -117,6 +117,10 @@ class Memos {
         return try await MemosListAllMemo.request(self, data: data, param: ())
     }
     
+    func deleteTag(name: String) async throws -> MemosDeleteTag.Output {
+        return try await MemosDeleteTag.request(self, data: MemosDeleteTag.Input(name: name), param: ())
+    }
+    
     func url(for resource: Resource) -> URL {
         if let externalLink = resource.externalLink?.encodeUrlPath(), let url = URL(string: externalLink) {
             return url

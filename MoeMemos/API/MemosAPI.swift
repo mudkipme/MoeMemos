@@ -235,6 +235,17 @@ struct MemosListAllMemo: MemosAPI {
     static let path = "/api/v1/memo/all"
 }
 
+struct MemosDeleteTag: MemosAPI {
+    struct Input: Encodable {
+        let name: String
+    }
+    
+    static let method: HTTPMethod = .post
+    static let encodeMode: HTTPBodyEncodeMode = .json
+    static let decodeMode: HTTPBodyDecodeMode = .none
+    static let path = "/api/v1/tag/delete"
+}
+
 struct MemosErrorOutput: Decodable {
     let error: String
     let message: String
