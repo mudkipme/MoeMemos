@@ -61,6 +61,12 @@ struct MemoInput: View {
                 }
                 
                 Button {
+                    toggleTodoItem()
+                } label: {
+                    Image(systemName: "checkmark.square")
+                }
+                
+                Button {
                     showingPhotoPicker = true
                 } label: {
                     Image(systemName: "photo.on.rectangle")
@@ -296,6 +302,43 @@ struct MemoInput: View {
         text = text.replacingCharacters(in: selection, with: tagText)
         let index = text.index(selection.lowerBound, offsetBy: tagText.count)
         self.selection = index..<text.index(selection.lowerBound, offsetBy: tagText.count)
+    }
+    
+    private func toggleTodoItem() {
+        var currentText = text
+        guard let currentSelection = selection else { return }
+        
+        let contentBefore = currentText[currentText.startIndex..<currentSelection.lowerBound]
+        let lastLineBreak = contentBefore.lastIndex(of: "\n")
+        let nextLineBreak = currentText[currentSelection.lowerBound...].firstIndex(of: "\n") ?? currentText.endIndex
+        let currentLine: Substring
+        if let lastLineBreak = lastLineBreak {
+            currentLine = currentText[currentText.index(after: lastLineBreak)..<nextLineBreak]
+        } else {
+            currentLine = currentText[currentText.startIndex..<nextLineBreak]
+        }
+    
+        let contentBeforeCurrentLine = currentText[currentText.startIndex..<currentLine.startIndex]
+        let contentAfterCurrentLine = currentText[nextLineBreak..<currentText.endIndex]
+        
+        for prefixStr in listItemSymbolList {
+            if (!currentLine.hasPrefix(prefixStr)) {
+                continue
+            }
+            
+            if prefixStr == "- [ ] " {
+                text = contentBeforeCurrentLine + "- [x] " + currentLine[currentLine.index(currentLine.startIndex, offsetBy: prefixStr.count)..<currentLine.endIndex] + contentAfterCurrentLine
+                return
+            }
+            
+            let offset = "- [ ] ".count - prefixStr.count
+            text = contentBeforeCurrentLine + "- [ ] " + currentLine[currentLine.index(currentLine.startIndex, offsetBy: prefixStr.count)..<currentLine.endIndex] + contentAfterCurrentLine
+            selection = text.index(currentSelection.lowerBound, offsetBy: offset)..<text.index(currentSelection.upperBound, offsetBy: offset)
+            return
+        }
+        
+        text = contentBeforeCurrentLine + "- [ ] " + currentLine + contentAfterCurrentLine
+        selection = text.index(currentSelection.lowerBound, offsetBy: "- [ ] ".count)..<text.index(currentSelection.upperBound, offsetBy: "- [ ] ".count)
     }
 }
 
