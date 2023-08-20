@@ -79,12 +79,7 @@ class ShareViewController: SLComposeServiceViewController {
                 }
                 
                 if attachment.canLoadObject(ofClass: UIImage.self),
-                   let image = try await attachment.loadObject(ofClass: UIImage.self) {
-                    var image = image
-                    if image.size.height > 1024 || image.size.width > 1024 {
-                        image = image.scale(to: CGSize(width: 1024, height: 1024))
-                    }
-                    
+                   let image = try await attachment.loadObject(ofClass: UIImage.self) {                    
                     guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
                     let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
                     resourceList.append(response)
