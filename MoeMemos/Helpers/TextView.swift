@@ -9,6 +9,7 @@ import SwiftUI
 struct TextView: UIViewRepresentable {
     @Binding var text: String
     @Binding var selection: Range<String.Index>?
+    let shouldChangeText: ((_ range: Range<String.Index>, _ replacementText: String) -> Bool)?
     
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView(frame: CGRectZero)
@@ -53,6 +54,13 @@ struct TextView: UIViewRepresentable {
         func textViewDidChangeSelection(_ textView: UITextView) {
             parent._selection.wrappedValue = Range(textView.selectedRange, in: textView.text)
         }
+        
+        func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+            if let shouldChangeText = parent.shouldChangeText, let textRange = Range(range, in: textView.text) {
+                return shouldChangeText(textRange, text)
+            }
+            return true
+        }
     }
 }
 
@@ -61,6 +69,6 @@ struct TextView_Previews: PreviewProvider {
     @State static var selection: Range<String.Index>? = nil
     
     static var previews: some View {
-        TextView(text: $text, selection: $selection)
+        TextView(text: $text, selection: $selection, shouldChangeText: nil)
     }
 }
