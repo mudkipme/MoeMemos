@@ -18,12 +18,14 @@ private let urlSessionConfiguration = {
 
 class Memos {
     let host: URL
+    let accessToken: String?
     let openId: String?
     let session: URLSession
     private(set) var status: MemosServerStatus? = nil
     
-    private init(host: URL, openId: String?) {
+    private init(host: URL, accessToken: String?, openId: String?) {
         self.host = host
+        self.accessToken = accessToken?.isEmpty ?? true ? nil : accessToken
         self.openId = (openId?.isEmpty ?? true) ? nil : openId
         session = URLSession(configuration: urlSessionConfiguration)
         
@@ -33,8 +35,8 @@ class Memos {
         }
     }
     
-    static func create(host: URL, openId: String?) async throws -> Memos {
-        let memos = Memos(host: host, openId: openId)
+    static func create(host: URL, accessToken: String?, openId: String?) async throws -> Memos {
+        let memos = Memos(host: host, accessToken: accessToken, openId: openId)
         try await memos.loadStatus()
         return memos
     }

@@ -6,19 +6,27 @@
 //
 
 import SwiftUI
+import KeychainSwift
 
 struct Login: View {
     private enum LoginMethod: Hashable {
         case usernamdAndPassword
+        case accessToken
         case openAPI
     }
     
     @AppStorage(memosHostKey, store: UserDefaults(suiteName: groupContainerIdentifier)) var memosHost = ""
     @AppStorage(memosOpenIdKey, store: UserDefaults(suiteName: groupContainerIdentifier)) var memosOpenId: String?
+    @State private var keychain = {
+        let keychain = KeychainSwift()
+        keychain.accessGroup = keychainAccessGroupName
+        return keychain
+    }()
 
     @State private var host = ""
     @State private var email = ""
     @State private var password = ""
+    @State private var accessToken = ""
     @State private var openId = ""
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject private var userState: UserState
@@ -42,6 +50,7 @@ struct Login: View {
             
             Picker("login.method", selection: $loginMethod) {
                 Text("login.username-and-password").tag(LoginMethod.usernamdAndPassword)
+                Text("login.access-token").tag(LoginMethod.accessToken)
                 Text("login.open-id").tag(LoginMethod.openAPI)
             }
             .pickerStyle(.segmented)
@@ -63,6 +72,12 @@ struct Login: View {
                     .textFieldStyle(.roundedBorder)
                 SecureField("login.password", text: $password)
                     .textFieldStyle(.roundedBorder)
+            } else if loginMethod == .accessToken {
+                SecureField("login.access-token", text: $accessToken)
+                    .textFieldStyle(.roundedBorder)
+                Text("login.access-token.hint")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
             } else {
                 TextField("login.open-id", text: $openId)
                     .textContentType(.URL)
@@ -127,6 +142,16 @@ struct Login: View {
                     username: email.trimmingCharacters(in: .whitespaces),
                     password: password))
             memosHost = hostAddress
+            keychain.delete(memosAccessTokenKey)
+            memosOpenId = nil
+        } else if loginMethod == .accessToken {
+            if accessToken.trimmingCharacters(in: .whitespaces).isEmpty {
+                throw MemosError.invalidParams
+            }
+            
+            try await userState.signIn(memosHost: hostAddress, accessToken: accessToken.trimmingCharacters(in: .whitespaces))
+            memosHost = try userState.memos.host.absoluteString
+            keychain.set(accessToken.trimmingCharacters(in: .whitespaces), forKey: memosAccessTokenKey)
             memosOpenId = nil
         } else {
             if openId.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -134,6 +159,7 @@ struct Login: View {
             }
             try await userState.signIn(memosHost: hostAddress, openId: openId.trimmingCharacters(in: .whitespaces))
             memosHost = try userState.memos.host.absoluteString
+            keychain.delete(memosAccessTokenKey)
             memosOpenId = try userState.memos.openId
         }
         

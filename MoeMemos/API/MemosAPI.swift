@@ -292,6 +292,10 @@ extension MemosAPI {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         
+        if let accessToken = memos.accessToken, !accessToken.isEmpty {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        
         if let accept = decodeMode.contentType() {
             request.setValue(accept, forHTTPHeaderField: "Accept")
         }

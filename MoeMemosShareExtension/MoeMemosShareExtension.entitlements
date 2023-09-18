@@ -6,5 +6,9 @@
 	<array>
 		<string>group.me.mudkip.MoeMemos</string>
 	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)me.mudkip.MoeMemos</string>
+	</array>
 </dict>
 </plist>

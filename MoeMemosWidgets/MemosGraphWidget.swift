@@ -8,6 +8,7 @@
 import WidgetKit
 import SwiftUI
 import Intents
+import KeychainSwift
 
 struct Provider: IntentTimelineProvider {
     func placeholder(in context: Context) -> MemosGraphEntry {
@@ -34,8 +35,13 @@ struct Provider: IntentTimelineProvider {
             return nil
         }
         
+        let keychain = KeychainSwift()
+        keychain.accessGroup = keychainAccessGroupName
+        let accessToken = keychain.get(memosAccessTokenKey)
+        
         let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
-        let memos = try await Memos.create(host: hostURL, openId: openId)
+        
+        let memos = try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)
         
         let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
         return DailyUsageStat.calculateMatrix(memoList: response)
@@ -77,6 +83,7 @@ struct MemosGraphWidget: Widget {
         .supportedFamilies([.systemSmall, .systemMedium])
         .configurationDisplayName("widget.memo-graph")
         .description("widget.memo-graph.description")
+        .contentMarginsDisabled()
     }
 }
 

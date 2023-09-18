@@ -22,8 +22,8 @@ class UserState: ObservableObject {
     @Published private(set) var currentUser: MemosUser?
     @Published var showingLogin = false
     
-    func reset(memosHost: String, openId: String?) async throws {
-        try await memosManager.reset(memosHost: memosHost, openId: openId)
+    func reset(memosHost: String, accessToken: String?, openId: String?) async throws {
+        try await memosManager.reset(memosHost: memosHost, accessToken: accessToken, openId: openId)
         currentUser = nil
     }
     
@@ -35,19 +35,27 @@ class UserState: ObservableObject {
     func signIn(memosHost: String, input: MemosSignIn.Input) async throws {
         guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
         
-        let client = try await Memos.create(host: url, openId: nil)
+        let client = try await Memos.create(host: url, accessToken: nil, openId: nil)
         try await client.signIn(data: input)
         
         let response = try await client.me()
-        await memosManager.reset(memosHost: url, openId: nil)
+        await memosManager.reset(memosHost: url, accessToken: nil, openId: nil)
+        currentUser = response
+    }
+    
+    func signIn(memosHost: String, accessToken: String) async throws {
+        guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
+        let client = try await Memos.create(host: url, accessToken: accessToken, openId: nil)
+        let response = try await client.me()
+        await memosManager.reset(memosHost: url, accessToken: accessToken, openId: nil)
         currentUser = response
     }
     
     func signIn(memosHost: String, openId: String) async throws {
         guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
-        let client = try await Memos.create(host: url, openId: openId)
+        let client = try await Memos.create(host: url, accessToken: nil, openId: openId)
         let response = try await client.me()
-        await memosManager.reset(memosHost: url, openId: openId)
+        await memosManager.reset(memosHost: url, accessToken: nil, openId: openId)
         currentUser = response
     }
     
