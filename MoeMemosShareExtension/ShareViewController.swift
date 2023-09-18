@@ -8,6 +8,7 @@
 import UIKit
 import Social
 import SwiftUI
+import KeychainSwift
 
 class ShareViewController: SLComposeServiceViewController {
     
@@ -102,7 +103,11 @@ class ShareViewController: SLComposeServiceViewController {
             throw MemosError.notLogin
         }
         
+        let keychain = KeychainSwift()
+        keychain.accessGroup = keychainAccessGroupName
+        let accessToken = keychain.get(memosAccessTokenKey)
+        
         let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
-        return try await Memos.create(host: hostURL, openId: openId)
+        return try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)
     }
 }

@@ -20,9 +20,8 @@ struct MemosUser: Decodable {
     let id: Int
     let name: String?
     let nickname: String?
-    let openId: String
-    let role: String
-    let updatedTs: Date
+    let role: String?
+    let updatedTs: Date?
     let userSettingList: [MemosUserSetting]?
     
     var displayName: String {

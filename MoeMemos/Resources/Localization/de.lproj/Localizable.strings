@@ -43,6 +43,8 @@
 "login.host" = "Host";
 "login.method" = "Anmeldemethode";
 "login.open-id" = "Open ID";
+"login.access-token" = "Access Token";
+"login.access-token.hint" = "Create an Access Token from Setting in ✍️memos.";
 "login.password" = "Passwort";
 "login.hint" = "Bitte geben Sie die Anmeldeinformationen für Ihren ✍️memos Server ein (https://github.com/usememos/memos) ein.";
 "login.username" = "Benutzername";
