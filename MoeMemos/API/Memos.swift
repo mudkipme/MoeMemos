@@ -159,7 +159,12 @@ class Memos {
             }
         } catch {}
         
-        let (tmpURL, response) = try await session.download(for: URLRequest(url: url))
+        var request = URLRequest(url: url)
+        if let accessToken = accessToken, !accessToken.isEmpty && url.host == host.host {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (tmpURL, response) = try await session.download(for: request)
         guard let response = response as? HTTPURLResponse else {
             throw MemosError.unknown
         }
