@@ -7,7 +7,11 @@
 
 import SwiftUI
 
-fileprivate let weekDaySymbols = Calendar.current.shortWeekdaySymbols
+fileprivate let weekDaySymbols: [String] = {
+    var symbols = Calendar.current.shortWeekdaySymbols
+    let firstWeekday = Calendar.current.firstWeekday - 1
+    return [String](symbols[firstWeekday...] + symbols[0..<firstWeekday])
+}()
 
 struct Sidebar: View {
     @State private var toMemosList = true
