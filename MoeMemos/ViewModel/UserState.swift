@@ -60,7 +60,9 @@ class UserState: ObservableObject {
     }
     
     func logout() async throws {
-        try await memos.logout()
+        if try memos.accessToken == nil || memos.accessToken?.isEmpty == true {
+            try await memos.logout()
+        }
         currentUser = nil
         UserDefaults(suiteName: groupContainerIdentifier)?.removeObject(forKey: memosOpenIdKey)
     }
