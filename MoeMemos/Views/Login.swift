@@ -140,7 +140,8 @@ struct Login: View {
                 input: MemosSignIn.Input(
                     email: email.trimmingCharacters(in: .whitespaces),
                     username: email.trimmingCharacters(in: .whitespaces),
-                    password: password))
+                    password: password,
+                    remember: true))
             memosHost = hostAddress
             keychain.delete(memosAccessTokenKey)
             memosOpenId = nil
