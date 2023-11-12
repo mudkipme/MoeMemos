@@ -7,43 +7,17 @@
 
 import SwiftUI
 
-fileprivate let weekDaySymbols: [String] = {
-    var symbols = Calendar.current.shortWeekdaySymbols
-    let firstWeekday = Calendar.current.firstWeekday - 1
-    return [String](symbols[firstWeekday...] + symbols[0..<firstWeekday])
-}()
-
 struct Sidebar: View {
-    @State private var toMemosList = true
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @EnvironmentObject private var userState: UserState
     @Binding var selection: Route?
 
     var body: some View {
-        List(selection: UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .reality ? $selection : nil) {
-            VStack {
-                Stats()
-                    .padding(20)
-                
-                HStack {
-                    VStack(alignment: .trailing) {
-                        Text(weekDaySymbols.first ?? "")
-                            .font(.footnote).foregroundStyle(.secondary)
-                        Spacer()
-                        Text(weekDaySymbols[weekDaySymbols.count / 2])
-                            .font(.footnote).foregroundStyle(.secondary)
-                        Spacer()
-                        Text(weekDaySymbols.last ?? "")
-                            .font(.footnote).foregroundStyle(.secondary)
-                    }
-                    Heatmap(matrix: memosViewModel.matrix, alignment: .trailing)
-                }
-                .frame(minHeight: 120, maxHeight: 120)
-                .padding(.bottom, 10)
-            }
-            .listRowSeparator(.hidden)
-            .listRowInsets(EdgeInsets())
-            .listRowBackground(EmptyView())
+        List(selection: UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .vision ? $selection : nil) {
+            Stats()
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(EmptyView())
             
             Section {
                 NavigationLink(value: Route.memos) {
@@ -81,7 +55,7 @@ struct Sidebar: View {
         }
         .listStyle(.sidebar)
         .toolbar {
-            if UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .reality {
+            if UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .vision {
                 Button(action: {
                     selection = .settings
                 }) {

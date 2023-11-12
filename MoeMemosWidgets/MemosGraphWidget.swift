@@ -9,6 +9,7 @@ import WidgetKit
 import SwiftUI
 import Intents
 import KeychainSwift
+import Models
 
 struct Provider: IntentTimelineProvider {
     func placeholder(in context: Context) -> MemosGraphEntry {
@@ -28,7 +29,7 @@ struct Provider: IntentTimelineProvider {
     }
     
     func getMatrix() async throws -> [DailyUsageStat]? {
-        guard let host = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosHostKey) else {
+        guard let host = UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.string(forKey: memosHostKey) else {
             return nil
         }
         guard let hostURL = URL(string: host) else {
@@ -36,10 +37,10 @@ struct Provider: IntentTimelineProvider {
         }
         
         let keychain = KeychainSwift()
-        keychain.accessGroup = keychainAccessGroupName
+        keychain.accessGroup = AppInfo.keychainAccessGroupName
         let accessToken = keychain.get(memosAccessTokenKey)
         
-        let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
+        let openId = UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
         
         let memos = try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)
         

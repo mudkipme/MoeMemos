@@ -7,6 +7,7 @@
 
 import SwiftUI
 import KeychainSwift
+import Models
 
 struct Login: View {
     private enum LoginMethod: Hashable {
@@ -15,11 +16,11 @@ struct Login: View {
         case openAPI
     }
     
-    @AppStorage(memosHostKey, store: UserDefaults(suiteName: groupContainerIdentifier)) var memosHost = ""
-    @AppStorage(memosOpenIdKey, store: UserDefaults(suiteName: groupContainerIdentifier)) var memosOpenId: String?
+    @AppStorage(memosHostKey, store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier)) var memosHost = ""
+    @AppStorage(memosOpenIdKey, store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier)) var memosOpenId: String?
     @State private var keychain = {
         let keychain = KeychainSwift()
-        keychain.accessGroup = keychainAccessGroupName
+        keychain.accessGroup = AppInfo.keychainAccessGroupName
         return keychain
     }()
 

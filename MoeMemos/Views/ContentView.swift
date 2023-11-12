@@ -7,13 +7,14 @@
 
 import SwiftUI
 import KeychainSwift
+import Models
 
 struct ContentView: View {
-    @AppStorage(memosHostKey, store: UserDefaults(suiteName: groupContainerIdentifier)) private var memosHost = ""
-    @AppStorage(memosOpenIdKey, store: UserDefaults(suiteName: groupContainerIdentifier)) private var memosOpenId: String?
+    @AppStorage(memosHostKey, store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier)) private var memosHost = ""
+    @AppStorage(memosOpenIdKey, store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier)) private var memosOpenId: String?
     @State private var keychain = {
         let keychain = KeychainSwift()
-        keychain.accessGroup = keychainAccessGroupName
+        keychain.accessGroup = AppInfo.keychainAccessGroupName
         return keychain
     }()
 

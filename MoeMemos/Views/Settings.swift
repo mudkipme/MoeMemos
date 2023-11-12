@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import Models
 
 struct Settings: View {
     @EnvironmentObject var userState: UserState
-    @StateObject var appInfo = AppInfo()
+    @State var appInfo = AppInfo()
 
     var body: some View {
         List {

@@ -9,6 +9,7 @@ import WidgetKit
 import SwiftUI
 import Intents
 import KeychainSwift
+import Models
 
 let sampleMemo = Memo(
     id: 0,
@@ -51,17 +52,17 @@ struct MemoryProvider: IntentTimelineProvider {
     }
     
     func getMemos(_ frequency: MemoryUpdatePeriod) async throws -> [Memo]? {
-        guard let host = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosHostKey) else {
+        guard let host = UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.string(forKey: memosHostKey) else {
             return nil
         }
         guard let hostURL = URL(string: host) else {
             return nil
         }
         
-        let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
+        let openId = UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
         
         let keychain = KeychainSwift()
-        keychain.accessGroup = keychainAccessGroupName
+        keychain.accessGroup = AppInfo.keychainAccessGroupName
         let accessToken = keychain.get(memosAccessTokenKey)
         
         let memos = try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)

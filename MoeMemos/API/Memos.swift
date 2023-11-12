@@ -7,8 +7,9 @@
 
 import Foundation
 import CryptoKit
+import Models
 
-private let cookieStorage = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: groupContainerIdentifier)
+private let cookieStorage = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: AppInfo.groupContainerIdentifier)
 
 private let urlSessionConfiguration = {
     let configuration = URLSessionConfiguration.default
@@ -142,7 +143,7 @@ class Memos {
     }
     
     func download(url: URL) async throws -> URL {
-        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupContainerIdentifier) else { throw MemosError.unknown }
+        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppInfo.groupContainerIdentifier) else { throw MemosError.unknown }
         
         let hash = SHA256.hash(data: url.absoluteString.data(using: .utf8)!)
         let hex = hash.map { String(format: "%02X", $0) }[0...10].joined()

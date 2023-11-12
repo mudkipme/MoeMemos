@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Models
 
 @MainActor
 class UserState: ObservableObject {
@@ -64,6 +65,6 @@ class UserState: ObservableObject {
             try await memos.logout()
         }
         currentUser = nil
-        UserDefaults(suiteName: groupContainerIdentifier)?.removeObject(forKey: memosOpenIdKey)
+        UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.removeObject(forKey: memosOpenIdKey)
     }
 }

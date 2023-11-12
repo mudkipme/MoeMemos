@@ -7,8 +7,6 @@
 
 import Foundation
 
-let groupContainerIdentifier = "group.me.mudkip.MoeMemos"
-let keychainAccessGroupName = "AHAQ4D2466.me.mudkip.MoeMemos"
 let memosHostKey = "memosHost"
 let memosAccessTokenKey = "memosAccessToken"
 let memosOpenIdKey = "memosOpenId"
