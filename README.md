@@ -9,7 +9,7 @@ Moe Memos
 
 ## Installation
 
-[![Download Moe Memos on the App Store](https://linkmaker.itunes.apple.com/images/badges/en-us/badge_appstore-lrg.svg)](https://apps.apple.com/app/moe-memos/id1643902185)
+[![Download Moe Memos on the App Store](https://memos.moe/app-store-badge.svg)](https://apps.apple.com/app/moe-memos/id1643902185)
 
 Moe Memos is available on App Store for free. You can also build this app with Xcode and run on your devices. iOS 15 or higher is required.
 

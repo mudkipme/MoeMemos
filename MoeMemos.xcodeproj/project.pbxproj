@@ -66,6 +66,7 @@
 		195E5D6B28C704AC00784EF5 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6A28C704AC00784EF5 /* Date.swift */; };
 		195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
 		195E5D7128C70A3800784EF5 /* HeatmapStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D7028C70A3800784EF5 /* HeatmapStat.swift */; };
+		1968555F2B00719A009D7DC5 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1968555E2B00719A009D7DC5 /* AppInfo.swift */; };
 		19709CFC297F2C1900F6A144 /* MemoInputResourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19709CFB297F2C1900F6A144 /* MemoInputResourceView.swift */; };
 		1973B7D72916308D003C3710 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1973B7D62916308D003C3710 /* Constants.swift */; };
 		197A4D3329599C300027427E /* MemoCardImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197A4D3229599C300027427E /* MemoCardImageView.swift */; };
@@ -106,6 +107,9 @@
 		19E6EF1F29113EC900C998F5 /* MemoInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF1E29113EC900C998F5 /* MemoInputViewModel.swift */; };
 		19E6EF2129113FDA00C998F5 /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF2029113FDA00C998F5 /* UserState.swift */; };
 		19E6EF2329115A2800C998F5 /* MemosManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF2229115A2800C998F5 /* MemosManager.swift */; };
+		19E866612AB84EBA00E33521 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 19E866602AB84EBA00E33521 /* KeychainSwift */; };
+		19E866632AB851E200E33521 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 19E866622AB851E200E33521 /* KeychainSwift */; };
+		19E866652AB851E800E33521 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 19E866642AB851E800E33521 /* KeychainSwift */; };
 		19F31BF728C3E26D000C5207 /* MemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BF628C3E26D000C5207 /* MemosList.swift */; };
 		19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFA28C3E9B2000C5207 /* Memo.swift */; };
 		19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFC28C3ED11000C5207 /* MemoCard.swift */; };
@@ -163,6 +167,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		190322DC2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MainInterface.strings; sourceTree = "<group>"; };
+		190322DD2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
+		190322DE2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1911568929802F200058F18B /* QuickLookRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLookRepresentable.swift; sourceTree = "<group>"; };
 		191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MoeMemosWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		191339AE291D7288001F2B2E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -218,6 +225,7 @@
 		195E5D6A28C704AC00784EF5 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		195E5D6C28C7051F00784EF5 /* Memos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memos.swift; sourceTree = "<group>"; };
 		195E5D7028C70A3800784EF5 /* HeatmapStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapStat.swift; sourceTree = "<group>"; };
+		1968555E2B00719A009D7DC5 /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
 		19709CFB297F2C1900F6A144 /* MemoInputResourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInputResourceView.swift; sourceTree = "<group>"; };
 		1973B7D529160F48003C3710 /* MoeMemos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MoeMemos.entitlements; sourceTree = "<group>"; };
 		1973B7D62916308D003C3710 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -258,6 +266,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19E866632AB851E200E33521 /* KeychainSwift in Frameworks */,
 				191339B1291D7288001F2B2E /* SwiftUI.framework in Frameworks */,
 				191339AF291D7288001F2B2E /* WidgetKit.framework in Frameworks */,
 			);
@@ -267,6 +276,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19E866612AB84EBA00E33521 /* KeychainSwift in Frameworks */,
 				193D274D29C8D1EB00BDE4A2 /* MarkdownUI in Frameworks */,
 				31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */,
 			);
@@ -290,6 +300,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19E866652AB851E800E33521 /* KeychainSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,12 +319,13 @@
 		191339B2291D7288001F2B2E /* MoeMemosWidgets */ = {
 			isa = PBXGroup;
 			children = (
-				191339B3291D7288001F2B2E /* MoeMemosWidgetsBundle.swift */,
+				191339B8291D7289001F2B2E /* Assets.xcassets */,
+				191339BA291D7289001F2B2E /* Info.plist */,
 				191339DB291D8F15001F2B2E /* MemoryWidget.swift */,
 				191339B5291D7288001F2B2E /* MemosGraphWidget.swift */,
 				193F04E529CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition */,
-				191339B8291D7289001F2B2E /* Assets.xcassets */,
-				191339BA291D7289001F2B2E /* Info.plist */,
+				191339B3291D7288001F2B2E /* MoeMemosWidgetsBundle.swift */,
+				191339D3291D7F13001F2B2E /* MoeMemosWidgetsExtension.entitlements */,
 			);
 			path = MoeMemosWidgets;
 			sourceTree = "<group>";
@@ -331,6 +343,7 @@
 			isa = PBXGroup;
 			children = (
 				195E5AD228C84E4F00CD4674 /* AlertToast.swift */,
+				1968555E2B00719A009D7DC5 /* AppInfo.swift */,
 				1973B7D62916308D003C3710 /* Constants.swift */,
 				195E5D6A28C704AC00784EF5 /* Date.swift */,
 				193DE93128C652F7002651E0 /* Error.swift */,
@@ -385,7 +398,6 @@
 				194B274028C3973600A48675 /* MoeMemosTests */,
 				194B274A28C3973600A48675 /* MoeMemosUITests */,
 				191339B2291D7288001F2B2E /* MoeMemosWidgets */,
-				191339D3291D7F13001F2B2E /* MoeMemosWidgetsExtension.entitlements */,
 				194B272E28C3973400A48675 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -528,6 +540,9 @@
 			dependencies = (
 			);
 			name = MoeMemosWidgetsExtension;
+			packageProductDependencies = (
+				19E866622AB851E200E33521 /* KeychainSwift */,
+			);
 			productName = MoeMemosWidgetsExtension;
 			productReference = 191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -551,6 +566,7 @@
 			packageProductDependencies = (
 				31EE785E29B9E6F4005F62D0 /* Highlightr */,
 				193D274C29C8D1EB00BDE4A2 /* MarkdownUI */,
+				19E866602AB84EBA00E33521 /* KeychainSwift */,
 			);
 			productName = MoeMemos;
 			productReference = 194B272D28C3973400A48675 /* MoeMemos.app */;
@@ -605,6 +621,9 @@
 			dependencies = (
 			);
 			name = MoeMemosShareExtension;
+			packageProductDependencies = (
+				19E866642AB851E800E33521 /* KeychainSwift */,
+			);
 			productName = MoeMemosShareExtension;
 			productReference = 19E29A682938FBCD00BE9C32 /* MoeMemosShareExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -617,7 +636,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1410;
-				LastUpgradeCheck = 1340;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					191339AB291D7288001F2B2E = {
 						CreatedOnToolsVersion = 14.1;
@@ -647,11 +666,13 @@
 				"zh-Hans",
 				"zh-Hant",
 				Base,
+				de,
 			);
 			mainGroup = 194B272428C3973400A48675;
 			packageReferences = (
 				31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */,
 				193D274B29C8D1EB00BDE4A2 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				19E8665F2AB84ACA00E33521 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 			);
 			productRefGroup = 194B272E28C3973400A48675 /* Products */;
 			projectDirPath = "";
@@ -786,6 +807,7 @@
 				19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */,
 				19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */,
 				19E6EF2129113FDA00C998F5 /* UserState.swift in Sources */,
+				1968555F2B00719A009D7DC5 /* AppInfo.swift in Sources */,
 				1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */,
 				193DE92828C61488002651E0 /* MemosAPI.swift in Sources */,
 				1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */,
@@ -875,6 +897,7 @@
 				193F04E429CCBA9C0010E3BF /* Base */,
 				193F04E729CCBAB40010E3BF /* zh-Hans */,
 				193F04E929CCBAB70010E3BF /* zh-Hant */,
+				190322DD2A82929300CAA50D /* de */,
 			);
 			name = MoeMemosWidgets.intentdefinition;
 			sourceTree = "<group>";
@@ -885,6 +908,7 @@
 				1948CCAE2996B3FA00AB1986 /* en */,
 				1948CCB12996BB6C00AB1986 /* zh-Hans */,
 				1948CCB32996BEEA00AB1986 /* zh-Hant */,
+				190322DE2A82929300CAA50D /* de */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -895,6 +919,7 @@
 				1948CCB92996BFDF00AB1986 /* zh-Hans */,
 				1948CCBA2996BFE200AB1986 /* zh-Hant */,
 				193F04E129CCBA320010E3BF /* Base */,
+				190322DC2A82929300CAA50D /* de */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
@@ -908,9 +933,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_ENTITLEMENTS = MoeMemosWidgetsExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MoeMemosWidgets/MoeMemosWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosWidgets/Info.plist;
@@ -922,7 +947,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.1;
+				MARKETING_VERSION = 1.5.7;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -942,9 +967,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_ENTITLEMENTS = MoeMemosWidgetsExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MoeMemosWidgets/MoeMemosWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosWidgets/Info.plist;
@@ -956,7 +981,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.1;
+				MARKETING_VERSION = 1.5.7;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -974,6 +999,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1007,6 +1033,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1035,6 +1062,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1068,6 +1096,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1094,7 +1123,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MoeMemos/MoeMemos.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_ASSET_PATHS = "\"MoeMemos/Preview Content\"";
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				ENABLE_PREVIEWS = YES;
@@ -1112,7 +1141,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.1;
+				MARKETING_VERSION = 1.5.7;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
@@ -1133,7 +1162,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MoeMemos/MoeMemos.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_ASSET_PATHS = "\"MoeMemos/Preview Content\"";
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				ENABLE_PREVIEWS = YES;
@@ -1151,7 +1180,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.1;
+				MARKETING_VERSION = 1.5.7;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
@@ -1246,7 +1275,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosShareExtension/MoeMemosShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosShareExtension/Info.plist;
@@ -1258,7 +1287,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.1;
+				MARKETING_VERSION = 1.5.7;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1278,7 +1307,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosShareExtension/MoeMemosShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosShareExtension/Info.plist;
@@ -1290,7 +1319,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.1;
+				MARKETING_VERSION = 1.5.7;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1372,6 +1401,14 @@
 				kind = branch;
 			};
 		};
+		19E8665F2AB84ACA00E33521 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 20.0.0;
+			};
+		};
 		31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/raspu/Highlightr";
@@ -1387,6 +1424,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 193D274B29C8D1EB00BDE4A2 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
+		};
+		19E866602AB84EBA00E33521 /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 19E8665F2AB84ACA00E33521 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
+		};
+		19E866622AB851E200E33521 /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 19E8665F2AB84ACA00E33521 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
+		};
+		19E866642AB851E800E33521 /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 19E8665F2AB84ACA00E33521 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
 		};
 		31EE785E29B9E6F4005F62D0 /* Highlightr */ = {
 			isa = XCSwiftPackageProductDependency;

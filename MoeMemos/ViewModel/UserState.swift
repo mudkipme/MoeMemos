@@ -22,46 +22,47 @@ class UserState: ObservableObject {
     @Published private(set) var currentUser: MemosUser?
     @Published var showingLogin = false
     
-    func reset(memosHost: String, openId: String?) async throws {
-        try await memosManager.reset(memosHost: memosHost, openId: openId)
+    func reset(memosHost: String, accessToken: String?, openId: String?) async throws {
+        try await memosManager.reset(memosHost: memosHost, accessToken: accessToken, openId: openId)
         currentUser = nil
     }
     
     func loadCurrentUser() async throws {
         let response = try await memos.me()
-        currentUser = response.data
+        currentUser = response
     }
     
     func signIn(memosHost: String, input: MemosSignIn.Input) async throws {
         guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
         
-        let client = Memos(host: url, openId: nil)
+        let client = try await Memos.create(host: url, accessToken: nil, openId: nil)
+        try await client.signIn(data: input)
         
-        try await client.auth()
-        let response = try await client.signIn(data: input)
-        await memosManager.reset(memosHost: url, openId: nil)
-        currentUser = response.data
+        let response = try await client.me()
+        await memosManager.reset(memosHost: url, accessToken: nil, openId: nil)
+        currentUser = response
     }
     
-    func signIn(memosOpenAPI: String) async throws {
-        guard let url = URL(string: memosOpenAPI) else { throw MemosError.invalidParams }
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { throw MemosError.invalidParams }
-        guard let openId = components.queryItems?
-            .first(where: { queryItem in queryItem.name == "openId" })?
-            .value else { throw MemosError.invalidOpenAPI }
-        
-        components.path = ""
-        components.query = nil
-        components.fragment = nil
-        
-        let client = Memos(host: components.url!, openId: openId)
+    func signIn(memosHost: String, accessToken: String) async throws {
+        guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
+        let client = try await Memos.create(host: url, accessToken: accessToken, openId: nil)
         let response = try await client.me()
-        await memosManager.reset(memosHost: components.url!, openId: openId)
-        currentUser = response.data
+        await memosManager.reset(memosHost: url, accessToken: accessToken, openId: nil)
+        currentUser = response
+    }
+    
+    func signIn(memosHost: String, openId: String) async throws {
+        guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
+        let client = try await Memos.create(host: url, accessToken: nil, openId: openId)
+        let response = try await client.me()
+        await memosManager.reset(memosHost: url, accessToken: nil, openId: openId)
+        currentUser = response
     }
     
     func logout() async throws {
-        try await memos.logout()
+        if try memos.accessToken == nil || memos.accessToken?.isEmpty == true {
+            try await memos.logout()
+        }
         currentUser = nil
         UserDefaults(suiteName: groupContainerIdentifier)?.removeObject(forKey: memosOpenIdKey)
     }

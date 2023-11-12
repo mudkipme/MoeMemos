@@ -18,21 +18,16 @@ private let urlSessionConfiguration = {
 
 class Memos {
     let host: URL
+    let accessToken: String?
     let openId: String?
     let session: URLSession
     private(set) var status: MemosServerStatus? = nil
     
-    init(host: URL, openId: String?) {
+    private init(host: URL, accessToken: String?, openId: String?) {
         self.host = host
+        self.accessToken = accessToken?.isEmpty ?? true ? nil : accessToken
         self.openId = (openId?.isEmpty ?? true) ? nil : openId
         session = URLSession(configuration: urlSessionConfiguration)
-        
-        // Migrate cookies to group container
-        let legacyCookieStorage = HTTPCookieStorage.shared
-        if let legacyCookies = legacyCookieStorage.cookies(for: host), !legacyCookies.isEmpty {
-            cookieStorage.setCookies(legacyCookies, for: host, mainDocumentURL: nil)
-            legacyCookies.forEach(legacyCookieStorage.deleteCookie)
-        }
         
         // No longer uses cookie when logged-in with Open API
         if let openId = openId, !openId.isEmpty {
@@ -40,8 +35,14 @@ class Memos {
         }
     }
     
-    func signIn(data: MemosSignIn.Input) async throws -> MemosSignIn.Output {
-        return try await MemosSignIn.request(self, data: data, param: ())
+    static func create(host: URL, accessToken: String?, openId: String?) async throws -> Memos {
+        let memos = Memos(host: host, accessToken: accessToken, openId: openId)
+        try await memos.loadStatus()
+        return memos
+    }
+    
+    func signIn(data: MemosSignIn.Input) async throws {
+        _ = try await MemosSignIn.request(self, data: data, param: ())
     }
     
     func logout() async throws {
@@ -86,6 +87,11 @@ class Memos {
     }
     
     func uploadResource(imageData: Data, filename: String, contentType: String) async throws -> MemosUploadResource.Output {
+        if self.status?.profile.version.compare("0.10.2", options: .numeric) == .orderedAscending {
+            let response = try await MemosUploadResourceLegacy.request(self, data: [Multipart(name: "file", filename: filename, contentType: contentType, data: imageData)], param: ())
+            return response.data
+        }
+        
         return try await MemosUploadResource.request(self, data: [Multipart(name: "file", filename: filename, contentType: contentType, data: imageData)], param: ())
     }
     
@@ -93,13 +99,16 @@ class Memos {
         return try await MemosDeleteResource.request(self, data: nil, param: id)
     }
     
-    func auth() async throws {
-        _ = try await MemosAuth.request(self, data: nil, param: ())
-    }
-    
     func loadStatus() async throws {
-        let response = try await MemosStatus.request(self, data: nil, param: ())
-        status = response.data
+        do {
+            let response = try await MemosStatus.request(self, data: nil, param: ())
+            status = response
+        } catch MemosError.invalidStatusCode(let code, _) {
+            if code >= 400 && code < 500 {
+                let response = try await MemosV0Status.request(self, data: nil, param: ())
+                status = response.data
+            }
+        }
     }
     
     func upsertTag(name: String) async throws -> MemosUpsertTag.Output {
@@ -108,6 +117,10 @@ class Memos {
     
     func listAllMemo(data: MemosListAllMemo.Input?) async throws -> MemosListAllMemo.Output {
         return try await MemosListAllMemo.request(self, data: data, param: ())
+    }
+    
+    func deleteTag(name: String) async throws -> MemosDeleteTag.Output {
+        return try await MemosDeleteTag.request(self, data: MemosDeleteTag.Input(name: name), param: ())
     }
     
     func url(for resource: Resource) -> URL {
@@ -146,7 +159,12 @@ class Memos {
             }
         } catch {}
         
-        let (tmpURL, response) = try await session.download(for: URLRequest(url: url))
+        var request = URLRequest(url: url)
+        if let accessToken = accessToken, !accessToken.isEmpty && url.host == host.host {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (tmpURL, response) = try await session.download(for: request)
         guard let response = response as? HTTPURLResponse else {
             throw MemosError.unknown
         }

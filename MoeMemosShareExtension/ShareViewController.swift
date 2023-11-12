@@ -8,6 +8,7 @@
 import UIKit
 import Social
 import SwiftUI
+import KeychainSwift
 
 class ShareViewController: SLComposeServiceViewController {
     
@@ -79,15 +80,10 @@ class ShareViewController: SLComposeServiceViewController {
                 }
                 
                 if attachment.canLoadObject(ofClass: UIImage.self),
-                   let image = try await attachment.loadObject(ofClass: UIImage.self) {
-                    var image = image
-                    if image.size.height > 1024 || image.size.width > 1024 {
-                        image = image.scale(to: CGSize(width: 1024, height: 1024))
-                    }
-                    
+                   let image = try await attachment.loadObject(ofClass: UIImage.self) {                    
                     guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
                     let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
-                    resourceList.append(response.data)
+                    resourceList.append(response)
                 }
             }
         }
@@ -107,7 +103,11 @@ class ShareViewController: SLComposeServiceViewController {
             throw MemosError.notLogin
         }
         
+        let keychain = KeychainSwift()
+        keychain.accessGroup = keychainAccessGroupName
+        let accessToken = keychain.get(memosAccessTokenKey)
+        
         let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
-        return Memos(host: hostURL, openId: openId)
+        return try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)
     }
 }

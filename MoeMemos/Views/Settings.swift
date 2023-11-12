@@ -9,6 +9,7 @@ import SwiftUI
 
 struct Settings: View {
     @EnvironmentObject var userState: UserState
+    @StateObject var appInfo = AppInfo()
 
     var body: some View {
         List {
@@ -42,10 +43,10 @@ struct Settings: View {
             
             
             Section {
-                Link(destination: URL(string: "https://memos.moe")!) {
+                Link(destination: appInfo.website) {
                     Label("settings.website", systemImage: "globe")
                 }
-                Link(destination: URL(string: "https://memos.moe/privacy")!) {
+                Link(destination: appInfo.privacy) {
                     Label("settings.privacy", systemImage: "lock")
                 }
                 Link(destination: URL(string: "https://memos.moe/ios-acknowledgements")!) {
@@ -56,6 +57,8 @@ struct Settings: View {
                 }
             } header: {
                 Text("settings.about")
+            } footer: {
+                Text(appInfo.registration)
             }
             
             if userState.currentUser != nil {

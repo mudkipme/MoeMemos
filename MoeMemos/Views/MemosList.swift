@@ -54,7 +54,7 @@ struct MemosList: View {
             MemoInput(memo: nil)
         }
         .onAppear {
-            filteredMemoList = filterMemoList(memosViewModel.memoList)
+            filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: searchString)
         }
         .refreshable {
             do {
@@ -70,14 +70,19 @@ struct MemosList: View {
                 print(error)
             }
         }
+        .onChange(of: userState.currentUser?.id, perform: { newValue in
+            Task {
+                try await memosViewModel.loadMemos()
+            }
+        })
         .onChange(of: memosViewModel.memoList, perform: { newValue in
-            filteredMemoList = filterMemoList(newValue)
+            filteredMemoList = filterMemoList(newValue, tag: tag, searchString: searchString)
         })
         .onChange(of: tag, perform: { newValue in
-            filteredMemoList = filterMemoList(memosViewModel.memoList)
+            filteredMemoList = filterMemoList(memosViewModel.memoList, tag: newValue, searchString: searchString)
         })
         .onChange(of: searchString, perform: { newValue in
-            filteredMemoList = filterMemoList(memosViewModel.memoList)
+            filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: newValue)
         })
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             Task {
@@ -88,7 +93,7 @@ struct MemosList: View {
         }
     }
     
-    private func filterMemoList(_ memoList: [Memo]) -> [Memo] {
+    private func filterMemoList(_ memoList: [Memo], tag: Tag?, searchString: String) -> [Memo] {
         let pinned = memoList.filter { $0.pinned }
         let nonPinned = memoList.filter { !$0.pinned }
         var fullList = pinned + nonPinned

@@ -61,6 +61,12 @@ struct MemoInput: View {
                 }
                 
                 Button {
+                    toggleTodoItem()
+                } label: {
+                    Image(systemName: "checkmark.square")
+                }
+                
+                Button {
                     showingPhotoPicker = true
                 } label: {
                     Image(systemName: "photo.on.rectangle")
@@ -87,7 +93,7 @@ struct MemoInput: View {
             VStack(alignment: .leading) {
                 privacyMenu
                     .padding(.horizontal)
-                TextView(text: $text, selection: $selection)
+                TextView(text: $text, selection: $selection, shouldChangeText: shouldChangeText(in:replacementText:))
                     .focused($focused)
                     .overlay(alignment: .topLeading) {
                         if text.isEmpty {
@@ -274,7 +280,7 @@ struct MemoInput: View {
     }
     
     private func insert(tag: Tag?) {
-        let tagText = "#\(tag?.name ?? "")"
+        let tagText = "#\(tag?.name ?? "") "
         guard let selection = selection else {
             text += tagText
             return
@@ -283,6 +289,76 @@ struct MemoInput: View {
         text = text.replacingCharacters(in: selection, with: tagText)
         let index = text.index(selection.lowerBound, offsetBy: tagText.count)
         self.selection = index..<text.index(selection.lowerBound, offsetBy: tagText.count)
+    }
+    
+    private func toggleTodoItem() {
+        let currentText = text
+        guard let currentSelection = selection else { return }
+        
+        let contentBefore = currentText[currentText.startIndex..<currentSelection.lowerBound]
+        let lastLineBreak = contentBefore.lastIndex(of: "\n")
+        let nextLineBreak = currentText[currentSelection.lowerBound...].firstIndex(of: "\n") ?? currentText.endIndex
+        let currentLine: Substring
+        if let lastLineBreak = lastLineBreak {
+            currentLine = currentText[currentText.index(after: lastLineBreak)..<nextLineBreak]
+        } else {
+            currentLine = currentText[currentText.startIndex..<nextLineBreak]
+        }
+    
+        let contentBeforeCurrentLine = currentText[currentText.startIndex..<currentLine.startIndex]
+        let contentAfterCurrentLine = currentText[nextLineBreak..<currentText.endIndex]
+        
+        for prefixStr in listItemSymbolList {
+            if (!currentLine.hasPrefix(prefixStr)) {
+                continue
+            }
+            
+            if prefixStr == "- [ ] " {
+                text = contentBeforeCurrentLine + "- [x] " + currentLine[currentLine.index(currentLine.startIndex, offsetBy: prefixStr.count)..<currentLine.endIndex] + contentAfterCurrentLine
+                return
+            }
+            
+            let offset = "- [ ] ".count - prefixStr.count
+            text = contentBeforeCurrentLine + "- [ ] " + currentLine[currentLine.index(currentLine.startIndex, offsetBy: prefixStr.count)..<currentLine.endIndex] + contentAfterCurrentLine
+            selection = text.index(currentSelection.lowerBound, offsetBy: offset)..<text.index(currentSelection.upperBound, offsetBy: offset)
+            return
+        }
+        
+        text = contentBeforeCurrentLine + "- [ ] " + currentLine + contentAfterCurrentLine
+        selection = text.index(currentSelection.lowerBound, offsetBy: "- [ ] ".count)..<text.index(currentSelection.upperBound, offsetBy: "- [ ] ".count)
+    }
+    
+    private func shouldChangeText(in range: Range<String.Index>, replacementText text: String) -> Bool {
+        if text != "\n" || range.upperBound != range.lowerBound {
+            return true
+        }
+        
+        let currentText = self.text
+        let contentBefore = currentText[currentText.startIndex..<range.lowerBound]
+        let lastLineBreak = contentBefore.lastIndex(of: "\n")
+        let nextLineBreak = currentText[range.lowerBound...].firstIndex(of: "\n") ?? currentText.endIndex
+        let currentLine: Substring
+        if let lastLineBreak = lastLineBreak {
+            currentLine = currentText[currentText.index(after: lastLineBreak)..<nextLineBreak]
+        } else {
+            currentLine = currentText[currentText.startIndex..<nextLineBreak]
+        }
+        
+        for prefixStr in listItemSymbolList {
+            if (!currentLine.hasPrefix(prefixStr)) {
+                continue
+            }
+            
+            if currentLine.count <= prefixStr.count || currentText.index(currentLine.startIndex, offsetBy: prefixStr.count) >= range.lowerBound {
+                break
+            }
+            
+            self.text = currentText[currentText.startIndex..<range.lowerBound] + "\n" + prefixStr + currentText[range.upperBound..<currentText.endIndex]
+            selection = self.text.index(range.lowerBound, offsetBy: prefixStr.count + 1)..<self.text.index(range.upperBound, offsetBy: prefixStr.count + 1)
+            return false
+        }
+
+        return true
     }
 }
 

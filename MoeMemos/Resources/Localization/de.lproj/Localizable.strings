@@ -1,0 +1,69 @@
+/*
+  Localizable.strings
+  MoeMemos
+
+  Created by Ghost108 on 2023/8/7.
+*/
+
+"moe-memos" = "Moe Memos";
+
+"memo.archive" = "Archiv";
+"memo.archived" = "Archiviert";
+"memo.copy" = "Kopieren";
+"memo.delete" = "Löschen";
+"memo.delete.confirm" = "Dieses Memo löschen?";
+"memo.edit" = "Bearbeiten";
+"memo.memos" = "Memos";
+"memo.action.cancel" = "Nei";
+"memo.pin" = "Anpinnen";
+"memo.restore" = "Wiederherstellen";
+"memo.share" = "Teilen";
+"memo.unpin" = "Pin lösen";
+"memo.action.ok" = "Ja";
+"memo.visibility.public" = "Sichtbar für Gäste";
+"memo.visibility.protected" = "Sichtbar für Mitglieder";
+"memo.visibility.private" = "Nur für dich sichtbar";
+
+"settings" = "Einstellungen";
+"settings.about" = "Über Moe Memos";
+"settings.privacy" = "Datenschutzbestimmungen";
+"settings.report" = "Ein Problem melden";
+"settings.sign-out" = "Abmelden";
+"settings.website" = "Webseite";
+"settings.acknowledgements" = "Danksagung";
+
+"input.placeholder" = "Ein Gedanke...";
+"input.close" = "Schließen";
+"input.compose" = "Verfassen";
+"input.edit" = "Memo bearbeiten";
+"input.save" = "Speichern";
+"input.visibility" = "Memo Sichtbarkeit";
+
+"login.open-id.hint" = "Kopiere “Open ID” aus den ✍️memos Einstellungen.";
+"login.host" = "Host";
+"login.method" = "Anmeldemethode";
+"login.open-id" = "Open ID";
+"login.access-token" = "Access Token";
+"login.access-token.hint" = "Create an Access Token from Setting in ✍️memos.";
+"login.password" = "Passwort";
+"login.hint" = "Bitte geben Sie die Anmeldeinformationen für Ihren ✍️memos Server ein (https://github.com/usememos/memos) ein.";
+"login.username" = "Benutzername";
+"login.username-and-password" = "Benutzername und Passwort";
+"login.sign-in" = "Anmelden";
+
+"stats.day" = "Tag";
+"stats.memo" = "Memo";
+"stats.tag" = "Tag";
+
+"resources" = "Ressourcen";
+
+"tags" = "Tags";
+
+"widget.memories" = "Erinnerungen";
+"widget.memories.description" = "Erinnere dich an deine früheren Memos";
+"widget.memo-graph" = "Memos Diagramm";
+"widget.memo-graph.description" = "Das Diagramm, das anzeigt, wie viele Memos du in den letzten Wochen täglich verfasst hasts.";
+
+"share.memo-saved" = "Memo gespeichert.";
+
+"explore" = "Durchsuchen";

@@ -8,6 +8,7 @@
 import WidgetKit
 import SwiftUI
 import Intents
+import KeychainSwift
 
 let sampleMemo = Memo(
     id: 0,
@@ -58,10 +59,15 @@ struct MemoryProvider: IntentTimelineProvider {
         }
         
         let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
-        let memos = Memos(host: hostURL, openId: openId)
+        
+        let keychain = KeychainSwift()
+        keychain.accessGroup = keychainAccessGroupName
+        let accessToken = keychain.get(memosAccessTokenKey)
+        
+        let memos = try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)
         
         let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
-        return [Memo](response.data.shuffled().prefix(frequency.memosPerDay))
+        return [Memo](response.shuffled().prefix(frequency.memosPerDay))
     }
 
     func getTimeline(for configuration: MemoryWidgetConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
@@ -136,6 +142,7 @@ struct MemoryWidget: Widget {
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .configurationDisplayName("widget.memories")
         .description("widget.memories.description")
+        .contentMarginsDisabled()
     }
 }
 

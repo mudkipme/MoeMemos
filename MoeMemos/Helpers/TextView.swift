@@ -9,6 +9,7 @@ import SwiftUI
 struct TextView: UIViewRepresentable {
     @Binding var text: String
     @Binding var selection: Range<String.Index>?
+    let shouldChangeText: ((_ range: Range<String.Index>, _ replacementText: String) -> Bool)?
     
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView(frame: CGRectZero)
@@ -22,15 +23,23 @@ struct TextView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UITextView, context: Context) {
-        uiView.text = text
+        if text != uiView.text {
+            uiView.text = text
+        }
         
-        if let selection = selection {
-            uiView.selectedRange = NSRange(selection, in: text)
+        if let selection = selection, selection.upperBound <= text.endIndex {
+            let range = NSRange(selection, in: text)
+            if uiView.selectedRange != range {
+                uiView.selectedRange = range
+            }
         } else {
-            uiView.selectedRange = NSRange()
+            if uiView.selectedRange.upperBound != 0 {
+                uiView.selectedRange = NSRange()
+            }
         }
     }
     
+    @MainActor
     class Coordinator: NSObject, UITextViewDelegate {
         let parent: TextView
         
@@ -39,11 +48,18 @@ struct TextView: UIViewRepresentable {
         }
         
         func textViewDidChange(_ textView: UITextView) {
-            parent.text = textView.text
+            parent._text.wrappedValue = textView.text
         }
         
         func textViewDidChangeSelection(_ textView: UITextView) {
-            parent.selection = Range(textView.selectedRange, in: textView.text)
+            parent._selection.wrappedValue = Range(textView.selectedRange, in: textView.text)
+        }
+        
+        func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+            if let shouldChangeText = parent.shouldChangeText, let textRange = Range(range, in: textView.text) {
+                return shouldChangeText(textRange, text)
+            }
+            return true
         }
     }
 }
@@ -53,6 +69,6 @@ struct TextView_Previews: PreviewProvider {
     @State static var selection: Range<String.Index>? = nil
     
     static var previews: some View {
-        TextView(text: $text, selection: $selection)
+        TextView(text: $text, selection: $selection, shouldChangeText: nil)
     }
 }

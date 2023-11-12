@@ -16,7 +16,7 @@ protocol MemosAPI {
     static var method: HTTPMethod { get }
     static var encodeMode: HTTPBodyEncodeMode { get }
     static var decodeMode: HTTPBodyDecodeMode { get }
-    static func path(_ memos: Memos, _ param: Param) -> String
+    static func path(_ param: Param) -> String
 }
 
 extension MemosAPI {
@@ -26,7 +26,7 @@ extension MemosAPI {
 }
 
 extension MemosAPI where Self.Param == () {
-    static func path(_ memos: Memos, _ param: Param) -> String {
+    static func path(_ param: Param) -> String {
         return Self.path
     }
 }
@@ -40,30 +40,29 @@ struct MemosSignIn: MemosAPI {
         let email: String
         let username: String
         let password: String
+        let remember: Bool
     }
-
-    typealias Output = MemosOutput<MemosUser>
     
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .json
-    static let decodeMode: HTTPBodyDecodeMode = .json
-    static let path = "/api/auth/signin"
+    static let decodeMode: HTTPBodyDecodeMode = .none
+    static let path = "/api/v1/auth/signin"
 }
 
 struct MemosLogout: MemosAPI {
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .none
     static let decodeMode: HTTPBodyDecodeMode = .none
-    static let path = "/api/auth/signout"
+    static let path = "/api/v1/auth/signout"
 }
 
 struct MemosMe: MemosAPI {
-    typealias Output = MemosOutput<MemosUser>
+    typealias Output = MemosUser
     
     static let method: HTTPMethod = .get
     static let encodeMode: HTTPBodyEncodeMode = .none
     static let decodeMode: HTTPBodyDecodeMode = .json
-    static let path = "/api/user/me"
+    static let path = "/api/v1/user/me"
 }
 
 struct MemosListMemo: MemosAPI {
@@ -73,12 +72,12 @@ struct MemosListMemo: MemosAPI {
         let visibility: MemosVisibility?
     }
 
-    typealias Output = MemosOutput<[Memo]>
+    typealias Output = [Memo]
     
     static let method: HTTPMethod = .get
     static let encodeMode: HTTPBodyEncodeMode = .urlencoded
     static let decodeMode: HTTPBodyDecodeMode = .json
-    static let path = "/api/memo"
+    static let path = "/api/v1/memo"
 }
 
 struct MemosTag: MemosAPI {
@@ -86,12 +85,12 @@ struct MemosTag: MemosAPI {
         let creatorId: Int?
     }
 
-    typealias Output = MemosOutput<[String]>
+    typealias Output = [String]
     
     static let method: HTTPMethod = .get
     static let encodeMode: HTTPBodyEncodeMode = .urlencoded
     static let decodeMode: HTTPBodyDecodeMode = .json
-    static let path = "/api/tag"
+    static let path = "/api/v1/tag"
 }
 
 struct MemosCreate: MemosAPI {
@@ -101,12 +100,12 @@ struct MemosCreate: MemosAPI {
         let resourceIdList: [Int]?
     }
 
-    typealias Output = MemosOutput<Memo>
+    typealias Output = Memo
     
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .json
     static let decodeMode: HTTPBodyDecodeMode = .json
-    static let path = "/api/memo"
+    static let path = "/api/v1/memo"
 }
 
 struct MemosOrganizer: MemosAPI {
@@ -114,13 +113,13 @@ struct MemosOrganizer: MemosAPI {
         let pinned: Bool
     }
 
-    typealias Output = MemosOutput<Memo>
+    typealias Output = Memo
     typealias Param = Int
     
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .json
     static let decodeMode: HTTPBodyDecodeMode = .json
-    static func path(_ memos: Memos, _ params: Int) -> String { "/api/memo/\(params)/organizer" }
+    static func path(_ params: Int) -> String { "/api/v1/memo/\(params)/organizer" }
 }
 
 struct MemosPatch: MemosAPI {
@@ -133,65 +132,63 @@ struct MemosPatch: MemosAPI {
         let resourceIdList: [Int]?
     }
 
-    typealias Output = MemosOutput<Memo>
+    typealias Output = Memo
     typealias Param = Int
     
     static let method: HTTPMethod = .patch
     static let encodeMode: HTTPBodyEncodeMode = .json
     static let decodeMode: HTTPBodyDecodeMode = .json
-    static func path(_ memos: Memos, _ params: Int) -> String { "/api/memo/\(params)" }
+    static func path(_ params: Int) -> String { "/api/v1/memo/\(params)" }
 }
 
 struct MemosDelete: MemosAPI {
-    typealias Output = Bool
     typealias Param = Int
     
     static let method: HTTPMethod = .delete
     static let encodeMode: HTTPBodyEncodeMode = .none
-    static let decodeMode: HTTPBodyDecodeMode = .json
-    static func path(_ memos: Memos, _ params: Int) -> String { "/api/memo/\(params)" }
+    static let decodeMode: HTTPBodyDecodeMode = .none
+    static func path(_ params: Int) -> String { "/api/v1/memo/\(params)" }
 }
 
 struct MemosListResource: MemosAPI {
-    typealias Output = MemosOutput<[Resource]>
+    typealias Output = [Resource]
     
     static let method: HTTPMethod = .get
     static let encodeMode: HTTPBodyEncodeMode = .none
     static let decodeMode: HTTPBodyDecodeMode = .json
-    static let path = "/api/resource"
+    static let path = "/api/v1/resource"
 }
 
 struct MemosUploadResource: MemosAPI {
+    typealias Input = [Multipart]
+    typealias Output = Resource
+    
+    static let method: HTTPMethod = .post
+    static let encodeMode: HTTPBodyEncodeMode = .multipart(boundary: UUID().uuidString)
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static let path = "/api/v1/resource/blob"
+}
+
+struct MemosUploadResourceLegacy: MemosAPI {
     typealias Input = [Multipart]
     typealias Output = MemosOutput<Resource>
     
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .multipart(boundary: UUID().uuidString)
     static let decodeMode: HTTPBodyDecodeMode = .json
-    static func path(_ memos: Memos, _ params: ()) -> String {
-        memos.status != nil && memos.status?.profile.version.compare("0.10.2", options: .numeric)
-            != .orderedAscending ? "/api/resource/blob" : "/api/resource"
-    }
+    static let path = "/api/resource"
 }
 
 struct MemosDeleteResource: MemosAPI {
-    typealias Output = Bool
     typealias Param = Int
     
     static let method: HTTPMethod = .delete
     static let encodeMode: HTTPBodyEncodeMode = .none
-    static let decodeMode: HTTPBodyDecodeMode = .json
-    static func path(_ memos: Memos, _ params: Int) -> String { "/api/resource/\(params)" }
-}
-
-struct MemosAuth: MemosAPI {
-    static let method: HTTPMethod = .get
-    static let encodeMode: HTTPBodyEncodeMode = .none
     static let decodeMode: HTTPBodyDecodeMode = .none
-    static let path = "/auth"
+    static func path(_ params: Int) -> String { "/api/v1/resource/\(params)" }
 }
 
-struct MemosStatus: MemosAPI {
+struct MemosV0Status: MemosAPI {
     typealias Output = MemosOutput<MemosServerStatus>
     
     static let method: HTTPMethod = .get
@@ -200,17 +197,26 @@ struct MemosStatus: MemosAPI {
     static let path = "/api/status"
 }
 
+struct MemosStatus: MemosAPI {
+    typealias Output = MemosServerStatus
+    
+    static let method: HTTPMethod = .get
+    static let encodeMode: HTTPBodyEncodeMode = .none
+    static let decodeMode: HTTPBodyDecodeMode = .json
+    static let path = "/api/v1/status"
+}
+
 struct MemosUpsertTag: MemosAPI {
     struct Input: Encodable {
         let name: String
     }
 
-    typealias Output = MemosOutput<String>
+    typealias Output = String
     
     static let method: HTTPMethod = .post
     static let encodeMode: HTTPBodyEncodeMode = .json
     static let decodeMode: HTTPBodyDecodeMode = .json
-    static let path = "/api/tag"
+    static let path = "/api/v1/tag"
 }
 
 struct MemosListAllMemo: MemosAPI {
@@ -222,12 +228,23 @@ struct MemosListAllMemo: MemosAPI {
         let offset: Int?
     }
     
-    typealias Output = MemosOutput<[Memo]>
+    typealias Output = [Memo]
 
     static let method: HTTPMethod = .get
     static let encodeMode: HTTPBodyEncodeMode = .urlencoded
     static let decodeMode: HTTPBodyDecodeMode = .json
-    static let path = "/api/memo/all"
+    static let path = "/api/v1/memo/all"
+}
+
+struct MemosDeleteTag: MemosAPI {
+    struct Input: Encodable {
+        let name: String
+    }
+    
+    static let method: HTTPMethod = .post
+    static let encodeMode: HTTPBodyEncodeMode = .json
+    static let decodeMode: HTTPBodyDecodeMode = .none
+    static let path = "/api/v1/tag/delete"
 }
 
 struct MemosErrorOutput: Decodable {
@@ -235,10 +252,30 @@ struct MemosErrorOutput: Decodable {
     let message: String
 }
 
+fileprivate extension String {
+    func replacingPrefix(_ prefix: String, with newPrefix: String) -> String {
+        guard self.hasPrefix(prefix) else { return self }
+        return newPrefix + String(self.dropFirst(prefix.count))
+    }
+}
+
 extension MemosAPI {
     static func request(_ memos: Memos, data: Input?, param: Param) async throws -> Output {
-        var url = memos.host.appendingPathComponent(Self.path(memos, param))
-                
+        var path = Self.path(param)
+        var useLegacy = false
+        
+        // support legacy versions
+        if Self.self == MemosSignIn.self {
+            useLegacy = memos.status?.profile.version.compare("0.13.2", options: .numeric) == .orderedAscending && path.hasPrefix("/api/v1/")
+        } else  {
+            useLegacy = memos.status?.profile.version.compare("0.14.0", options: .numeric) == .orderedAscending && path.hasPrefix("/api/v1/")
+        }
+        if useLegacy {
+            path = path.replacingPrefix("/api/v1/", with: "/api/")
+        }
+        
+        var url = memos.host.appendingPathComponent(path)
+        
         if method == .get && encodeMode == .urlencoded && data != nil {
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
             components.queryItems = try encodeToQueryItems(data)
@@ -255,6 +292,10 @@ extension MemosAPI {
         
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
+        
+        if let accessToken = memos.accessToken, !accessToken.isEmpty {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
         
         if let accept = decodeMode.contentType() {
             request.setValue(accept, forHTTPHeaderField: "Accept")
@@ -279,6 +320,11 @@ extension MemosAPI {
                 throw MemosError.invalidStatusCode(response.statusCode, String(data: data, encoding: .utf8))
             }
             throw MemosError.invalidStatusCode(response.statusCode, errorOutput.message)
+        }
+        
+        if useLegacy && decodeMode == .json {
+            let json: MemosOutput<Output> = try decodeMode.decode(data)
+            return json.data
         }
         
         return try decodeMode.decode(data)
