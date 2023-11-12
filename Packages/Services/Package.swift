@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Account",
+    name: "Services",
     platforms: [
       .iOS(.v17),
       .visionOS(.v1),
@@ -13,30 +13,29 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "Account",
-            targets: ["Account"]),
+            name: "MemosService",
+            targets: ["MemosService"]),
     ],
     dependencies: [
-        .package(name: "Models", path: "../Models"),
-        .package(name: "Services", path: "../Services"),
-        .package(url: "https://github.com/evgenyneu/keychain-swift", from: "20.0.0")
+        .package(url: "https://github.com/apple/swift-openapi-generator", .upToNextMinor(from: "0.3.4")),
+        .package(url: "https://github.com/apple/swift-openapi-runtime", .upToNextMinor(from: "0.3.6")),
+        .package(url: "https://github.com/apple/swift-openapi-urlsession", .upToNextMinor(from: "0.3.0")),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "Account",
+            name: "MemosService",
             dependencies: [
-                .product(name: "Models", package: "Models"),
-                .product(name: "MemosService", package: "Services"),
-                .product(name: "KeychainSwift", package: "keychain-swift")
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
             ],
             swiftSettings: [
               .enableExperimentalFeature("StrictConcurrency"),
+            ],
+            plugins: [
+                .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")
             ]
         ),
-        .testTarget(
-            name: "AccountTests",
-            dependencies: ["Account"]),
     ]
 )

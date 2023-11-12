@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 enum Route: Hashable {
     case memos
     case resources
