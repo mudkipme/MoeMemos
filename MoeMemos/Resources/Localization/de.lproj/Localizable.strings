@@ -39,10 +39,8 @@
 "input.save" = "Speichern";
 "input.visibility" = "Memo Sichtbarkeit";
 
-"login.open-id.hint" = "Kopiere “Open ID” aus den ✍️memos Einstellungen.";
 "login.host" = "Host";
 "login.method" = "Anmeldemethode";
-"login.open-id" = "Open ID";
 "login.access-token" = "Access Token";
 "login.access-token.hint" = "Create an Access Token from Setting in ✍️memos.";
 "login.password" = "Passwort";

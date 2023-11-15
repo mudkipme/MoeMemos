@@ -39,10 +39,8 @@ struct Provider: IntentTimelineProvider {
         let keychain = KeychainSwift()
         keychain.accessGroup = AppInfo.keychainAccessGroupName
         let accessToken = keychain.get(memosAccessTokenKey)
-        
-        let openId = UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
-        
-        let memos = try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)
+                
+        let memos = try await Memos.create(host: hostURL, accessToken: accessToken, openId: nil)
         
         let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
         return DailyUsageStat.calculateMatrix(memoList: response)

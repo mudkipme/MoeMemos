@@ -13,11 +13,9 @@ struct Login: View {
     private enum LoginMethod: Hashable {
         case usernamdAndPassword
         case accessToken
-        case openAPI
     }
     
     @AppStorage(memosHostKey, store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier)) var memosHost = ""
-    @AppStorage(memosOpenIdKey, store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier)) var memosOpenId: String?
     @State private var keychain = {
         let keychain = KeychainSwift()
         keychain.accessGroup = AppInfo.keychainAccessGroupName
@@ -28,7 +26,6 @@ struct Login: View {
     @State private var email = ""
     @State private var password = ""
     @State private var accessToken = ""
-    @State private var openId = ""
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject private var userState: UserState
     @EnvironmentObject private var memosViewModel: MemosViewModel
@@ -52,7 +49,6 @@ struct Login: View {
             Picker("login.method", selection: $loginMethod) {
                 Text("login.username-and-password").tag(LoginMethod.usernamdAndPassword)
                 Text("login.access-token").tag(LoginMethod.accessToken)
-                Text("login.open-id").tag(LoginMethod.openAPI)
             }
             .pickerStyle(.segmented)
             .padding(.bottom, 10)
@@ -77,16 +73,6 @@ struct Login: View {
                 SecureField("login.access-token", text: $accessToken)
                     .textFieldStyle(.roundedBorder)
                 Text("login.access-token.hint")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            } else {
-                TextField("login.open-id", text: $openId)
-                    .textContentType(.URL)
-                    .keyboardType(.URL)
-                    .textInputAutocapitalization(.never)
-                    .disableAutocorrection(true)
-                    .textFieldStyle(.roundedBorder)
-                Text("login.open-id.hint")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -145,7 +131,6 @@ struct Login: View {
                     remember: true))
             memosHost = hostAddress
             keychain.delete(memosAccessTokenKey)
-            memosOpenId = nil
         } else if loginMethod == .accessToken {
             if accessToken.trimmingCharacters(in: .whitespaces).isEmpty {
                 throw MemosError.invalidParams
@@ -154,15 +139,6 @@ struct Login: View {
             try await userState.signIn(memosHost: hostAddress, accessToken: accessToken.trimmingCharacters(in: .whitespaces))
             memosHost = try userState.memos.host.absoluteString
             keychain.set(accessToken.trimmingCharacters(in: .whitespaces), forKey: memosAccessTokenKey)
-            memosOpenId = nil
-        } else {
-            if openId.trimmingCharacters(in: .whitespaces).isEmpty {
-                throw MemosError.invalidParams
-            }
-            try await userState.signIn(memosHost: hostAddress, openId: openId.trimmingCharacters(in: .whitespaces))
-            memosHost = try userState.memos.host.absoluteString
-            keychain.delete(memosAccessTokenKey)
-            memosOpenId = try userState.memos.openId
         }
         
         try await memosViewModel.loadMemos()

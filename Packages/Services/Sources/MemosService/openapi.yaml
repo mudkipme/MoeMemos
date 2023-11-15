@@ -976,6 +976,8 @@ components:
           type: string
         username:
           type: string
+        remember:
+          type: boolean
     SystemStatus:
       type: object
       properties:

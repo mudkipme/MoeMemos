@@ -20,14 +20,12 @@ private let urlSessionConfiguration = {
 class Memos {
     let host: URL
     let accessToken: String?
-    let openId: String?
     let session: URLSession
     private(set) var status: MemosServerStatus? = nil
     
     private init(host: URL, accessToken: String?, openId: String?) {
         self.host = host
         self.accessToken = accessToken?.isEmpty ?? true ? nil : accessToken
-        self.openId = (openId?.isEmpty ?? true) ? nil : openId
         session = URLSession(configuration: urlSessionConfiguration)
         
         // No longer uses cookie when logged-in with Open API
@@ -42,87 +40,6 @@ class Memos {
         return memos
     }
     
-    func signIn(data: MemosSignIn.Input) async throws {
-        _ = try await MemosSignIn.request(self, data: data, param: ())
-    }
-    
-    func logout() async throws {
-        do {
-            _ = try await MemosLogout.request(self, data: nil, param: ())
-        } catch {
-            print(error)
-        }
-        session.configuration.httpCookieStorage?.removeCookies(since: .distantPast)
-    }
-    
-    func me() async throws -> MemosMe.Output {
-        return try await MemosMe.request(self, data: nil, param: ())
-    }
-    
-    func listMemos(data: MemosListMemo.Input?) async throws -> MemosListMemo.Output {
-        return try await MemosListMemo.request(self, data: data, param: ())
-    }
-    
-    func tags(data: MemosTag.Input?) async throws -> MemosTag.Output {
-        return try await MemosTag.request(self, data: data, param: ())
-    }
-    
-    func createMemo(data: MemosCreate.Input) async throws -> MemosCreate.Output {
-        return try await MemosCreate.request(self, data: data, param: ())
-    }
-    
-    func updateMemoOrganizer(memoId: Int, data: MemosOrganizer.Input) async throws -> MemosOrganizer.Output {
-        return try await MemosOrganizer.request(self, data: data, param: memoId)
-    }
-    
-    func updateMemo(data: MemosPatch.Input) async throws -> MemosPatch.Output {
-        return try await MemosPatch.request(self, data: data, param: data.id)
-    }
-    
-    func deleteMemo(id: Int) async throws -> MemosDelete.Output {
-        return try await MemosDelete.request(self, data: nil, param: id)
-    }
-    
-    func listResources() async throws -> MemosListResource.Output {
-        return try await MemosListResource.request(self, data: nil, param: ())
-    }
-    
-    func uploadResource(imageData: Data, filename: String, contentType: String) async throws -> MemosUploadResource.Output {
-        if self.status?.profile.version.compare("0.10.2", options: .numeric) == .orderedAscending {
-            let response = try await MemosUploadResourceLegacy.request(self, data: [Multipart(name: "file", filename: filename, contentType: contentType, data: imageData)], param: ())
-            return response.data
-        }
-        
-        return try await MemosUploadResource.request(self, data: [Multipart(name: "file", filename: filename, contentType: contentType, data: imageData)], param: ())
-    }
-    
-    func deleteResource(id: Int) async throws -> MemosDeleteResource.Output {
-        return try await MemosDeleteResource.request(self, data: nil, param: id)
-    }
-    
-    func loadStatus() async throws {
-        do {
-            let response = try await MemosStatus.request(self, data: nil, param: ())
-            status = response
-        } catch MemosError.invalidStatusCode(let code, _) {
-            if code >= 400 && code < 500 {
-                let response = try await MemosV0Status.request(self, data: nil, param: ())
-                status = response.data
-            }
-        }
-    }
-    
-    func upsertTag(name: String) async throws -> MemosUpsertTag.Output {
-        return try await MemosUpsertTag.request(self, data: MemosUpsertTag.Input(name: name), param: ())
-    }
-    
-    func listAllMemo(data: MemosListAllMemo.Input?) async throws -> MemosListAllMemo.Output {
-        return try await MemosListAllMemo.request(self, data: data, param: ())
-    }
-    
-    func deleteTag(name: String) async throws -> MemosDeleteTag.Output {
-        return try await MemosDeleteTag.request(self, data: MemosDeleteTag.Input(name: name), param: ())
-    }
     
     func url(for resource: Resource) -> URL {
         if let externalLink = resource.externalLink?.encodeUrlPath(), let url = URL(string: externalLink) {
@@ -132,10 +49,6 @@ class Memos {
         var url = host.appendingPathComponent(resource.path())
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         var queryItems = components.queryItems ?? []
-        if let openId = openId, !openId.isEmpty {
-            // to be compatible with future Memos release with resource visibility
-            queryItems.append(URLQueryItem(name: "openId", value: openId))
-        }
         queryItems.append(URLQueryItem(name: "extension", value: URL(fileURLWithPath: resource.filename).pathExtension))
         components.queryItems = queryItems
         url = components.url!
@@ -178,7 +91,7 @@ class Memos {
     }
 }
 
-extension String {
+fileprivate extension String {
     // encode url path
     func encodeUrlPath() -> String {
         guard self.hasPrefix("http") else { return self}

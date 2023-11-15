@@ -9,5 +9,4 @@ import Foundation
 
 let memosHostKey = "memosHost"
 let memosAccessTokenKey = "memosAccessToken"
-let memosOpenIdKey = "memosOpenId"
 let listItemSymbolList = ["- [ ] ", "- [x] ", "- [X] ", "* ", "- "]

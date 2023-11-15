@@ -108,7 +108,6 @@ class ShareViewController: SLComposeServiceViewController {
         keychain.accessGroup = AppInfo.keychainAccessGroupName
         let accessToken = keychain.get(memosAccessTokenKey)
         
-        let openId = UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
-        return try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)
+        return try await Memos.create(host: hostURL, accessToken: accessToken, openId: nil)
     }
 }

@@ -11,7 +11,6 @@ import Models
 
 struct ContentView: View {
     @AppStorage(memosHostKey, store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier)) private var memosHost = ""
-    @AppStorage(memosOpenIdKey, store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier)) private var memosOpenId: String?
     @State private var keychain = {
         let keychain = KeychainSwift()
         keychain.accessGroup = AppInfo.keychainAccessGroupName
@@ -62,7 +61,7 @@ struct ContentView: View {
             }
             
             let accessToken = keychain.get(memosAccessTokenKey)
-            try await userState.reset(memosHost: memosHost, accessToken: accessToken, openId: memosOpenId)
+            try await userState.reset(memosHost: memosHost, accessToken: accessToken, openId: nil)
             try await userState.loadCurrentUser()
         } catch MemosError.notLogin {
             userState.showingLogin = true

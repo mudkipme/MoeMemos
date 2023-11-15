@@ -58,14 +58,12 @@ struct MemoryProvider: IntentTimelineProvider {
         guard let hostURL = URL(string: host) else {
             return nil
         }
-        
-        let openId = UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
-        
+                
         let keychain = KeychainSwift()
         keychain.accessGroup = AppInfo.keychainAccessGroupName
         let accessToken = keychain.get(memosAccessTokenKey)
         
-        let memos = try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)
+        let memos = try await Memos.create(host: hostURL, accessToken: accessToken, openId: nil)
         
         let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
         return [Memo](response.shuffled().prefix(frequency.memosPerDay))
