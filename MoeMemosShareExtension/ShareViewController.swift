@@ -10,6 +10,8 @@ import Social
 import SwiftUI
 import KeychainSwift
 import Models
+import Account
+import MemosService
 
 class ShareViewController: SLComposeServiceViewController {
     
@@ -62,13 +64,8 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
     private func handleShare() async throws {
-        let memos = try await getMemos()
-        do {
-            try await memos.loadStatus()
-        } catch {
-            print(error)
-        }
-        var resourceList = [Resource]()
+        guard let memos = AccountManager.shared.currentService else { throw MemosServiceError.notLogin }
+        var resourceList = [MemosResource]()
         var contentTextList = [String]()
         contentTextList.append(contentText)
         
@@ -82,7 +79,7 @@ class ShareViewController: SLComposeServiceViewController {
                 
                 if attachment.canLoadObject(ofClass: UIImage.self),
                    let image = try await attachment.loadObject(ofClass: UIImage.self) {                    
-                    guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
+                    guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosServiceError.invalidParams }
                     let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
                     resourceList.append(response)
                 }
@@ -91,23 +88,8 @@ class ShareViewController: SLComposeServiceViewController {
         
         let content = contentTextList.joined(separator: "\n").trimmingCharacters(in: .whitespaces)
         if content.isEmpty && resourceList.isEmpty {
-            throw MemosError.invalidParams
+            throw MemosServiceError.invalidParams
         }
-        _ = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: nil, resourceIdList: resourceList.map { $0.id }))
-    }
-    
-    private func getMemos() async throws -> Memos {
-        guard let host = UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.string(forKey: memosHostKey) else {
-            throw MemosError.notLogin
-        }
-        guard let hostURL = URL(string: host) else {
-            throw MemosError.notLogin
-        }
-        
-        let keychain = KeychainSwift()
-        keychain.accessGroup = AppInfo.keychainAccessGroupName
-        let accessToken = keychain.get(memosAccessTokenKey)
-        
-        return try await Memos.create(host: hostURL, accessToken: accessToken, openId: nil)
+        _ = try await memos.createMemo(input: .init(content: content, resourceIdList: resourceList.map { $0.id }, visibility: nil))
     }
 }

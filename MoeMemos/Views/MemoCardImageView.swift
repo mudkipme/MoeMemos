@@ -7,12 +7,13 @@
 
 import SwiftUI
 import QuickLook
+import Account
 
 struct MemoCardImageView: View {
     let images: [URL]
     
     @State private var imagePreviewURL: URL?
-    @EnvironmentObject private var memosManager: MemosManager
+    @Environment(AccountManager.self) private var memosManager: AccountManager
     @State private var downloads = [URL: URL]()
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
@@ -30,9 +31,9 @@ struct MemoCardImageView: View {
             }
         } else {
             ProgressView()
-                .task {
+                .task { @MainActor in
                     do {
-                        if downloads[url] == nil, let memos = memosManager.memos {
+                        if downloads[url] == nil, let memos = memosManager.currentService {
                             downloads[url] = try await memos.download(url: url)
                         }
                     } catch {}

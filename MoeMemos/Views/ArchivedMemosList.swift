@@ -6,11 +6,12 @@
 //
 
 import SwiftUI
+import MemosService
 
 struct ArchivedMemosList: View {
     @StateObject private var viewModel = ArchivedMemoListViewModel()
     @State private var searchString = ""
-    @State private var filteredMemoList: [Memo] = []
+    @State private var filteredMemoList: [MemosMemo] = []
 
     var body: some View {
         List(filteredMemoList, id: \.id) { memo in
@@ -46,7 +47,7 @@ struct ArchivedMemosList: View {
         })
     }
     
-    private func filterMemoList(_ memoList: [Memo]) -> [Memo] {
+    private func filterMemoList(_ memoList: [MemosMemo]) -> [MemosMemo] {
         var memoList = memoList
         if !searchString.isEmpty {
             memoList = memoList.filter({ memo in

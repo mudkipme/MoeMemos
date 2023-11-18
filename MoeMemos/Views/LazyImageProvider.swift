@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MarkdownUI
+import Account
 
 struct LazyImageProvider: ImageProvider {
     let aspectRatio: CGFloat
@@ -21,7 +22,7 @@ struct LazyImageProvider: ImageProvider {
     @MainActor
     func makeURL(_ url: URL?) -> URL? {
         guard let url = url else { return nil }
-        if url.host == nil, let hostURL = MemosManager.shared.hostURL {
+        if url.host == nil, let hostURL = AccountManager.shared.currentService?.hostURL {
             return hostURL.appendingPathComponent(url.path)
         }
         return url

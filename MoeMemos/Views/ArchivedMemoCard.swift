@@ -7,15 +7,16 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import MemosService
 
 struct ArchivedMemoCard: View {
-    let memo: Memo
+    let memo: MemosMemo
     let archivedViewModel: ArchivedMemoListViewModel
 
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var showingDeleteConfirmation = false
 
-    init(_ memo: Memo, archivedViewModel: ArchivedMemoListViewModel) {
+    init(_ memo: MemosMemo, archivedViewModel: ArchivedMemoListViewModel) {
         self.memo = memo
         self.archivedViewModel = archivedViewModel
     }
@@ -81,7 +82,7 @@ struct ArchivedMemoCard: View {
 
 struct ArchivedMemoCard_Previews: PreviewProvider {
     static var previews: some View {
-        ArchivedMemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, creatorName: nil, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil), archivedViewModel: ArchivedMemoListViewModel())
+        ArchivedMemoCard(MemosMemo(content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", createdTs: Int(Date.now.addingTimeInterval(-100).timeIntervalSince1970), id: 1), archivedViewModel: ArchivedMemoListViewModel())
             .environmentObject(MemosViewModel())
     }
 }

@@ -17,6 +17,7 @@ let package = Package(
             targets: ["MemosService"]),
     ],
     dependencies: [
+        .package(name: "Models", path: "../Models"),
         .package(url: "https://github.com/apple/swift-openapi-generator", .upToNextMinor(from: "0.3.4")),
         .package(url: "https://github.com/apple/swift-openapi-runtime", .upToNextMinor(from: "0.3.6")),
         .package(url: "https://github.com/apple/swift-openapi-urlsession", .upToNextMinor(from: "0.3.0")),
@@ -27,6 +28,7 @@ let package = Package(
         .target(
             name: "MemosService",
             dependencies: [
+                .product(name: "Models", package: "Models"),
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
             ],

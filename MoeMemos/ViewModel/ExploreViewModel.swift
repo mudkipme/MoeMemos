@@ -6,16 +6,14 @@
 //
 
 import Foundation
+import Account
+import MemosService
 
 @MainActor
 class ExploreViewModel: ObservableObject {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    var memos: Memos { get throws { try memosManager.api } }
+    var memos: MemosService { get throws { try AccountManager.shared.mustCurrentService } }
 
-    @Published private(set) var memoList: [Memo] = []
+    @Published private(set) var memoList: [MemosMemo] = []
     @Published private(set) var loading = false
     @Published private(set) var hasMore = false
     private var currentOffset = 0
@@ -23,7 +21,7 @@ class ExploreViewModel: ObservableObject {
     func loadMemos() async throws {
         do {
             loading = true
-            let response = try await memos.listAllMemo(data: MemosListAllMemo.Input(pinned: nil, tag: nil, visibility: nil, limit: 20, offset: nil))
+            let response = try await memos.listPublicMemos(limit: 20, offset: 0)
             memoList = response
             loading = false
             hasMore = response.count >= 20
@@ -37,7 +35,7 @@ class ExploreViewModel: ObservableObject {
         guard !loading && hasMore else { return }
         do {
             loading = true
-            let response = try await memos.listAllMemo(data: MemosListAllMemo.Input(pinned: nil, tag: nil, visibility: nil, limit: 20, offset: memoList.count))
+            let response = try await memos.listPublicMemos(limit: 20, offset: memoList.count)
             memoList += response
             loading = false
             hasMore = response.count >= 20

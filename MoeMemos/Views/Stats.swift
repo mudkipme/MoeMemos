@@ -15,7 +15,7 @@ fileprivate let weekDaySymbols: [String] = {
 
 struct Stats: View {
     @EnvironmentObject private var memosViewModel: MemosViewModel
-    @EnvironmentObject private var userState: UserState
+    @Environment(UserState.self) private var userState: UserState
     
     var body: some View {
         VStack {
@@ -69,7 +69,8 @@ struct Stats: View {
     
     func days() -> Int {
         guard let user = userState.currentUser else { return 0 }
-        return Calendar.current.dateComponents([.day], from: user.createdTs, to: .now).day!
+        guard let createdTs = user.createdTs else { return 0 }
+        return Calendar.current.dateComponents([.day], from: Date(timeIntervalSince1970: TimeInterval(createdTs)), to: .now).day!
     }
 }
 
@@ -77,6 +78,6 @@ struct Stats_Previews: PreviewProvider {
     static var previews: some View {
         Stats()
             .environmentObject(MemosViewModel())
-            .environmentObject(UserState())
+            .environment(UserState())
     }
 }

@@ -6,18 +6,19 @@
 //
 
 import SwiftUI
+import MemosService
 
 struct MemosList: View {
     let tag: Tag?
 
     @State private var searchString = ""
     @State private var showingNewPost = false
-    @EnvironmentObject private var userState: UserState
+    @Environment(UserState.self) private var userState: UserState
     @EnvironmentObject private var memosViewModel: MemosViewModel
-    @State private var filteredMemoList: [Memo] = []
+    @State private var filteredMemoList: [MemosMemo] = []
     
     var body: some View {
-        let defaultMemoVisibility = userState.currentUser?.defaultMemoVisibility ?? .private
+        let defaultMemoVisibility = userState.currentUser?.defaultMemoVisibility ?? .PRIVATE
         
         ZStack(alignment: .bottomTrailing) {
             List(filteredMemoList, id: \.id) { memo in
@@ -93,9 +94,9 @@ struct MemosList: View {
         }
     }
     
-    private func filterMemoList(_ memoList: [Memo], tag: Tag?, searchString: String) -> [Memo] {
-        let pinned = memoList.filter { $0.pinned }
-        let nonPinned = memoList.filter { !$0.pinned }
+    private func filterMemoList(_ memoList: [MemosMemo], tag: Tag?, searchString: String) -> [MemosMemo] {
+        let pinned = memoList.filter { $0.pinned == true }
+        let nonPinned = memoList.filter { !($0.pinned == true) }
         var fullList = pinned + nonPinned
         
         if let tag = tag {
@@ -120,6 +121,6 @@ struct MemosList_Previews: PreviewProvider {
     static var previews: some View {
         MemosList(tag: nil)
             .environmentObject(MemosViewModel())
-            .environmentObject(UserState())
+            .environment(UserState())
     }
 }

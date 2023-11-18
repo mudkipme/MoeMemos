@@ -7,64 +7,50 @@
 
 import Foundation
 import Models
+import Account
+import MemosService
 
 @MainActor
-class UserState: ObservableObject {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    
+@Observable class UserState {
     static let shared = UserState()
     
-    var memos: Memos { get throws { try memosManager.api } }
-    var status: MemosServerStatus? { memosManager.memos?.status }
-    
-    @Published private(set) var currentUser: MemosUser?
-    @Published var showingLogin = false
-    
-    func reset(memosHost: String, accessToken: String?, openId: String?) async throws {
-        try await memosManager.reset(memosHost: memosHost, accessToken: accessToken, openId: openId)
-        currentUser = nil
-    }
+    private(set) var currentUser: MemosUser?
+    var showingLogin = false
+    private(set) var currentStatus: MemosStatus?
     
     func loadCurrentUser() async throws {
-        let response = try await memos.me()
+        guard let memos = AccountManager.shared.currentService else { throw MemosServiceError.notLogin }
+        let response = try await memos.getCurrentUser()
         currentUser = response
     }
     
-    func signIn(memosHost: String, input: MemosSignIn.Input) async throws {
-        guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
-        
-        let client = try await Memos.create(host: url, accessToken: nil, openId: nil)
-        try await client.signIn(data: input)
-        
-        let response = try await client.me()
-        await memosManager.reset(memosHost: url, accessToken: nil, openId: nil)
+    func loadCurrentStatus() async throws {
+        let response = try await AccountManager.shared.currentService?.getStatus()
+        currentStatus = response
+    }
+    
+    func signIn(memosHost: String, username: String, password: String) async throws {
+        guard let url = URL(string: memosHost) else { throw MemosServiceError.invalidParams }
+        let client = MemosService(hostURL: url, accessToken: nil)
+        let (user, accessToken) = try await client.signIn(username: username, password: password)
+        guard let accessToken = accessToken else { throw MemosServiceError.unsupportedVersion }
+        try AccountManager.shared.add(account: .memos(host: memosHost, id: "\(user.id)", accessToken: accessToken))
+        let response = try await AccountManager.shared.currentService?.getCurrentUser()
         currentUser = response
     }
     
     func signIn(memosHost: String, accessToken: String) async throws {
-        guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
-        let client = try await Memos.create(host: url, accessToken: accessToken, openId: nil)
-        let response = try await client.me()
-        await memosManager.reset(memosHost: url, accessToken: accessToken, openId: nil)
-        currentUser = response
-    }
-    
-    func signIn(memosHost: String, openId: String) async throws {
-        guard let url = URL(string: memosHost) else { throw MemosError.invalidParams }
-        let client = try await Memos.create(host: url, accessToken: nil, openId: openId)
-        let response = try await client.me()
-        await memosManager.reset(memosHost: url, accessToken: nil, openId: openId)
+        guard let url = URL(string: memosHost) else { throw MemosServiceError.invalidParams }
+        let client = MemosService(hostURL: url, accessToken: accessToken)
+        let response = try await client.getCurrentUser()
+        try AccountManager.shared.add(account: .memos(host: memosHost, id: "\(response.id)", accessToken: accessToken))
         currentUser = response
     }
     
     func logout() async throws {
-        if try memos.accessToken == nil || memos.accessToken?.isEmpty == true {
-            try await memos.logout()
+        if let account = AccountManager.shared.currentAccount {
+            AccountManager.shared.delete(account: account)
         }
-        currentUser = nil
-        UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.removeObject(forKey: memosOpenIdKey)
+        try await loadCurrentUser()
     }
 }

@@ -834,6 +834,17 @@ components:
           type: integer
         visibility:
           $ref: '#/components/schemas/Visibility'
+        creatorName:
+          type: string
+          nullable: true
+        resourceList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+      required:
+        - id
+        - createdTs
+        - content
     MemoRelation:
       type: object
       properties:
@@ -882,6 +893,9 @@ components:
           type: string
         updatedTs:
           type: integer
+      required:
+        - id
+        - filename
     Role:
       type: string
       enum:
@@ -927,10 +941,7 @@ components:
           items:
             type: integer
         visibility:
-          type: object
-          description: Domain specific fields
-          allOf:
-          - $ref: '#/components/schemas/Visibility'
+          $ref: '#/components/schemas/Visibility'
     CreateResourceRequest:
       type: object
       properties:
@@ -1020,13 +1031,6 @@ components:
       properties:
         name:
           type: string
-    UpsertUserSettingRequest:
-      type: object
-      properties:
-        key:
-          $ref: '#/components/schemas/UserSettingKey'
-        value:
-          type: string
     User:
       type: object
       properties:
@@ -1056,6 +1060,8 @@ components:
         username:
           type: string
           description: Domain specific fields
+      required:
+        - id
     UserSetting:
       type: object
       properties:
@@ -1067,13 +1073,3 @@ components:
           type: string
     UserSettingKey:
       type: string
-      enum:
-      - locale
-      - appearance
-      - memo-visibility
-      - telegram-user-id
-      x-enum-varnames:
-      - UserSettingLocaleKey
-      - UserSettingAppearanceKey
-      - UserSettingMemoVisibilityKey
-      - UserSettingTelegramUserIDKey

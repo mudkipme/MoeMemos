@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import MemosService
+import Account
 
 struct Attachment: View {
-    let resource: Resource
+    let resource: MemosResource
     @State var showingAttachment = false
-    @EnvironmentObject private var memosManager: MemosManager
+    @Environment(AccountManager.self) private var memosManager: AccountManager
     @State private var downloadedURL: URL?
     @State private var downloadError: Error?
     @State private var showingErrorToast = false
@@ -21,7 +23,7 @@ struct Attachment: View {
             Task {
                 do {
                     downloading = true
-                    if let memos = memosManager.memos {
+                    if let memos = memosManager.currentService {
                         downloadedURL = try await memos.download(url: memos.url(for: resource))
                     }
                 } catch {
@@ -50,7 +52,7 @@ struct Attachment: View {
 
 struct Attachment_Previews: PreviewProvider {
     static var previews: some View {
-        Attachment(resource: Resource(id: 0, createdTs: Date(), creatorId: 0, filename: "test.yml", size: 0, type: "application/x-yaml", updatedTs: Date(), externalLink: nil, publicId: nil))
-            .environmentObject(MemosManager())
+        Attachment(resource: MemosResource(filename: "test.yml", id: 1))
+            .environment(AccountManager.shared)
     }
 }

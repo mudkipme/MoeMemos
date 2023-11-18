@@ -6,8 +6,8 @@
 //
 
 import SwiftUI
-import KeychainSwift
 import Models
+import MemosService
 
 struct Login: View {
     private enum LoginMethod: Hashable {
@@ -15,19 +15,12 @@ struct Login: View {
         case accessToken
     }
     
-    @AppStorage(memosHostKey, store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier)) var memosHost = ""
-    @State private var keychain = {
-        let keychain = KeychainSwift()
-        keychain.accessGroup = AppInfo.keychainAccessGroupName
-        return keychain
-    }()
-
     @State private var host = ""
     @State private var email = ""
     @State private var password = ""
     @State private var accessToken = ""
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject private var userState: UserState
+    @Environment(UserState.self) private var userState: UserState
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var loginError: Error?
     @State private var showingErrorToast = false
@@ -97,11 +90,6 @@ struct Login: View {
             .padding(.top, 20)
         }
         .padding()
-        .onAppear {
-            if host == "" {
-                host = memosHost
-            }
-        }
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", loginError?.localizedDescription))
         .toast(isPresenting: $showLoadingToast, alertType: .loading)
         .interactiveDismissDisabled()
@@ -109,7 +97,7 @@ struct Login: View {
     
     func doLogin() async throws {
         if host.isEmpty {
-            throw MemosError.invalidParams
+            throw MemosServiceError.invalidParams
         }
         
         var hostAddress = host.trimmingCharacters(in: .whitespaces)
@@ -120,25 +108,18 @@ struct Login: View {
         if loginMethod == .usernamdAndPassword {
             if email.trimmingCharacters(in: .whitespaces).isEmpty ||
                 password.isEmpty {
-                throw MemosError.invalidParams
+                throw MemosServiceError.invalidParams
             }
             try await userState.signIn(
                 memosHost: hostAddress,
-                input: MemosSignIn.Input(
-                    email: email.trimmingCharacters(in: .whitespaces),
-                    username: email.trimmingCharacters(in: .whitespaces),
-                    password: password,
-                    remember: true))
-            memosHost = hostAddress
-            keychain.delete(memosAccessTokenKey)
+                username: email.trimmingCharacters(in: .whitespaces),
+                password: password)
         } else if loginMethod == .accessToken {
             if accessToken.trimmingCharacters(in: .whitespaces).isEmpty {
-                throw MemosError.invalidParams
+                throw MemosServiceError.invalidParams
             }
             
             try await userState.signIn(memosHost: hostAddress, accessToken: accessToken.trimmingCharacters(in: .whitespaces))
-            memosHost = try userState.memos.host.absoluteString
-            keychain.set(accessToken.trimmingCharacters(in: .whitespaces), forKey: memosAccessTokenKey)
         }
         
         try await memosViewModel.loadMemos()
@@ -150,6 +131,6 @@ struct Login_Previews: PreviewProvider {
     static var previews: some View {
         Login()
             .environmentObject(MemosViewModel())
-            .environmentObject(UserState())
+            .environment(UserState())
     }
 }

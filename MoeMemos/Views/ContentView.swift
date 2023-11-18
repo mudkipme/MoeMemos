@@ -6,29 +6,23 @@
 //
 
 import SwiftUI
-import KeychainSwift
 import Models
+import MemosService
 
 struct ContentView: View {
-    @AppStorage(memosHostKey, store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier)) private var memosHost = ""
-    @State private var keychain = {
-        let keychain = KeychainSwift()
-        keychain.accessGroup = AppInfo.keychainAccessGroupName
-        return keychain
-    }()
-
-    @EnvironmentObject private var userState: UserState
+    @Environment(UserState.self) private var userState: UserState
     @State private var selection: Route? = .memos
     @StateObject private var memosViewModel = MemosViewModel()
     @Environment(\.scenePhase) var scenePhase
 
-    
     @ViewBuilder
     private func navigation() -> some View {
         Navigation(selection: $selection)
     }
     
     var body: some View {
+        @Bindable var userState = userState
+        
         navigation()
             .tint(.green)
             .task {
@@ -43,7 +37,7 @@ struct ContentView: View {
                     Task {
                         do {
                             try await userState.loadCurrentUser()
-                        } catch MemosError.invalidStatusCode(let statusCode, _) {
+                        } catch MemosServiceError.invalidStatusCode(let statusCode, _) {
                             if statusCode == 401 {
                                 userState.showingLogin = true
                             }
@@ -55,18 +49,11 @@ struct ContentView: View {
     
     func loadCurrentUser() async {
         do {
-            if let legacyMemosHost = UserDefaults.standard.string(forKey: memosHostKey), !legacyMemosHost.isEmpty {
-                memosHost = legacyMemosHost
-                UserDefaults.standard.removeObject(forKey: memosHostKey)
-            }
-            
-            let accessToken = keychain.get(memosAccessTokenKey)
-            try await userState.reset(memosHost: memosHost, accessToken: accessToken, openId: nil)
             try await userState.loadCurrentUser()
-        } catch MemosError.notLogin {
+        } catch MemosServiceError.notLogin {
             userState.showingLogin = true
             return
-        } catch MemosError.invalidStatusCode(let statusCode, let message) {
+        } catch MemosServiceError.invalidStatusCode(let statusCode, let message) {
             if statusCode == 401 {
                 userState.showingLogin = true
                 return
@@ -81,6 +68,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .environmentObject(UserState())
+            .environment(UserState())
     }
 }

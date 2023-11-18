@@ -7,30 +7,7 @@
 
 import Foundation
 import SwiftUI
-
-enum MemosVisibility: String, Decodable, Encodable, CaseIterable {
-    case `public` = "PUBLIC"
-    case `protected` = "PROTECTED"
-    case `private` = "PRIVATE"
-}
-
-enum MemosRowStatus: String, Decodable, Encodable {
-    case normal = "NORMAL"
-    case archived = "ARCHIVED"
-}
-
-struct Memo: Decodable, Equatable, Identifiable {
-    let id: Int
-    let createdTs: Date
-    let creatorId: Int
-    let creatorName: String?
-    var content: String
-    var pinned: Bool
-    let rowStatus: MemosRowStatus
-    let updatedTs: Date
-    let visibility: MemosVisibility
-    let resourceList: [Resource]?
-}
+import MemosService
 
 struct Tag: Identifiable, Hashable {
     let name: String
@@ -41,38 +18,38 @@ struct Tag: Identifiable, Hashable {
 extension MemosVisibility {
     var title: LocalizedStringKey {
         switch self {
-        case .public:
+        case .PUBLIC:
             return "memo.visibility.public"
-        case .protected:
+        case .PROTECTED:
             return "memo.visibility.protected"
-        case .private:
+        case .PRIVATE:
             return "memo.visibility.private"
         }
     }
     
     var iconName: String {
         switch self {
-        case .public:
+        case .PUBLIC:
             return "globe"
-        case .protected:
+        case .PROTECTED:
             return "house"
-        case .private:
+        case .PRIVATE:
             return "lock"
         }
     }
 }
 
-extension Memo {
+extension MemosMemo {
     func renderTime() -> String {
-        if Calendar.current.dateComponents([.day], from: createdTs, to: .now).day! > 7 {
+        if Calendar.current.dateComponents([.day], from: createDate, to: .now).day! > 7 {
             let formatter = DateFormatter()
             formatter.dateStyle = .long
             formatter.timeStyle = .short
-            return formatter.string(from: createdTs)
+            return formatter.string(from: createDate)
         }
         
         let formatter = RelativeDateTimeFormatter()
         formatter.dateTimeStyle = .named
-        return formatter.localizedString(for: createdTs, relativeTo: .now)
+        return formatter.localizedString(for: createDate, relativeTo: .now)
     }
 }

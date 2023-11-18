@@ -15,7 +15,7 @@ struct MemoInputResourceView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     ForEach(viewModel.resourceList, id: \.id) { resource in
-                        if resource.type.hasPrefix("image/") {
+                        if resource._type?.hasPrefix("image/") == true {
                             ResourceCard(resource: resource, resourceManager: viewModel)
                         } else {
                             Attachment(resource: resource)

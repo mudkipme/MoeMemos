@@ -9,17 +9,19 @@ import SwiftUI
 import Models
 
 struct Settings: View {
-    @EnvironmentObject var userState: UserState
+    @Environment(UserState.self) var userState: UserState
     @State var appInfo = AppInfo()
 
     var body: some View {
         List {
             if let user = userState.currentUser {
                 VStack(alignment: .leading) {
-                    Text(user.displayName)
-                        .font(.title3)
-                    if user.displayName != user.displayEmail && !user.displayEmail.isEmpty {
-                        Text(user.displayEmail)
+                    if let nickname = user.nickname {
+                        Text(nickname)
+                            .font(.title3)
+                    }
+                    if let email = user.email {
+                        Text(email)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -37,8 +39,8 @@ struct Settings: View {
                 }
             }
             
-            if let status = userState.status {
-                Text("✍️memos v\(status.profile.version)")
+            if let version = userState.currentStatus?.profile?.version {
+                Text("✍️memos v\(version)")
                     .foregroundStyle(.secondary)
             }
             
@@ -78,12 +80,10 @@ struct Settings: View {
             }
         }
         .navigationTitle("settings")
-    }
-}
-
-struct Settings_Previews: PreviewProvider {
-    static var previews: some View {
-        Settings()
-            .environmentObject(UserState())
+        .task {
+            do {
+                try await userState.loadCurrentStatus()
+            } catch {}
+        }
     }
 }

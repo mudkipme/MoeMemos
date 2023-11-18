@@ -10,19 +10,17 @@ import UIKit
 import PhotosUI
 import SwiftUI
 import Markdown
+import MemosService
+import Account
 
 @MainActor
 class MemoInputViewModel: ObservableObject, ResourceManager {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    var memos: Memos { get throws { try memosManager.api } }
+    var memos: MemosService { get throws { try AccountManager.shared.mustCurrentService } }
     
-    @Published var resourceList = [Resource]()
+    @Published var resourceList = [MemosResource]()
     @Published var imageUploading = false
     @Published var saving = false
-    @Published var visibility: MemosVisibility = .private
+    @Published var visibility: MemosVisibility = .PRIVATE
 
     private var anyPhotos: Any?
     @available(iOS 16, *) var photos: [PhotosPickerItem]? {
@@ -39,7 +37,7 @@ class MemoInputViewModel: ObservableObject, ResourceManager {
             image = image.scale(to: CGSize(width: 1024, height: 1024))
         }
         
-        guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
+        guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosServiceError.invalidParams }
         let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
         resourceList.append(response)
     }

@@ -7,11 +7,12 @@
 
 import SwiftUI
 import PhotosUI
+import MemosService
 
 struct MemoInput: View {
-    let memo: Memo?
+    let memo: MemosMemo?
     @EnvironmentObject private var memosViewModel: MemosViewModel
-    @EnvironmentObject var userState: UserState
+    @Environment(UserState.self) var userState: UserState
     @StateObject private var viewModel = MemoInputViewModel()
 
     @State private var text = ""
@@ -112,10 +113,10 @@ struct MemoInput: View {
         .onAppear {
             if let memo = memo {
                 text = memo.content
-                viewModel.visibility = memo.visibility
+                viewModel.visibility = memo.visibility ?? .PRIVATE
             } else {
                 text = draft
-                viewModel.visibility = userState.currentUser?.defaultMemoVisibility ?? .private
+                viewModel.visibility = userState.currentUser?.defaultMemoVisibility ?? .PRIVATE
             }
             if let resourceList = memo?.resourceList {
                 viewModel.resourceList = resourceList
@@ -366,6 +367,6 @@ struct MemoInput_Previews: PreviewProvider {
     static var previews: some View {
         MemoInput(memo: nil)
             .environmentObject(MemosViewModel())
-            .environmentObject(UserState())
+            .environment(UserState())
     }
 }

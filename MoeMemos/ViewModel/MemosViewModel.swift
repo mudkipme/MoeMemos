@@ -6,16 +6,14 @@
 //
 
 import Foundation
+import Account
+import MemosService
 
 @MainActor
 class MemosViewModel: ObservableObject {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    var memos: Memos { get throws { try memosManager.api } }
+    var memos: MemosService { get throws { try AccountManager.shared.mustCurrentService } }
 
-    @Published private(set) var memoList: [Memo] = [] {
+    @Published private(set) var memoList: [MemosMemo] = [] {
         didSet {
             matrix = DailyUsageStat.calculateMatrix(memoList: memoList)
         }
@@ -28,7 +26,7 @@ class MemosViewModel: ObservableObject {
     func loadMemos() async throws {
         do {
             loading = true
-            let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
+            let response = try await memos.listMemos(input: .init(rowStatus: .NORMAL))
             memoList = response
             loading = false
             inited = true
@@ -39,19 +37,19 @@ class MemosViewModel: ObservableObject {
     }
     
     func loadTags() async throws {
-        let response = try await memos.tags(data: nil)
+        let response = try await memos.listTags()
         tags = response.map({ name in
             Tag(name: name)
         })
     }
     
-    func createMemo(content: String, visibility: MemosVisibility = .private, resourceIdList: [Int]? = nil) async throws {
-        let response = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: visibility, resourceIdList: resourceIdList))
+    func createMemo(content: String, visibility: MemosVisibility = .PRIVATE, resourceIdList: [Int]? = nil) async throws {
+        let response = try await memos.createMemo(input: .init(content: content, resourceIdList: resourceIdList, visibility: visibility))
         memoList.insert(response, at: 0)
         try await loadTags()
     }
     
-    private func updateMemo(_ memo: Memo) {
+    private func updateMemo(_ memo: MemosMemo) {
         for (i, item) in memoList.enumerated() {
             if item.id == memo.id {
                 memoList[i] = memo
@@ -61,7 +59,7 @@ class MemosViewModel: ObservableObject {
     }
     
     func updateMemoOrganizer(id: Int, pinned: Bool) async throws {
-        let response = try await memos.updateMemoOrganizer(memoId: id, data: MemosOrganizer.Input(pinned: pinned))
+        let response = try await memos.memoOrganizer(id: id, pinned: pinned)
         // the response might be incorrect
         var memo = response
         memo.pinned = pinned
@@ -70,14 +68,14 @@ class MemosViewModel: ObservableObject {
     }
     
     func archiveMemo(id: Int) async throws {
-        _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .archived, content: nil, visibility: nil, resourceIdList: nil))
+        _ = try await memos.updateMemo(id: id, input: .init(rowStatus: .ARCHIVED))
         memoList = memoList.filter({ memo in
             memo.id != id
         })
     }
     
-    func editMemo(id: Int, content: String, visibility: MemosVisibility = .private, resourceIdList: [Int]? = nil) async throws {
-        let response = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: nil, content: content, visibility: visibility, resourceIdList: resourceIdList))
+    func editMemo(id: Int, content: String, visibility: MemosVisibility = .PRIVATE, resourceIdList: [Int]? = nil) async throws {
+        let response = try await memos.updateMemo(id: id, input: .init(content: content, resourceIdList: resourceIdList, visibility: visibility))
         updateMemo(response)
         try await loadTags()
     }

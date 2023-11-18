@@ -6,24 +6,22 @@
 //
 
 import Foundation
+import Account
+import MemosService
 
 @MainActor
 class ArchivedMemoListViewModel: ObservableObject {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    var memos: Memos { get throws { try memosManager.api } }
+    var memos: MemosService { get throws { try AccountManager.shared.mustCurrentService } }
 
-    @Published private(set) var archivedMemoList: [Memo] = []
+    @Published private(set) var archivedMemoList: [MemosMemo] = []
     
     func loadArchivedMemos() async throws {
-        let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .archived, visibility: nil))
+        let response = try await memos.listMemos(input: .init(rowStatus: .ARCHIVED))
         archivedMemoList = response
     }
     
     func restoreMemo(id: Int) async throws {
-        _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .normal, content: nil, visibility: nil, resourceIdList: nil))
+        _ = try await memos.updateMemo(id: id, input: .init(rowStatus: .NORMAL))
         archivedMemoList = archivedMemoList.filter({ memo in
             memo.id != id
         })

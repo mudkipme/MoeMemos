@@ -1,18 +1,18 @@
 //
 //  Error.swift
-//  MoeMemos
 //
-//  Created by Mudkip on 2022/9/5.
+//
+//  Created by Mudkip on 2023/11/18.
 //
 
 import Foundation
 
-enum MemosError: LocalizedError {
+public enum MemosServiceError: LocalizedError {
     case unknown
     case notLogin
     case invalidStatusCode(Int, String?)
     case invalidParams
-    case invalidOpenAPI
+    case unsupportedVersion
     
     public var errorDescription: String? {
         switch self {
@@ -27,8 +27,8 @@ enum MemosError: LocalizedError {
             return "Network error."
         case .invalidParams:
             return "Please enter a valid input."
-        case .invalidOpenAPI:
-            return "The Open API URL is incorrect."
+        case .unsupportedVersion:
+            return "Your Memos version is not supported."
         }
     }
 }

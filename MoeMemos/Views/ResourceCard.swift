@@ -6,18 +6,20 @@
 //
 
 import SwiftUI
+import MemosService
+import Account
 
 struct ResourceCard: View {
-    let resource: Resource
+    let resource: MemosResource
     let resourceManager: ResourceManager
     
-    init(resource: Resource, resourceManager: ResourceManager) {
+    init(resource: MemosResource, resourceManager: ResourceManager) {
         self.resource = resource
         self.resourceManager = resourceManager
     }
     
     @EnvironmentObject private var memosViewModel: MemosViewModel
-    @EnvironmentObject private var memosManager: MemosManager
+    @Environment(AccountManager.self) private var memosManager: AccountManager
     @State private var imagePreviewURL: URL?
     @State private var downloadedURL: URL?
     
@@ -44,7 +46,7 @@ struct ResourceCard: View {
             }
             .task {
                 do {
-                    if downloadedURL == nil, let memos = memosManager.memos {
+                    if downloadedURL == nil, let memos = memosManager.currentService {
                         downloadedURL = try await memos.download(url: memos.url(for: resource))
                     }
                 } catch {}
@@ -57,7 +59,7 @@ struct ResourceCard: View {
     }
     
     @ViewBuilder
-    func menu(for resource: Resource) -> some View {
+    func menu(for resource: MemosResource) -> some View {
         Button(role: .destructive, action: {
             Task {
                 try await resourceManager.deleteResource(id: resource.id)
@@ -65,13 +67,5 @@ struct ResourceCard: View {
         }, label: {
             Label("Delete", systemImage: "trash")
         })
-    }
-}
-
-struct ResourceCard_Previews: PreviewProvider {
-    static var previews: some View {
-        ResourceCard(resource: Resource(id: 1, createdTs: .now, creatorId: 0, filename: "", size: 0, type: "image/jpeg", updatedTs: .now, externalLink: nil, publicId: nil), resourceManager: ResourceListViewModel())
-            .environmentObject(MemosViewModel())
-            .environmentObject(MemosManager())
     }
 }

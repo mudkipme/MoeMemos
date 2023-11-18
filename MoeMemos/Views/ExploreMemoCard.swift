@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import MemosService
 
 struct ExploreMemoCard: View {
-    let memo: Memo
+    let memo: MemosMemo
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -34,6 +35,6 @@ struct ExploreMemoCard: View {
 
 struct ExploreMemoCard_Previews: PreviewProvider {
     static var previews: some View {
-        ExploreMemoCard(memo: Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, creatorName: nil, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil))
+        ExploreMemoCard(memo: MemosMemo(content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", createdTs: Int(Date.now.addingTimeInterval(-100).timeIntervalSince1970), id: 1))
     }
 }

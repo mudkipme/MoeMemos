@@ -10,18 +10,13 @@ import SwiftUI
 import Intents
 import KeychainSwift
 import Models
+import MemosService
+import Account
 
-let sampleMemo = Memo(
-    id: 0,
-    createdTs: Date(),
-    creatorId: 0,
-    creatorName: nil,
+let sampleMemo = MemosMemo(
     content: "Make your wonderful dream a reality, and it will become your truth.",
-    pinned: false,
-    rowStatus: .normal,
-    updatedTs: Date(),
-    visibility: .private,
-    resourceList: nil
+    createdTs: Int(Date().timeIntervalSince1970),
+    id: 0
 )
 
 extension MemoryUpdatePeriod {
@@ -51,22 +46,12 @@ struct MemoryProvider: IntentTimelineProvider {
         }
     }
     
-    func getMemos(_ frequency: MemoryUpdatePeriod) async throws -> [Memo]? {
-        guard let host = UserDefaults(suiteName: AppInfo.groupContainerIdentifier)?.string(forKey: memosHostKey) else {
-            return nil
-        }
-        guard let hostURL = URL(string: host) else {
-            return nil
-        }
-                
-        let keychain = KeychainSwift()
-        keychain.accessGroup = AppInfo.keychainAccessGroupName
-        let accessToken = keychain.get(memosAccessTokenKey)
+    @MainActor
+    func getMemos(_ frequency: MemoryUpdatePeriod) async throws -> [MemosMemo]? {
+        guard let memos = AccountManager.shared.currentService else { return nil }
         
-        let memos = try await Memos.create(host: hostURL, accessToken: accessToken, openId: nil)
-        
-        let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
-        return [Memo](response.shuffled().prefix(frequency.memosPerDay))
+        let response = try await memos.listMemos(input: .init(rowStatus: .NORMAL))
+        return [MemosMemo](response.shuffled().prefix(frequency.memosPerDay))
     }
 
     func getTimeline(for configuration: MemoryWidgetConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
@@ -93,7 +78,7 @@ struct MemoryProvider: IntentTimelineProvider {
 struct MemoryEntry: TimelineEntry {
     let date: Date
     let configuration: MemoryWidgetConfigurationIntent
-    let memo: Memo
+    let memo: MemosMemo
 }
 
 struct MemoryEntryView : View {
@@ -119,7 +104,7 @@ struct MemoryEntryView : View {
     var dateString: String {
         let formatter = RelativeDateTimeFormatter()
         formatter.dateTimeStyle = .named
-        return formatter.localizedString(for: entry.memo.createdTs, relativeTo: .now)
+        return formatter.localizedString(for: entry.memo.createDate, relativeTo: .now)
     }
     
     var attributedString: AttributedString {

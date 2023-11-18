@@ -7,11 +7,14 @@
 
 import SwiftUI
 import MarkdownUI
+import MemosService
+import Account
 
+@MainActor
 struct MemoCardContent: View {
     private enum MemoResource: Identifiable {
         case images([URL])
-        case attachment(Resource)
+        case attachment(MemosResource)
         
         var id: String {
             switch self {
@@ -23,10 +26,10 @@ struct MemoCardContent: View {
         }
     }
 
-    let memo: Memo
+    let memo: MemosMemo
     let toggleTaskItem: ((TaskListMarkerConfiguration) async -> Void)?
     @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject private var memosManager: MemosManager
+    @Environment(AccountManager.self) private var memosManager: AccountManager
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -58,12 +61,12 @@ struct MemoCardContent: View {
     
     private func resources() -> [MemoResource] {
         var attachments = [MemoResource]()
-        if let resourceList = memo.resourceList, let memos = memosManager.memos {
+        if let resourceList = memo.resourceList, let memos = memosManager.currentService {
             let imageResources = resourceList.filter { resource in
-                resource.type.hasPrefix("image/")
+                resource._type?.hasPrefix("image/") == true
             }
             let otherResources = resourceList.filter { resource in
-                !resource.type.hasPrefix("image/")
+                !(resource._type?.hasPrefix("image/") == true)
             }
             
             if !imageResources.isEmpty {
@@ -79,8 +82,8 @@ struct MemoCardContent: View {
 
 struct MemoCardContent_Previews: PreviewProvider {
     static var previews: some View {
-        MemoCardContent(memo: Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, creatorName: nil, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil), toggleTaskItem: nil)
+        MemoCardContent(memo: MemosMemo(content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", createdTs: Int(Date.now.addingTimeInterval(-100).timeIntervalSince1970), id: 1), toggleTaskItem: nil)
             .environmentObject(MemosViewModel())
-            .environmentObject(MemosManager())
+            .environment(AccountManager.shared)
     }
 }

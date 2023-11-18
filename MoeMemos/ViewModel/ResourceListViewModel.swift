@@ -6,21 +6,19 @@
 //
 
 import Foundation
+import Account
+import MemosService
 
 @MainActor
 class ResourceListViewModel: ObservableObject, ResourceManager {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    var memos: Memos { get throws { try memosManager.api } }
+    var memos: MemosService { get throws { try AccountManager.shared.mustCurrentService } }
 
-    @Published private(set) var resourceList: [Resource] = []
+    @Published private(set) var resourceList: [MemosResource] = []
     
     func loadResources() async throws {
         let response = try await memos.listResources()
         resourceList = response.filter({ resource in
-            resource.type.hasPrefix("image/")
+            resource._type?.hasPrefix("image/") ?? false
         })
     }
     

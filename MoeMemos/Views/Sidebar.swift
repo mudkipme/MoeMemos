@@ -9,7 +9,7 @@ import SwiftUI
 
 struct Sidebar: View {
     @EnvironmentObject private var memosViewModel: MemosViewModel
-    @EnvironmentObject private var userState: UserState
+    @Environment(UserState.self) private var userState: UserState
     @Binding var selection: Route?
 
     var body: some View {
@@ -67,7 +67,7 @@ struct Sidebar: View {
                 }
             }
         }
-        .navigationTitle(userState.currentUser?.displayName ?? NSLocalizedString("memo.memos", comment: "Memos"))
+        .navigationTitle(userState.currentUser?.nickname ?? NSLocalizedString("memo.memos", comment: "Memos"))
         .task {
             do {
                 try await memosViewModel.loadTags()
@@ -89,6 +89,6 @@ struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
         Sidebar(selection: $route)
             .environmentObject(MemosViewModel())
-            .environmentObject(UserState())
+            .environment(UserState())
     }
 }

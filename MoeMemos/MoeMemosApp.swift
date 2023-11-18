@@ -6,17 +6,19 @@
 //
 
 import SwiftUI
+import Account
 
 @main
+@MainActor
 struct MoeMemosApp: App {
-    @StateObject private var userState: UserState = .shared
-    @StateObject private var memosManager: MemosManager = .shared
+    @State private var userState: UserState = .shared
+    @State private var accountManager: AccountManager = .shared
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(userState)
-                .environmentObject(memosManager)
+                .environment(userState)
+                .environment(accountManager)
         }
     }
 }

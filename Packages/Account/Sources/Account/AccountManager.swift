@@ -8,18 +8,32 @@
 import Foundation
 import SwiftUI
 import Models
+import MemosService
 
 @MainActor
 @Observable public class AccountManager {
-    public static var shared = AccountManager()
+    public static let shared = AccountManager()
 
     @ObservationIgnored @AppStorage("currentAccountKey", store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier))
     private var currentAccountKey: String = ""
+    @ObservationIgnored public private(set) var currentService: MemosService?
+    
+    public var mustCurrentService: MemosService {
+        get throws {
+            guard let service = currentService else { throw MemosServiceError.notLogin }
+            return service
+        }
+    }
     
     public var accounts: [Account]
     public var currentAccount: Account? {
         didSet {
             currentAccountKey = currentAccount?.key ?? ""
+            if case .memos(host: let host, id: _, accessToken: let accessToken) = currentAccount, let hostURL = URL(string: host) {
+                currentService = MemosService(hostURL: hostURL, accessToken: accessToken)
+            } else {
+                currentService = nil
+            }
         }
     }
     
