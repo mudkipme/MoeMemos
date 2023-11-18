@@ -826,10 +826,7 @@ components:
           items:
             type: integer
         rowStatus:
-          type: object
-          description: Standard fields
-          allOf:
-          - $ref: '#/components/schemas/RowStatus'
+          $ref: '#/components/schemas/RowStatus'
         updatedTs:
           type: integer
         visibility:
