@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import Account
 
 struct Sidebar: View {
     @EnvironmentObject private var memosViewModel: MemosViewModel
+    @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(UserState.self) private var userState: UserState
     @Binding var selection: Route?
 
@@ -68,16 +70,11 @@ struct Sidebar: View {
             }
         }
         .navigationTitle(userState.currentUser?.nickname ?? NSLocalizedString("memo.memos", comment: "Memos"))
-        .task {
+        .task(id: accountManager.currentAccount) {
             do {
                 try await memosViewModel.loadTags()
             } catch {
                 print(error)
-            }
-        }
-        .onChange(of: userState.currentUser?.id) { newValue in
-            Task {
-                try await memosViewModel.loadTags()
             }
         }
     }

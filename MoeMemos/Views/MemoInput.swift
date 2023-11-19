@@ -8,6 +8,7 @@
 import SwiftUI
 import PhotosUI
 import MemosService
+import Models
 
 struct MemoInput: View {
     let memo: MemosMemo?

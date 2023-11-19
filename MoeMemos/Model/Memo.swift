@@ -9,12 +9,6 @@ import Foundation
 import SwiftUI
 import MemosService
 
-struct Tag: Identifiable, Hashable {
-    let name: String
-    
-    var id: String { name }
-}
-
 extension MemosVisibility {
     var title: LocalizedStringKey {
         switch self {

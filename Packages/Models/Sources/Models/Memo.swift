@@ -8,39 +8,44 @@
 import Foundation
 import SwiftData
 
-enum RowStatus: Codable {
+public enum RowStatus: Codable {
     case normal
     case archived
 }
 
-enum MemoVisibility: Codable {
+public enum MemoVisibility: Codable {
     case `private`
     case `protected`
     case `public`
 }
 
 @Model
-class Memo {
+public final class Memo {
     @Attribute(.unique)
-    var id: UUID
-    var account: Account
-    var content: String
-    var pinned: Bool
-    var rowStatus: RowStatus
-    var visibility: MemoVisibility
-    var createdAt: Date
-    var updatedAt: Date
-    var remoteId: String? = nil
+    public var id: UUID = UUID()
+    public var user: User?
+    public var content: String
+    public var pinned: Bool
+    public var rowStatus: RowStatus
+    public var visibility: MemoVisibility
+    @Relationship(deleteRule: .cascade, inverse: \Resource.memo)
+    public var resources: [Resource]
+    public var createdAt: Date
+    public var updatedAt: Date
+    public var remoteId: String?
+    public var synced: Bool
     
-    init(id: UUID, account: Account, content: String, pinned: Bool, rowStatus: RowStatus, visibility: MemoVisibility, createdAt: Date, updatedAt: Date, remoteId: String? = nil) {
+    public init(id: UUID = UUID(), user: User? = nil, content: String, pinned: Bool = false, rowStatus: RowStatus = .normal, visibility: MemoVisibility = .private, resources: [Resource] = [], createdAt: Date = .now, updatedAt: Date = .now, remoteId: String? = nil, synced: Bool = false) {
         self.id = id
-        self.account = account
+        self.user = user
         self.content = content
         self.pinned = pinned
         self.rowStatus = rowStatus
         self.visibility = visibility
+        self.resources = resources
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.remoteId = remoteId
+        self.synced = synced
     }
 }

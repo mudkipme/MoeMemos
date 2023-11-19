@@ -20,3 +20,16 @@ public enum Account: Codable {
         }
     }
 }
+
+extension Account: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case (.local, .local):
+            return true
+        case (let .memos(lhost, lid, _), let .memos(rhost, rid, _)):
+            return lhost == rhost && lid == rid
+        default:
+            return false
+        }
+    }
+}

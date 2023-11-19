@@ -8,6 +8,7 @@
 import Foundation
 import Account
 import MemosService
+import Models
 
 @MainActor
 class MemosViewModel: ObservableObject {

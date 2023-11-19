@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Models
 
 @MainActor
 enum Route: Hashable {

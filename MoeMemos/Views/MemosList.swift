@@ -7,12 +7,15 @@
 
 import SwiftUI
 import MemosService
+import Account
+import Models
 
 struct MemosList: View {
     let tag: Tag?
 
     @State private var searchString = ""
     @State private var showingNewPost = false
+    @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(UserState.self) private var userState: UserState
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var filteredMemoList: [MemosMemo] = []
@@ -28,7 +31,7 @@ struct MemosList: View {
             }
             .listStyle(InsetGroupedListStyle())
             
-            if userState.currentUser != nil && tag == nil {
+            if tag == nil {
                 Button {
                     showingNewPost = true
                 } label: {
@@ -64,27 +67,22 @@ struct MemosList: View {
                 print(error)
             }
         }
-        .task {
+        .task(id: accountManager.currentAccount, {
             do {
                 try await memosViewModel.loadMemos()
             } catch {
                 print(error)
             }
-        }
-        .onChange(of: userState.currentUser?.id, perform: { newValue in
-            Task {
-                try await memosViewModel.loadMemos()
-            }
         })
-        .onChange(of: memosViewModel.memoList, perform: { newValue in
+        .onChange(of: memosViewModel.memoList) { _, newValue in
             filteredMemoList = filterMemoList(newValue, tag: tag, searchString: searchString)
-        })
-        .onChange(of: tag, perform: { newValue in
+        }
+        .onChange(of: tag) { _, newValue in
             filteredMemoList = filterMemoList(memosViewModel.memoList, tag: newValue, searchString: searchString)
-        })
-        .onChange(of: searchString, perform: { newValue in
+        }
+        .onChange(of: searchString) { _, newValue in
             filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: newValue)
-        })
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             Task {
                 if memosViewModel.inited {
