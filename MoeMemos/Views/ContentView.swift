@@ -9,19 +9,17 @@ import SwiftUI
 import Models
 import MemosService
 import SwiftData
+import Account
 
 struct ContentView: View {
-    @State private var container = try? ModelContainer(
-        for: Memo.self, Resource.self, Tag.self, User.self,
-        configurations: .init(groupContainer: .identifier(AppInfo.groupContainerIdentifier))
-    )
+    @State private var accountViewModel = AccountViewModel.shared
+    @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(UserState.self) private var userState: UserState
     @State private var selection: Route? = .memos
     @StateObject private var memosViewModel = MemosViewModel()
     @Environment(\.scenePhase) var scenePhase
-
-    @ViewBuilder
-    private func content() -> some View {
+    
+    var body: some View {
         @Bindable var userState = userState
 
         Navigation(selection: $selection)
@@ -37,30 +35,17 @@ struct ContentView: View {
                     }
                 }
             })
-    }
-    
-    var body: some View {
-        if let container = container {
-            content()
-                .modelContainer(container)
-        } else {
-            content()
-        }
+            .modelContext(AppInfo.shared.modelContext)
+            .environment(accountViewModel)
     }
     
     @MainActor
     func loadCurrentUser() async {
         do {
+            try await accountViewModel.reloadUsers()
             try await userState.loadCurrentUser()
         } catch {
             print(error)
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .environment(UserState())
     }
 }

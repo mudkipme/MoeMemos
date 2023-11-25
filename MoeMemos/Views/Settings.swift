@@ -7,43 +7,14 @@
 
 import SwiftUI
 import Models
+import Account
 
 struct Settings: View {
-    @Environment(UserState.self) var userState: UserState
     @State var appInfo = AppInfo()
 
     var body: some View {
         List {
-            if let user = userState.currentUser {
-                VStack(alignment: .leading) {
-                    if let nickname = user.nickname {
-                        Text(nickname)
-                            .font(.title3)
-                    }
-                    if let email = user.email {
-                        Text(email)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding([.top, .bottom], 10)
-            } else {
-                Button {
-                    userState.showingLogin = true
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("login.sign-in")
-                        Spacer()
-                    }
-                }
-            }
-            
-            if let version = userState.currentStatus?.profile?.version {
-                Text("✍️memos v\(version)")
-                    .foregroundStyle(.secondary)
-            }
-            
+            AccountSectionView()
             
             Section {
                 Link(destination: appInfo.website) {
@@ -63,27 +34,7 @@ struct Settings: View {
             } footer: {
                 Text(appInfo.registration)
             }
-            
-            if userState.currentUser != nil {
-                Button(role: .destructive) {
-                    Task {
-                        try await userState.logout()
-                        userState.showingLogin = true
-                    }
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("settings.sign-out")
-                        Spacer()
-                    }
-                }
-            }
         }
         .navigationTitle("settings")
-        .task {
-            do {
-                try await userState.loadCurrentStatus()
-            } catch {}
-        }
     }
 }

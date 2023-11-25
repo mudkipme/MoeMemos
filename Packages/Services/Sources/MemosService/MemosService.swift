@@ -30,7 +30,7 @@ struct MemosAuthenticationMiddleware: ClientMiddleware {
     }
 }
 
-public class MemosService {
+public final class MemosService: Sendable {
     public let hostURL: URL
     let urlSession: URLSession
     let client: Client
@@ -156,6 +156,21 @@ public extension MemosService {
         components.queryItems = queryItems
         url = components.url!
         return url
+    }
+    
+    func downloadData(url: URL) async throws -> Data {
+        var request = URLRequest(url: url)
+        if let accessToken = accessToken, !accessToken.isEmpty && url.host == hostURL.host {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        let (data, response) = try await urlSession.data(for: request)
+        guard let response = response as? HTTPURLResponse else {
+            throw MemosServiceError.unknown
+        }
+        if response.statusCode < 200 || response.statusCode >= 300 {
+            throw MemosServiceError.invalidStatusCode(response.statusCode, url.absoluteString)
+        }
+        return data
     }
     
     func download(url: URL) async throws -> URL {

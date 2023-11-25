@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Models
 
 public typealias MemosUser = Components.Schemas.User
 public typealias MemosMemo = Components.Schemas.Memo
@@ -34,4 +34,17 @@ public extension MemosUser {
 extension MemosResource: Identifiable {}
 extension MemosVisibility: CaseIterable {
     public static let allCases: [Components.Schemas.Visibility] = [.PRIVATE, .PROTECTED, .PUBLIC]
+}
+
+extension MemoVisibility {
+    public init(_ memosVisibility: MemosVisibility) {
+        switch memosVisibility {
+        case .PUBLIC:
+            self = .public
+        case .PROTECTED:
+            self = .protected
+        case .PRIVATE:
+            self = .private
+        }
+    }
 }

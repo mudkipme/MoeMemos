@@ -29,11 +29,7 @@ import MemosService
     public var currentAccount: Account? {
         didSet {
             currentAccountKey = currentAccount?.key ?? ""
-            if case .memos(host: let host, id: _, accessToken: let accessToken) = currentAccount, let hostURL = URL(string: host) {
-                currentService = MemosService(hostURL: hostURL, accessToken: accessToken)
-            } else {
-                currentService = nil
-            }
+            currentService = currentAccount?.memosService
         }
     }
     
