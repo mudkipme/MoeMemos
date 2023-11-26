@@ -21,10 +21,13 @@ public struct AccountSectionView: View {
             Button {
                 showingAddAccount = true
             } label: {
-                Text("account.add-account")
+                Label("account.add-account", systemImage: "plus.circle")
             }
         } header: {
             Text("Accounts")
+        }
+        .sheet(isPresented: $showingAddAccount) {
+            AddAccountView()
         }
     }
 }

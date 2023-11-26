@@ -18,6 +18,14 @@ import Models
     public init(currentContext: ModelContext = AppInfo.shared.modelContext, accountManager: AccountManager = AccountManager.shared) {
         self.currentContext = currentContext
         self.accountManager = accountManager
+        
+        _ = withObservationTracking {
+            accountManager.accounts
+        } onChange: {
+            Task {
+                try await self.reloadUsers()
+            }
+        }
     }
     
     public private(set) var users = [User]()
@@ -39,6 +47,12 @@ import Models
                 currentContext.insert(user)
             }
         }
+        
+        // Remove removed users
+        savedUsers.filter { user in !accountManager.accounts.contains { $0.key == user.accountKey } }.forEach { user in
+            currentContext.delete(user)
+        }
+        
         users = allUsers
     }
 }
