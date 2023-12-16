@@ -1,0 +1,69 @@
+/*
+  Localizable.strings
+  MoeMemos
+ 
+  Created by Tombat on 2023/12/14.
+*/
+ 
+"moe-memos" = "Moe Memos";
+ 
+"memo.archive" = "Archivia";
+"memo.archived" = "Archiviate";
+"memo.copy" = "Copia";
+"memo.delete" = "Elimina";
+"memo.delete.confirm" = "Elimina questo memo?";
+"memo.edit" = "Modifica";
+"memo.memos" = "Memos";
+"memo.action.cancel" = "No";
+"memo.pin" = "Fissa";
+"memo.restore" = "Ripristina";
+"memo.share" = "Condividi";
+"memo.unpin" = "Sblocca";
+"memo.action.ok" = "Si";
+"memo.visibility.public" = "Pubblico";
+"memo.visibility.protected" = "Visibile ai membri locali";
+"memo.visibility.private" = "Privato";
+ 
+"settings" = "Impostazioni";
+"settings.about" = "A proposito di Moe Memos";
+"settings.privacy" = "Politiche di Privacy";
+"settings.report" = "Segnala un problema";
+"settings.sign-out" = "Disconnetti";
+"settings.website" = "Sito";
+"settings.acknowledgements" = "Ringraziamenti";
+ 
+"input.placeholder" = "Una idea…";
+"input.close" = "Chiudi";
+"input.compose" = "Componi";
+"input.edit" = "Modifica Memo";
+"input.save" = "Salva";
+"input.visibility" = "Visibilità dei memo";
+ 
+"login.open-id.hint" = "Copia “Open ID” dall'impostazioni in ✍️memos.";
+"login.host" = "Ospite";
+"login.method" = "Metodo di connessione";
+"login.open-id" = "Open ID";
+"login.access-token" = "Token di accesso";
+"login.access-token.hint" = "Crea un token di accesso dalle impostazioni ✍️memos.";
+"login.password" = "Password";
+"login.hint" = "Inserisci le informazioni di accesso al server\n[✍️memos](https://github.com/usememos/memos).";
+"login.username" = "Nome Utente";
+"login.username-and-password" = "Password";
+"login.sign-in" = "Login";
+ 
+"stats.day" = "Giorno";
+"stats.memo" = "Memo";
+"stats.tag" = "Etichetta";
+ 
+"resources" = "Risorse";
+ 
+"tags" = "Etichetta";
+ 
+"widget.memories" = "Ricordi";
+"widget.memories.description" = "Ricorda i tuoi vecchi memos.";
+"widget.memo-graph" = "Grafico promemoria";
+"widget.memo-graph.description" = "Il grafico mostra il numero di promemoria scritti ogni giorno nelle ultime settimane.";
+ 
+"share.memo-saved" = "Promemoria salvato.";
+ 
+"explore" = "Esplora";
