@@ -186,6 +186,7 @@
 		1919FBE429CF738300FEF570 /* ExploreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewModel.swift; sourceTree = "<group>"; };
 		1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreMemoCard.swift; sourceTree = "<group>"; };
 		1919FBE829CF78BE00FEF570 /* Explore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Explore.swift; sourceTree = "<group>"; };
+		191C49ED2B2D79A40097B98E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
 		192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyShareSheet.swift; sourceTree = "<group>"; };
 		1934C77B2921670600A169EC /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
@@ -673,6 +674,7 @@
 				"zh-Hant",
 				Base,
 				de,
+				fr,
 			);
 			mainGroup = 194B272428C3973400A48675;
 			packageReferences = (
@@ -915,6 +917,7 @@
 				1948CCB12996BB6C00AB1986 /* zh-Hans */,
 				1948CCB32996BEEA00AB1986 /* zh-Hant */,
 				190322DE2A82929300CAA50D /* de */,
+				191C49ED2B2D79A40097B98E /* fr */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
