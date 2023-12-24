@@ -1,0 +1,69 @@
+/*
+  Localizable.strings
+  MoeMemos
+
+  Created by Ezmana on 2023/12/06.
+*/
+
+"moe-memos" = "Moe Memos";
+
+"memo.archive" = "Archiver";
+"memo.archived" = "Archivés";
+"memo.copy" = "Copier";
+"memo.delete" = "Supprimer";
+"memo.delete.confirm" = "Supprimer le memo ?";
+"memo.edit" = "Éditer";
+"memo.memos" = "Memos";
+"memo.action.cancel" = "Non";
+"memo.pin" = "Épingler";
+"memo.restore" = "Restaurer";
+"memo.share" = "Partager";
+"memo.unpin" = "Désépingler";
+"memo.action.ok" = "Oui";
+"memo.visibility.public" = "Public";
+"memo.visibility.protected" = "Visible aux membres";
+"memo.visibility.private" = "Privé";
+
+"settings" = "Paramètres";
+"settings.about" = "À propos de Moe Memos";
+"settings.privacy" = "Politique de confidentialité";
+"settings.report" = "Signaler un problème";
+"settings.sign-out" = "Se déconnecter";
+"settings.website" = "Website";
+"settings.acknowledgements" = "Remerciements";
+
+"input.placeholder" = "Une idée…";
+"input.close" = "Fermer";
+"input.compose" = "Composer";
+"input.edit" = "Editer Memo";
+"input.save" = "Sauvegarder";
+"input.visibility" = "Visibilité du memo";
+
+"login.open-id.hint" = "Copier “Open ID” à partir du réglage dans ✍️memos.";
+"login.host" = "Hôte";
+"login.method" = "Méthode de connexion";
+"login.open-id" = "Open ID";
+"login.access-token" = "Jeton d'accès";
+"login.access-token.hint" = "Créer un jeton d'accès à partir du paramétrage ✍️memos.";
+"login.password" = "Mot de passe";
+"login.hint" = "Veuillez saisir les informations de connexion de votre serveur\n[✍️memos](https://github.com/usememos/memos).";
+"login.username" = "Nom d'utilisateur";
+"login.username-and-password" = "Mot de passe";
+"login.sign-in" = "S'identifier";
+
+"stats.day" = "Jour";
+"stats.memo" = "Mémo";
+"stats.tag" = "Étiquette";
+
+"resources" = "Ressources";
+
+"tags" = "Étiquettes";
+
+"widget.memories" = "Souvenirs";
+"widget.memories.description" = "Souvenez-vous de vos anciens memos.";
+"widget.memo-graph" = "Graphique des memos";
+"widget.memo-graph.description" = "Le graphique affiche le nombre de memos que vous avez rédigés chaque jour au cours des dernières semaines.";
+
+"share.memo-saved" = "Memo sauvegardé.";
+
+"explore" = "Explorer";
