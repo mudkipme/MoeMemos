@@ -9,6 +9,7 @@ import UIKit
 import Social
 import SwiftUI
 import KeychainSwift
+import UniformTypeIdentifiers
 
 class ShareViewController: SLComposeServiceViewController {
     
@@ -18,11 +19,11 @@ class ShareViewController: SLComposeServiceViewController {
         // Do validation of contentText and/or NSExtensionContext attachments here
         if let item = self.extensionContext!.inputItems.first as? NSExtensionItem, let attachments = item.attachments {
             for attachment in attachments {
-                if attachment.canLoadObject(ofClass: NSURL.self) {
+                if attachment.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
                     return true
                 }
                 
-                if attachment.canLoadObject(ofClass: UIImage.self) {
+                if attachment.canLoadObject(ofClass: NSURL.self) {
                     return true
                 }
             }
@@ -73,17 +74,23 @@ class ShareViewController: SLComposeServiceViewController {
         
         if let item = self.extensionContext!.inputItems.first as? NSExtensionItem, let attachments = item.attachments {
             for attachment in attachments {
+                if attachment.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+                    let result = try await attachment.loadItem(forTypeIdentifier: UTType.image.identifier)
+                    var image = result as? UIImage
+                    if image == nil, let url = result as? URL {
+                        let data = try Data(contentsOf: url)
+                        image = UIImage(data: data)
+                    }
+                    guard let image = image else { throw MemosError.invalidParams }
+                    guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
+                    let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
+                    resourceList.append(response)
+                }
+                
                 if attachment.canLoadObject(ofClass: NSURL.self),
                    let url = try await attachment.loadObject(ofClass: NSURL.self),
                    let address = url.absoluteString {
                     contentTextList.append(address)
-                }
-                
-                if attachment.canLoadObject(ofClass: UIImage.self),
-                   let image = try await attachment.loadObject(ofClass: UIImage.self) {                    
-                    guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
-                    let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
-                    resourceList.append(response)
                 }
             }
         }
