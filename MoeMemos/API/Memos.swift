@@ -124,8 +124,13 @@ class Memos {
     }
     
     func url(for resource: Resource) -> URL {
-        if let externalLink = resource.externalLink?.encodeUrlPath(), let url = URL(string: externalLink) {
-            return url
+        if let externalLink = resource.externalLink {
+            if let url = URL(string: externalLink) {
+                return url
+            // Only re-encode url path when the url is invalid, temporary fix for filename is not encoded when URL prefix is used
+            } else if let url = URL(string: externalLink.encodeUrlPath()) {
+                return url
+            }
         }
         
         var url = host.appendingPathComponent(resource.path())
@@ -177,7 +182,7 @@ class Memos {
     }
 }
 
-extension String {
+fileprivate extension String {
     // encode url path
     func encodeUrlPath() -> String {
         guard self.hasPrefix("http") else { return self}
