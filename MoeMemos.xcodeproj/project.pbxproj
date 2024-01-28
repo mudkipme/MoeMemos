@@ -188,6 +188,8 @@
 		1919FBE829CF78BE00FEF570 /* Explore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Explore.swift; sourceTree = "<group>"; };
 		191C49ED2B2D79A40097B98E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		191C49EE2B2D7DAB0097B98E /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		192383F32B6659DC00D2C9DA /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
+		192383F52B6659DD00D2C9DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
 		192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyShareSheet.swift; sourceTree = "<group>"; };
 		1934C77B2921670600A169EC /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
@@ -908,6 +910,8 @@
 				193F04E729CCBAB40010E3BF /* zh-Hans */,
 				193F04E929CCBAB70010E3BF /* zh-Hant */,
 				190322DD2A82929300CAA50D /* de */,
+				192383F32B6659DC00D2C9DA /* fr */,
+				192383F52B6659DD00D2C9DA /* it */,
 			);
 			name = MoeMemosWidgets.intentdefinition;
 			sourceTree = "<group>";
