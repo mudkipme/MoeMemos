@@ -10,6 +10,7 @@ import Social
 import SwiftUI
 import KeychainSwift
 import UniformTypeIdentifiers
+import Markdown
 
 class ShareViewController: SLComposeServiceViewController {
     
@@ -99,6 +100,11 @@ class ShareViewController: SLComposeServiceViewController {
         if content.isEmpty && resourceList.isEmpty {
             throw MemosError.invalidParams
         }
+        
+        let tags = extractCustomTags(from: content)
+        for name in tags {
+            _ = try await memos.upsertTag(name: name)
+        }
         _ = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: nil, resourceIdList: resourceList.map { $0.id }))
     }
     
@@ -116,5 +122,12 @@ class ShareViewController: SLComposeServiceViewController {
         
         let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
         return try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)
+    }
+    
+    private func extractCustomTags(from markdownText: String) -> [String] {
+        let document = Document(parsing: markdownText)
+        var tagVisitor = TagVisitor()
+        document.accept(&tagVisitor)
+        return tagVisitor.tags
     }
 }
