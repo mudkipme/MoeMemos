@@ -17,8 +17,12 @@ struct Resource: Decodable, Identifiable, Equatable {
     let updatedTs: Date
     let externalLink: String?
     let publicId: String?
+    let name: String?
     
     func path() -> String {
+        if let name = name, !name.isEmpty {
+            return "/o/r/\(name)"
+        }
         if let publicId = publicId, !publicId.isEmpty {
             return "/o/r/\(id)/\(publicId)"
         }

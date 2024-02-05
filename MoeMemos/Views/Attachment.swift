@@ -50,7 +50,7 @@ struct Attachment: View {
 
 struct Attachment_Previews: PreviewProvider {
     static var previews: some View {
-        Attachment(resource: Resource(id: 0, createdTs: Date(), creatorId: 0, filename: "test.yml", size: 0, type: "application/x-yaml", updatedTs: Date(), externalLink: nil, publicId: nil))
+        Attachment(resource: Resource(id: 0, createdTs: Date(), creatorId: 0, filename: "test.yml", size: 0, type: "application/x-yaml", updatedTs: Date(), externalLink: nil, publicId: nil, name: ""))
             .environmentObject(MemosManager())
     }
 }
