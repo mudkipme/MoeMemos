@@ -97,4 +97,11 @@ class MemosViewModel: ObservableObject {
             tag.name == name
         }
     }
+
+    func deleteMemo(id: Int) async throws {
+        _ = try await memos.deleteMemo(id: id)
+        memoList = memoList.filter({ memo in
+            memo.id != id
+        })
+    }
 }
