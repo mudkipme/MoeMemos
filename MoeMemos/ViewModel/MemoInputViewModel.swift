@@ -32,11 +32,6 @@ class MemoInputViewModel: ObservableObject, ResourceManager {
     }
 
     func upload(image: UIImage) async throws {
-        var image = image
-        if image.size.height > 1024 || image.size.width > 1024 {
-            image = image.scale(to: CGSize(width: 1024, height: 1024))
-        }
-        
         guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosServiceError.invalidParams }
         let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
         resourceList.append(response)

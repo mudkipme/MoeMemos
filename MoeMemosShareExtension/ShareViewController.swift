@@ -13,6 +13,7 @@ import Models
 import Account
 import MemosService
 import UniformTypeIdentifiers
+import Markdown
 
 class ShareViewController: SLComposeServiceViewController {
     
@@ -97,6 +98,17 @@ class ShareViewController: SLComposeServiceViewController {
         if content.isEmpty && resourceList.isEmpty {
             throw MemosServiceError.invalidParams
         }
+        let tags = extractCustomTags(from: content)
+        for name in tags {
+            _ = try await memos.upsertTag(name: name)
+        }
         _ = try await memos.createMemo(input: .init(content: content, resourceIdList: resourceList.map { $0.id }, visibility: nil))
+    }
+    
+    private func extractCustomTags(from markdownText: String) -> [String] {
+        let document = Document(parsing: markdownText)
+        var tagVisitor = TagVisitor()
+        document.accept(&tagVisitor)
+        return tagVisitor.tags
     }
 }

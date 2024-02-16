@@ -16,6 +16,7 @@ struct MemoCard: View {
     
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var showingEdit = false
+    @State private var showingDeleteConfirmation = false
     
     init(_ memo: MemosMemo, defaultMemoVisibility: MemosVisibility) {
         self.memo = memo
@@ -62,6 +63,14 @@ struct MemoCard: View {
         .sheet(isPresented: $showingEdit) {
             MemoInput(memo: memo)
         }
+        .confirmationDialog("memo.delete.confirm", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
+            Button("memo.action.ok", role: .destructive) {
+                Task {
+                    try await memosViewModel.deleteMemo(id: memo.id)
+                }
+            }
+            Button("memo.action.cancel", role: .cancel) {}
+        }
     }
     
     @ViewBuilder
@@ -99,6 +108,11 @@ struct MemoCard: View {
             }
         }, label: {
             Label("memo.archive", systemImage: "archivebox")
+        })
+        Button(role: .destructive, action: {
+            showingDeleteConfirmation = true
+        }, label: {
+            Label("memo.delete", systemImage: "trash")
         })
     }
     
