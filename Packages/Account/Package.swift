@@ -19,7 +19,7 @@ let package = Package(
     dependencies: [
         .package(name: "Models", path: "../Models"),
         .package(name: "Services", path: "../Services"),
-        .package(url: "https://github.com/evgenyneu/keychain-swift", from: "20.0.0")
+        .package(url: "https://github.com/evgenyneu/keychain-swift", from: "21.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

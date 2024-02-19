@@ -1130,7 +1130,7 @@
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 20.0.0;
+				minimumVersion = 21.0.0;
 			};
 		};
 		31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */ = {
@@ -1144,14 +1144,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		191489EF2B00832C00577BD1 /* Account */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Account;
-		};
 		190755982B66512200451E6D /* Markdown */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 190755972B66512200451E6D /* XCRemoteSwiftPackageReference "swift-markdown" */;
 			productName = Markdown;
+		};
+		191489EF2B00832C00577BD1 /* Account */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Account;
 		};
 		193D274C29C8D1EB00BDE4A2 /* MarkdownUI */ = {
 			isa = XCSwiftPackageProductDependency;

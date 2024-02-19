@@ -80,7 +80,7 @@ class ShareViewController: SLComposeServiceViewController {
                         let data = try Data(contentsOf: url)
                         image = UIImage(data: data)
                     }
-                    guard let image = image else { throw MemosError.invalidParams }
+                    guard let image = image else { throw MemosServiceError.invalidParams }
                     guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosServiceError.invalidParams }
                     let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
                     resourceList.append(response)

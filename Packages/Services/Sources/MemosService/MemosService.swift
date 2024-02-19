@@ -45,8 +45,7 @@ public final class MemosService: Sendable {
             serverURL: hostURL,
             transport: URLSessionTransport(configuration: .init(session: urlSession)),
             middlewares: [
-                MemosAuthenticationMiddleware(accessToken: accessToken),
-                FormDataMiddleware(boundary: boundary)
+                MemosAuthenticationMiddleware(accessToken: accessToken)
             ]
         )
     }
@@ -106,11 +105,13 @@ public final class MemosService: Sendable {
     }
     
     public func uploadResource(imageData: Data, filename: String, contentType: String) async throws -> MemosResource {
-        let data = encodeFormData(multiparts: [Multipart(name: "file", filename: filename, contentType: contentType, data: imageData)], boundary: boundary)
-        let resp = try await client.uploadResource(body: .multipartForm(.init(data)))
+        let multipartBody: MultipartBody<Operations.uploadResource.Input.Body.multipartFormPayload> = [
+            .file(.init(payload: .init(headers: .init(Content_hyphen_Type: contentType), body: .init(imageData)), filename: filename))
+        ]
+        let resp = try await client.uploadResource(body: .multipartForm(multipartBody))
         return try resp.ok.body.json
     }
-    
+//    
     public func deleteResource(id: Int) async throws {
         let resp = try await client.deleteResource(path: .init(resourceId: id))
         _ = try resp.ok.body.json
