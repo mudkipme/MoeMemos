@@ -10,9 +10,10 @@ import SwiftUI
 struct AddAccountView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(AccountManager.self) var accountManager: AccountManager
+    @State private var path: [AddAccountRouter] = []
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 HStack {
                     Image(systemName: "house")
@@ -30,7 +31,7 @@ struct AddAccountView: View {
                     dismiss()
                 }
                 
-                NavigationLink(value: "login") {
+                NavigationLink(value: AddAccountRouter.addMemosAccount) {
                     HStack {
                         Image(systemName: "pencil")
                         VStack(alignment: .leading) {
@@ -52,10 +53,13 @@ struct AddAccountView: View {
                 }
             }
             .navigationTitle("Add Accounts")
+            .navigationDestination(for: AddAccountRouter.self) { router in
+                switch router {
+                case .addMemosAccount:
+                    AddMemosAccountView(dismiss: dismiss)
+                }
+            }
         }
+        .interactiveDismissDisabled()
     }
-}
-
-#Preview {
-    AddAccountView()
 }

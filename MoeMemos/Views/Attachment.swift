@@ -52,7 +52,7 @@ struct Attachment: View {
 
 struct Attachment_Previews: PreviewProvider {
     static var previews: some View {
-        Attachment(resource: MemosResource(filename: "test.yml", id: 1))
+        Attachment(resource: MemosResource(filename: "test.yml", id: 1, name: ""))
             .environment(AccountManager.shared)
     }
 }

@@ -11,7 +11,7 @@ fileprivate let loadingWidth: CGFloat = 150
 fileprivate let loadingHeight: CGFloat = 150
 fileprivate let textMaxWidth: CGFloat = 300
 
-enum AlertType: Equatable {
+public enum AlertType: Equatable {
     case systemImage(_ name: String, _ title: String?)
     case loading
 }
@@ -72,7 +72,7 @@ struct AlertToastModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         main(content: content)
-            .onChange(of: isPresenting) { presented in
+            .onChange(of: isPresenting) { (_, presented) in
                 if presented {
                     onAppearAction()
                 }
@@ -95,14 +95,12 @@ struct AlertToastModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func toast(isPresenting: Binding<Bool>, duration: Double = 2, alertType: AlertType) -> some View {
         modifier(AlertToastModifier(isPresenting: isPresenting, duration: duration, alertType: alertType))
     }
 }
 
-struct AlertToast_Previews: PreviewProvider {
-    static var previews: some View {
-        AlertToast(type: .systemImage("xmark.circle", "Error"))
-    }
+#Preview {
+    AlertToast(type: .systemImage("xmark.circle", "Error"))
 }

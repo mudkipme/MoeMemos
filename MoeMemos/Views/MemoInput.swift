@@ -363,11 +363,3 @@ struct MemoInput: View {
         return true
     }
 }
-
-struct MemoInput_Previews: PreviewProvider {
-    static var previews: some View {
-        MemoInput(memo: nil)
-            .environmentObject(MemosViewModel())
-            .environment(UserState())
-    }
-}
