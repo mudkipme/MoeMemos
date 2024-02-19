@@ -106,12 +106,12 @@ public final class MemosService: Sendable {
     
     public func uploadResource(imageData: Data, filename: String, contentType: String) async throws -> MemosResource {
         let multipartBody: MultipartBody<Operations.uploadResource.Input.Body.multipartFormPayload> = [
-            .file(.init(payload: .init(headers: .init(Content_hyphen_Type: contentType), body: .init(imageData)), filename: filename))
+            .undocumented(.init(name: "file", filename: filename, headerFields: [.contentType: contentType], body: .init(imageData)))
         ]
         let resp = try await client.uploadResource(body: .multipartForm(multipartBody))
         return try resp.ok.body.json
     }
-//    
+
     public func deleteResource(id: Int) async throws {
         let resp = try await client.deleteResource(path: .init(resourceId: id))
         _ = try resp.ok.body.json

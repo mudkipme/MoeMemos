@@ -651,12 +651,6 @@ paths:
                   type: string
                   description: File to upload
                   format: binary
-            encoding:
-              file:
-                headers:
-                  Content-Type:
-                    schema:
-                      type: string
         required: true
       responses:
         "200":
