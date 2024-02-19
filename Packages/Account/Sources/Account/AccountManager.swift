@@ -44,7 +44,7 @@ import MemosService
     
     public func add(account: Account) throws {
         try account.save()
-        accounts.append(account)
+        accounts = Account.retriveAll()
         currentAccount = account
     }
     

@@ -16,7 +16,16 @@ public struct AccountSectionView: View {
     public var body: some View {
         Section {
             ForEach(accountViewModel.users) { user in
-                Text(user.nickname)
+                if let avatarData = user.avatarData, let uiImage = UIImage(data: avatarData) {
+                    Label(title: { Text(user.nickname) }) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(Circle())
+                    }
+                } else {
+                    Text(user.nickname)
+                }
             }
             Button {
                 showingAddAccount = true

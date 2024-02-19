@@ -9,11 +9,13 @@ import SwiftUI
 import PhotosUI
 import MemosService
 import Models
+import Account
 
 struct MemoInput: View {
     let memo: MemosMemo?
     @EnvironmentObject private var memosViewModel: MemosViewModel
-    @Environment(UserState.self) var userState: UserState
+    @Environment(AccountViewModel.self) var userState: AccountViewModel
+    @Environment(AccountManager.self) var accountManager: AccountManager
     @StateObject private var viewModel = MemoInputViewModel()
 
     @State private var text = ""
@@ -114,10 +116,10 @@ struct MemoInput: View {
         .onAppear {
             if let memo = memo {
                 text = memo.content
-                viewModel.visibility = memo.visibility ?? .PRIVATE
+                viewModel.visibility = .init(memo.visibility ?? .PRIVATE)
             } else {
                 text = draft
-                viewModel.visibility = userState.currentUser?.defaultMemoVisibility ?? .PRIVATE
+                viewModel.visibility = userState.currentUser?.defaultVisibility ?? .private
             }
             if let resourceList = memo?.resourceList {
                 viewModel.resourceList = resourceList
@@ -241,9 +243,9 @@ struct MemoInput: View {
         
         do {
             if let memo = memo {
-                try await memosViewModel.editMemo(id: memo.id, content: text, visibility: viewModel.visibility, resourceIdList: viewModel.resourceList.map { $0.id })
+                try await memosViewModel.editMemo(id: memo.id, content: text, visibility: .init(memoVisibility: viewModel.visibility), resourceIdList: viewModel.resourceList.map { $0.id })
             } else {
-                try await memosViewModel.createMemo(content: text, visibility: viewModel.visibility, resourceIdList: viewModel.resourceList.map { $0.id })
+                try await memosViewModel.createMemo(content: text, visibility: .init(memoVisibility: viewModel.visibility), resourceIdList: viewModel.resourceList.map { $0.id })
                 draft = ""
             }
             text = ""
@@ -259,7 +261,7 @@ struct MemoInput: View {
     private var privacyMenu: some View {
       Menu {
         Section("input.visibility") {
-          ForEach(MemosVisibility.allCases, id: \.self) { visibility in
+        ForEach(accountManager.currentService?.memoVisibilities() ?? [.private], id: \.self) { visibility in
             Button {
               viewModel.visibility = visibility
             } label: {

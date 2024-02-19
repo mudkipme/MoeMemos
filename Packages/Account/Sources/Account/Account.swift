@@ -54,7 +54,7 @@ public extension Account {
         }
         if let memosService = memosService {
             let memosUser = try await memosService.getCurrentUser()
-            let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: .init(memosUser.defaultMemoVisibility))
+            let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: .init(memosUser.defaultMemoVisibility), creationDate: Date(timeIntervalSince1970: TimeInterval(memosUser.createdTs ?? 0)))
             if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
                 user.avatarData = try? await memosService.downloadData(url: url)
             }

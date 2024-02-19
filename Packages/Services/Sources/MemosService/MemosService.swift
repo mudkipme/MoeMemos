@@ -11,6 +11,7 @@ import OpenAPIURLSession
 import HTTPTypes
 import Models
 import CryptoKit
+import DataURI
 
 struct MemosAuthenticationMiddleware: ClientMiddleware {
     var accessToken: String?
@@ -160,6 +161,11 @@ public extension MemosService {
     }
     
     func downloadData(url: URL) async throws -> Data {
+        if url.scheme == "data" {
+            let (data, _) = try url.absoluteString.dataURIDecoded()
+            return data.convertToData()
+        }
+        
         var request = URLRequest(url: url)
         if let accessToken = accessToken, !accessToken.isEmpty && url.host == hostURL.host {
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")

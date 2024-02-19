@@ -79,7 +79,6 @@
 		19E29A7D2939A94400BE9C32 /* NSItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A7C2939A94400BE9C32 /* NSItemProvider.swift */; };
 		19E29A7E2939AC5000BE9C32 /* NSItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A7C2939A94400BE9C32 /* NSItemProvider.swift */; };
 		19E6EF1F29113EC900C998F5 /* MemoInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF1E29113EC900C998F5 /* MemoInputViewModel.swift */; };
-		19E6EF2129113FDA00C998F5 /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF2029113FDA00C998F5 /* UserState.swift */; };
 		19E866612AB84EBA00E33521 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 19E866602AB84EBA00E33521 /* KeychainSwift */; };
 		19E866632AB851E200E33521 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 19E866622AB851E200E33521 /* KeychainSwift */; };
 		19E866652AB851E800E33521 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 19E866642AB851E800E33521 /* KeychainSwift */; };
@@ -200,7 +199,6 @@
 		19E29A772938FCE000BE9C32 /* MoeMemosShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosShareView.swift; sourceTree = "<group>"; };
 		19E29A7C2939A94400BE9C32 /* NSItemProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSItemProvider.swift; sourceTree = "<group>"; };
 		19E6EF1E29113EC900C998F5 /* MemoInputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInputViewModel.swift; sourceTree = "<group>"; };
-		19E6EF2029113FDA00C998F5 /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; };
 		19F31BF628C3E26D000C5207 /* MemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosList.swift; sourceTree = "<group>"; };
 		19F31BFA28C3E9B2000C5207 /* Memo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memo.swift; sourceTree = "<group>"; };
 		19F31BFC28C3ED11000C5207 /* MemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCard.swift; sourceTree = "<group>"; };
@@ -295,7 +293,6 @@
 				193DE92F28C65104002651E0 /* MemosViewModel.swift */,
 				19C569AB29125C0700745F9D /* ResourceListViewModel.swift */,
 				19C569A929125BB200745F9D /* ResourceManager.swift */,
-				19E6EF2029113FDA00C998F5 /* UserState.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -641,7 +638,6 @@
 				193AA8A728CD9ED700FF7EB6 /* URL.swift in Sources */,
 				19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */,
 				19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */,
-				19E6EF2129113FDA00C998F5 /* UserState.swift in Sources */,
 				1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */,
 				1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */,
 				31EE786129B9F3A2005F62D0 /* Highlighter.swift in Sources */,

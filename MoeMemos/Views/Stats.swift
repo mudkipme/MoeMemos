@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Account
 
 fileprivate let weekDaySymbols: [String] = {
     var symbols = Calendar.current.shortWeekdaySymbols
@@ -15,7 +16,7 @@ fileprivate let weekDaySymbols: [String] = {
 
 struct Stats: View {
     @EnvironmentObject private var memosViewModel: MemosViewModel
-    @Environment(UserState.self) private var userState: UserState
+    @Environment(AccountViewModel.self) var userState: AccountViewModel
     
     var body: some View {
         VStack {
@@ -69,15 +70,6 @@ struct Stats: View {
     
     func days() -> Int {
         guard let user = userState.currentUser else { return 0 }
-        guard let createdTs = user.createdTs else { return 0 }
-        return Calendar.current.dateComponents([.day], from: Date(timeIntervalSince1970: TimeInterval(createdTs)), to: .now).day!
-    }
-}
-
-struct Stats_Previews: PreviewProvider {
-    static var previews: some View {
-        Stats()
-            .environmentObject(MemosViewModel())
-            .environment(UserState())
+        return Calendar.current.dateComponents([.day], from: user.creationDate, to: .now).day!
     }
 }

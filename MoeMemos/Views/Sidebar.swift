@@ -11,7 +11,7 @@ import Account
 struct Sidebar: View {
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @Environment(AccountManager.self) private var accountManager: AccountManager
-    @Environment(UserState.self) private var userState: UserState
+    @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Binding var selection: Route?
 
     var body: some View {
@@ -77,15 +77,5 @@ struct Sidebar: View {
                 print(error)
             }
         }
-    }
-}
-
-struct SwiftUIView_Previews: PreviewProvider {
-    @State static var route: Route? = .memos
-
-    static var previews: some View {
-        Sidebar(selection: $route)
-            .environmentObject(MemosViewModel())
-            .environment(UserState())
     }
 }

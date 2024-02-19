@@ -9,16 +9,17 @@ import SwiftUI
 import UniformTypeIdentifiers
 import MarkdownUI
 import MemosService
+import Models
 
 struct MemoCard: View {
     let memo: MemosMemo
-    let defaultMemoVisilibity: MemosVisibility?
+    let defaultMemoVisilibity: MemoVisibility?
     
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var showingEdit = false
     @State private var showingDeleteConfirmation = false
     
-    init(_ memo: MemosMemo, defaultMemoVisibility: MemosVisibility) {
+    init(_ memo: MemosMemo, defaultMemoVisibility: MemoVisibility) {
         self.memo = memo
         self.defaultMemoVisilibity = defaultMemoVisibility
     }
@@ -30,8 +31,8 @@ struct MemoCard: View {
                     .font(.footnote)
                     .foregroundColor(.secondary)
                 
-                if defaultMemoVisilibity != nil && memo.visibility != defaultMemoVisilibity, let visibility = memo.visibility {
-                    Image(systemName: visibility.iconName)
+                if let visibility = memo.visibility, let defaultMemoVisilibity = defaultMemoVisilibity, MemoVisibility(visibility) != defaultMemoVisilibity {
+                    Image(systemName: MemoVisibility(visibility).iconName)
                         .foregroundColor(.secondary)
                 }
                 

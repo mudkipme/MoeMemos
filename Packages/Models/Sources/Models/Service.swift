@@ -7,6 +7,10 @@
 
 import Foundation
 
-public protocol RemoteService {
+public protocol MoeMemosService {
+    func memoVisibilities() -> [MemoVisibility]
+}
+
+public protocol RemoteService: MoeMemosService {
     func fetchMemos() async throws -> [Memo]
 }

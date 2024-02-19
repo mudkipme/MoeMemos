@@ -8,27 +8,36 @@
 import Foundation
 import SwiftUI
 import MemosService
+import Models
 
-extension MemosVisibility {
+extension MemoVisibility {
     var title: LocalizedStringKey {
         switch self {
-        case .PUBLIC:
+        case .public:
             return "memo.visibility.public"
-        case .PROTECTED:
+        case .local:
             return "memo.visibility.protected"
-        case .PRIVATE:
+        case .private:
             return "memo.visibility.private"
+        case .direct:
+            return "memo.visibility.direct"
+        case .unlisted:
+            return "memo.visibility.unlisted"
         }
     }
     
     var iconName: String {
         switch self {
-        case .PUBLIC:
+        case .public:
             return "globe"
-        case .PROTECTED:
+        case .local:
             return "house"
-        case .PRIVATE:
+        case .private:
             return "lock"
+        case .direct:
+            return "envelope"
+        case .unlisted:
+            return "lock.open"
         }
     }
 }

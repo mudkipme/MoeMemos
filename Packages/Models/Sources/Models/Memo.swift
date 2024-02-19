@@ -15,8 +15,10 @@ public enum RowStatus: Codable {
 
 public enum MemoVisibility: Codable {
     case `private`
-    case `protected`
+    case local
     case `public`
+    case unlisted
+    case direct
 }
 
 @Model

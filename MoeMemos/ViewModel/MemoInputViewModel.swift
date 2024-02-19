@@ -12,6 +12,7 @@ import SwiftUI
 import Markdown
 import MemosService
 import Account
+import Models
 
 @MainActor
 class MemoInputViewModel: ObservableObject, ResourceManager {
@@ -20,7 +21,7 @@ class MemoInputViewModel: ObservableObject, ResourceManager {
     @Published var resourceList = [MemosResource]()
     @Published var imageUploading = false
     @Published var saving = false
-    @Published var visibility: MemosVisibility = .PRIVATE
+    @Published var visibility: MemoVisibility = .private
 
     private var anyPhotos: Any?
     @available(iOS 16, *) var photos: [PhotosPickerItem]? {

@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "data-uri",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nodes-vapor/data-uri",
+      "state" : {
+        "revision" : "6a9f50b99f2a2ce234556970d02e9af01f9f592e",
+        "version" : "2.0.1"
+      }
+    },
+    {
       "identity" : "highlightr",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/raspu/Highlightr",

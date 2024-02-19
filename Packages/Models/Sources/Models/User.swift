@@ -22,11 +22,13 @@ public class User {
     public var tags = [Tag]()
     @Relationship(inverse: \Resource.user)
     public var resources = [Resource]()
+    public var creationDate: Date
     
-    public init(accountKey: String, nickname: String, avatarData: Data? = nil, defaultVisibility: MemoVisibility = .private) {
+    public init(accountKey: String, nickname: String, avatarData: Data? = nil, defaultVisibility: MemoVisibility = .private, creationDate: Date = .now) {
         self.accountKey = accountKey
         self.nickname = nickname
         self.avatarData = avatarData
         self.defaultVisibility = defaultVisibility
+        self.creationDate = creationDate
     }
 }

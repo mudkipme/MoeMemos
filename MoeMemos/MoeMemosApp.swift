@@ -11,7 +11,7 @@ import Account
 @main
 @MainActor
 struct MoeMemosApp: App {
-    @State private var userState: UserState = .shared
+    @State private var userState: AccountViewModel = .shared
     @State private var accountManager: AccountManager = .shared
 
     var body: some Scene {

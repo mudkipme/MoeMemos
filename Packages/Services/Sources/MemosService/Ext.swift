@@ -32,8 +32,21 @@ public extension MemosUser {
 }
 
 extension MemosResource: Identifiable {}
-extension MemosVisibility: CaseIterable {
-    public static let allCases: [Components.Schemas.Visibility] = [.PRIVATE, .PROTECTED, .PUBLIC]
+extension MemosVisibility {
+    public init(memoVisibility: MemoVisibility) {
+        switch memoVisibility {
+        case .direct:
+            self = .PRIVATE
+        case .local:
+            self = .PROTECTED
+        case .private:
+            self = .PRIVATE
+        case .public:
+            self = .PUBLIC
+        case .unlisted:
+            self = .PUBLIC
+        }
+    }
 }
 
 extension MemoVisibility {
@@ -42,7 +55,7 @@ extension MemoVisibility {
         case .PUBLIC:
             self = .public
         case .PROTECTED:
-            self = .protected
+            self = .local
         case .PRIVATE:
             self = .private
         }

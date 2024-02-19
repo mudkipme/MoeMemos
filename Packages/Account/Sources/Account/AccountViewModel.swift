@@ -55,4 +55,10 @@ import Models
         
         users = allUsers
     }
+    
+    func logout() async throws {
+        if let account = accountManager.currentAccount {
+            accountManager.delete(account: account)
+        }
+    }
 }

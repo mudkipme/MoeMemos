@@ -16,12 +16,12 @@ struct MemosList: View {
     @State private var searchString = ""
     @State private var showingNewPost = false
     @Environment(AccountManager.self) private var accountManager: AccountManager
-    @Environment(UserState.self) private var userState: UserState
+    @Environment(AccountViewModel.self) var userState: AccountViewModel
     @EnvironmentObject private var memosViewModel: MemosViewModel
     @State private var filteredMemoList: [MemosMemo] = []
     
     var body: some View {
-        let defaultMemoVisibility = userState.currentUser?.defaultMemoVisibility ?? .PRIVATE
+        let defaultMemoVisibility = userState.currentUser?.defaultVisibility ?? .private
         
         ZStack(alignment: .bottomTrailing) {
             List(filteredMemoList, id: \.id) { memo in
@@ -112,13 +112,5 @@ struct MemosList: View {
         }
         
         return fullList
-    }
-}
-
-struct MemosList_Previews: PreviewProvider {
-    static var previews: some View {
-        MemosList(tag: nil)
-            .environmentObject(MemosViewModel())
-            .environment(UserState())
     }
 }
