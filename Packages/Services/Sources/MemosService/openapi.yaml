@@ -896,9 +896,12 @@ components:
           type: string
         updatedTs:
           type: integer
+        name:
+          type: string
       required:
         - id
         - filename
+        - name
     Role:
       type: string
       enum:

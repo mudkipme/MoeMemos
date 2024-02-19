@@ -140,7 +140,7 @@ public final class MemosService: Sendable {
 
 fileprivate extension MemosResource {
     func path() -> String {
-        return "/o/r/\(id)/\(filename)"
+        return "/o/r/\(id)/\(name)"
     }
 }
 
