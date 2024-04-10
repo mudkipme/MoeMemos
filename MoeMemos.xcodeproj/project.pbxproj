@@ -65,6 +65,9 @@
 		194B274228C3973600A48675 /* MoeMemosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274128C3973600A48675 /* MoeMemosTests.swift */; };
 		194B274C28C3973600A48675 /* MoeMemosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274B28C3973600A48675 /* MoeMemosUITests.swift */; };
 		194B274E28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */; };
+		194C4C372BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */; };
+		194C4C382BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */; };
+		194C4C392BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */; };
 		195E5AD328C84E4F00CD4674 /* AlertToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5AD228C84E4F00CD4674 /* AlertToast.swift */; };
 		195E5D6B28C704AC00784EF5 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6A28C704AC00784EF5 /* Date.swift */; };
 		195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
@@ -227,6 +230,7 @@
 		194B274728C3973600A48675 /* MoeMemosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoeMemosUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		194B274B28C3973600A48675 /* MoeMemosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosUITests.swift; sourceTree = "<group>"; };
 		194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19558A442912CEA60070CAF9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		195E5AD228C84E4F00CD4674 /* AlertToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertToast.swift; sourceTree = "<group>"; };
 		195E5D6A28C704AC00784EF5 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
@@ -402,6 +406,7 @@
 		194B272428C3973400A48675 = {
 			isa = PBXGroup;
 			children = (
+				194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */,
 				191339AD291D7288001F2B2E /* Frameworks */,
 				194B272F28C3973400A48675 /* MoeMemos */,
 				19E29A692938FBCD00BE9C32 /* MoeMemosShareExtension */,
@@ -705,6 +710,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				194C4C382BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */,
 				191339B9291D7289001F2B2E /* Assets.xcassets in Resources */,
 				19B3B79529CEB9C5007E2997 /* Localizable.strings in Resources */,
 			);
@@ -716,6 +722,7 @@
 			files = (
 				194B273828C3973600A48675 /* Preview Assets.xcassets in Resources */,
 				1948CCAD2996B3FA00AB1986 /* Localizable.strings in Resources */,
+				194C4C372BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */,
 				194B273528C3973600A48675 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -738,6 +745,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				194C4C392BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */,
 				19E29A6E2938FBCD00BE9C32 /* MainInterface.storyboard in Resources */,
 				19B3B79629CEBCC0007E2997 /* Localizable.strings in Resources */,
 			);
