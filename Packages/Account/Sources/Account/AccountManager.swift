@@ -10,7 +10,6 @@ import SwiftUI
 import Models
 import MemosService
 
-@MainActor
 @Observable public class AccountManager {
     public static let shared = AccountManager()
 

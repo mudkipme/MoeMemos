@@ -12,7 +12,7 @@ import SwiftData
 import Account
 
 struct ContentView: View {
-    @State private var accountViewModel = AccountViewModel.shared
+    @Environment(AccountViewModel.self) private var accountViewModel: AccountViewModel
     @Environment(AccountManager.self) private var accountManager: AccountManager
     @State private var selection: Route? = .memos
     @StateObject private var memosViewModel = MemosViewModel()
@@ -30,7 +30,6 @@ struct ContentView: View {
                 }
             })
             .modelContext(AppInfo.shared.modelContext)
-            .environment(accountViewModel)
     }
     
     @MainActor

@@ -10,8 +10,7 @@ import Observation
 import StoreKit
 import SwiftData
 
-@Observable
-public class AppInfo {
+@Observable public class AppInfo {
     public static let shared = AppInfo()
     public static let groupContainerIdentifier = "group.me.mudkip.MoeMemos"
     public static let keychainAccessGroupName = "AHAQ4D2466.me.mudkip.MoeMemos"

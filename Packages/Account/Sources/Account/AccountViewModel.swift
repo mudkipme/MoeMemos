@@ -1,8 +1,8 @@
 //
-//  AccountViewModel.swift
+//  File.swift
+//  
 //
-//
-//  Created by Mudkip on 2023/11/25.
+//  Created by Mudkip on 2024/6/5.
 //
 
 import Foundation
@@ -13,9 +13,8 @@ import Models
 @Observable public class AccountViewModel {
     private var currentContext: ModelContext
     private var accountManager: AccountManager
-    public static let shared = AccountViewModel()
-    
-    public init(currentContext: ModelContext = AppInfo.shared.modelContext, accountManager: AccountManager = AccountManager.shared) {
+
+    public init(currentContext: ModelContext, accountManager: AccountManager) {
         self.currentContext = currentContext
         self.accountManager = accountManager
         
@@ -47,12 +46,12 @@ import Models
                 currentContext.insert(user)
             }
         }
-        
+
         // Remove removed users
         savedUsers.filter { user in !accountManager.accounts.contains { $0.key == user.accountKey } }.forEach { user in
             currentContext.delete(user)
         }
-        
+
         users = allUsers
     }
     
@@ -61,4 +60,5 @@ import Models
             accountManager.delete(account: account)
         }
     }
+
 }
