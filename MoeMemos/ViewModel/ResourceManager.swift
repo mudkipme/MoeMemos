@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 protocol ResourceManager {
     func deleteResource(id: Int) async throws
 }

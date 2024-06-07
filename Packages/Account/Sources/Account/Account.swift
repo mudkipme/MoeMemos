@@ -10,6 +10,7 @@ import Models
 import KeychainSwift
 import MemosService
 
+@MainActor
 public extension Account {
     private static var keychain: KeychainSwift {
         let keychain = KeychainSwift()

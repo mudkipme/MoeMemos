@@ -10,8 +10,9 @@ import SwiftUI
 import Models
 import MemosService
 
-@Observable public class AccountManager {
-    public static let shared = AccountManager()
+@MainActor
+@Observable public final class AccountManager {
+    @ObservationIgnored public static let shared = AccountManager()
 
     @ObservationIgnored @AppStorage("currentAccountKey", store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier))
     private var currentAccountKey: String = ""

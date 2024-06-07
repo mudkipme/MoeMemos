@@ -9,8 +9,9 @@ import SwiftUI
 import Models
 import Account
 
+@MainActor
 struct Settings: View {
-    @State var appInfo = AppInfo()
+    @State var appInfo = AppInfo.shared
 
     var body: some View {
         List {

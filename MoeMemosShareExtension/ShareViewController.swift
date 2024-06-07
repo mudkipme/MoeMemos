@@ -112,3 +112,5 @@ class ShareViewController: SLComposeServiceViewController {
         return tagVisitor.tags
     }
 }
+
+extension NSItemProvider: @unchecked Sendable {}

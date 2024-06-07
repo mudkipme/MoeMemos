@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import MarkdownUI
+@preconcurrency import MarkdownUI
 import MemosService
 import Account
 

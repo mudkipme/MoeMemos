@@ -11,6 +11,7 @@ import MemosService
 import Models
 import Account
 
+@MainActor
 struct MemoInput: View {
     let memo: MemosMemo?
     @EnvironmentObject private var memosViewModel: MemosViewModel
@@ -187,7 +188,7 @@ struct MemoInput: View {
                 }, set: { photos in
                     viewModel.photos = photos
                 }))
-                .onChange(of: viewModel.photos) { newValue in
+                .onChange(of: viewModel.photos) { _, newValue in
                     Task {
                         guard let newValue = newValue else { return }
                         
@@ -365,3 +366,6 @@ struct MemoInput: View {
         return true
     }
 }
+
+
+extension PhotosPickerItem: @unchecked Sendable {}
