@@ -8,18 +8,13 @@
 import Foundation
 import SwiftData
 
-@Model
-public final class Tag {
+public struct Tag: Hashable, Identifiable {
     @Attribute(.unique)
     public var id: UUID = UUID()
-    public var user: User?
     public var name: String
-    public var synced: Bool
     
-    public init(id: UUID = UUID(), user: User? = nil, name: String, synced: Bool = false) {
+    public init(id: UUID = UUID(), name: String) {
         self.id = id
-        self.user = user
         self.name = name
-        self.synced = synced
     }
 }

@@ -8,18 +8,20 @@
 import SwiftUI
 import Account
 import Models
+import Factory
 
 @main
-@MainActor
 struct MoeMemosApp: App {
-    @State private var userState: AccountViewModel = AccountViewModel(currentContext: AppInfo.shared.modelContext, accountManager: .shared)
-    @State private var accountManager: AccountManager = .shared
+    @Injected(\.appInfo) private var appInfo
+    @Injected(\.accountViewModel) private var userState
+    @Injected(\.accountManager) private var accountManager
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(userState)
                 .environment(accountManager)
+                .environment(appInfo)
         }
     }
 }

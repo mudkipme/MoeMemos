@@ -79,11 +79,3 @@ struct MemoCardContent: View {
         return attachments
     }
 }
-
-struct MemoCardContent_Previews: PreviewProvider {
-    static var previews: some View {
-        MemoCardContent(memo: MemosMemo(content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", createdTs: Int(Date.now.addingTimeInterval(-100).timeIntervalSince1970), id: 1), toggleTaskItem: nil)
-            .environmentObject(MemosViewModel())
-            .environment(AccountManager.shared)
-    }
-}

@@ -10,10 +10,12 @@ import Models
 import MemosService
 import SwiftData
 import Account
+import Factory
 
 struct ContentView: View {
     @Environment(AccountViewModel.self) private var accountViewModel: AccountViewModel
     @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Injected(\.appInfo) private var appInfo
     @State private var selection: Route? = .memos
     @StateObject private var memosViewModel = MemosViewModel()
     @Environment(\.scenePhase) var scenePhase
@@ -29,7 +31,7 @@ struct ContentView: View {
                     }
                 }
             })
-            .modelContext(AppInfo.shared.modelContext)
+            .modelContext(appInfo.modelContext)
     }
     
     @MainActor

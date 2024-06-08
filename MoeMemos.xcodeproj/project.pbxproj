@@ -56,6 +56,7 @@
 		197A4D3329599C300027427E /* MemoCardImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197A4D3229599C300027427E /* MemoCardImageView.swift */; };
 		197BEF472B00998F0025C17B /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 197BEF462B00998F0025C17B /* Models */; };
 		197D9D47292D4B160033AF33 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197D9D46292D4B160033AF33 /* ImagePicker.swift */; };
+		1990357E2C14A55B0011B985 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 1990357D2C14A55B0011B985 /* Factory */; };
 		1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1995E9CD28C46DC9004F2EDB /* Heatmap.swift */; };
 		19996E6029118AF6001E3583 /* NavLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19996E5F29118AF6001E3583 /* NavLink.swift */; };
 		199A657B28C474BA00C39994 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657A28C474BA00C39994 /* Color.swift */; };
@@ -228,6 +229,7 @@
 				197BEF472B00998F0025C17B /* Models in Frameworks */,
 				191489F02B00832C00577BD1 /* Account in Frameworks */,
 				19E866612AB84EBA00E33521 /* KeychainSwift in Frameworks */,
+				1990357E2C14A55B0011B985 /* Factory in Frameworks */,
 				193D274D29C8D1EB00BDE4A2 /* MarkdownUI in Frameworks */,
 				31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */,
 			);
@@ -341,7 +343,6 @@
 		194B272F28C3973400A48675 /* MoeMemos */ = {
 			isa = PBXGroup;
 			children = (
-				1948CCA92996B29500AB1986 /* Resources */,
 				194B273428C3973600A48675 /* Assets.xcassets */,
 				199A657928C4749800C39994 /* Extensions */,
 				193DE92928C619CE002651E0 /* Helpers */,
@@ -350,6 +351,7 @@
 				1973B7D529160F48003C3710 /* MoeMemos.entitlements */,
 				194B273028C3973400A48675 /* MoeMemosApp.swift */,
 				194B273628C3973600A48675 /* Preview Content */,
+				1948CCA92996B29500AB1986 /* Resources */,
 				193DE92E28C650F8002651E0 /* ViewModel */,
 				19F31BF828C3E286000C5207 /* Views */,
 			);
@@ -472,6 +474,7 @@
 				19E866602AB84EBA00E33521 /* KeychainSwift */,
 				191489EF2B00832C00577BD1 /* Account */,
 				197BEF462B00998F0025C17B /* Models */,
+				1990357D2C14A55B0011B985 /* Factory */,
 			);
 			productName = MoeMemos;
 			productReference = 194B272D28C3973400A48675 /* MoeMemos.app */;
@@ -540,6 +543,7 @@
 				193D274B29C8D1EB00BDE4A2 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				19E8665F2AB84ACA00E33521 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				190755972B66512200451E6D /* XCRemoteSwiftPackageReference "swift-markdown" */,
+				1990357C2C14A55B0011B985 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			productRefGroup = 194B272E28C3973400A48675 /* Products */;
 			projectDirPath = "";
@@ -1113,6 +1117,14 @@
 				kind = branch;
 			};
 		};
+		1990357C2C14A55B0011B985 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.2;
+			};
+		};
 		19E8665F2AB84ACA00E33521 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
@@ -1157,6 +1169,11 @@
 		197BEF462B00998F0025C17B /* Models */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Models;
+		};
+		1990357D2C14A55B0011B985 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1990357C2C14A55B0011B985 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
 		};
 		199C6CC52B009F19005C6921 /* Models */ = {
 			isa = XCSwiftPackageProductDependency;

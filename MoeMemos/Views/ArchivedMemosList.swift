@@ -39,12 +39,12 @@ struct ArchivedMemosList: View {
         .onAppear {
             filteredMemoList = filterMemoList(viewModel.archivedMemoList)
         }
-        .onChange(of: viewModel.archivedMemoList, perform: { newValue in
+        .onChange(of: viewModel.archivedMemoList) { _, newValue in
             filteredMemoList = filterMemoList(newValue)
-        })
-        .onChange(of: searchString, perform: { newValue in
+        }
+        .onChange(of: searchString) { _, newValue in
             filteredMemoList = filterMemoList(viewModel.archivedMemoList)
-        })
+        }
     }
     
     private func filterMemoList(_ memoList: [MemosMemo]) -> [MemosMemo] {

@@ -8,23 +8,15 @@
 import Foundation
 import SwiftData
 import Models
+import Factory
 
-@MainActor
-@Observable public class AccountViewModel {
+@Observable public final class AccountViewModel {
     private var currentContext: ModelContext
     private var accountManager: AccountManager
 
     public init(currentContext: ModelContext, accountManager: AccountManager) {
         self.currentContext = currentContext
         self.accountManager = accountManager
-        
-        _ = withObservationTracking {
-            accountManager.accounts
-        } onChange: {
-            Task {
-                try await self.reloadUsers()
-            }
-        }
     }
     
     public private(set) var users = [User]()
@@ -35,6 +27,7 @@ import Models
         return nil
     }
     
+    @MainActor
     public func reloadUsers() async throws {
         let savedUsers = try currentContext.fetch(FetchDescriptor<User>())
         var allUsers = [User]()
@@ -61,4 +54,10 @@ import Models
         }
     }
 
+}
+
+public extension Container {
+    var accountViewModel: Factory<AccountViewModel> {
+        self { AccountViewModel(currentContext: self.appInfo().modelContext, accountManager: self.accountManager()) }
+    }
 }

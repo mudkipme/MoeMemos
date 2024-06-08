@@ -20,7 +20,8 @@ let package = Package(
         .package(name: "Models", path: "../Models"),
         .package(name: "Services", path: "../Services"),
         .package(name: "DesignSystem", path: "../DesignSystem"),
-        .package(url: "https://github.com/evgenyneu/keychain-swift", from: "21.0.0")
+        .package(url: "https://github.com/evgenyneu/keychain-swift", from: "21.0.0"),
+        .package(url: "https://github.com/hmlongco/Factory", from: "2.3.2")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -31,7 +32,8 @@ let package = Package(
                 .product(name: "Models", package: "Models"),
                 .product(name: "MemosService", package: "Services"),
                 .product(name: "DesignSystem", package: "DesignSystem"),
-                .product(name: "KeychainSwift", package: "keychain-swift")
+                .product(name: "KeychainSwift", package: "keychain-swift"),
+                .product(name: "Factory", package: "Factory")
             ],
             swiftSettings: [
               .enableExperimentalFeature("StrictConcurrency"),

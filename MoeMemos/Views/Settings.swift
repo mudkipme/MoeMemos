@@ -11,7 +11,7 @@ import Account
 
 @MainActor
 struct Settings: View {
-    @State var appInfo = AppInfo.shared
+    @Environment(AppInfo.self) var appInfo: AppInfo
 
     var body: some View {
         List {

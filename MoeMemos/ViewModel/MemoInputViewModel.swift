@@ -13,10 +13,13 @@ import Markdown
 import MemosService
 import Account
 import Models
+import Factory
 
 @MainActor
 class MemoInputViewModel: ObservableObject, ResourceManager {
-    var memos: MemosService { get throws { try AccountManager.shared.mustCurrentService } }
+    @Injected(\.accountManager) private var accountManager
+    
+    var memos: MemosService { get throws { try accountManager.mustCurrentService } }
     
     @Published var resourceList = [MemosResource]()
     @Published var imageUploading = false

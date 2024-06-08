@@ -9,11 +9,9 @@ import Foundation
 import SwiftUI
 import Models
 import MemosService
+import Factory
 
-@MainActor
 @Observable public final class AccountManager {
-    @ObservationIgnored public static let shared = AccountManager()
-
     @ObservationIgnored @AppStorage("currentAccountKey", store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier))
     private var currentAccountKey: String = ""
     @ObservationIgnored public private(set) var currentService: MemosService?
@@ -33,7 +31,7 @@ import MemosService
         }
     }
     
-    init() {
+    public init() {
         accounts = Account.retriveAll()
         if !currentAccountKey.isEmpty, let currentAccount = accounts.first(where: { $0.key == currentAccountKey }) {
             self.currentAccount = currentAccount
@@ -54,5 +52,11 @@ import MemosService
         if currentAccount?.key == account.key {
             currentAccount = accounts.last
         }
+    }
+}
+
+public extension Container {
+    var accountManager: Factory<AccountManager> {
+        self { AccountManager() }.shared
     }
 }

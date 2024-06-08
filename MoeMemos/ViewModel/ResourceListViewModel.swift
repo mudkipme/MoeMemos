@@ -8,10 +8,12 @@
 import Foundation
 import Account
 import MemosService
+import Factory
 
 @MainActor
 class ResourceListViewModel: ObservableObject, ResourceManager {
-    var memos: MemosService { get throws { try AccountManager.shared.mustCurrentService } }
+    @Injected(\.accountManager) private var accountManager
+    var memos: MemosService { get throws { try accountManager.mustCurrentService } }
 
     @Published private(set) var resourceList: [MemosResource] = []
     

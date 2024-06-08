@@ -66,7 +66,8 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
     private func handleShare() async throws {
-        guard let memos = AccountManager.shared.currentService else { throw MemosServiceError.notLogin }
+        let accountManager = AccountManager()
+        guard let memos = accountManager.currentService else { throw MemosServiceError.notLogin }
         var resourceList = [MemosResource]()
         var contentTextList = [String]()
         contentTextList.append(contentText)

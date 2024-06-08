@@ -181,7 +181,7 @@ public extension MemosService {
     }
     
     func download(url: URL) async throws -> URL {
-        guard let containerURL = await FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppInfo.groupContainerIdentifier) else { throw MemosServiceError.unknown }
+        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppInfo.groupContainerIdentifier) else { throw MemosServiceError.unknown }
         
         let hash = SHA256.hash(data: url.absoluteString.data(using: .utf8)!)
         let hex = hash.map { String(format: "%02X", $0) }[0...10].joined()

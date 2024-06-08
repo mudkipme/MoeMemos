@@ -31,7 +31,8 @@ struct Provider: IntentTimelineProvider {
     
     @MainActor
     func getMatrix() async throws -> [DailyUsageStat]? {
-        guard let memos = AccountManager.shared.currentService else {
+        let accountManager = AccountManager()
+        guard let memos = accountManager.currentService else {
             return nil
         }
         

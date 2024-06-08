@@ -9,10 +9,12 @@ import Foundation
 import Account
 import MemosService
 import Models
+import Factory
 
 @MainActor
 class MemosViewModel: ObservableObject {
-    var memos: MemosService { get throws { try AccountManager.shared.mustCurrentService } }
+    @Injected(\.accountManager) private var accountManager
+    var memos: MemosService { get throws { try accountManager.mustCurrentService } }
 
     @Published private(set) var memoList: [MemosMemo] = [] {
         didSet {

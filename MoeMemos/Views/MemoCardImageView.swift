@@ -9,6 +9,7 @@ import SwiftUI
 import QuickLook
 import Account
 
+@MainActor
 struct MemoCardImageView: View {
     let images: [URL]
     
@@ -31,7 +32,7 @@ struct MemoCardImageView: View {
             }
         } else {
             ProgressView()
-                .task { @MainActor in
+                .task {
                     do {
                         if downloads[url] == nil, let memos = memosManager.currentService {
                             downloads[url] = try await memos.download(url: url)
@@ -103,11 +104,5 @@ struct MemoCardImageView: View {
                     .edgesIgnoringSafeArea(.bottom)
                     .background(TransparentBackground())
             }
-    }
-}
-
-struct MemoCardImageView_Previews: PreviewProvider {
-    static var previews: some View {
-        MemoCardImageView(images: [])
     }
 }

@@ -34,7 +34,6 @@ extension MemoryUpdatePeriod {
 }
 
 struct MemoryProvider: IntentTimelineProvider {
-    
     func placeholder(in context: Context) -> MemoryEntry {
         MemoryEntry(date: Date(), configuration: MemoryWidgetConfigurationIntent(), memo: sampleMemo)
     }
@@ -48,7 +47,8 @@ struct MemoryProvider: IntentTimelineProvider {
     
     @MainActor
     func getMemos(_ frequency: MemoryUpdatePeriod) async throws -> [MemosMemo]? {
-        guard let memos = AccountManager.shared.currentService else { return nil }
+        let accountManager = AccountManager()
+        guard let memos = accountManager.currentService else { return nil }
         
         let response = try await memos.listMemos(input: .init(rowStatus: .NORMAL))
         return [MemosMemo](response.shuffled().prefix(frequency.memosPerDay))
