@@ -892,10 +892,11 @@ components:
           type: integer
         name:
           type: string
+        uid:
+          type: string
       required:
         - id
         - filename
-        - name
     Role:
       type: string
       enum:

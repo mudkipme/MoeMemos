@@ -141,7 +141,10 @@ public final class MemosService: Sendable {
 
 fileprivate extension MemosResource {
     func path() -> String {
-        return "/o/r/\(name)"
+        if let uid = uid, !uid.isEmpty {
+            return "/o/r/\(uid)"
+        }
+        return "/o/r/\(name ?? "")"
     }
 }
 
