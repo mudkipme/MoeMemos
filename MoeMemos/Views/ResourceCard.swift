@@ -18,7 +18,7 @@ struct ResourceCard: View {
         self.resourceManager = resourceManager
     }
     
-    @EnvironmentObject private var memosViewModel: MemosViewModel
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @Environment(AccountManager.self) private var memosManager: AccountManager
     @State private var imagePreviewURL: URL?
     @State private var downloadedURL: URL?
@@ -59,6 +59,7 @@ struct ResourceCard: View {
     }
     
     @ViewBuilder
+    @MainActor
     func menu(for resource: MemosResource) -> some View {
         Button(role: .destructive, action: {
             Task {

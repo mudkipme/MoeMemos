@@ -9,7 +9,7 @@ import SwiftUI
 import MemosService
 
 struct ArchivedMemosList: View {
-    @StateObject private var viewModel = ArchivedMemoListViewModel()
+    @State private var viewModel = ArchivedMemoListViewModel()
     @State private var searchString = ""
     @State private var filteredMemoList: [MemosMemo] = []
 

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Explore: View {
-    @StateObject private var viewModel = ExploreViewModel()
+    @State private var viewModel = ExploreViewModel()
 
     var body: some View {
         List(viewModel.memoList, id: \.id) { memo in

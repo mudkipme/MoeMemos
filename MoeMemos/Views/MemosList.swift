@@ -17,7 +17,7 @@ struct MemosList: View {
     @State private var showingNewPost = false
     @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(AccountViewModel.self) var userState: AccountViewModel
-    @EnvironmentObject private var memosViewModel: MemosViewModel
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @State private var filteredMemoList: [MemosMemo] = []
     
     var body: some View {

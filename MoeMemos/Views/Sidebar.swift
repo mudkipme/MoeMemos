@@ -9,9 +9,9 @@ import SwiftUI
 import Account
 
 struct Sidebar: View {
-    @EnvironmentObject private var memosViewModel: MemosViewModel
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @Environment(AccountManager.self) private var accountManager: AccountManager
-    @Environment(AccountViewModel.self) var userState: AccountViewModel
+    @Environment(AccountViewModel.self) private var userState: AccountViewModel
     @Binding var selection: Route?
 
     var body: some View {

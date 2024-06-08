@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MemoInputResourceView: View {
-    @ObservedObject var viewModel: MemoInputViewModel
+    var viewModel: MemoInputViewModel
     
     var body: some View {
         if !viewModel.resourceList.isEmpty || viewModel.imageUploading {

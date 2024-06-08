@@ -14,10 +14,10 @@ import Account
 @MainActor
 struct MemoInput: View {
     let memo: MemosMemo?
-    @EnvironmentObject private var memosViewModel: MemosViewModel
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Environment(AccountManager.self) var accountManager: AccountManager
-    @StateObject private var viewModel = MemoInputViewModel()
+    @State private var viewModel = MemoInputViewModel()
 
     @State private var text = ""
     @State private var selection: Range<String.Index>? = nil
@@ -183,15 +183,9 @@ struct MemoInput: View {
     var body: some View {
         NavigationStack {
             editor()
-                .photosPicker(isPresented: $showingPhotoPicker, selection: Binding(get: {
-                    viewModel.photos ?? []
-                }, set: { photos in
-                    viewModel.photos = photos
-                }))
+                .photosPicker(isPresented: $showingPhotoPicker, selection: $viewModel.photos)
                 .onChange(of: viewModel.photos) { _, newValue in
                     Task {
-                        guard let newValue = newValue else { return }
-                        
                         if !newValue.isEmpty {
                             try await upload(images: newValue)
                             viewModel.photos = []
@@ -201,7 +195,6 @@ struct MemoInput: View {
         }
     }
     
-    @available(iOS 16, *)
     private func upload(images: [PhotosPickerItem]) async throws {
         do {
             viewModel.imageUploading = true

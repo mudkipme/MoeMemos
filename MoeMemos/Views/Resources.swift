@@ -11,8 +11,8 @@ fileprivate let columns = [GridItem(.adaptive(minimum: 125, maximum: 200), spaci
 
 
 struct Resources: View {
-    @EnvironmentObject private var memosViewModel: MemosViewModel
-    @StateObject private var viewModel = ResourceListViewModel()
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
+    @State private var viewModel = ResourceListViewModel()
 
     var body: some View {
         ScrollView {
@@ -31,12 +31,5 @@ struct Resources: View {
                 print(error)
             }
         }
-    }
-}
-
-struct Resources_Previews: PreviewProvider {
-    static var previews: some View {
-        Resources()
-            .environmentObject(MemosViewModel())
     }
 }

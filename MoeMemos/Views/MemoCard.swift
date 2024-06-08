@@ -11,11 +11,12 @@ import MarkdownUI
 import MemosService
 import Models
 
+@MainActor
 struct MemoCard: View {
     let memo: MemosMemo
     let defaultMemoVisilibity: MemoVisibility?
     
-    @EnvironmentObject private var memosViewModel: MemosViewModel
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @State private var showingEdit = false
     @State private var showingDeleteConfirmation = false
     

@@ -9,11 +9,12 @@ import SwiftUI
 import UniformTypeIdentifiers
 import MemosService
 
+@MainActor
 struct ArchivedMemoCard: View {
     let memo: MemosMemo
     let archivedViewModel: ArchivedMemoListViewModel
 
-    @EnvironmentObject private var memosViewModel: MemosViewModel
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @State private var showingDeleteConfirmation = false
 
     init(_ memo: MemosMemo, archivedViewModel: ArchivedMemoListViewModel) {
@@ -77,12 +78,5 @@ struct ArchivedMemoCard: View {
         }, label: {
             Label("memo.delete", systemImage: "trash")
         })
-    }
-}
-
-struct ArchivedMemoCard_Previews: PreviewProvider {
-    static var previews: some View {
-        ArchivedMemoCard(MemosMemo(content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", createdTs: Int(Date.now.addingTimeInterval(-100).timeIntervalSince1970), id: 1), archivedViewModel: ArchivedMemoListViewModel())
-            .environmentObject(MemosViewModel())
     }
 }

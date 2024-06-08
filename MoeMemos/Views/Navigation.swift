@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-@available(iOS 16, *)
 struct Navigation: View {
     @Binding var selection: Route?
     @State private var path: NavigationPath = NavigationPath([Route.memos])
@@ -30,14 +29,5 @@ struct Navigation: View {
                     }
             }
         }
-    }
-}
-
-@available(iOS 16, *)
-struct Navigation_Previews: PreviewProvider {
-    @State static var selection: Route? = nil
-
-    static var previews: some View {
-        Navigation(selection: $selection)
     }
 }

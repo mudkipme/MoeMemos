@@ -10,17 +10,17 @@ import Account
 import MemosService
 import Factory
 
-@MainActor
-class ExploreViewModel: ObservableObject {
+@Observable class ExploreViewModel {
+    @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
-    
+    @ObservationIgnored
     var memos: MemosService { get throws { try accountManager.mustCurrentService } }
 
-    @Published private(set) var memoList: [MemosMemo] = []
-    @Published private(set) var loading = false
-    @Published private(set) var hasMore = false
-    private var currentOffset = 0
+    private(set) var memoList: [MemosMemo] = []
+    private(set) var loading = false
+    private(set) var hasMore = false
     
+    @MainActor
     func loadMemos() async throws {
         do {
             loading = true
@@ -34,6 +34,7 @@ class ExploreViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func loadMoreMemos() async throws {
         guard !loading && hasMore else { return }
         do {

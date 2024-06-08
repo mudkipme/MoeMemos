@@ -17,13 +17,13 @@ struct ContentView: View {
     @Environment(AccountManager.self) private var accountManager: AccountManager
     @Injected(\.appInfo) private var appInfo
     @State private var selection: Route? = .memos
-    @StateObject private var memosViewModel = MemosViewModel()
+    @State private var memosViewModel = MemosViewModel()
     @Environment(\.scenePhase) var scenePhase
     
     var body: some View {
         Navigation(selection: $selection)
             .tint(.green)
-            .environmentObject(memosViewModel)
+            .environment(memosViewModel)
             .onChange(of: scenePhase, initial: true, { _, newValue in
                 if newValue == .active {
                     Task {
