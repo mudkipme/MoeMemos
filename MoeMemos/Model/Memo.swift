@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import MemosService
+import MemosV0Service
 import Models
 
 extension MemoVisibility {

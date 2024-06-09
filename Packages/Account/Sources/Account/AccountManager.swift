@@ -8,17 +8,17 @@
 import Foundation
 import SwiftUI
 import Models
-import MemosService
+import MemosV0Service
 import Factory
 
 @Observable public final class AccountManager {
     @ObservationIgnored @AppStorage("currentAccountKey", store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier))
     private var currentAccountKey: String = ""
-    @ObservationIgnored public private(set) var currentService: MemosService?
+    @ObservationIgnored public private(set) var currentService: MemosV0Service?
     
-    public var mustCurrentService: MemosService {
+    public var mustCurrentService: MemosV0Service {
         get throws {
-            guard let service = currentService else { throw MemosServiceError.notLogin }
+            guard let service = currentService else { throw MoeMemosError.notLogin }
             return service
         }
     }

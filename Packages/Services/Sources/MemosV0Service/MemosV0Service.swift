@@ -31,7 +31,7 @@ struct MemosAuthenticationMiddleware: ClientMiddleware {
     }
 }
 
-public final class MemosService: Sendable {
+public final class MemosV0Service: Sendable {
     public let hostURL: URL
     let urlSession: URLSession
     let client: Client
@@ -148,7 +148,7 @@ fileprivate extension MemosResource {
     }
 }
 
-public extension MemosService {
+public extension MemosV0Service {
     func url(for resource: MemosResource) -> URL {
         if let externalLink = resource.externalLink, let url = URL(string: externalLink) {
             return url
@@ -175,16 +175,16 @@ public extension MemosService {
         }
         let (data, response) = try await urlSession.data(for: request)
         guard let response = response as? HTTPURLResponse else {
-            throw MemosServiceError.unknown
+            throw MoeMemosError.unknown
         }
         if response.statusCode < 200 || response.statusCode >= 300 {
-            throw MemosServiceError.invalidStatusCode(response.statusCode, url.absoluteString)
+            throw MoeMemosError.invalidStatusCode(response.statusCode, url.absoluteString)
         }
         return data
     }
     
     func download(url: URL) async throws -> URL {
-        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppInfo.groupContainerIdentifier) else { throw MemosServiceError.unknown }
+        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppInfo.groupContainerIdentifier) else { throw MoeMemosError.unknown }
         
         let hash = SHA256.hash(data: url.absoluteString.data(using: .utf8)!)
         let hex = hash.map { String(format: "%02X", $0) }[0...10].joined()
@@ -208,10 +208,10 @@ public extension MemosService {
         
         let (tmpURL, response) = try await urlSession.download(for: request)
         guard let response = response as? HTTPURLResponse else {
-            throw MemosServiceError.unknown
+            throw MoeMemosError.unknown
         }
         if response.statusCode < 200 || response.statusCode >= 300 {
-            throw MemosServiceError.invalidStatusCode(response.statusCode, url.absoluteString)
+            throw MoeMemosError.invalidStatusCode(response.statusCode, url.absoluteString)
         }
         
         try FileManager.default.moveItem(at: tmpURL, to: downloadDestination)

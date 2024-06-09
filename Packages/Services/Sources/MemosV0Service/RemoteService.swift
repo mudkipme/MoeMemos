@@ -8,7 +8,7 @@
 import Foundation
 import Models
 
-extension MemosService: RemoteService {
+extension MemosV0Service: RemoteService {
     public func fetchMemos() async throws -> [Memo] {
         return []
     }

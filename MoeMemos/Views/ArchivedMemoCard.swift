@@ -7,7 +7,7 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
-import MemosService
+import MemosV0Service
 
 @MainActor
 struct ArchivedMemoCard: View {

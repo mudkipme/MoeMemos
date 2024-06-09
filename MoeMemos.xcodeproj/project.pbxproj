@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		190755992B66512200451E6D /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 190755982B66512200451E6D /* Markdown */; };
 		1907559A2B66514700451E6D /* TagVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D274E29C8D85700BDE4A2 /* TagVisitor.swift */; };
+		190D25702C1547C3001104E0 /* MemosV0Service in Frameworks */ = {isa = PBXBuildFile; productRef = 190D256F2C1547C3001104E0 /* MemosV0Service */; };
 		1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1911568929802F200058F18B /* QuickLookRepresentable.swift */; };
 		191339AF291D7288001F2B2E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 191339AE291D7288001F2B2E /* WidgetKit.framework */; };
 		191339B1291D7288001F2B2E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 191339B0291D7288001F2B2E /* SwiftUI.framework */; };
@@ -236,6 +237,7 @@
 				1990357E2C14A55B0011B985 /* Factory in Frameworks */,
 				193D274D29C8D1EB00BDE4A2 /* MarkdownUI in Frameworks */,
 				31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */,
+				190D25702C1547C3001104E0 /* MemosV0Service in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,6 +328,7 @@
 				19BB8C702B83207B007BFEBF /* DesignSystem */,
 				191489EC2B0082C700577BD1 /* Models */,
 				199C6CC92B00A7DB005C6921 /* Services */,
+				194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */,
 				191339AD291D7288001F2B2E /* Frameworks */,
 				194B272F28C3973400A48675 /* MoeMemos */,
 				19E29A692938FBCD00BE9C32 /* MoeMemosShareExtension */,
@@ -479,6 +482,7 @@
 				191489EF2B00832C00577BD1 /* Account */,
 				197BEF462B00998F0025C17B /* Models */,
 				1990357D2C14A55B0011B985 /* Factory */,
+				190D256F2C1547C3001104E0 /* MemosV0Service */,
 			);
 			productName = MoeMemos;
 			productReference = 194B272D28C3973400A48675 /* MoeMemos.app */;
@@ -1155,6 +1159,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 190755972B66512200451E6D /* XCRemoteSwiftPackageReference "swift-markdown" */;
 			productName = Markdown;
+		};
+		190D256F2C1547C3001104E0 /* MemosV0Service */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MemosV0Service;
 		};
 		191489EF2B00832C00577BD1 /* Account */ = {
 			isa = XCSwiftPackageProductDependency;

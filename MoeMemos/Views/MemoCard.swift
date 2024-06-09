@@ -8,7 +8,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import MarkdownUI
-import MemosService
+import MemosV0Service
 import Models
 
 @MainActor

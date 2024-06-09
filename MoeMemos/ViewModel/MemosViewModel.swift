@@ -7,7 +7,7 @@
 
 import Foundation
 import Account
-import MemosService
+import MemosV0Service
 import Models
 import Factory
 
@@ -15,7 +15,7 @@ import Factory
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
-    var memos: MemosService { get throws { try accountManager.mustCurrentService } }
+    var memos: MemosV0Service { get throws { try accountManager.mustCurrentService } }
 
     private(set) var memoList: [MemosMemo] = [] {
         didSet {

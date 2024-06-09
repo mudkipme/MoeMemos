@@ -11,7 +11,7 @@ import SwiftUI
 import KeychainSwift
 import Models
 import Account
-import MemosService
+import MemosV0Service
 import UniformTypeIdentifiers
 import Markdown
 
@@ -67,7 +67,7 @@ class ShareViewController: SLComposeServiceViewController {
 
     private func handleShare() async throws {
         let accountManager = AccountManager()
-        guard let memos = accountManager.currentService else { throw MemosServiceError.notLogin }
+        guard let memos = accountManager.currentService else { throw MoeMemosError.notLogin }
         var resourceList = [MemosResource]()
         var contentTextList = [String]()
         contentTextList.append(contentText)
@@ -81,8 +81,8 @@ class ShareViewController: SLComposeServiceViewController {
                         let data = try Data(contentsOf: url)
                         image = UIImage(data: data)
                     }
-                    guard let image = image else { throw MemosServiceError.invalidParams }
-                    guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosServiceError.invalidParams }
+                    guard let image = image else { throw MoeMemosError.invalidParams }
+                    guard let data = image.jpegData(compressionQuality: 0.8) else { throw MoeMemosError.invalidParams }
                     let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
                     resourceList.append(response)
                 }
@@ -97,7 +97,7 @@ class ShareViewController: SLComposeServiceViewController {
         
         let content = contentTextList.joined(separator: "\n").trimmingCharacters(in: .whitespaces)
         if content.isEmpty && resourceList.isEmpty {
-            throw MemosServiceError.invalidParams
+            throw MoeMemosError.invalidParams
         }
         let tags = extractCustomTags(from: content)
         for name in tags {

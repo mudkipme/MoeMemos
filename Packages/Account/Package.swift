@@ -30,7 +30,7 @@ let package = Package(
             name: "Account",
             dependencies: [
                 .product(name: "Models", package: "Models"),
-                .product(name: "MemosService", package: "Services"),
+                .product(name: "MemosV0Service", package: "Services"),
                 .product(name: "DesignSystem", package: "DesignSystem"),
                 .product(name: "KeychainSwift", package: "keychain-swift"),
                 .product(name: "Factory", package: "Factory")

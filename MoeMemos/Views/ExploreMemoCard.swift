@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import MemosService
+import MemosV0Service
 
 struct ExploreMemoCard: View {
     let memo: MemosMemo

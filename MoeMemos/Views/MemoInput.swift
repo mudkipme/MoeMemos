@@ -7,7 +7,7 @@
 
 import SwiftUI
 import PhotosUI
-import MemosService
+import MemosV0Service
 import Models
 import Account
 

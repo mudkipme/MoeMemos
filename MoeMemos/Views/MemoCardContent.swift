@@ -7,7 +7,7 @@
 
 import SwiftUI
 @preconcurrency import MarkdownUI
-import MemosService
+import MemosV0Service
 import Account
 
 @MainActor

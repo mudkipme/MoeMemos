@@ -7,7 +7,7 @@
 
 import SwiftUI
 import Models
-import MemosService
+import MemosV0Service
 import DesignSystem
 
 @MainActor
@@ -95,7 +95,7 @@ struct AddMemosAccountView: View {
     
     func doLogin() async throws {
         if host.isEmpty {
-            throw MemosServiceError.invalidParams
+            throw MoeMemosError.invalidParams
         }
         
         var hostAddress = host.trimmingCharacters(in: .whitespaces)
@@ -106,21 +106,21 @@ struct AddMemosAccountView: View {
         if loginMethod == .usernamdAndPassword {
             if email.trimmingCharacters(in: .whitespaces).isEmpty ||
                 password.isEmpty {
-                throw MemosServiceError.invalidParams
+                throw MoeMemosError.invalidParams
             }
             
-            guard let url = URL(string: hostAddress) else { throw MemosServiceError.invalidParams }
-            let client = MemosService(hostURL: url, accessToken: nil)
+            guard let url = URL(string: hostAddress) else { throw MoeMemosError.invalidParams }
+            let client = MemosV0Service(hostURL: url, accessToken: nil)
             let (user, accessToken) = try await client.signIn(username: email.trimmingCharacters(in: .whitespaces), password: password)
-            guard let accessToken = accessToken else { throw MemosServiceError.unsupportedVersion }
+            guard let accessToken = accessToken else { throw MoeMemosError.unsupportedVersion }
             try accountManager.add(account: .memos(host: hostAddress, id: "\(user.id)", accessToken: accessToken))
         } else if loginMethod == .accessToken {
             if accessToken.trimmingCharacters(in: .whitespaces).isEmpty {
-                throw MemosServiceError.invalidParams
+                throw MoeMemosError.invalidParams
             }
             
-            guard let url = URL(string: hostAddress) else { throw MemosServiceError.invalidParams }
-            let client = MemosService(hostURL: url, accessToken: accessToken.trimmingCharacters(in: .whitespaces))
+            guard let url = URL(string: hostAddress) else { throw MoeMemosError.invalidParams }
+            let client = MemosV0Service(hostURL: url, accessToken: accessToken.trimmingCharacters(in: .whitespaces))
             let response = try await client.getCurrentUser()
             try accountManager.add(account: .memos(host: hostAddress, id: "\(response.id)", accessToken: accessToken.trimmingCharacters(in: .whitespaces)))
         }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum MemosServiceError: LocalizedError {
+public enum MoeMemosError: LocalizedError {
     case unknown
     case notLogin
     case invalidStatusCode(Int, String?)
@@ -28,7 +28,7 @@ public enum MemosServiceError: LocalizedError {
         case .invalidParams:
             return "Please enter a valid input."
         case .unsupportedVersion:
-            return "Your Memos version is not supported."
+            return "Your Server version is not supported."
         }
     }
 }

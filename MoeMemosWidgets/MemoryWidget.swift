@@ -10,7 +10,7 @@ import SwiftUI
 import Intents
 import KeychainSwift
 import Models
-import MemosService
+import MemosV0Service
 import Account
 
 let sampleMemo = MemosMemo(

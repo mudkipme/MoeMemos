@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import MemosService
+import MemosV0Service
 
 struct ArchivedMemosList: View {
     @State private var viewModel = ArchivedMemoListViewModel()

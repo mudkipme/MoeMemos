@@ -8,7 +8,7 @@
 import Foundation
 import Models
 import KeychainSwift
-import MemosService
+import MemosV0Service
 
 public extension Account {
     private static var keychain: KeychainSwift {
@@ -40,9 +40,9 @@ public extension Account {
         return accounts
     }
     
-    var memosService: MemosService? {
+    var memosService: MemosV0Service? {
         if case .memos(host: let host, id: _, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
-            return MemosService(hostURL: hostURL, accessToken: accessToken)
+            return MemosV0Service(hostURL: hostURL, accessToken: accessToken)
         }
         return nil
     }
@@ -60,6 +60,6 @@ public extension Account {
             }
             return user
         }
-        throw MemosServiceError.notLogin
+        throw MoeMemosError.notLogin
     }
 }

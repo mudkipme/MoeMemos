@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import MemosService
+import MemosV0Service
 
 struct DailyUsageStat: Identifiable {
     let date: Date

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import MemosService
+import MemosV0Service
 import Account
 
 struct Attachment: View {

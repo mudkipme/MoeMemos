@@ -10,7 +10,7 @@ import UIKit
 import PhotosUI
 import SwiftUI
 import Markdown
-import MemosService
+import MemosV0Service
 import Account
 import Models
 import Factory
@@ -20,7 +20,7 @@ import Factory
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
-    var memos: MemosService { get throws { try accountManager.mustCurrentService } }
+    var memos: MemosV0Service { get throws { try accountManager.mustCurrentService } }
     
     var resourceList = [MemosResource]()
     var imageUploading = false
@@ -29,7 +29,7 @@ import Factory
     var photos: [PhotosPickerItem] = []
 
     func upload(image: UIImage) async throws {
-        guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosServiceError.invalidParams }
+        guard let data = image.jpegData(compressionQuality: 0.8) else { throw MoeMemosError.invalidParams }
         let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
         resourceList.append(response)
     }
