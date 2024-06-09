@@ -6,14 +6,14 @@
 //
 
 import SwiftUI
-import MemosV0Service
+import Models
 import Account
 
 struct ResourceCard: View {
-    let resource: MemosResource
+    let resource: Resource
     let resourceManager: ResourceManager
     
-    init(resource: MemosResource, resourceManager: ResourceManager) {
+    init(resource: Resource, resourceManager: ResourceManager) {
         self.resource = resource
         self.resourceManager = resourceManager
     }
@@ -47,7 +47,7 @@ struct ResourceCard: View {
             .task {
                 do {
                     if downloadedURL == nil, let memos = memosManager.currentService {
-                        downloadedURL = try await memos.download(url: memos.url(for: resource))
+                        downloadedURL = try await memos.download(url: resource.url, mimeType: resource.mimeType)
                     }
                 } catch {}
             }
@@ -60,10 +60,11 @@ struct ResourceCard: View {
     
     @ViewBuilder
     @MainActor
-    func menu(for resource: MemosResource) -> some View {
+    func menu(for resource: Resource) -> some View {
         Button(role: .destructive, action: {
             Task {
-                try await resourceManager.deleteResource(id: resource.id)
+                guard let remoteId = resource.remoteId else { return }
+                try await resourceManager.deleteResource(remoteId: remoteId)
             }
         }, label: {
             Label("Delete", systemImage: "trash")

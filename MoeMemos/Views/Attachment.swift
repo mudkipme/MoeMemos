@@ -6,11 +6,11 @@
 //
 
 import SwiftUI
-import MemosV0Service
+import Models
 import Account
 
 struct Attachment: View {
-    let resource: MemosResource
+    let resource: Resource
     @State var showingAttachment = false
     @Environment(AccountManager.self) private var memosManager: AccountManager
     @State private var downloadedURL: URL?
@@ -24,7 +24,7 @@ struct Attachment: View {
                 do {
                     downloading = true
                     if let memos = memosManager.currentService {
-                        downloadedURL = try await memos.download(url: memos.url(for: resource))
+                        downloadedURL = try await memos.download(url: resource.url, mimeType: resource.mimeType)
                     }
                 } catch {
                     showingErrorToast = true

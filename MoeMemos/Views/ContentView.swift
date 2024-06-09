@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Models
-import MemosV0Service
 import SwiftData
 import Account
 import Factory

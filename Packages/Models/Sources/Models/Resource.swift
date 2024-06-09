@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Resource {
+public struct Resource: Identifiable, Equatable {
     public var filename: String
     public var size: Int
     public var mimeType: String
@@ -16,7 +16,7 @@ public struct Resource {
     public var remoteId: String?
     public var url: URL
     
-    init(filename: String, size: Int, mimeType: String, createdAt: Date = .now, updatedAt: Date = .now, remoteId: String? = nil, url: URL) {
+    public init(filename: String, size: Int, mimeType: String, createdAt: Date = .now, updatedAt: Date = .now, remoteId: String? = nil, url: URL) {
         self.filename = filename
         self.size = size
         self.mimeType = mimeType
@@ -25,4 +25,6 @@ public struct Resource {
         self.remoteId = remoteId
         self.url = url
     }
+    
+    public var id: String { remoteId ?? "" }
 }

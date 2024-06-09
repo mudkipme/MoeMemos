@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import MemosV0Service
+import Models
 
 struct DailyUsageStat: Identifiable {
     let date: Date
@@ -24,12 +24,12 @@ struct DailyUsageStat: Identifiable {
         }.reversed()
     }()
     
-    static func calculateMatrix(memoList: [MemosMemo]) -> [DailyUsageStat] {
+    static func calculateMatrix(memoList: [Memo]) -> [DailyUsageStat] {
         var result = DailyUsageStat.initialMatrix
         var countDict = [String: Int]()
         
         for memo in memoList {
-            let key = memo.createDate.formatted(date: .numeric, time: .omitted)
+            let key = memo.createdAt.formatted(date: .numeric, time: .omitted)
             countDict[key] = (countDict[key] ?? 0) + 1
         }
         

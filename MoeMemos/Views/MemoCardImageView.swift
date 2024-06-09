@@ -9,9 +9,18 @@ import SwiftUI
 import QuickLook
 import Account
 
+struct ImageInfo: Identifiable {
+    let url: URL
+    let mimeType: String?
+    
+    var id: String {
+        url.absoluteString
+    }
+}
+
 @MainActor
 struct MemoCardImageView: View {
-    let images: [URL]
+    let images: [ImageInfo]
     
     @State private var imagePreviewURL: URL?
     @Environment(AccountManager.self) private var memosManager: AccountManager
@@ -19,7 +28,7 @@ struct MemoCardImageView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     @ViewBuilder
-    private func asyncImage(url: URL) -> some View {
+    private func asyncImage(url: URL, mimeType: String?) -> some View {
         if let downloaded = downloads[url] {
             AsyncImage(url: downloaded) { image in
                 image
@@ -35,7 +44,7 @@ struct MemoCardImageView: View {
                 .task {
                     do {
                         if downloads[url] == nil, let memos = memosManager.currentService {
-                            downloads[url] = try await memos.download(url: url)
+                            downloads[url] = try await memos.download(url: url, mimeType: mimeType)
                         }
                     } catch {}
                 }
@@ -43,7 +52,7 @@ struct MemoCardImageView: View {
     }
     
     @ViewBuilder
-    private func imageItem(url: URL, aspectRatio: CGFloat, contentMode: ContentMode) -> some View {
+    private func imageItem(url: URL, mimeType: String?, aspectRatio: CGFloat, contentMode: ContentMode) -> some View {
         // Workaround of a SwiftUI Bug:
         // - The hit testing of image need to disabled to prevent affecting the menu button
         //   in the top right of memo card.
@@ -55,7 +64,7 @@ struct MemoCardImageView: View {
         //
         // Please submit a pull request if you have a better solution
         Color(white: 1, opacity: 0.00001).overlay {
-            asyncImage(url: url)
+            asyncImage(url: url, mimeType: mimeType)
         }
         .aspectRatio(aspectRatio, contentMode: contentMode)
         .frame(maxWidth: .infinity)
@@ -70,26 +79,26 @@ struct MemoCardImageView: View {
     private var content: some View {
         if horizontalSizeClass == .regular {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 200), spacing: 5)], spacing: 5) {
-                ForEach(images) { url in
-                    imageItem(url: url, aspectRatio: 1.0, contentMode: .fill)
+                ForEach(images) { info in
+                    imageItem(url: info.url, mimeType: info.mimeType, aspectRatio: 1.0, contentMode: .fill)
                 }
             }
         } else {
             switch images.count {
             case 1:
-                imageItem(url: images[0], aspectRatio: 16.0 / 9.0, contentMode: .fit)
+                imageItem(url: images[0].url, mimeType: images[0].mimeType, aspectRatio: 16.0 / 9.0, contentMode: .fit)
             case 2...3:
                 HStack(spacing: 5) {
-                    ForEach(images) { url in
-                        imageItem(url: url, aspectRatio: 1.0, contentMode: .fill)
+                    ForEach(images) { info in
+                        imageItem(url: info.url, mimeType: info.mimeType, aspectRatio: 1.0, contentMode: .fill)
                     }
                 }
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: .infinity)
             default:
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: images.count == 4 ? 120 : 90, maximum: 150), spacing: 5)], spacing: 5) {
-                    ForEach(images) { url in
-                        imageItem(url: url, aspectRatio: 1.0, contentMode: .fill)
+                    ForEach(images) { info in
+                        imageItem(url: info.url, mimeType: info.mimeType, aspectRatio: 1.0, contentMode: .fill)
                     }
                 }
             }
@@ -100,7 +109,7 @@ struct MemoCardImageView: View {
         content
             .padding([.bottom], 10)
             .fullScreenCover(item: $imagePreviewURL) { url in
-                QuickLookPreview(selectedURL: url, urls: images.compactMap { downloads[$0] })
+                QuickLookPreview(selectedURL: url, urls: images.compactMap { downloads[$0.url] })
                     .edgesIgnoringSafeArea(.bottom)
                     .background(TransparentBackground())
             }

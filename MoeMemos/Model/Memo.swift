@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import MemosV0Service
 import Models
 
 extension MemoVisibility {
@@ -42,17 +41,17 @@ extension MemoVisibility {
     }
 }
 
-extension MemosMemo {
+extension Memo {
     func renderTime() -> String {
-        if Calendar.current.dateComponents([.day], from: createDate, to: .now).day! > 7 {
+        if Calendar.current.dateComponents([.day], from: createdAt, to: .now).day! > 7 {
             let formatter = DateFormatter()
             formatter.dateStyle = .long
             formatter.timeStyle = .short
-            return formatter.string(from: createDate)
+            return formatter.string(from: createdAt)
         }
         
         let formatter = RelativeDateTimeFormatter()
         formatter.dateTimeStyle = .named
-        return formatter.localizedString(for: createDate, relativeTo: .now)
+        return formatter.localizedString(for: createdAt, relativeTo: .now)
     }
 }

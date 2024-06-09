@@ -11,7 +11,6 @@ import SwiftUI
 import KeychainSwift
 import Models
 import Account
-import MemosV0Service
 import UniformTypeIdentifiers
 import Markdown
 
@@ -68,7 +67,7 @@ class ShareViewController: SLComposeServiceViewController {
     private func handleShare() async throws {
         let accountManager = AccountManager()
         guard let memos = accountManager.currentService else { throw MoeMemosError.notLogin }
-        var resourceList = [MemosResource]()
+        var resourceList = [Resource]()
         var contentTextList = [String]()
         contentTextList.append(contentText)
         
@@ -83,7 +82,7 @@ class ShareViewController: SLComposeServiceViewController {
                     }
                     guard let image = image else { throw MoeMemosError.invalidParams }
                     guard let data = image.jpegData(compressionQuality: 0.8) else { throw MoeMemosError.invalidParams }
-                    let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
+                    let response = try await memos.createResource(filename: "\(UUID().uuidString).jpg", data: data, type: "image/jpeg", memoRemoteId: nil)
                     resourceList.append(response)
                 }
                 
@@ -100,10 +99,7 @@ class ShareViewController: SLComposeServiceViewController {
             throw MoeMemosError.invalidParams
         }
         let tags = extractCustomTags(from: content)
-        for name in tags {
-            _ = try await memos.upsertTag(name: name)
-        }
-        _ = try await memos.createMemo(input: .init(content: content, resourceIdList: resourceList.map { $0.id }, visibility: nil))
+        _ = try await memos.createMemo(content: content, visibility: nil, resources: resourceList, tags: tags)
     }
     
     private func extractCustomTags(from markdownText: String) -> [String] {

@@ -10,13 +10,11 @@ import SwiftUI
 import Intents
 import KeychainSwift
 import Models
-import MemosV0Service
 import Account
 
-let sampleMemo = MemosMemo(
+let sampleMemo = Memo(
     content: "Make your wonderful dream a reality, and it will become your truth.",
-    createdTs: Int(Date().timeIntervalSince1970),
-    id: 0
+    createdAt: .now
 )
 
 extension MemoryUpdatePeriod {
@@ -46,12 +44,12 @@ struct MemoryProvider: IntentTimelineProvider {
     }
     
     @MainActor
-    func getMemos(_ frequency: MemoryUpdatePeriod) async throws -> [MemosMemo]? {
+    func getMemos(_ frequency: MemoryUpdatePeriod) async throws -> [Memo]? {
         let accountManager = AccountManager()
         guard let memos = accountManager.currentService else { return nil }
         
-        let response = try await memos.listMemos(input: .init(rowStatus: .NORMAL))
-        return [MemosMemo](response.shuffled().prefix(frequency.memosPerDay))
+        let response = try await memos.listMemos()
+        return [Memo](response.shuffled().prefix(frequency.memosPerDay))
     }
 
     func getTimeline(for configuration: MemoryWidgetConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
@@ -78,7 +76,7 @@ struct MemoryProvider: IntentTimelineProvider {
 struct MemoryEntry: TimelineEntry {
     let date: Date
     let configuration: MemoryWidgetConfigurationIntent
-    let memo: MemosMemo
+    let memo: Memo
 }
 
 struct MemoryEntryView : View {
@@ -104,7 +102,7 @@ struct MemoryEntryView : View {
     var dateString: String {
         let formatter = RelativeDateTimeFormatter()
         formatter.dateTimeStyle = .named
-        return formatter.localizedString(for: entry.memo.createDate, relativeTo: .now)
+        return formatter.localizedString(for: entry.memo.createdAt, relativeTo: .now)
     }
     
     var attributedString: AttributedString {

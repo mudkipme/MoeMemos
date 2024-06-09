@@ -8,31 +8,81 @@
 import Foundation
 import Models
 
-public typealias MemosUser = Components.Schemas.User
-public typealias MemosMemo = Components.Schemas.Memo
-public typealias MemosResource = Components.Schemas.Resource
-public typealias MemosVisibility = Components.Schemas.Visibility
-public typealias MemosStatus = Components.Schemas.SystemStatus
+public typealias MemosV0User = Components.Schemas.User
+public typealias MemosV0Memo = Components.Schemas.Memo
+public typealias MemosV0Resource = Components.Schemas.Resource
+public typealias MemosV0Visibility = Components.Schemas.Visibility
+public typealias MemosV0Status = Components.Schemas.SystemStatus
 
-public extension MemosMemo {
+public extension MemosV0Memo {
     var createDate: Date {
         Date(timeIntervalSince1970: TimeInterval(createdTs))
     }
+    
+    func toMemo(host: URL) -> Memo {
+        let updatedAt: Date
+        if let updatedTs = updatedTs {
+            updatedAt = Date(timeIntervalSince1970: TimeInterval(updatedTs))
+        } else {
+            updatedAt = .now
+        }
+        return Memo(
+            content: content,
+            pinned: pinned ?? false,
+            rowStatus: rowStatus == .ARCHIVED ? .archived : .normal,
+            visibility: visibility?.toMemoVisibility() ?? .private,
+            resources: resourceList?.map { $0.toResource(host: host) } ?? [],
+            createdAt: Date(timeIntervalSince1970: TimeInterval(createdTs)),
+            updatedAt: updatedAt,
+            remoteId: String(id)
+        )
+    }
 }
 
-public extension MemosUser {
-    var defaultMemoVisibility: MemosVisibility {
+public extension MemosV0User {
+    var defaultMemoVisibility: MemosV0Visibility {
         guard let visibilityJson = self.userSettingList?.first(where: { $0.key == "memo-visibility" })?.value?.data(using: .utf8) else { return .PRIVATE }
         do {
-            return try JSONDecoder().decode(MemosVisibility.self, from: visibilityJson)
+            return try JSONDecoder().decode(MemosV0Visibility.self, from: visibilityJson)
         } catch {
             return .PRIVATE
         }
     }
 }
 
-extension MemosResource: Identifiable {}
-extension MemosVisibility {
+extension MemosV0Resource: Identifiable {
+    func path() -> String {
+        if let uid = uid, !uid.isEmpty {
+            return "/o/r/\(uid)"
+        }
+        return "/o/r/\(name ?? "")"
+    }
+    
+    func url(for hostURL: URL) -> URL {
+        if let externalLink = externalLink, !externalLink.isEmpty, let url = URL(string: externalLink) {
+            return url
+        }
+        return hostURL.appendingPathComponent(self.path())
+    }
+    
+    func toResource(host: URL) -> Resource {
+        let createdAt: Date
+        if let createdTs = createdTs {
+            createdAt = Date(timeIntervalSince1970: TimeInterval(createdTs))
+        } else {
+            createdAt = .now
+        }
+        let updatedAt: Date
+        if let updatedTs = updatedTs {
+            updatedAt = Date(timeIntervalSince1970: TimeInterval(updatedTs))
+        } else {
+            updatedAt = .now
+        }
+        return Resource(filename: filename, size: size ?? 0, mimeType: self._type ?? "application/octet-stream", createdAt: createdAt, updatedAt: updatedAt, remoteId: String(id), url: self.url(for: host))
+    }
+}
+
+extension MemosV0Visibility {
     public init(memoVisibility: MemoVisibility) {
         switch memoVisibility {
         case .direct:
@@ -49,15 +99,15 @@ extension MemosVisibility {
     }
 }
 
-extension MemoVisibility {
-    public init(_ memosVisibility: MemosVisibility) {
-        switch memosVisibility {
+extension MemosV0Visibility {
+    func toMemoVisibility() -> MemoVisibility {
+        switch self {
         case .PUBLIC:
-            self = .public
+            return .public
         case .PROTECTED:
-            self = .local
+            return .local
         case .PRIVATE:
-            self = .private
+            return .private
         }
     }
 }

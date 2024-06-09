@@ -36,7 +36,7 @@ struct Provider: IntentTimelineProvider {
             return nil
         }
         
-        let response = try await memos.listMemos(input: .init(rowStatus: .NORMAL))
+        let response = try await memos.listMemos()
         return DailyUsageStat.calculateMatrix(memoList: response)
     }
 

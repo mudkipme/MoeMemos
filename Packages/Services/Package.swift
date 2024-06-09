@@ -30,12 +30,21 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
+            name: "ServiceUtils",
+            dependencies: [
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
+                .product(name: "Models", package: "Models"),
+                .product(name: "DataURI", package: "data-uri"),
+            ]
+        ),
+        .target(
             name: "MemosV0Service",
             dependencies: [
                 .product(name: "Models", package: "Models"),
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
-                .product(name: "DataURI", package: "data-uri")
+                "ServiceUtils"
             ],
             swiftSettings: [
               .enableExperimentalFeature("StrictConcurrency"),
@@ -49,7 +58,8 @@ let package = Package(
             dependencies: [
                 .product(name: "Models", package: "Models"),
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
-                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession")
+                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
+                "ServiceUtils"
             ],
             swiftSettings: [
               .enableExperimentalFeature("StrictConcurrency"),

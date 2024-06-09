@@ -16,13 +16,14 @@ struct LazyImageProvider: ImageProvider {
 
     func makeImage(url: URL?) -> some View {
         if let url = makeURL(url) {
-            MemoCardImageView(images: [url])
+            MemoCardImageView(images: [ImageInfo(url: url, mimeType: nil)])
         }
     }
     
     func makeURL(_ url: URL?) -> URL? {
         guard let url = url else { return nil }
-        if url.host == nil, let hostURL = accountManager.currentService?.hostURL {
+        
+        if url.host() == nil, let account = accountManager.currentAccount, case let .memos(host: host, id: _, accessToken: _) = account, let hostURL = URL(string: host) {
             return hostURL.appendingPathComponent(url.path)
         }
         return url

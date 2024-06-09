@@ -10,7 +10,6 @@ import UIKit
 import PhotosUI
 import SwiftUI
 import Markdown
-import MemosV0Service
 import Account
 import Models
 import Factory
@@ -20,9 +19,9 @@ import Factory
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
-    var memos: MemosV0Service { get throws { try accountManager.mustCurrentService } }
+    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
     
-    var resourceList = [MemosResource]()
+    var resourceList = [Resource]()
     var imageUploading = false
     var saving = false
     var visibility: MemoVisibility = .private
@@ -30,14 +29,14 @@ import Factory
 
     func upload(image: UIImage) async throws {
         guard let data = image.jpegData(compressionQuality: 0.8) else { throw MoeMemosError.invalidParams }
-        let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
+        let response = try await service.createResource(filename: "\(UUID().uuidString).jpg", data: data, type: "image/jpeg", memoRemoteId: nil)
         resourceList.append(response)
     }
     
-    func deleteResource(id: Int) async throws {
-        _ = try await memos.deleteResource(id: id)
+    func deleteResource(remoteId: String) async throws {
+        _ = try await service.deleteResource(remoteId: remoteId)
         resourceList = resourceList.filter({ resource in
-            resource.id != id
+            resource.remoteId != remoteId
         })
     }
     

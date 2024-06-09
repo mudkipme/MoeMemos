@@ -7,13 +7,12 @@
 
 import SwiftUI
 import PhotosUI
-import MemosV0Service
 import Models
 import Account
 
 @MainActor
 struct MemoInput: View {
-    let memo: MemosMemo?
+    let memo: Memo?
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Environment(AccountManager.self) var accountManager: AccountManager
@@ -117,12 +116,12 @@ struct MemoInput: View {
         .onAppear {
             if let memo = memo {
                 text = memo.content
-                viewModel.visibility = .init(memo.visibility ?? .PRIVATE)
+                viewModel.visibility = memo.visibility
             } else {
                 text = draft
                 viewModel.visibility = userState.currentUser?.defaultVisibility ?? .private
             }
-            if let resourceList = memo?.resourceList {
+            if let resourceList = memo?.resources {
                 viewModel.resourceList = resourceList
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
@@ -229,17 +228,12 @@ struct MemoInput: View {
     private func saveMemo() async throws {
         viewModel.saving = true
         let tags = viewModel.extractCustomTags(from: text)
-        do {
-            try await memosViewModel.upsertTags(names: tags)
-        } catch {
-            print(error.localizedDescription)
-        }
         
         do {
-            if let memo = memo {
-                try await memosViewModel.editMemo(id: memo.id, content: text, visibility: .init(memoVisibility: viewModel.visibility), resourceIdList: viewModel.resourceList.map { $0.id })
+            if let memo = memo, let remoteId = memo.remoteId {
+                try await memosViewModel.editMemo(remoteId: remoteId, content: text, visibility: viewModel.visibility, resources: viewModel.resourceList, tags: tags)
             } else {
-                try await memosViewModel.createMemo(content: text, visibility: .init(memoVisibility: viewModel.visibility), resourceIdList: viewModel.resourceList.map { $0.id })
+                try await memosViewModel.createMemo(content: text, visibility: viewModel.visibility, resources: viewModel.resourceList, tags: tags)
                 draft = ""
             }
             text = ""

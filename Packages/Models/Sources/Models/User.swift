@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-public class User {
+public final class User {
     @Attribute(.unique)
     public var accountKey: String
     public var nickname: String

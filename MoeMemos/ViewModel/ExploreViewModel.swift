@@ -7,27 +7,29 @@
 
 import Foundation
 import Account
-import MemosV0Service
+import Models
 import Factory
 
 @Observable class ExploreViewModel {
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
-    var memos: MemosV0Service { get throws { try accountManager.mustCurrentService } }
+    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
 
-    private(set) var memoList: [MemosMemo] = []
+    private(set) var memoList: [Memo] = []
     private(set) var loading = false
     private(set) var hasMore = false
+    @ObservationIgnored private var nextPageToken: String? = nil
     
     @MainActor
     func loadMemos() async throws {
         do {
             loading = true
-            let response = try await memos.listPublicMemos(limit: 20, offset: 0)
+            let (response, nextPageToken) = try await service.listWorkspaceMemos(pageSize: 20, pageToken: nil)
             memoList = response
             loading = false
             hasMore = response.count >= 20
+            self.nextPageToken = nextPageToken
         } catch {
             loading = false
             throw error
@@ -39,10 +41,11 @@ import Factory
         guard !loading && hasMore else { return }
         do {
             loading = true
-            let response = try await memos.listPublicMemos(limit: 20, offset: memoList.count)
+            let (response, nextPageToken) = try await service.listWorkspaceMemos(pageSize: 20, pageToken: self.nextPageToken)
             memoList += response
             loading = false
             hasMore = response.count >= 20
+            self.nextPageToken = nextPageToken
         } catch {
             loading = false
             throw error

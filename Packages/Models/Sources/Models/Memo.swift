@@ -20,7 +20,7 @@ public enum MemoVisibility: Codable {
     case direct
 }
 
-public struct Memo {
+public struct Memo: Equatable {
     public var user: User?
     public var content: String
     public var pinned: Bool

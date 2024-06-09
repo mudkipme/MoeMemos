@@ -11,12 +11,12 @@ struct Explore: View {
     @State private var viewModel = ExploreViewModel()
 
     var body: some View {
-        List(viewModel.memoList, id: \.id) { memo in
+        List(viewModel.memoList, id: \.remoteId) { memo in
             Section {
                 ExploreMemoCard(memo: memo)
                     .onAppear {
                         Task {
-                            if viewModel.memoList.firstIndex(of: memo) == viewModel.memoList.count - 2 {
+                            if viewModel.memoList.firstIndex(where: { $0.remoteId == memo.remoteId }) == viewModel.memoList.count - 2 {
                                 try await viewModel.loadMoreMemos()
                             }
                         }

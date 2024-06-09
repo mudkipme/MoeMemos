@@ -6,10 +6,10 @@
 //
 
 import SwiftUI
-import MemosV0Service
+import Models
 
 struct ExploreMemoCard: View {
-    let memo: MemosMemo
+    let memo: Memo
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -18,7 +18,7 @@ struct ExploreMemoCard: View {
                     .font(.footnote)
                     .foregroundColor(.secondary)
                 
-                if let creatorName = memo.creatorName {
+                if let creatorName = memo.user?.nickname {
                     Text("@\(creatorName)")
                         .font(.footnote)
                         .foregroundColor(.secondary)
@@ -29,12 +29,5 @@ struct ExploreMemoCard: View {
             MemoCardContent(memo: memo, toggleTaskItem: nil)
         }
         .padding([.top, .bottom], 5)
-    }
-
-}
-
-struct ExploreMemoCard_Previews: PreviewProvider {
-    static var previews: some View {
-        ExploreMemoCard(memo: MemosMemo(content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", createdTs: Int(Date.now.addingTimeInterval(-100).timeIntervalSince1970), id: 1))
     }
 }

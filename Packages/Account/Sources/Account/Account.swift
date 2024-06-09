@@ -9,7 +9,6 @@ import Foundation
 import Models
 import KeychainSwift
 import MemosV0Service
-import MemosV1Service
 
 public extension Account {
     private static var keychain: KeychainSwift {
@@ -41,7 +40,7 @@ public extension Account {
         return accounts
     }
     
-    var memosService: MemosV0Service? {
+    var remoteService: RemoteService? {
         if case .memos(host: let host, id: _, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
             return MemosV0Service(hostURL: hostURL, accessToken: accessToken)
         }
@@ -53,13 +52,8 @@ public extension Account {
         if case .local = self {
             return User(accountKey: key, nickname: NSLocalizedString("account.local-user", comment: ""))
         }
-        if let memosService = memosService {
-            let memosUser = try await memosService.getCurrentUser()
-            let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: .init(memosUser.defaultMemoVisibility), creationDate: Date(timeIntervalSince1970: TimeInterval(memosUser.createdTs ?? 0)))
-            if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
-                user.avatarData = try? await memosService.downloadData(url: url)
-            }
-            return user
+        if let remoteService = remoteService {
+            return try await remoteService.getCurrentUser()
         }
         throw MoeMemosError.notLogin
     }

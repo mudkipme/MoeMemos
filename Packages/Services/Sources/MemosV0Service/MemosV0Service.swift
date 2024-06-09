@@ -10,35 +10,17 @@ import OpenAPIRuntime
 import OpenAPIURLSession
 import HTTPTypes
 import Models
-import CryptoKit
-import DataURI
+import ServiceUtils
 
-struct MemosAuthenticationMiddleware: ClientMiddleware {
-    var accessToken: String?
-
-    func intercept(
-        _ request: HTTPRequest,
-        body: HTTPBody?,
-        baseURL: URL,
-        operationID: String,
-        next: (HTTPRequest, HTTPBody?, URL) async throws -> (HTTPResponse, HTTPBody?)
-    ) async throws -> (HTTPResponse, HTTPBody?) {
-        var request = request
-        if let accessToken = accessToken {
-            request.headerFields[.authorization] = "Bearer \(accessToken)"
-        }
-        return try await next(request, body, baseURL)
-    }
-}
-
-public final class MemosV0Service: Sendable {
+@MainActor
+public final class MemosV0Service: RemoteService {
     public let hostURL: URL
     let urlSession: URLSession
     let client: Client
     let boundary = UUID().uuidString
     let accessToken: String?
 
-    public init(hostURL: URL, accessToken: String?) {
+    public nonisolated init(hostURL: URL, accessToken: String?) {
         self.hostURL = hostURL
         self.accessToken = accessToken
         urlSession = URLSession(configuration: URLSessionConfiguration.default)
@@ -46,12 +28,156 @@ public final class MemosV0Service: Sendable {
             serverURL: hostURL,
             transport: URLSessionTransport(configuration: .init(session: urlSession)),
             middlewares: [
-                MemosAuthenticationMiddleware(accessToken: accessToken)
+                AccessTokenAuthenticationMiddleware(accessToken: accessToken)
             ]
         )
     }
     
-    public func signIn(username: String, password: String) async throws -> (MemosUser, String?) {
+    public func memoVisibilities() -> [MemoVisibility] {
+        return [.private, .local, .public]
+    }
+    
+    public func listMemos() async throws -> [Memo] {
+        let resp = try await client.listMemos(query: .init(rowStatus: .NORMAL))
+        let memos = try resp.ok.body.json
+        return memos.map { $0.toMemo(host: hostURL) }
+    }
+    
+    public func listArchivedMemos() async throws -> [Memo] {
+        let resp = try await client.listMemos(query: .init(rowStatus: .ARCHIVED))
+        let memos = try resp.ok.body.json
+        return memos.map { $0.toMemo(host: hostURL) }
+    }
+    
+    public func listWorkspaceMemos(pageSize: Int, pageToken: String?) async throws -> (list: [Memo], nextPageToken: String?) {
+        var offset = 0
+        if let pageToken = pageToken, let pageTokenNumber = Int(pageToken) {
+            offset = pageTokenNumber
+        }
+        let resp = try await client.listPublicMemos(query: .init(limit: pageSize, offset: offset))
+        let memos = try resp.ok.body.json
+        return (memos.map { $0.toMemo(host: hostURL) }, String(offset + pageSize))
+    }
+    
+    public func createMemo(content: String, visibility: MemoVisibility?, resources: [Resource], tags: [String]?) async throws -> Memo {
+        var memosVisibility: MemosV0Visibility? = nil
+        if let visibility = visibility {
+            memosVisibility = .init(memoVisibility: visibility)
+        }
+        let resp = try await client.createMemo(body: .json(.init(
+            content: content,
+            resourceIdList: resources.compactMap { if let remoteId = $0.remoteId { return Int(remoteId) } else { return nil } },
+            visibility: memosVisibility
+        )))
+        let memo = try resp.ok.body.json
+        
+        if let tags = tags {
+            for tag in tags {
+                _ = try? await client.createTag(body: .json(.init(name: tag)))
+            }
+        }
+        return memo.toMemo(host: hostURL)
+    }
+    
+    public func updateMemo(remoteId: String, content: String?, resources: [Resource]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> Memo {
+        guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
+        var memo: MemosV0Memo?
+        if let pinned = pinned {
+            let resp = try await client.organizeMemo(path: .init(memoId: id), body: .json(.init(pinned: pinned)))
+            memo = try resp.ok.body.json
+            // the response might be incorrect
+            memo?.pinned = pinned
+        }
+        
+        if let content = content {
+            var memosVisibility: MemosV0Visibility? = nil
+            if let visibility = visibility {
+                memosVisibility = .init(memoVisibility: visibility)
+            }
+            let resp = try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
+                content: content,
+                resourceIdList: resources?.compactMap { if let remoteId = $0.remoteId { return Int(remoteId) } else { return nil } },
+                visibility: memosVisibility
+            )))
+            memo = try resp.ok.body.json
+        }
+        
+        if let tags = tags {
+            for tag in tags {
+                _ = try? await client.createTag(body: .json(.init(name: tag)))
+            }
+        }
+        
+        guard let memo = memo else { throw MoeMemosError.invalidParams }
+        return memo.toMemo(host: hostURL)
+    }
+    
+    public func deleteMemo(remoteId: String) async throws {
+        guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
+        let resp = try await client.deleteMemo(path: .init(memoId: id))
+        _ = try resp.ok
+    }
+    
+    public func archiveMemo(remoteId: String) async throws {
+        guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
+        let resp = try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
+            rowStatus: .ARCHIVED
+        )))
+        _ = try resp.ok
+    }
+    
+    public func restoreMemo(remoteId: String) async throws {
+        guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
+        let resp = try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
+            rowStatus: .ARCHIVED
+        )))
+        _ = try resp.ok
+    }
+    
+    public func listTags() async throws -> [Tag] {
+        let resp = try await client.listTags()
+        let tags = try resp.ok.body.json
+        return tags.map { Tag(name: $0) }
+    }
+    
+    public func deleteTag(name: String) async throws {
+        let resp = try await client.deleteTag(body: .json(.init(name: name)))
+        _ = try resp.ok
+    }
+    
+    public func listResources() async throws -> [Resource] {
+        let resp = try await client.listResources()
+        let resources = try resp.ok.body.json
+        return resources.map { $0.toResource(host: hostURL) }
+    }
+    
+    public func createResource(filename: String, data: Data, type: String, memoRemoteId: String?) async throws -> Resource {
+        let multipartBody: MultipartBody<Operations.uploadResource.Input.Body.multipartFormPayload> = [
+            .undocumented(.init(name: "file", filename: filename, headerFields: [.contentType: type], body: .init(data)))
+        ]
+        let resp = try await client.uploadResource(body: .multipartForm(multipartBody))
+        let resource = try resp.ok.body.json
+        return resource.toResource(host: hostURL)
+    }
+    
+    public func deleteResource(remoteId: String) async throws {
+        guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
+        let resp = try await client.deleteResource(path: .init(resourceId: id))
+        _ = try resp.ok
+    }
+    
+    public func getCurrentUser() async throws -> Models.User {
+        let resp = try await client.getCurrentUser()
+        let memosUser = try resp.ok.body.json
+        return try await toUser(memosUser)
+    }
+    
+    public func logout() async throws {
+        let resp = try await client.signOut()
+        _ = try resp.ok.body.json
+    }
+    
+    public func signIn(username: String, password: String) async throws -> (MemosV0User, String?) {
         let resp = try await client.signIn(body: .json(.init(password: password, username: username, remember: true)))
         let user = try resp.ok.body.json
         
@@ -60,161 +186,31 @@ public final class MemosV0Service: Sendable {
         return (user, accessToken)
     }
     
-    public func getCurrentUser() async throws -> MemosUser {
-        let resp = try await client.getCurrentUser()
-        return try resp.ok.body.json
-    }
-    
-    public func signOut() async throws {
-        let resp = try await client.signOut()
-        _ = try resp.ok.body.json
-    }
-    
-    public func listMemos(input: Operations.listMemos.Input.Query) async throws -> [MemosMemo] {
-        let resp = try await client.listMemos(query: input)
-        return try resp.ok.body.json
-    }
-    
-    public func listTags() async throws -> [String] {
-        let resp = try await client.listTags()
-        return try resp.ok.body.json
-    }
-    
-    public func createMemo(input: Components.Schemas.CreateMemoRequest) async throws -> MemosMemo {
-        let resp = try await client.createMemo(body: .json(input))
-        return try resp.ok.body.json
-    }
-    
-    public func memoOrganizer(id: Int, pinned: Bool) async throws -> MemosMemo {
-        let resp = try await client.organizeMemo(path: .init(memoId: id), body: .json(.init(pinned: pinned)))
-        return try resp.ok.body.json
-    }
-    
-    public func updateMemo(id: Int, input: Components.Schemas.PatchMemoRequest) async throws -> MemosMemo {
-        let resp = try await client.updateMemo(path: .init(memoId: id), body: .json(input))
-        return try resp.ok.body.json
-    }
-    
-    public func deleteMemo(id: Int) async throws {
-        let resp = try await client.deleteMemo(path: .init(memoId: id))
-        _ = try resp.ok.body.json
-    }
-    
-    public func listResources() async throws -> [MemosResource] {
-        let resp = try await client.listResources()
-        return try resp.ok.body.json
-    }
-    
-    public func uploadResource(imageData: Data, filename: String, contentType: String) async throws -> MemosResource {
-        let multipartBody: MultipartBody<Operations.uploadResource.Input.Body.multipartFormPayload> = [
-            .undocumented(.init(name: "file", filename: filename, headerFields: [.contentType: contentType], body: .init(imageData)))
-        ]
-        let resp = try await client.uploadResource(body: .multipartForm(multipartBody))
-        return try resp.ok.body.json
-    }
-
-    public func deleteResource(id: Int) async throws {
-        let resp = try await client.deleteResource(path: .init(resourceId: id))
-        _ = try resp.ok.body.json
-    }
-    
     public func getStatus() async throws -> Components.Schemas.SystemStatus {
         let resp = try await client.getStatus()
         return try resp.ok.body.json
     }
     
-    public func upsertTag(name: String) async throws {
-        let resp = try await client.createTag(body: .json(.init(name: name)))
-        _ = try resp.ok.body.json
-    }
-    
-    public func listPublicMemos(limit: Int, offset: Int) async throws -> [MemosMemo]  {
-        let resp = try await client.listPublicMemos(query: .init(limit: limit, offset: offset))
-        return try resp.ok.body.json
-    }
-    
-    public func deleteTag(name: String) async throws {
-        let resp = try await client.deleteTag(body: .json(.init(name: name)))
-        _ = try resp.ok.body.json
-    }
-}
-
-fileprivate extension MemosResource {
-    func path() -> String {
-        if let uid = uid, !uid.isEmpty {
-            return "/o/r/\(uid)"
-        }
-        return "/o/r/\(name ?? "")"
-    }
-}
-
-public extension MemosV0Service {
-    func url(for resource: MemosResource) -> URL {
-        if let externalLink = resource.externalLink, let url = URL(string: externalLink) {
-            return url
-        }
-        
-        var url = hostURL.appendingPathComponent(resource.path())
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        var queryItems = components.queryItems ?? []
-        queryItems.append(URLQueryItem(name: "extension", value: URL(fileURLWithPath: resource.filename).pathExtension))
-        components.queryItems = queryItems
-        url = components.url!
-        return url
+    public func download(url: URL, mimeType: String? = nil) async throws -> URL {
+        return try await ServiceUtils.download(urlSession: urlSession, url: url, mimeType: mimeType, middleware: rawAccessTokenMiddlware(hostURL: hostURL, accessToken: accessToken))
     }
     
     func downloadData(url: URL) async throws -> Data {
-        if url.scheme == "data" {
-            let (data, _) = try url.absoluteString.dataURIDecoded()
-            return data.convertToData()
-        }
-        
-        var request = URLRequest(url: url)
-        if let accessToken = accessToken, !accessToken.isEmpty && url.host == hostURL.host {
-            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-        }
-        let (data, response) = try await urlSession.data(for: request)
-        guard let response = response as? HTTPURLResponse else {
-            throw MoeMemosError.unknown
-        }
-        if response.statusCode < 200 || response.statusCode >= 300 {
-            throw MoeMemosError.invalidStatusCode(response.statusCode, url.absoluteString)
-        }
-        return data
+        return try await ServiceUtils.downloadData(urlSession: urlSession, url: url, middleware: rawAccessTokenMiddlware(hostURL: hostURL, accessToken: accessToken))
     }
     
-    func download(url: URL) async throws -> URL {
-        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppInfo.groupContainerIdentifier) else { throw MoeMemosError.unknown }
-        
-        let hash = SHA256.hash(data: url.absoluteString.data(using: .utf8)!)
-        let hex = hash.map { String(format: "%02X", $0) }[0...10].joined()
-        
-        let pathExtension = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "extension" }?.value
-        let downloadDestination = containerURL.appendingPathComponent("Library/Caches")
-            .appendingPathComponent(hex).appendingPathExtension(pathExtension ?? url.pathExtension)
-        
-        try FileManager.default.createDirectory(at: downloadDestination.deletingLastPathComponent(), withIntermediateDirectories: true)
-
-        do {
-            if try downloadDestination.checkResourceIsReachable() {
-                return downloadDestination
-            }
-        } catch {}
-        
-        var request = URLRequest(url: url)
-        if let accessToken = accessToken, !accessToken.isEmpty && url.host == hostURL.host {
-            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+    func toUser(_ memosUser: MemosV0User) async throws -> User {
+        let key = "memos:\(hostURL.absoluteString):\(memosUser.id)"
+        let createdAt: Date
+        if let createdTs = memosUser.createdTs {
+            createdAt = Date(timeIntervalSince1970: TimeInterval(createdTs))
+        } else {
+            createdAt = .now
         }
-        
-        let (tmpURL, response) = try await urlSession.download(for: request)
-        guard let response = response as? HTTPURLResponse else {
-            throw MoeMemosError.unknown
+        let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: memosUser.defaultMemoVisibility.toMemoVisibility(), creationDate: createdAt)
+        if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
+            user.avatarData = try? await downloadData(url: url)
         }
-        if response.statusCode < 200 || response.statusCode >= 300 {
-            throw MoeMemosError.invalidStatusCode(response.statusCode, url.absoluteString)
-        }
-        
-        try FileManager.default.moveItem(at: tmpURL, to: downloadDestination)
-        return downloadDestination
+        return user
     }
 }

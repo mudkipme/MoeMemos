@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import MemosV0Service
 import Account
 import Models
 
@@ -18,13 +17,13 @@ struct MemosList: View {
     @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
-    @State private var filteredMemoList: [MemosMemo] = []
+    @State private var filteredMemoList: [Memo] = []
     
     var body: some View {
         let defaultMemoVisibility = userState.currentUser?.defaultVisibility ?? .private
         
         ZStack(alignment: .bottomTrailing) {
-            List(filteredMemoList, id: \.id) { memo in
+            List(filteredMemoList, id: \.remoteId) { memo in
                 Section {
                     MemoCard(memo, defaultMemoVisibility: defaultMemoVisibility)
                 }
@@ -92,7 +91,7 @@ struct MemosList: View {
         }
     }
     
-    private func filterMemoList(_ memoList: [MemosMemo], tag: Tag?, searchString: String) -> [MemosMemo] {
+    private func filterMemoList(_ memoList: [Memo], tag: Tag?, searchString: String) -> [Memo] {
         let pinned = memoList.filter { $0.pinned == true }
         let nonPinned = memoList.filter { !($0.pinned == true) }
         var fullList = pinned + nonPinned
