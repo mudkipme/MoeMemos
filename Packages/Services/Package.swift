@@ -15,11 +15,14 @@ let package = Package(
         .library(
             name: "MemosV0Service",
             targets: ["MemosV0Service"]),
+        .library(
+            name: "MemosV1Service",
+            targets: ["MemosV1Service"]),
     ],
     dependencies: [
         .package(name: "Models", path: "../Models"),
         .package(url: "https://github.com/apple/swift-openapi-generator", .upToNextMinor(from: "1.2.1")),
-        .package(url: "https://github.com/apple/swift-openapi-runtime", .upToNextMinor(from: "1.3.2")),
+        .package(url: "https://github.com/apple/swift-openapi-runtime", .upToNextMinor(from: "1.4.0")),
         .package(url: "https://github.com/apple/swift-openapi-urlsession", .upToNextMinor(from: "1.0.1")),
         .package(url: "https://github.com/nodes-vapor/data-uri", from: "2.0.1")
     ],
@@ -33,6 +36,20 @@ let package = Package(
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
                 .product(name: "DataURI", package: "data-uri")
+            ],
+            swiftSettings: [
+              .enableExperimentalFeature("StrictConcurrency"),
+            ],
+            plugins: [
+                .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")
+            ]
+        ),
+        .target(
+            name: "MemosV1Service",
+            dependencies: [
+                .product(name: "Models", package: "Models"),
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession")
             ],
             swiftSettings: [
               .enableExperimentalFeature("StrictConcurrency"),

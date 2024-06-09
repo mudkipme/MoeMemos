@@ -9,6 +9,7 @@ import Foundation
 import Models
 import KeychainSwift
 import MemosV0Service
+import MemosV1Service
 
 public extension Account {
     private static var keychain: KeychainSwift {
