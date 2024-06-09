@@ -31,6 +31,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Models", package: "Models"),
                 .product(name: "MemosV0Service", package: "Services"),
+                .product(name: "MemosV1Service", package: "Services"),
                 .product(name: "DesignSystem", package: "DesignSystem"),
                 .product(name: "KeychainSwift", package: "keychain-swift"),
                 .product(name: "Factory", package: "Factory")

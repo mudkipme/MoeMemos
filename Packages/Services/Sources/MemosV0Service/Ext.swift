@@ -62,7 +62,7 @@ extension MemosV0Resource: Identifiable {
         if let externalLink = externalLink, !externalLink.isEmpty, let url = URL(string: externalLink) {
             return url
         }
-        return hostURL.appendingPathComponent(self.path())
+        return hostURL.appending(path: path())
     }
     
     func toResource(host: URL) -> Resource {

@@ -9,6 +9,7 @@ import Foundation
 import Models
 import KeychainSwift
 import MemosV0Service
+import MemosV1Service
 
 public extension Account {
     private static var keychain: KeychainSwift {
@@ -41,8 +42,11 @@ public extension Account {
     }
     
     var remoteService: RemoteService? {
-        if case .memos(host: let host, id: _, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
+        if case .memosV0(host: let host, id: _, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
             return MemosV0Service(hostURL: hostURL, accessToken: accessToken)
+        }
+        if case .memosV1(host: let host, id: _, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
+            return MemosV1Service(hostURL: hostURL, accessToken: accessToken)
         }
         return nil
     }

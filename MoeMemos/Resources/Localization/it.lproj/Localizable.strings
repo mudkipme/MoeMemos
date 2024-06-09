@@ -67,3 +67,8 @@
 "share.memo-saved" = "Promemoria salvato.";
  
 "explore" = "Esplora";
+
+// Account
+"account.local-user" = "Local user";
+"account.add-account" = "Add Account";
+"account.accounts" = "Accounts";

@@ -44,7 +44,7 @@ import Factory
         savedUsers.filter { user in !accountManager.accounts.contains { $0.key == user.accountKey } }.forEach { user in
             currentContext.delete(user)
         }
-
+        try currentContext.save()
         users = allUsers
     }
     
@@ -58,6 +58,6 @@ import Factory
 
 public extension Container {
     var accountViewModel: Factory<AccountViewModel> {
-        self { AccountViewModel(currentContext: self.appInfo().modelContext, accountManager: self.accountManager()) }
+        self { AccountViewModel(currentContext: self.appInfo().modelContext, accountManager: self.accountManager()) }.shared
     }
 }

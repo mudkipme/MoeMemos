@@ -23,7 +23,7 @@ struct LazyImageProvider: ImageProvider {
     func makeURL(_ url: URL?) -> URL? {
         guard let url = url else { return nil }
         
-        if url.host() == nil, let account = accountManager.currentAccount, case let .memos(host: host, id: _, accessToken: _) = account, let hostURL = URL(string: host) {
+        if url.host() == nil, let account = accountManager.currentAccount, case let .memosV0(host: host, id: _, accessToken: _) = account, let hostURL = URL(string: host) {
             return hostURL.appendingPathComponent(url.path)
         }
         return url
