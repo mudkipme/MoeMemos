@@ -45,8 +45,8 @@ public extension Account {
         if case .memosV0(host: let host, id: _, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
             return MemosV0Service(hostURL: hostURL, accessToken: accessToken)
         }
-        if case .memosV1(host: let host, id: _, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
-            return MemosV1Service(hostURL: hostURL, accessToken: accessToken)
+        if case .memosV1(host: let host, id: let userId, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
+            return MemosV1Service(hostURL: hostURL, accessToken: accessToken, userId: userId)
         }
         return nil
     }

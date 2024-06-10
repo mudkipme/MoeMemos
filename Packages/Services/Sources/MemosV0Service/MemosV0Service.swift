@@ -169,7 +169,7 @@ public final class MemosV0Service: RemoteService {
     public func getCurrentUser() async throws -> Models.User {
         let resp = try await client.getCurrentUser()
         let memosUser = try resp.ok.body.json
-        return try await toUser(memosUser)
+        return await toUser(memosUser)
     }
     
     public func logout() async throws {
@@ -199,7 +199,7 @@ public final class MemosV0Service: RemoteService {
         return try await ServiceUtils.downloadData(urlSession: urlSession, url: url, middleware: rawAccessTokenMiddlware(hostURL: hostURL, accessToken: accessToken))
     }
     
-    func toUser(_ memosUser: MemosV0User) async throws -> User {
+    func toUser(_ memosUser: MemosV0User) async -> User {
         let key = "memos:\(hostURL.absoluteString):\(memosUser.id)"
         let createdAt: Date
         if let createdTs = memosUser.createdTs {
