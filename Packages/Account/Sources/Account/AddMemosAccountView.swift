@@ -18,11 +18,11 @@ struct AddMemosAccountView: View {
     }
     
     @State private var host = ""
-    @State private var email = ""
+    @State private var username = ""
     @State private var password = ""
     @State private var accessToken = ""
-    let dismiss: DismissAction
-    @Environment(AccountManager.self) var accountManager: AccountManager
+    @Environment(\.dismiss) var dismiss
+    @Environment(AccountViewModel.self) var accountViewModel: AccountViewModel
     @State private var loginError: Error?
     @State private var showingErrorToast = false
     @State private var showLoadingToast = false
@@ -51,7 +51,7 @@ struct AddMemosAccountView: View {
                 .textFieldStyle(.roundedBorder)
             
             if loginMethod == .usernamdAndPassword {
-                TextField("login.username", text: $email)
+                TextField("login.username", text: $username)
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
@@ -102,27 +102,33 @@ struct AddMemosAccountView: View {
         if !hostAddress.contains("//") {
             hostAddress = "https://" + hostAddress
         }
-        
+        guard let hostURL = URL(string: hostAddress) else { throw MoeMemosError.invalidParams }
+        let server = try await accountViewModel.detectMemosVersion(hostURL: hostURL)
+
         if loginMethod == .usernamdAndPassword {
-            if email.trimmingCharacters(in: .whitespaces).isEmpty ||
-                password.isEmpty {
+            let username = username.trimmingCharacters(in: .whitespaces)
+            if username.isEmpty || password.isEmpty {
                 throw MoeMemosError.invalidParams
             }
             
-            guard let url = URL(string: hostAddress) else { throw MoeMemosError.invalidParams }
-            let client = MemosV0Service(hostURL: url, accessToken: nil)
-            let (user, accessToken) = try await client.signIn(username: email.trimmingCharacters(in: .whitespaces), password: password)
-            guard let accessToken = accessToken else { throw MoeMemosError.unsupportedVersion }
-            try accountManager.add(account: .memosV0(host: hostAddress, id: "\(user.id)", accessToken: accessToken))
+            switch server {
+            case .v1(version: _):
+                try await accountViewModel.loginMemosV1(hostURL: hostURL, username: username, password: password)
+            case .v0(version: _):
+                try await accountViewModel.loginMemosV0(hostURL: hostURL, username: username, password: password)
+            }
         } else if loginMethod == .accessToken {
-            if accessToken.trimmingCharacters(in: .whitespaces).isEmpty {
+            let accessToken = accessToken.trimmingCharacters(in: .whitespaces)
+            if accessToken.isEmpty {
                 throw MoeMemosError.invalidParams
             }
             
-            guard let url = URL(string: hostAddress) else { throw MoeMemosError.invalidParams }
-            let client = MemosV0Service(hostURL: url, accessToken: accessToken.trimmingCharacters(in: .whitespaces))
-            let response = try await client.getCurrentUser()
-            try accountManager.add(account: .memosV0(host: hostAddress, id: "\(response.id)", accessToken: accessToken.trimmingCharacters(in: .whitespaces)))
+            switch server {
+            case .v1(version: _):
+                try await accountViewModel.loginMemosV1(hostURL: hostURL, accessToken: accessToken)
+            case .v0(version: _):
+                try await accountViewModel.loginMemosV0(hostURL: hostURL, accessToken: accessToken)
+            }
         }
         dismiss()
     }

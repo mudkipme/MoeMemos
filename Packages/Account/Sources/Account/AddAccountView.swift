@@ -7,12 +7,14 @@
 
 import SwiftUI
 
-struct AddAccountView: View {
+public struct AddAccountView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(AccountManager.self) var accountManager: AccountManager
     @State private var path: [AddAccountRouter] = []
     
-    var body: some View {
+    public init() {}
+    
+    public var body: some View {
         NavigationStack(path: $path) {
             List {
 //                HStack {
@@ -56,7 +58,7 @@ struct AddAccountView: View {
             .navigationDestination(for: AddAccountRouter.self) { router in
                 switch router {
                 case .addMemosAccount:
-                    AddMemosAccountView(dismiss: dismiss)
+                    AddMemosAccountView()
                 }
             }
         }

@@ -8,8 +8,7 @@
 import SwiftUI
 
 public struct AccountSectionView: View {
-    @Environment(AccountViewModel.self) var accountViewModel: AccountViewModel
-    @State var showingAddAccount = false
+    @Environment(AccountViewModel.self) var accountViewModel
     
     public init() {}
     
@@ -28,15 +27,12 @@ public struct AccountSectionView: View {
                 }
             }
             Button {
-                showingAddAccount = true
+                accountViewModel.showingAddAccount = true
             } label: {
                 Label("account.add-account", systemImage: "plus.circle")
             }
         } header: {
             Text("Accounts")
-        }
-        .sheet(isPresented: $showingAddAccount) {
-            AddAccountView()
         }
     }
 }

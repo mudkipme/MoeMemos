@@ -10,7 +10,9 @@ import OpenAPIRuntime
 import OpenAPIURLSession
 import HTTPTypes
 
-public struct GRPCSetCookieMiddleware: ClientMiddleware {
+public actor GRPCSetCookieMiddleware: ClientMiddleware {
+    var setCookieHeaderValue: String? = nil
+    
     public func intercept(
         _ request: HTTPRequest,
         body: HTTPBody?,
@@ -18,12 +20,12 @@ public struct GRPCSetCookieMiddleware: ClientMiddleware {
         operationID: String,
         next: (HTTPRequest, HTTPBody?, URL) async throws -> (HTTPResponse, HTTPBody?)
     ) async throws -> (HTTPResponse, HTTPBody?) {
-        var (response, body) = try await next(request, body, baseURL)
+        let (response, body) = try await next(request, body, baseURL)
         
         // The HTTP response of Memos 0.22.0 uses incorrect cookie header
         guard let grpcSetCookieHeader = HTTPField.Name("grpc-metadata-set-cookie") else { return (response, body) }
-        if response.headerFields.contains(grpcSetCookieHeader) && !response.headerFields.contains(.setCookie) {
-            response.headerFields[.setCookie] = response.headerFields[grpcSetCookieHeader]
+        if response.headerFields.contains(grpcSetCookieHeader) {
+            setCookieHeaderValue = response.headerFields[grpcSetCookieHeader]
         }
         
         return (response, body)

@@ -14,12 +14,12 @@ import ServiceUtils
 
 @MainActor
 public final class MemosV1Service: RemoteService {
-    public let hostURL: URL
-    let urlSession: URLSession
-    let client: Client
-    let boundary = UUID().uuidString
-    let accessToken: String?
-    let userId: String?
+    private let hostURL: URL
+    private let urlSession: URLSession
+    private let client: Client
+    private let accessToken: String?
+    private let userId: String?
+    private let grpcSetCookieMiddleware = GRPCSetCookieMiddleware()
     
     public nonisolated init(hostURL: URL, accessToken: String?, userId: String?) {
         self.hostURL = hostURL
@@ -31,7 +31,7 @@ public final class MemosV1Service: RemoteService {
             transport: URLSessionTransport(configuration: .init(session: urlSession)),
             middlewares: [
                 AccessTokenAuthenticationMiddleware(accessToken: accessToken),
-                GRPCSetCookieMiddleware()
+                grpcSetCookieMiddleware
             ]
         )
     }
@@ -184,9 +184,17 @@ public final class MemosV1Service: RemoteService {
         let user = try resp.ok.body.json
         
         let cookieStorage = urlSession.configuration.httpCookieStorage ?? .shared
-        let accessToken = cookieStorage.cookies(for: self.hostURL)?.first(where: { $0.name == "memos.access-token" })?.value
-        
+        var accessToken = cookieStorage.cookies(for: self.hostURL)?.first(where: { $0.name == "memos.access-token" })?.value
+        if accessToken == nil {
+            guard let setCookieHeader = await grpcSetCookieMiddleware.setCookieHeaderValue else { throw MoeMemosError.unsupportedVersion }
+            accessToken = setCookieHeader.split(separator: ";", maxSplits: 1, omittingEmptySubsequences: true).first?.components(separatedBy: "memos.access-token=").last
+        }
         return (user, accessToken)
+    }
+    
+    public func getWorkspaceProfile() async throws -> MemosV1Profile {
+        let resp = try await client.WorkspaceService_GetWorkspaceProfile()
+        return try resp.ok.body.json
     }
     
     public func download(url: URL, mimeType: String? = nil) async throws -> URL {
@@ -217,7 +225,8 @@ public final class MemosV1Service: RemoteService {
         let user = User(
             accountKey: key,
             nickname: memosUser.nickname ?? memosUser.username ?? "",
-            creationDate: memosUser.createTime ?? .now
+            creationDate: memosUser.createTime ?? .now,
+            remoteId: memosUser.id.map(String.init)
         )
         if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
             user.avatarData = try? await downloadData(url: url)

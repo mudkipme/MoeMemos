@@ -9,12 +9,12 @@ import Foundation
 import Models
 
 public typealias MemosV0User = Components.Schemas.User
-public typealias MemosV0Memo = Components.Schemas.Memo
-public typealias MemosV0Resource = Components.Schemas.Resource
-public typealias MemosV0Visibility = Components.Schemas.Visibility
+typealias MemosV0Memo = Components.Schemas.Memo
+typealias MemosV0Resource = Components.Schemas.Resource
+typealias MemosV0Visibility = Components.Schemas.Visibility
 public typealias MemosV0Status = Components.Schemas.SystemStatus
 
-public extension MemosV0Memo {
+extension MemosV0Memo {
     var createDate: Date {
         Date(timeIntervalSince1970: TimeInterval(createdTs))
     }
@@ -39,7 +39,7 @@ public extension MemosV0Memo {
     }
 }
 
-public extension MemosV0User {
+extension MemosV0User {
     var defaultMemoVisibility: MemosV0Visibility {
         guard let visibilityJson = self.userSettingList?.first(where: { $0.key == "memo-visibility" })?.value?.data(using: .utf8) else { return .PRIVATE }
         do {

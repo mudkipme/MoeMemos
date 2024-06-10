@@ -12,6 +12,7 @@ typealias MemosV1Memo = Components.Schemas.v1Memo
 typealias MemosV1Resource = Components.Schemas.v1Resource
 typealias MemosV1Visibility = Components.Schemas.v1Visibility
 public typealias MemosV1User = Components.Schemas.v1User
+public typealias MemosV1Profile = Components.Schemas.v1WorkspaceProfile
 
 extension MemosV1Memo {
     func toMemo(host: URL) -> Memo {

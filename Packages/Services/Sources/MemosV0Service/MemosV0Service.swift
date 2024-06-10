@@ -14,11 +14,10 @@ import ServiceUtils
 
 @MainActor
 public final class MemosV0Service: RemoteService {
-    public let hostURL: URL
-    let urlSession: URLSession
-    let client: Client
-    let boundary = UUID().uuidString
-    let accessToken: String?
+    private let hostURL: URL
+    private let urlSession: URLSession
+    private let client: Client
+    private let accessToken: String?
 
     public nonisolated init(hostURL: URL, accessToken: String?) {
         self.hostURL = hostURL
@@ -186,7 +185,7 @@ public final class MemosV0Service: RemoteService {
         return (user, accessToken)
     }
     
-    public func getStatus() async throws -> Components.Schemas.SystemStatus {
+    public func getStatus() async throws -> MemosV0Status {
         let resp = try await client.getStatus()
         return try resp.ok.body.json
     }
@@ -207,7 +206,7 @@ public final class MemosV0Service: RemoteService {
         } else {
             createdAt = .now
         }
-        let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: memosUser.defaultMemoVisibility.toMemoVisibility(), creationDate: createdAt)
+        let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: memosUser.defaultMemoVisibility.toMemoVisibility(), creationDate: createdAt, remoteId: String(memosUser.id))
         if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
             user.avatarData = try? await downloadData(url: url)
         }
