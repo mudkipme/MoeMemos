@@ -208,6 +208,10 @@ public final class MemosV0Service: RemoteService {
         }
         let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: memosUser.defaultMemoVisibility.toMemoVisibility(), creationDate: createdAt, remoteId: String(memosUser.id))
         if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
+            var url = url
+            if url.host() == nil {
+                url = hostURL.appending(path: avatarUrl)
+            }
             user.avatarData = try? await downloadData(url: url)
         }
         return user

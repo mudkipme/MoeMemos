@@ -12,8 +12,10 @@ import Account
 @MainActor
 struct Settings: View {
     @Environment(AppInfo.self) var appInfo: AppInfo
+    @Environment(AccountViewModel.self) var accountViewModel
 
     var body: some View {
+        @Bindable var accountViewModel = accountViewModel
         List {
             AccountSectionView()
             
@@ -37,5 +39,8 @@ struct Settings: View {
             }
         }
         .navigationTitle("settings")
+        .sheet(isPresented: $accountViewModel.showingAddAccount) {
+            AddAccountView()
+        }
     }
 }

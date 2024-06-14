@@ -66,13 +66,6 @@ struct MemosList: View {
                 print(error)
             }
         }
-        .task(id: accountManager.currentAccount, {
-            do {
-                try await memosViewModel.loadMemos()
-            } catch {
-                print(error)
-            }
-        })
         .onChange(of: memosViewModel.memoList) { _, newValue in
             filteredMemoList = filterMemoList(newValue, tag: tag, searchString: searchString)
         }

@@ -30,6 +30,13 @@ struct ContentView: View {
                     }
                 }
             })
+            .task {
+                await loadCurrentUser()
+            }
+            .task(id: accountManager.currentAccount) {
+                try? await memosViewModel.loadMemos()
+                try? await memosViewModel.loadTags()
+            }
             .modelContext(appInfo.modelContext)
     }
     

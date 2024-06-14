@@ -70,12 +70,5 @@ struct Sidebar: View {
             }
         }
         .navigationTitle(userState.currentUser?.nickname ?? NSLocalizedString("memo.memos", comment: "Memos"))
-        .task(id: accountManager.currentAccount) {
-            do {
-                try await memosViewModel.loadTags()
-            } catch {
-                print(error)
-            }
-        }
     }
 }

@@ -229,6 +229,10 @@ public final class MemosV1Service: RemoteService {
             remoteId: memosUser.id.map(String.init)
         )
         if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
+            var url = url
+            if url.host() == nil {
+                url = hostURL.appending(path: avatarUrl)
+            }
             user.avatarData = try? await downloadData(url: url)
         }
         if let visibilityString = setting?.memoVisibility, let visibility = MemosV1Visibility(rawValue: visibilityString) {

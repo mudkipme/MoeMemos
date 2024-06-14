@@ -16,7 +16,7 @@
 		191339B4291D7288001F2B2E /* MoeMemosWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191339B3291D7288001F2B2E /* MoeMemosWidgetsBundle.swift */; };
 		191339B6291D7288001F2B2E /* MemosGraphWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191339B5291D7288001F2B2E /* MemosGraphWidget.swift */; };
 		191339B9291D7289001F2B2E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 191339B8291D7289001F2B2E /* Assets.xcassets */; };
-		191339BF291D7289001F2B2E /* MoeMemosWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		191339BF291D7289001F2B2E /* MoeMemosWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		191339C5291D765B001F2B2E /* Memo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFA28C3E9B2000C5207 /* Memo.swift */; };
 		191339CA291D7675001F2B2E /* Usage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657C28C4761100C39994 /* Usage.swift */; };
 		191339CE291D76BD001F2B2E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1973B7D62916308D003C3710 /* Constants.swift */; };
@@ -79,7 +79,7 @@
 		19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E1C5BF28C5191D0072CEEF /* MemoInput.swift */; };
 		19E29A6B2938FBCD00BE9C32 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A6A2938FBCD00BE9C32 /* ShareViewController.swift */; };
 		19E29A6E2938FBCD00BE9C32 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19E29A6C2938FBCD00BE9C32 /* MainInterface.storyboard */; };
-		19E29A722938FBCD00BE9C32 /* MoeMemosShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 19E29A682938FBCD00BE9C32 /* MoeMemosShareExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		19E29A722938FBCD00BE9C32 /* MoeMemosShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 19E29A682938FBCD00BE9C32 /* MoeMemosShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		19E29A782938FCE000BE9C32 /* MoeMemosShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A772938FCE000BE9C32 /* MoeMemosShareView.swift */; };
 		19E29A7D2939A94400BE9C32 /* NSItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A7C2939A94400BE9C32 /* NSItemProvider.swift */; };
 		19E29A7E2939AC5000BE9C32 /* NSItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A7C2939A94400BE9C32 /* NSItemProvider.swift */; };
@@ -685,13 +685,11 @@
 /* Begin PBXTargetDependency section */
 		191339BE291D7289001F2B2E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
 			target = 191339AB291D7288001F2B2E /* MoeMemosWidgetsExtension */;
 			targetProxy = 191339BD291D7289001F2B2E /* PBXContainerItemProxy */;
 		};
 		19E29A712938FBCD00BE9C32 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
 			target = 19E29A672938FBCD00BE9C32 /* MoeMemosShareExtension */;
 			targetProxy = 19E29A702938FBCD00BE9C32 /* PBXContainerItemProxy */;
 		};
@@ -955,9 +953,9 @@
 				MARKETING_VERSION = 1.5.10;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -995,9 +993,9 @@
 				MARKETING_VERSION = 1.5.10;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;

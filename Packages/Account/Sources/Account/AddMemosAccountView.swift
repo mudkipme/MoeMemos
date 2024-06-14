@@ -21,7 +21,7 @@ struct AddMemosAccountView: View {
     @State private var username = ""
     @State private var password = ""
     @State private var accessToken = ""
-    @Environment(\.dismiss) var dismiss
+    let dismiss: DismissAction
     @Environment(AccountViewModel.self) var accountViewModel: AccountViewModel
     @State private var loginError: Error?
     @State private var showingErrorToast = false
