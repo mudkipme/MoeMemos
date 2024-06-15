@@ -13,6 +13,15 @@ import Models
 enum MemosVersion {
     case v0(version: String)
     case v1(version: String)
+    
+    var version: String? {
+        switch self {
+        case .v0(version: let ver):
+            return ver
+        case .v1(version: let ver):
+            return ver
+        }
+    }
 }
 
 func detectMemosVersion(hostURL: URL) async throws -> MemosVersion {

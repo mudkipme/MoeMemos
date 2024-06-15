@@ -63,9 +63,18 @@ import MemosV0Service
         users = allUsers
     }
     
+    @MainActor
     func logout(account: Account) async throws {
         try? await account.remoteService()?.logout()
         accountManager.delete(account: account)
+        try await reloadUsers()
+    }
+    
+    @MainActor
+    func switchTo(accountKey: String) async throws {
+        guard let account = accountManager.accounts.first(where: { $0.key == accountKey }) else { return }
+        accountManager.currentAccount = account
+        try await reloadUsers()
     }
     
     @MainActor

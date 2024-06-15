@@ -10,6 +10,7 @@ import Models
 import SwiftData
 import Account
 import Factory
+import Env
 
 @MainActor
 struct ContentView: View {
@@ -21,6 +22,8 @@ struct ContentView: View {
     @Environment(\.scenePhase) var scenePhase
     
     var body: some View {
+        @Bindable var accountViewModel = accountViewModel
+        
         Navigation(selection: $selection)
             .tint(.green)
             .environment(memosViewModel)
@@ -39,6 +42,10 @@ struct ContentView: View {
                 try? await memosViewModel.loadTags()
             }
             .modelContext(appInfo.modelContext)
+            .sheet(isPresented: $accountViewModel.showingAddAccount) {
+                AddAccountView()
+                    .tint(.green)
+            }
     }
     
     private func loadCurrentUser() async {

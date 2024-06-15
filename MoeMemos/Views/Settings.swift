@@ -39,8 +39,5 @@ struct Settings: View {
             }
         }
         .navigationTitle("settings")
-        .sheet(isPresented: $accountViewModel.showingAddAccount) {
-            AddAccountView()
-        }
     }
 }

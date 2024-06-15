@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Account
+import Env
 
 struct Sidebar: View {
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel

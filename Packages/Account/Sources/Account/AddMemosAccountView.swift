@@ -89,7 +89,7 @@ struct AddMemosAccountView: View {
         .padding()
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", loginError?.localizedDescription))
         .toast(isPresenting: $showLoadingToast, alertType: .loading)
-        .navigationTitle("Memos Account")
+        .navigationTitle("account.add-memos-account")
         .navigationBarTitleDisplayMode(.inline)
     }
     

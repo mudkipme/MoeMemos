@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		190755992B66512200451E6D /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 190755982B66512200451E6D /* Markdown */; };
 		1907559A2B66514700451E6D /* TagVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D274E29C8D85700BDE4A2 /* TagVisitor.swift */; };
-		190D25702C1547C3001104E0 /* MemosV0Service in Frameworks */ = {isa = PBXBuildFile; productRef = 190D256F2C1547C3001104E0 /* MemosV0Service */; };
+		19113B8D2C1D97A200365C05 /* Env in Frameworks */ = {isa = PBXBuildFile; productRef = 19113B8C2C1D97A200365C05 /* Env */; };
 		1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1911568929802F200058F18B /* QuickLookRepresentable.swift */; };
 		191339AF291D7288001F2B2E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 191339AE291D7288001F2B2E /* WidgetKit.framework */; };
 		191339B1291D7288001F2B2E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 191339B0291D7288001F2B2E /* SwiftUI.framework */; };
@@ -132,6 +132,7 @@
 		190322DC2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MainInterface.strings; sourceTree = "<group>"; };
 		190322DD2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
 		190322DE2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		19113B8B2C1D95B700365C05 /* Env */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Env; path = Packages/Env; sourceTree = "<group>"; };
 		1911568929802F200058F18B /* QuickLookRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLookRepresentable.swift; sourceTree = "<group>"; };
 		191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MoeMemosWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		191339AE291D7288001F2B2E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -233,9 +234,9 @@
 				191489F02B00832C00577BD1 /* Account in Frameworks */,
 				19E866612AB84EBA00E33521 /* KeychainSwift in Frameworks */,
 				1990357E2C14A55B0011B985 /* Factory in Frameworks */,
+				19113B8D2C1D97A200365C05 /* Env in Frameworks */,
 				193D274D29C8D1EB00BDE4A2 /* MarkdownUI in Frameworks */,
 				31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */,
-				190D25702C1547C3001104E0 /* MemosV0Service in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -322,6 +323,7 @@
 		194B272428C3973400A48675 = {
 			isa = PBXGroup;
 			children = (
+				19113B8B2C1D95B700365C05 /* Env */,
 				191489F22B00837D00577BD1 /* Account */,
 				19BB8C702B83207B007BFEBF /* DesignSystem */,
 				191489EC2B0082C700577BD1 /* Models */,
@@ -479,7 +481,7 @@
 				191489EF2B00832C00577BD1 /* Account */,
 				197BEF462B00998F0025C17B /* Models */,
 				1990357D2C14A55B0011B985 /* Factory */,
-				190D256F2C1547C3001104E0 /* MemosV0Service */,
+				19113B8C2C1D97A200365C05 /* Env */,
 			);
 			productName = MoeMemos;
 			productReference = 194B272D28C3973400A48675 /* MoeMemos.app */;
@@ -1154,9 +1156,9 @@
 			package = 190755972B66512200451E6D /* XCRemoteSwiftPackageReference "swift-markdown" */;
 			productName = Markdown;
 		};
-		190D256F2C1547C3001104E0 /* MemosV0Service */ = {
+		19113B8C2C1D97A200365C05 /* Env */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = MemosV0Service;
+			productName = Env;
 		};
 		191489EF2B00832C00577BD1 /* Account */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -7,16 +7,10 @@
 
 import SwiftUI
 import Models
+import Env
+import Account
 
-@MainActor
-enum Route: Hashable {
-    case memos
-    case resources
-    case archived
-    case tag(Tag)
-    case settings
-    case explore
-    
+extension Route {
     @ViewBuilder
     func destination() -> some View {
         switch self {
@@ -32,6 +26,8 @@ enum Route: Hashable {
             Settings()
         case .explore:
             Explore()
+        case .memosAccount(let accountKey):
+            MemosAccountView(accountKey: accountKey)
         }
     }
 }

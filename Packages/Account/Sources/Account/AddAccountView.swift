@@ -37,10 +37,10 @@ public struct AddAccountView: View {
                     HStack {
                         Image(systemName: "pencil")
                         VStack(alignment: .leading) {
-                            Text("Add a Memos Account")
+                            Text("account.add-memos-account")
                                 .foregroundStyle(.primary)
                                 .font(.headline)
-                            Text("Sync with Your Memos Server")
+                            Text("account.memos-account-description")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
@@ -48,13 +48,15 @@ public struct AddAccountView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Close") {
-                        dismiss()
+                if !accountManager.accounts.isEmpty {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("input.close") {
+                            dismiss()
+                        }
                     }
                 }
             }
-            .navigationTitle("Add Accounts")
+            .navigationTitle(accountManager.accounts.isEmpty ? NSLocalizedString("moe-memos", comment: "") : NSLocalizedString("account.add-account", comment: ""))
             .navigationDestination(for: AddAccountRouter.self) { router in
                 switch router {
                 case .addMemosAccount:
