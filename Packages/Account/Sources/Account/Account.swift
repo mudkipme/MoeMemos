@@ -41,7 +41,7 @@ public extension Account {
         return accounts
     }
     
-    var remoteService: RemoteService? {
+    func remoteService() -> RemoteService? {
         if case .memosV0(host: let host, id: _, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
             return MemosV0Service(hostURL: hostURL, accessToken: accessToken)
         }
@@ -56,7 +56,7 @@ public extension Account {
         if case .local = self {
             return User(accountKey: key, nickname: NSLocalizedString("account.local-user", comment: ""))
         }
-        if let remoteService = remoteService {
+        if let remoteService = remoteService() {
             return try await remoteService.getCurrentUser()
         }
         throw MoeMemosError.notLogin

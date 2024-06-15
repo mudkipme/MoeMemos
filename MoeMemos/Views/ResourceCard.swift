@@ -9,6 +9,7 @@ import SwiftUI
 import Models
 import Account
 
+@MainActor
 struct ResourceCard: View {
     let resource: Resource
     let resourceManager: ResourceManager
@@ -59,7 +60,6 @@ struct ResourceCard: View {
     }
     
     @ViewBuilder
-    @MainActor
     func menu(for resource: Resource) -> some View {
         Button(role: .destructive, action: {
             Task {

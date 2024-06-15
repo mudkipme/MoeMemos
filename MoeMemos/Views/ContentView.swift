@@ -11,6 +11,7 @@ import SwiftData
 import Account
 import Factory
 
+@MainActor
 struct ContentView: View {
     @Environment(AccountViewModel.self) private var accountViewModel: AccountViewModel
     @Environment(AccountManager.self) private var accountManager: AccountManager
@@ -40,10 +41,14 @@ struct ContentView: View {
             .modelContext(appInfo.modelContext)
     }
     
-    @MainActor
-    func loadCurrentUser() async {
+    private func loadCurrentUser() async {
         do {
+            if accountManager.currentAccount == nil {
+                throw MoeMemosError.notLogin
+            }
             try await accountViewModel.reloadUsers()
+        } catch MoeMemosError.notLogin {
+            accountViewModel.showingAddAccount = true
         } catch {
             print(error)
         }

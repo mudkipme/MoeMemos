@@ -22,11 +22,11 @@ import Factory
         }
     }
     
-    public var accounts: [Account]
-    public var currentAccount: Account? {
+    public private(set) var accounts: [Account]
+    public internal(set) var currentAccount: Account? {
         didSet {
             currentAccountKey = currentAccount?.key ?? ""
-            currentService = currentAccount?.remoteService
+            currentService = currentAccount?.remoteService()
         }
     }
     
@@ -39,13 +39,13 @@ import Factory
         }
     }
     
-    public func add(account: Account) throws {
+    internal func add(account: Account) throws {
         try account.save()
         accounts = Account.retriveAll()
         currentAccount = account
     }
     
-    public func delete(account: Account) {
+    internal func delete(account: Account) {
         accounts.removeAll { $0.key == account.key }
         account.delete()
         if currentAccount?.key == account.key {

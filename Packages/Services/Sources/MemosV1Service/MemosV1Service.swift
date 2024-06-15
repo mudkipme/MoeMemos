@@ -166,10 +166,16 @@ public final class MemosV1Service: RemoteService {
     
     public func getCurrentUser() async throws -> User {
         let resp = try await client.AuthService_GetAuthStatus()
+        
+        if case .default(statusCode: let statusCode, _) = resp, statusCode == HTTPResponse.Status.unauthorized.code {
+            throw MoeMemosError.notLogin
+        }
+        
         let user = try resp.ok.body.json
         
         guard let name = user.name else { throw MoeMemosError.unsupportedVersion }
         let userSettingResp = try await client.UserService_GetUserSetting(path: .init(name: name))
+        
         let setting = try userSettingResp.ok.body.json
         return await toUser(user, setting: setting)
     }
@@ -226,6 +232,7 @@ public final class MemosV1Service: RemoteService {
             accountKey: key,
             nickname: memosUser.nickname ?? memosUser.username ?? "",
             creationDate: memosUser.createTime ?? .now,
+            email: memosUser.email,
             remoteId: memosUser.id.map(String.init)
         )
         if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {

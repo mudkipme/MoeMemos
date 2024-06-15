@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  AccountViewModel.swift
+//
 //
 //  Created by Mudkip on 2024/6/5.
 //
@@ -12,11 +12,6 @@ import Factory
 import MemosV1Service
 import MemosV0Service
 
-enum MemosVersion {
-    case v0(version: String)
-    case v1(version: String)
-}
-
 @Observable public final class AccountViewModel {
     private var currentContext: ModelContext
     private var accountManager: AccountManager
@@ -25,9 +20,10 @@ enum MemosVersion {
     public init(currentContext: ModelContext, accountManager: AccountManager) {
         self.currentContext = currentContext
         self.accountManager = accountManager
+        users = (try? currentContext.fetch(FetchDescriptor<User>())) ?? []
     }
     
-    public private(set) var users = [User]()
+    public private(set) var users: [User]
     public var currentUser: User? {
         if let account = self.accountManager.currentAccount {
             return users.first { $0.accountKey == account.key }
@@ -40,7 +36,18 @@ enum MemosVersion {
         let savedUsers = try currentContext.fetch(FetchDescriptor<User>())
         var allUsers = [User]()
         for account in accountManager.accounts {
-            if let user = savedUsers.first(where: { $0.accountKey == account.key }) {
+            if accountManager.currentAccount == account {
+                guard let currentService = accountManager.currentService else { throw MoeMemosError.notLogin }
+                let user = try await currentService.getCurrentUser()
+                if let existingUser = savedUsers.first(where: { $0.accountKey == account.key }) {
+                    existingUser.avatarData = user.avatarData
+                    existingUser.nickname = user.nickname
+                    existingUser.defaultVisibility = user.defaultVisibility
+                } else {
+                    currentContext.insert(user)
+                }
+                allUsers.append(user)
+            } else if let user = savedUsers.first(where: { $0.accountKey == account.key }) {
                 allUsers.append(user)
             } else if let user = try? await account.toUser() {
                 allUsers.append(user)
@@ -56,25 +63,9 @@ enum MemosVersion {
         users = allUsers
     }
     
-    func logout() async throws {
-        if let account = accountManager.currentAccount {
-            accountManager.delete(account: account)
-        }
-    }
-
-    @MainActor
-    func detectMemosVersion(hostURL: URL) async throws -> MemosVersion {
-        let v1Service = MemosV1Service(hostURL: hostURL, accessToken: nil, userId: nil)
-        let v1Profile = try? await v1Service.getWorkspaceProfile()
-        if let version = v1Profile?.version, !version.isEmpty {
-            return .v1(version: version)
-        }
-        let v0Service = MemosV0Service(hostURL: hostURL, accessToken: nil)
-        let v0Status = try? await v0Service.getStatus()
-        if let version = v0Status?.profile?.version, !version.isEmpty {
-            return .v0(version: version)
-        }
-        throw MoeMemosError.unsupportedVersion
+    func logout(account: Account) async throws {
+        try? await account.remoteService()?.logout()
+        accountManager.delete(account: account)
     }
     
     @MainActor

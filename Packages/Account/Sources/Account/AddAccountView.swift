@@ -8,8 +8,8 @@
 import SwiftUI
 
 public struct AddAccountView: View {
-    @Environment(\.dismiss) var dismiss
-    @Environment(AccountManager.self) var accountManager: AccountManager
+    @Environment(\.dismiss) private var dismiss
+    @Environment(AccountManager.self) private var accountManager: AccountManager
     @State private var path: [AddAccountRouter] = []
     
     public init() {}

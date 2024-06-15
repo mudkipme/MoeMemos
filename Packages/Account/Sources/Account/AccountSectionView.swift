@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct AccountSectionView: View {
-    @Environment(AccountViewModel.self) var accountViewModel
+    @Environment(AccountViewModel.self) private var accountViewModel
     
     public init() {}
     
@@ -23,7 +23,12 @@ public struct AccountSectionView: View {
                             .clipShape(Circle())
                     }
                 } else {
-                    Text(user.nickname)
+                    Label(title: { Text(user.nickname) }) {
+                        Image(.memos)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(Circle())
+                    }
                 }
             }
             Button {

@@ -22,7 +22,7 @@ struct AddMemosAccountView: View {
     @State private var password = ""
     @State private var accessToken = ""
     let dismiss: DismissAction
-    @Environment(AccountViewModel.self) var accountViewModel: AccountViewModel
+    @Environment(AccountViewModel.self) private var accountViewModel
     @State private var loginError: Error?
     @State private var showingErrorToast = false
     @State private var showLoadingToast = false
@@ -93,7 +93,7 @@ struct AddMemosAccountView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
     
-    func doLogin() async throws {
+    private func doLogin() async throws {
         if host.isEmpty {
             throw MoeMemosError.invalidParams
         }
@@ -103,7 +103,7 @@ struct AddMemosAccountView: View {
             hostAddress = "https://" + hostAddress
         }
         guard let hostURL = URL(string: hostAddress) else { throw MoeMemosError.invalidParams }
-        let server = try await accountViewModel.detectMemosVersion(hostURL: hostURL)
+        let server = try await detectMemosVersion(hostURL: hostURL)
 
         if loginMethod == .usernamdAndPassword {
             let username = username.trimmingCharacters(in: .whitespaces)

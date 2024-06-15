@@ -25,13 +25,13 @@ struct Sidebar: View {
                 NavigationLink(value: Route.memos) {
                     Label("memo.memos", systemImage: "rectangle.grid.1x2")
                 }
-                NavLink(route: .explore) {
+                NavigationLink(value: Route.explore) {
                     Label("explore", systemImage: "house")
                 }
-                NavLink(route: .resources) {
+                NavigationLink(value: Route.resources) {
                     Label("resources", systemImage: "photo.on.rectangle")
                 }
-                NavLink(route: .archived) {
+                NavigationLink(value: Route.archived) {
                     Label("memo.archived", systemImage: "archivebox")
                 }
             } header: {
@@ -40,7 +40,7 @@ struct Sidebar: View {
             
             Section {
                 ForEach(memosViewModel.tags) { tag in
-                    NavLink(route: .tag(tag)) {
+                    NavigationLink(value: Route.tag(tag)) {
                         Label(tag.name, systemImage: "number")
                     }
                 }.onDelete { indexSet in
@@ -64,7 +64,7 @@ struct Sidebar: View {
                     Image(systemName: "ellipsis.circle")
                 }
             } else {
-                NavLink(route: .settings) {
+                NavigationLink(value: Route.settings) {
                     Image(systemName: "ellipsis.circle")
                 }
             }

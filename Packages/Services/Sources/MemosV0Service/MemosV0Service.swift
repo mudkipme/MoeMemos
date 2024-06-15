@@ -167,6 +167,9 @@ public final class MemosV0Service: RemoteService {
     
     public func getCurrentUser() async throws -> Models.User {
         let resp = try await client.getCurrentUser()
+        if case .unauthorized(_) = resp {
+            throw MoeMemosError.notLogin
+        }
         let memosUser = try resp.ok.body.json
         return await toUser(memosUser)
     }
@@ -206,7 +209,7 @@ public final class MemosV0Service: RemoteService {
         } else {
             createdAt = .now
         }
-        let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: memosUser.defaultMemoVisibility.toMemoVisibility(), creationDate: createdAt, remoteId: String(memosUser.id))
+        let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: memosUser.defaultMemoVisibility.toMemoVisibility(), creationDate: createdAt, email: memosUser.email, remoteId: String(memosUser.id))
         if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
             var url = url
             if url.host() == nil {
