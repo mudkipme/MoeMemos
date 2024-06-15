@@ -6,29 +6,31 @@
 //
 
 import Foundation
+import Account
+import Models
+import Factory
 
-@MainActor
-class MemosViewModel: ObservableObject {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    var memos: Memos { get throws { try memosManager.api } }
+@Observable class MemosViewModel {
+    @ObservationIgnored
+    @Injected(\.accountManager) private var accountManager
+    @ObservationIgnored
+    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
 
-    @Published private(set) var memoList: [Memo] = [] {
+    private(set) var memoList: [Memo] = [] {
         didSet {
             matrix = DailyUsageStat.calculateMatrix(memoList: memoList)
         }
     }
-    @Published private(set) var tags: [Tag] = []
-    @Published private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
-    @Published private(set) var inited = false
-    @Published private(set) var loading = false
+    private(set) var tags: [Tag] = []
+    private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
+    private(set) var inited = false
+    private(set) var loading = false
     
+    @MainActor
     func loadMemos() async throws {
         do {
             loading = true
-            let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
+            let response = try await service.listMemos()
             memoList = response
             loading = false
             inited = true
@@ -38,70 +40,63 @@ class MemosViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func loadTags() async throws {
-        let response = try await memos.tags(data: nil)
-        tags = response.map({ name in
-            Tag(name: name)
-        })
+        tags = try await service.listTags()
     }
     
-    func createMemo(content: String, visibility: MemosVisibility = .private, resourceIdList: [Int]? = nil) async throws {
-        let response = try await memos.createMemo(data: MemosCreate.Input(content: content, visibility: visibility, resourceIdList: resourceIdList))
+    @MainActor
+    func createMemo(content: String, visibility: MemoVisibility = .private, resources: [Resource]? = nil, tags: [String]?) async throws {
+        let response = try await service.createMemo(content: content, visibility: visibility, resources: resources ?? [], tags: tags)
         memoList.insert(response, at: 0)
         try await loadTags()
     }
     
+    @MainActor
     private func updateMemo(_ memo: Memo) {
         for (i, item) in memoList.enumerated() {
-            if item.id == memo.id {
+            if memo.remoteId != nil && item.remoteId == memo.remoteId {
                 memoList[i] = memo
                 break
             }
         }
     }
     
-    func updateMemoOrganizer(id: Int, pinned: Bool) async throws {
-        let response = try await memos.updateMemoOrganizer(memoId: id, data: MemosOrganizer.Input(pinned: pinned))
-        // the response might be incorrect
-        var memo = response
-        memo.pinned = pinned
-        
-        updateMemo(memo)
+    @MainActor
+    func updateMemoOrganizer(remoteId: String, pinned: Bool) async throws {
+        let response = try await service.updateMemo(remoteId: remoteId, content: nil, resources: nil, visibility: nil, tags: nil, pinned: pinned)
+        updateMemo(response)
     }
     
-    func archiveMemo(id: Int) async throws {
-        _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .archived, content: nil, visibility: nil, resourceIdList: nil))
+    @MainActor
+    func archiveMemo(remoteId: String) async throws {
+        try await service.archiveMemo(remoteId: remoteId)
         memoList = memoList.filter({ memo in
-            memo.id != id
+            memo.remoteId != remoteId
         })
     }
     
-    func editMemo(id: Int, content: String, visibility: MemosVisibility = .private, resourceIdList: [Int]? = nil) async throws {
-        let response = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: nil, content: content, visibility: visibility, resourceIdList: resourceIdList))
+    @MainActor
+    func editMemo(remoteId: String, content: String, visibility: MemoVisibility = .private, resources: [Resource]? = nil, tags: [String]?) async throws {
+        let response = try await service.updateMemo(remoteId: remoteId, content: content, resources: resources, visibility: visibility, tags: nil, pinned: nil)
         updateMemo(response)
         try await loadTags()
     }
     
-    func upsertTags(names: [String]) async throws {
-        for name in names {
-            _ = try await memos.upsertTag(name: name)
-        }
-        
-        try await loadTags()
-    }
-    
+    @MainActor
     func deleteTag(name: String) async throws {
-        _ = try await memos.deleteTag(name: name)
+        _ = try await service.deleteTag(name: name)
         
         tags.removeAll { tag in
             tag.name == name
         }
     }
 
-    func deleteMemo(id: Int) async throws {
-        _ = try await memos.deleteMemo(id: id)
+    @MainActor
+    func deleteMemo(remoteId: String) async throws {
+        _ = try await service.deleteMemo(remoteId: remoteId)
         memoList = memoList.filter({ memo in
-            memo.id != id
+            memo.remoteId != remoteId
         })
     }
 }

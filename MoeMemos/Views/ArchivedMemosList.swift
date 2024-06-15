@@ -6,14 +6,15 @@
 //
 
 import SwiftUI
+import Models
 
 struct ArchivedMemosList: View {
-    @StateObject private var viewModel = ArchivedMemoListViewModel()
+    @State private var viewModel = ArchivedMemoListViewModel()
     @State private var searchString = ""
     @State private var filteredMemoList: [Memo] = []
 
     var body: some View {
-        List(filteredMemoList, id: \.id) { memo in
+        List(filteredMemoList, id: \.remoteId) { memo in
             Section {
                 ArchivedMemoCard(memo, archivedViewModel: viewModel)
             }
@@ -38,12 +39,12 @@ struct ArchivedMemosList: View {
         .onAppear {
             filteredMemoList = filterMemoList(viewModel.archivedMemoList)
         }
-        .onChange(of: viewModel.archivedMemoList, perform: { newValue in
+        .onChange(of: viewModel.archivedMemoList) { _, newValue in
             filteredMemoList = filterMemoList(newValue)
-        })
-        .onChange(of: searchString, perform: { newValue in
+        }
+        .onChange(of: searchString) { _, newValue in
             filteredMemoList = filterMemoList(viewModel.archivedMemoList)
-        })
+        }
     }
     
     private func filterMemoList(_ memoList: [Memo]) -> [Memo] {

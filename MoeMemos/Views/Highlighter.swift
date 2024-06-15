@@ -9,6 +9,7 @@ import Highlightr
 import SwiftUI
 import MarkdownUI
 
+@MainActor
 class Highlighter: CodeSyntaxHighlighter {
     static let dark = Highlighter(colorScheme: .dark)
     static let light = Highlighter(colorScheme: .light)
@@ -19,7 +20,7 @@ class Highlighter: CodeSyntaxHighlighter {
         self.colorScheme = colorScheme
     }
     
-    func highlightCode(_ code: String, language: String?) -> Text {
+    nonisolated func highlightCode(_ code: String, language: String?) -> Text {
         guard let highlightr = Highlightr() else { fatalError("") }
         highlightr.setTheme(to: colorScheme == .dark ? "atom-one-dark-reasonable" : "github")
         let result = highlightr.highlight(code, as: language?.lowercased()) ?? NSAttributedString()
@@ -30,6 +31,7 @@ class Highlighter: CodeSyntaxHighlighter {
     }
 }
 
+@MainActor
 extension CodeSyntaxHighlighter where Self == Highlighter {
     static func light() -> Self {
         return .light

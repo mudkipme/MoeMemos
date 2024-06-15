@@ -8,17 +8,18 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import MarkdownUI
+import Models
 
+@MainActor
 struct MemoCard: View {
     let memo: Memo
-    let defaultMemoVisilibity: MemosVisibility?
+    let defaultMemoVisilibity: MemoVisibility?
     
-    @EnvironmentObject private var memosViewModel: MemosViewModel
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @State private var showingEdit = false
-    @State private var showingLegacyShareSheet = false
     @State private var showingDeleteConfirmation = false
     
-    init(_ memo: Memo, defaultMemoVisibility: MemosVisibility) {
+    init(_ memo: Memo, defaultMemoVisibility: MemoVisibility) {
         self.memo = memo
         self.defaultMemoVisilibity = defaultMemoVisibility
     }
@@ -30,12 +31,12 @@ struct MemoCard: View {
                     .font(.footnote)
                     .foregroundColor(.secondary)
                 
-                if defaultMemoVisilibity != nil && memo.visibility != defaultMemoVisilibity {
+                if memo.visibility != defaultMemoVisilibity {
                     Image(systemName: memo.visibility.iconName)
                         .foregroundColor(.secondary)
                 }
                 
-                if memo.pinned {
+                if memo.pinned == true {
                     Image(systemName: "flag.fill")
                         .renderingMode(.original)
                 }
@@ -66,7 +67,8 @@ struct MemoCard: View {
         .confirmationDialog("memo.delete.confirm", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("memo.action.ok", role: .destructive) {
                 Task {
-                    try await memosViewModel.deleteMemo(id: memo.id)
+                    guard let remoteId = memo.remoteId else { return }
+                    try await memosViewModel.deleteMemo(remoteId: remoteId)
                 }
             }
             Button("memo.action.cancel", role: .cancel) {}
@@ -78,13 +80,14 @@ struct MemoCard: View {
         Button {
             Task {
                 do {
-                    try await memosViewModel.updateMemoOrganizer(id: memo.id, pinned: !memo.pinned)
+                    guard let remoteId = memo.remoteId else { return }
+                    try await memosViewModel.updateMemoOrganizer(remoteId: remoteId, pinned: !(memo.pinned == true))
                 } catch {
                     print(error)
                 }
             }
         } label: {
-            if memo.pinned {
+            if memo.pinned == true {
                 Label("memo.unpin", systemImage: "flag.slash")
             } else {
                 Label("memo.pin", systemImage: "flag")
@@ -95,21 +98,14 @@ struct MemoCard: View {
         } label: {
             Label("memo.edit", systemImage: "pencil")
         }
-        if #available(iOS 16, *) {
-            ShareLink(item: memo.content) {
-                Label("memo.share", systemImage: "square.and.arrow.up")
-            }
-        } else {
-            Button {
-                showingLegacyShareSheet = true
-            } label: {
-                Label("memo.share", systemImage: "square.and.arrow.up")
-            }
+        ShareLink(item: memo.content) {
+            Label("memo.share", systemImage: "square.and.arrow.up")
         }
         Button(role: .destructive, action: {
             Task {
                 do {
-                    try await memosViewModel.archiveMemo(id: memo.id)
+                    guard let remoteId = memo.remoteId else { return }
+                    try await memosViewModel.archiveMemo(remoteId: remoteId)
                 } catch {
                     print(error)
                 }
@@ -128,17 +124,10 @@ struct MemoCard: View {
         do {
             guard var node = configuration.node else { return }
             node.checkbox = configuration.isCompleted ? .unchecked : .checked
-            
-            try await memosViewModel.editMemo(id: memo.id, content: node.root.format(), visibility: memo.visibility, resourceIdList: memo.resourceList?.map { $0.id })
+            guard let remoteId = memo.remoteId else { return }
+            try await memosViewModel.editMemo(remoteId: remoteId, content: node.root.format(), visibility: memo.visibility, resources: memo.resources, tags: nil)
         } catch {
             print(error)
         }
-    }
-}
-
-struct MemoCard_Previews: PreviewProvider {
-    static var previews: some View {
-        MemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, creatorName: nil, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil), defaultMemoVisibility: .private)
-            .environmentObject(MemosViewModel())
     }
 }

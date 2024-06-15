@@ -6,19 +6,22 @@
 //
 
 import SwiftUI
-import MarkdownUI
+@preconcurrency import MarkdownUI
+import Models
+import Account
 
+@MainActor
 struct MemoCardContent: View {
     private enum MemoResource: Identifiable {
-        case images([URL])
+        case images([ImageInfo])
         case attachment(Resource)
         
         var id: String {
             switch self {
-            case .images(let urls):
-                return urls.map { $0.absoluteString }.joined(separator: ",")
+            case .images(let pairs):
+                return pairs.map { $0.url.absoluteString }.joined(separator: ",")
             case .attachment(let resource):
-                return "\(resource.id)"
+                return "\(resource.remoteId ?? "")"
             }
         }
     }
@@ -26,7 +29,7 @@ struct MemoCardContent: View {
     let memo: Memo
     let toggleTaskItem: ((TaskListMarkerConfiguration) async -> Void)?
     @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject private var memosManager: MemosManager
+    @Environment(AccountManager.self) private var memosManager: AccountManager
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -58,29 +61,19 @@ struct MemoCardContent: View {
     
     private func resources() -> [MemoResource] {
         var attachments = [MemoResource]()
-        if let resourceList = memo.resourceList, let memos = memosManager.memos {
-            let imageResources = resourceList.filter { resource in
-                resource.type.hasPrefix("image/")
-            }
-            let otherResources = resourceList.filter { resource in
-                !resource.type.hasPrefix("image/")
-            }
-            
-            if !imageResources.isEmpty {
-                attachments.append(.images(imageResources.map { memos.url(for: $0) }))
-            }
-            
-            attachments += otherResources.map { .attachment($0) }
+        let resourceList = memo.resources
+        let imageResources = resourceList.filter { resource in
+            resource.mimeType.hasPrefix("image/") == true
+        }
+        let otherResources = resourceList.filter { resource in
+            !(resource.mimeType.hasPrefix("image/") == true)
         }
         
+        if !imageResources.isEmpty {
+            attachments.append(.images(imageResources.map { ImageInfo(url: $0.url, mimeType: $0.mimeType) }))
+        }
+        
+        attachments += otherResources.map { .attachment($0) }
         return attachments
-    }
-}
-
-struct MemoCardContent_Previews: PreviewProvider {
-    static var previews: some View {
-        MemoCardContent(memo: Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, creatorName: nil, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil), toggleTaskItem: nil)
-            .environmentObject(MemosViewModel())
-            .environmentObject(MemosManager())
     }
 }

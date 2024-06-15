@@ -6,28 +6,31 @@
 //
 
 import Foundation
+import Account
+import Models
+import Factory
 
-@MainActor
-class ResourceListViewModel: ObservableObject, ResourceManager {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    var memos: Memos { get throws { try memosManager.api } }
+@Observable class ResourceListViewModel: ResourceManager {
+    @ObservationIgnored
+    @Injected(\.accountManager) private var accountManager
+    @ObservationIgnored
+    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
 
-    @Published private(set) var resourceList: [Resource] = []
+    private(set) var resourceList: [Resource] = []
     
+    @MainActor
     func loadResources() async throws {
-        let response = try await memos.listResources()
+        let response = try await service.listResources()
         resourceList = response.filter({ resource in
-            resource.type.hasPrefix("image/")
+            resource.mimeType.hasPrefix("image/")
         })
     }
     
-    func deleteResource(id: Int) async throws {
-        _ = try await memos.deleteResource(id: id)
+    @MainActor
+    func deleteResource(remoteId: String) async throws {
+        _ = try await service.deleteResource(remoteId: remoteId)
         resourceList = resourceList.filter({ resource in
-            resource.id != id
+            resource.remoteId != remoteId
         })
     }
 }

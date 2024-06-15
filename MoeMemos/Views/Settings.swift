@@ -6,41 +6,18 @@
 //
 
 import SwiftUI
+import Models
+import Account
 
+@MainActor
 struct Settings: View {
-    @EnvironmentObject var userState: UserState
-    @StateObject var appInfo = AppInfo()
+    @Environment(AppInfo.self) var appInfo: AppInfo
+    @Environment(AccountViewModel.self) var accountViewModel
 
     var body: some View {
+        @Bindable var accountViewModel = accountViewModel
         List {
-            if let user = userState.currentUser {
-                VStack(alignment: .leading) {
-                    Text(user.displayName)
-                        .font(.title3)
-                    if user.displayName != user.displayEmail && !user.displayEmail.isEmpty {
-                        Text(user.displayEmail)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding([.top, .bottom], 10)
-            } else {
-                Button {
-                    userState.showingLogin = true
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("login.sign-in")
-                        Spacer()
-                    }
-                }
-            }
-            
-            if let status = userState.status {
-                Text("✍️memos v\(status.profile.version)")
-                    .foregroundStyle(.secondary)
-            }
-            
+            AccountSectionView()
             
             Section {
                 Link(destination: appInfo.website) {
@@ -60,29 +37,7 @@ struct Settings: View {
             } footer: {
                 Text(appInfo.registration)
             }
-            
-            if userState.currentUser != nil {
-                Button(role: .destructive) {
-                    Task {
-                        try await userState.logout()
-                        userState.showingLogin = true
-                    }
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("settings.sign-out")
-                        Spacer()
-                    }
-                }
-            }
         }
         .navigationTitle("settings")
-    }
-}
-
-struct Settings_Previews: PreviewProvider {
-    static var previews: some View {
-        Settings()
-            .environmentObject(UserState())
     }
 }

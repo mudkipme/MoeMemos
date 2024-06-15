@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 struct MoeMemosShareView: View {
     let alertType: AlertType
@@ -21,8 +22,6 @@ struct MoeMemosShareView: View {
     }
 }
 
-struct MoeMemosShareView_Previews: PreviewProvider {
-    static var previews: some View {
-        MoeMemosShareView()
-    }
+#Preview {
+    MoeMemosShareView()
 }

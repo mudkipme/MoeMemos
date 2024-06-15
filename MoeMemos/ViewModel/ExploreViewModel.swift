@@ -6,41 +6,46 @@
 //
 
 import Foundation
+import Account
+import Models
+import Factory
 
-@MainActor
-class ExploreViewModel: ObservableObject {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    var memos: Memos { get throws { try memosManager.api } }
+@Observable class ExploreViewModel {
+    @ObservationIgnored
+    @Injected(\.accountManager) private var accountManager
+    @ObservationIgnored
+    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
 
-    @Published private(set) var memoList: [Memo] = []
-    @Published private(set) var loading = false
-    @Published private(set) var hasMore = false
-    private var currentOffset = 0
+    private(set) var memoList: [Memo] = []
+    private(set) var loading = false
+    private(set) var hasMore = false
+    @ObservationIgnored private var nextPageToken: String? = nil
     
+    @MainActor
     func loadMemos() async throws {
         do {
             loading = true
-            let response = try await memos.listAllMemo(data: MemosListAllMemo.Input(pinned: nil, tag: nil, visibility: nil, limit: 20, offset: nil))
+            let (response, nextPageToken) = try await service.listWorkspaceMemos(pageSize: 20, pageToken: nil)
             memoList = response
             loading = false
             hasMore = response.count >= 20
+            self.nextPageToken = nextPageToken
         } catch {
             loading = false
             throw error
         }
     }
     
+    @MainActor
     func loadMoreMemos() async throws {
         guard !loading && hasMore else { return }
         do {
             loading = true
-            let response = try await memos.listAllMemo(data: MemosListAllMemo.Input(pinned: nil, tag: nil, visibility: nil, limit: 20, offset: memoList.count))
+            let (response, nextPageToken) = try await service.listWorkspaceMemos(pageSize: 20, pageToken: self.nextPageToken)
             memoList += response
             loading = false
             hasMore = response.count >= 20
+            self.nextPageToken = nextPageToken
         } catch {
             loading = false
             throw error

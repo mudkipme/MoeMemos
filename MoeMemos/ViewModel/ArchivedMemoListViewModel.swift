@@ -6,33 +6,37 @@
 //
 
 import Foundation
+import Account
+import Factory
+import Models
 
-@MainActor
-class ArchivedMemoListViewModel: ObservableObject {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    var memos: Memos { get throws { try memosManager.api } }
+@Observable class ArchivedMemoListViewModel {
+    @ObservationIgnored
+    @Injected(\.accountManager) private var accountManager
+    @ObservationIgnored
+    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
 
-    @Published private(set) var archivedMemoList: [Memo] = []
+    private(set) var archivedMemoList: [Memo] = []
     
+    @MainActor
     func loadArchivedMemos() async throws {
-        let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .archived, visibility: nil))
+        let response = try await service.listArchivedMemos()
         archivedMemoList = response
     }
     
-    func restoreMemo(id: Int) async throws {
-        _ = try await memos.updateMemo(data: MemosPatch.Input(id: id, createdTs: nil, rowStatus: .normal, content: nil, visibility: nil, resourceIdList: nil))
+    @MainActor
+    func restoreMemo(remoteId: String) async throws {
+        _ = try await service.restoreMemo(remoteId: remoteId)
         archivedMemoList = archivedMemoList.filter({ memo in
-            memo.id != id
+            memo.remoteId != remoteId
         })
     }
     
-    func deleteMemo(id: Int) async throws {
-        _ = try await memos.deleteMemo(id: id)
+    @MainActor
+    func deleteMemo(remoteId: String) async throws {
+        _ = try await service.deleteMemo(remoteId: remoteId)
         archivedMemoList = archivedMemoList.filter({ memo in
-            memo.id != id
+            memo.remoteId != remoteId
         })
     }
 }

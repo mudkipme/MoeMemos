@@ -10,39 +10,33 @@ import UIKit
 import PhotosUI
 import SwiftUI
 import Markdown
+import Account
+import Models
+import Factory
 
 @MainActor
-class MemoInputViewModel: ObservableObject, ResourceManager {
-    let memosManager: MemosManager
-    init(memosManager: MemosManager = .shared) {
-        self.memosManager = memosManager
-    }
-    var memos: Memos { get throws { try memosManager.api } }
+@Observable class MemoInputViewModel: ResourceManager {
+    @ObservationIgnored
+    @Injected(\.accountManager) private var accountManager
+    @ObservationIgnored
+    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
     
-    @Published var resourceList = [Resource]()
-    @Published var imageUploading = false
-    @Published var saving = false
-    @Published var visibility: MemosVisibility = .private
-
-    private var anyPhotos: Any?
-    @available(iOS 16, *) var photos: [PhotosPickerItem]? {
-        get { return anyPhotos as? [PhotosPickerItem] }
-        set {
-            objectWillChange.send()
-            anyPhotos = newValue
-        }
-    }
+    var resourceList = [Resource]()
+    var imageUploading = false
+    var saving = false
+    var visibility: MemoVisibility = .private
+    var photos: [PhotosPickerItem] = []
 
     func upload(image: UIImage) async throws {
-        guard let data = image.jpegData(compressionQuality: 0.8) else { throw MemosError.invalidParams }
-        let response = try await memos.uploadResource(imageData: data, filename: "\(UUID().uuidString).jpg", contentType: "image/jpeg")
+        guard let data = image.jpegData(compressionQuality: 0.8) else { throw MoeMemosError.invalidParams }
+        let response = try await service.createResource(filename: "\(UUID().uuidString).jpg", data: data, type: "image/jpeg", memoRemoteId: nil)
         resourceList.append(response)
     }
     
-    func deleteResource(id: Int) async throws {
-        _ = try await memos.deleteResource(id: id)
+    func deleteResource(remoteId: String) async throws {
+        _ = try await service.deleteResource(remoteId: remoteId)
         resourceList = resourceList.filter({ resource in
-            resource.id != id
+            resource.remoteId != remoteId
         })
     }
     

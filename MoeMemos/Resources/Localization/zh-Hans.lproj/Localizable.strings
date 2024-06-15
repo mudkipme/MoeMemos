@@ -39,10 +39,8 @@
 "input.save" = "记下";
 "input.visibility" = "MEMO 可见性";
 
-"login.open-id.hint" = "从 ✍️memos 设置中拷贝 Open ID。";
 "login.host" = "服务器地址";
 "login.method" = "登录方式";
-"login.open-id" = "Open ID";
 "login.access-token" = "Access Token";
 "login.access-token.hint" = "从 ✍️memos 设置中创建 Access Token。";
 "login.password" = "密码";
@@ -67,3 +65,12 @@
 "share.memo-saved" = "已保存 MEMO";
 
 "explore" = "探索";
+
+// Account
+"account.local-user" = "Local user";
+"account.add-account" = "Add Account";
+"account.accounts" = "Accounts";
+"account.add-memos-account" = "Add a Memos Account";
+"account.memos-account-description" = "Sync with Your Memos Server";
+"account.account-detail" = "Account Detail";
+"account.switch-account" = "Switch Account";

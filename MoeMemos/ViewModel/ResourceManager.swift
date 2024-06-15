@@ -8,5 +8,6 @@
 import Foundation
 
 protocol ResourceManager {
-    func deleteResource(id: Int) async throws
+    @MainActor
+    func deleteResource(remoteId: String) async throws
 }

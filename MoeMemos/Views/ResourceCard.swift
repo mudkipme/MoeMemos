@@ -6,7 +6,10 @@
 //
 
 import SwiftUI
+import Models
+import Account
 
+@MainActor
 struct ResourceCard: View {
     let resource: Resource
     let resourceManager: ResourceManager
@@ -16,8 +19,8 @@ struct ResourceCard: View {
         self.resourceManager = resourceManager
     }
     
-    @EnvironmentObject private var memosViewModel: MemosViewModel
-    @EnvironmentObject private var memosManager: MemosManager
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
+    @Environment(AccountManager.self) private var memosManager: AccountManager
     @State private var imagePreviewURL: URL?
     @State private var downloadedURL: URL?
     
@@ -44,8 +47,8 @@ struct ResourceCard: View {
             }
             .task {
                 do {
-                    if downloadedURL == nil, let memos = memosManager.memos {
-                        downloadedURL = try await memos.download(url: memos.url(for: resource))
+                    if downloadedURL == nil, let memos = memosManager.currentService {
+                        downloadedURL = try await memos.download(url: resource.url, mimeType: resource.mimeType)
                     }
                 } catch {}
             }
@@ -60,18 +63,11 @@ struct ResourceCard: View {
     func menu(for resource: Resource) -> some View {
         Button(role: .destructive, action: {
             Task {
-                try await resourceManager.deleteResource(id: resource.id)
+                guard let remoteId = resource.remoteId else { return }
+                try await resourceManager.deleteResource(remoteId: remoteId)
             }
         }, label: {
             Label("Delete", systemImage: "trash")
         })
-    }
-}
-
-struct ResourceCard_Previews: PreviewProvider {
-    static var previews: some View {
-        ResourceCard(resource: Resource(id: 1, createdTs: .now, creatorId: 0, filename: "", size: 0, type: "image/jpeg", updatedTs: .now, externalLink: nil, publicId: nil, name: "", uid: ""), resourceManager: ResourceListViewModel())
-            .environmentObject(MemosViewModel())
-            .environmentObject(MemosManager())
     }
 }

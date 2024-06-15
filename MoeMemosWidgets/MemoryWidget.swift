@@ -9,18 +9,12 @@ import WidgetKit
 import SwiftUI
 import Intents
 import KeychainSwift
+import Models
+import Account
 
 let sampleMemo = Memo(
-    id: 0,
-    createdTs: Date(),
-    creatorId: 0,
-    creatorName: nil,
     content: "Make your wonderful dream a reality, and it will become your truth.",
-    pinned: false,
-    rowStatus: .normal,
-    updatedTs: Date(),
-    visibility: .private,
-    resourceList: nil
+    createdAt: .now
 )
 
 extension MemoryUpdatePeriod {
@@ -38,7 +32,6 @@ extension MemoryUpdatePeriod {
 }
 
 struct MemoryProvider: IntentTimelineProvider {
-    
     func placeholder(in context: Context) -> MemoryEntry {
         MemoryEntry(date: Date(), configuration: MemoryWidgetConfigurationIntent(), memo: sampleMemo)
     }
@@ -50,23 +43,12 @@ struct MemoryProvider: IntentTimelineProvider {
         }
     }
     
+    @MainActor
     func getMemos(_ frequency: MemoryUpdatePeriod) async throws -> [Memo]? {
-        guard let host = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosHostKey) else {
-            return nil
-        }
-        guard let hostURL = URL(string: host) else {
-            return nil
-        }
+        let accountManager = AccountManager()
+        guard let memos = accountManager.currentService else { return nil }
         
-        let openId = UserDefaults(suiteName: groupContainerIdentifier)?.string(forKey: memosOpenIdKey)
-        
-        let keychain = KeychainSwift()
-        keychain.accessGroup = keychainAccessGroupName
-        let accessToken = keychain.get(memosAccessTokenKey)
-        
-        let memos = try await Memos.create(host: hostURL, accessToken: accessToken, openId: openId)
-        
-        let response = try await memos.listMemos(data: MemosListMemo.Input(creatorId: nil, rowStatus: .normal, visibility: nil))
+        let response = try await memos.listMemos()
         return [Memo](response.shuffled().prefix(frequency.memosPerDay))
     }
 
@@ -120,7 +102,7 @@ struct MemoryEntryView : View {
     var dateString: String {
         let formatter = RelativeDateTimeFormatter()
         formatter.dateTimeStyle = .named
-        return formatter.localizedString(for: entry.memo.createdTs, relativeTo: .now)
+        return formatter.localizedString(for: entry.memo.createdAt, relativeTo: .now)
     }
     
     var attributedString: AttributedString {

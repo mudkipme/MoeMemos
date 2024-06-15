@@ -7,21 +7,23 @@
 
 import SwiftUI
 import MarkdownUI
+import Account
+import Factory
 
 struct LazyImageProvider: ImageProvider {
     let aspectRatio: CGFloat
+    @Injected(\.accountManager) private var accountManager
 
-    @MainActor
     func makeImage(url: URL?) -> some View {
         if let url = makeURL(url) {
-            MemoCardImageView(images: [url])
+            MemoCardImageView(images: [ImageInfo(url: url, mimeType: nil)])
         }
     }
     
-    @MainActor
     func makeURL(_ url: URL?) -> URL? {
         guard let url = url else { return nil }
-        if url.host == nil, let hostURL = MemosManager.shared.hostURL {
+        
+        if url.host() == nil, let account = accountManager.currentAccount, case let .memosV0(host: host, id: _, accessToken: _) = account, let hostURL = URL(string: host) {
             return hostURL.appendingPathComponent(url.path)
         }
         return url

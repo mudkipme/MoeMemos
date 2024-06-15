@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Models
 
 struct DailyUsageStat: Identifiable {
     let date: Date
@@ -29,7 +29,7 @@ struct DailyUsageStat: Identifiable {
         var countDict = [String: Int]()
         
         for memo in memoList {
-            let key = memo.createdTs.formatted(date: .numeric, time: .omitted)
+            let key = memo.createdAt.formatted(date: .numeric, time: .omitted)
             countDict[key] = (countDict[key] ?? 0) + 1
         }
         

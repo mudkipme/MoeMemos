@@ -39,10 +39,8 @@
 "input.save" = "Speichern";
 "input.visibility" = "Memo Sichtbarkeit";
 
-"login.open-id.hint" = "Kopiere “Open ID” aus den ✍️memos Einstellungen.";
 "login.host" = "Host";
 "login.method" = "Anmeldemethode";
-"login.open-id" = "Open ID";
 "login.access-token" = "Access Token";
 "login.access-token.hint" = "Create an Access Token from Setting in ✍️memos.";
 "login.password" = "Passwort";
@@ -67,3 +65,12 @@
 "share.memo-saved" = "Memo gespeichert.";
 
 "explore" = "Durchsuchen";
+
+// Account
+"account.local-user" = "Local user";
+"account.add-account" = "Add Account";
+"account.accounts" = "Accounts";
+"account.add-memos-account" = "Add a Memos Account";
+"account.memos-account-description" = "Sync with Your Memos Server";
+"account.account-detail" = "Account Detail";
+"account.switch-account" = "Switch Account";

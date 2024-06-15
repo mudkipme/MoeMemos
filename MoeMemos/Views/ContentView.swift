@@ -6,87 +6,58 @@
 //
 
 import SwiftUI
-import KeychainSwift
+import Models
+import SwiftData
+import Account
+import Factory
+import Env
 
+@MainActor
 struct ContentView: View {
-    @AppStorage(memosHostKey, store: UserDefaults(suiteName: groupContainerIdentifier)) private var memosHost = ""
-    @AppStorage(memosOpenIdKey, store: UserDefaults(suiteName: groupContainerIdentifier)) private var memosOpenId: String?
-    @State private var keychain = {
-        let keychain = KeychainSwift()
-        keychain.accessGroup = keychainAccessGroupName
-        return keychain
-    }()
-
-    @EnvironmentObject private var userState: UserState
+    @Environment(AccountViewModel.self) private var accountViewModel: AccountViewModel
+    @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Injected(\.appInfo) private var appInfo
     @State private var selection: Route? = .memos
-    @StateObject private var memosViewModel = MemosViewModel()
+    @State private var memosViewModel = MemosViewModel()
     @Environment(\.scenePhase) var scenePhase
-
-    
-    @ViewBuilder
-    private func navigation() -> some View {
-        if #available(iOS 16, *) {
-            Navigation(selection: $selection)
-        } else {
-            NavigationView {
-                Sidebar(selection: $selection)
-            }
-        }
-    }
     
     var body: some View {
-        navigation()
+        @Bindable var accountViewModel = accountViewModel
+        
+        Navigation(selection: $selection)
             .tint(.green)
+            .environment(memosViewModel)
+            .onChange(of: scenePhase, initial: true, { _, newValue in
+                if newValue == .active {
+                    Task {
+                        await loadCurrentUser()
+                    }
+                }
+            })
             .task {
                 await loadCurrentUser()
             }
-            .sheet(isPresented: $userState.showingLogin) {
-                Login()
+            .task(id: accountManager.currentAccount) {
+                try? await memosViewModel.loadMemos()
+                try? await memosViewModel.loadTags()
             }
-            .environmentObject(memosViewModel)
-            .onChange(of: scenePhase) { newValue in
-                if newValue == .active && userState.currentUser != nil {
-                    Task {
-                        do {
-                            try await userState.loadCurrentUser()
-                        } catch MemosError.invalidStatusCode(let statusCode, _) {
-                            if statusCode == 401 {
-                                userState.showingLogin = true
-                            }
-                        }
-                    }
-                }
+            .modelContext(appInfo.modelContext)
+            .sheet(isPresented: $accountViewModel.showingAddAccount) {
+                AddAccountView()
+                    .tint(.green)
             }
     }
     
-    func loadCurrentUser() async {
+    private func loadCurrentUser() async {
         do {
-            if let legacyMemosHost = UserDefaults.standard.string(forKey: memosHostKey), !legacyMemosHost.isEmpty {
-                memosHost = legacyMemosHost
-                UserDefaults.standard.removeObject(forKey: memosHostKey)
+            if accountManager.currentAccount == nil {
+                throw MoeMemosError.notLogin
             }
-            
-            let accessToken = keychain.get(memosAccessTokenKey)
-            try await userState.reset(memosHost: memosHost, accessToken: accessToken, openId: memosOpenId)
-            try await userState.loadCurrentUser()
-        } catch MemosError.notLogin {
-            userState.showingLogin = true
-            return
-        } catch MemosError.invalidStatusCode(let statusCode, let message) {
-            if statusCode == 401 {
-                userState.showingLogin = true
-                return
-            }
-            print("status: \(statusCode), message: \(message ?? "")")
+            try await accountViewModel.reloadUsers()
+        } catch MoeMemosError.notLogin {
+            accountViewModel.showingAddAccount = true
         } catch {
             print(error)
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .environmentObject(UserState())
     }
 }

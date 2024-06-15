@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		190755992B66512200451E6D /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 190755982B66512200451E6D /* Markdown */; };
 		1907559A2B66514700451E6D /* TagVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D274E29C8D85700BDE4A2 /* TagVisitor.swift */; };
+		19113B8D2C1D97A200365C05 /* Env in Frameworks */ = {isa = PBXBuildFile; productRef = 19113B8C2C1D97A200365C05 /* Env */; };
 		1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1911568929802F200058F18B /* QuickLookRepresentable.swift */; };
 		191339AF291D7288001F2B2E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 191339AE291D7288001F2B2E /* WidgetKit.framework */; };
 		191339B1291D7288001F2B2E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 191339B0291D7288001F2B2E /* SwiftUI.framework */; };
@@ -16,44 +17,29 @@
 		191339B6291D7288001F2B2E /* MemosGraphWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191339B5291D7288001F2B2E /* MemosGraphWidget.swift */; };
 		191339B9291D7289001F2B2E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 191339B8291D7289001F2B2E /* Assets.xcassets */; };
 		191339BF291D7289001F2B2E /* MoeMemosWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		191339C4291D763A001F2B2E /* MemosManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF2229115A2800C998F5 /* MemosManager.swift */; };
 		191339C5291D765B001F2B2E /* Memo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFA28C3E9B2000C5207 /* Memo.swift */; };
-		191339C6291D7660001F2B2E /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
-		191339C7291D7663001F2B2E /* MemosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92728C61488002651E0 /* MemosAPI.swift */; };
-		191339C8291D766A001F2B2E /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92028C5CFBB002651E0 /* User.swift */; };
-		191339C9291D7672001F2B2E /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89C28CCD38100FF7EB6 /* Resource.swift */; };
 		191339CA291D7675001F2B2E /* Usage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657C28C4761100C39994 /* Usage.swift */; };
-		191339CB291D7699001F2B2E /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92A28C619D9002651E0 /* HTTP.swift */; };
-		191339CC291D769C001F2B2E /* FormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A028CD12CD00FF7EB6 /* FormData.swift */; };
-		191339CD291D76BB001F2B2E /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE93128C652F7002651E0 /* Error.swift */; };
 		191339CE291D76BD001F2B2E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1973B7D62916308D003C3710 /* Constants.swift */; };
 		191339CF291D7748001F2B2E /* Heatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1995E9CD28C46DC9004F2EDB /* Heatmap.swift */; };
 		191339D0291D774B001F2B2E /* HeatmapStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D7028C70A3800784EF5 /* HeatmapStat.swift */; };
 		191339D1291D7765001F2B2E /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657A28C474BA00C39994 /* Color.swift */; };
 		191339D2291D7785001F2B2E /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6A28C704AC00784EF5 /* Date.swift */; };
 		191339DC291D8F15001F2B2E /* MemoryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191339DB291D8F15001F2B2E /* MemoryWidget.swift */; };
+		191489F02B00832C00577BD1 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 191489EF2B00832C00577BD1 /* Account */; };
 		1919FBE329CF6BDD00FEF570 /* ArchivedMemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE229CF6BDD00FEF570 /* ArchivedMemoCard.swift */; };
 		1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE429CF738300FEF570 /* ExploreViewModel.swift */; };
 		1919FBE729CF77C900FEF570 /* ExploreMemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */; };
 		1919FBE929CF78BE00FEF570 /* Explore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE829CF78BE00FEF570 /* Explore.swift */; };
 		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
-		192DF0F528C7B71D0077E785 /* LegacyShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */; };
 		1934C77C2921670600A169EC /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1934C77B2921670600A169EC /* Attachment.swift */; };
 		193938DC29CF682D0027939F /* MemoCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193938DB29CF682D0027939F /* MemoCardContent.swift */; };
 		193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89A28CCD34A00FF7EB6 /* Resources.swift */; };
-		193AA89D28CCD38100FF7EB6 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89C28CCD38100FF7EB6 /* Resource.swift */; };
-		193AA89F28CD080000FF7EB6 /* LegacyPhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */; };
-		193AA8A128CD12CD00FF7EB6 /* FormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A028CD12CD00FF7EB6 /* FormData.swift */; };
 		193AA8A728CD9ED700FF7EB6 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A628CD9ED700FF7EB6 /* URL.swift */; };
 		193AA8A928CDB27F00FF7EB6 /* ResourceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A828CDB27F00FF7EB6 /* ResourceCard.swift */; };
 		193D274D29C8D1EB00BDE4A2 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 193D274C29C8D1EB00BDE4A2 /* MarkdownUI */; };
 		193D274F29C8D85700BDE4A2 /* TagVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D274E29C8D85700BDE4A2 /* TagVisitor.swift */; };
-		193DE92128C5CFBB002651E0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92028C5CFBB002651E0 /* User.swift */; };
 		193DE92328C5E267002651E0 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92228C5E267002651E0 /* Settings.swift */; };
-		193DE92828C61488002651E0 /* MemosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92728C61488002651E0 /* MemosAPI.swift */; };
-		193DE92B28C619D9002651E0 /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92A28C619D9002651E0 /* HTTP.swift */; };
 		193DE93028C65104002651E0 /* MemosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92F28C65104002651E0 /* MemosViewModel.swift */; };
-		193DE93228C652F7002651E0 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE93128C652F7002651E0 /* Error.swift */; };
 		193F04E229CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 193F04E529CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition */; };
 		193F04E329CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 193F04E529CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition */; };
 		194502F52A36341D00A70A03 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194502F42A36341D00A70A03 /* TextView.swift */; };
@@ -62,42 +48,29 @@
 		194B273328C3973400A48675 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B273228C3973400A48675 /* ContentView.swift */; };
 		194B273528C3973600A48675 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 194B273428C3973600A48675 /* Assets.xcassets */; };
 		194B273828C3973600A48675 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 194B273728C3973600A48675 /* Preview Assets.xcassets */; };
-		194B274228C3973600A48675 /* MoeMemosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274128C3973600A48675 /* MoeMemosTests.swift */; };
-		194B274C28C3973600A48675 /* MoeMemosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274B28C3973600A48675 /* MoeMemosUITests.swift */; };
-		194B274E28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */; };
 		194C4C372BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */; };
 		194C4C382BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */; };
 		194C4C392BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */; };
-		195E5AD328C84E4F00CD4674 /* AlertToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5AD228C84E4F00CD4674 /* AlertToast.swift */; };
 		195E5D6B28C704AC00784EF5 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6A28C704AC00784EF5 /* Date.swift */; };
-		195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
 		195E5D7128C70A3800784EF5 /* HeatmapStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D7028C70A3800784EF5 /* HeatmapStat.swift */; };
-		1968555F2B00719A009D7DC5 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1968555E2B00719A009D7DC5 /* AppInfo.swift */; };
+		196C7DC02B087A0000EDD8B6 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 196C7DBF2B087A0000EDD8B6 /* Account */; };
+		196C7DC22B088A8800EDD8B6 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 196C7DC12B088A8800EDD8B6 /* Account */; };
 		19709CFC297F2C1900F6A144 /* MemoInputResourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19709CFB297F2C1900F6A144 /* MemoInputResourceView.swift */; };
 		1973B7D72916308D003C3710 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1973B7D62916308D003C3710 /* Constants.swift */; };
 		197A4D3329599C300027427E /* MemoCardImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197A4D3229599C300027427E /* MemoCardImageView.swift */; };
-		197C21A6293A2DCC00110EE5 /* AlertToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5AD228C84E4F00CD4674 /* AlertToast.swift */; };
+		197BEF472B00998F0025C17B /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 197BEF462B00998F0025C17B /* Models */; };
 		197D9D47292D4B160033AF33 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197D9D46292D4B160033AF33 /* ImagePicker.swift */; };
+		1990357E2C14A55B0011B985 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 1990357D2C14A55B0011B985 /* Factory */; };
 		1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1995E9CD28C46DC9004F2EDB /* Heatmap.swift */; };
-		19996E6029118AF6001E3583 /* NavLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19996E5F29118AF6001E3583 /* NavLink.swift */; };
 		199A657B28C474BA00C39994 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657A28C474BA00C39994 /* Color.swift */; };
 		199A657D28C4761100C39994 /* Usage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657C28C4761100C39994 /* Usage.swift */; };
 		199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657E28C47D7C00C39994 /* Sidebar.swift */; };
-		199A658128C48A6200C39994 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A658028C48A6200C39994 /* Login.swift */; };
-		19A547822986E3670000E71A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A547812986E3670000E71A /* Status.swift */; };
-		19A547832986E4C10000E71A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A547812986E3670000E71A /* Status.swift */; };
-		19A547842986E4C20000E71A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A547812986E3670000E71A /* Status.swift */; };
+		199C6CC62B009F19005C6921 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 199C6CC52B009F19005C6921 /* Models */; };
+		199C6CC82B009F2F005C6921 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 199C6CC72B009F2F005C6921 /* Models */; };
 		19B3B79529CEB9C5007E2997 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.strings */; };
 		19B3B79629CEBCC0007E2997 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.strings */; };
-		19B5CFFA2939BB9700140294 /* Memos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6C28C7051F00784EF5 /* Memos.swift */; };
-		19B5CFFB2939BB9B00140294 /* MemosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92728C61488002651E0 /* MemosAPI.swift */; };
-		19B5CFFC2939BBCA00140294 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE93128C652F7002651E0 /* Error.swift */; };
 		19B5CFFD2939BC1300140294 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1973B7D62916308D003C3710 /* Constants.swift */; };
-		19B5CFFE2939BC2300140294 /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92A28C619D9002651E0 /* HTTP.swift */; };
 		19B5CFFF2939BC2F00140294 /* Memo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFA28C3E9B2000C5207 /* Memo.swift */; };
-		19B5D0002939BC3200140294 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92028C5CFBB002651E0 /* User.swift */; };
-		19B5D0012939BC3D00140294 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89C28CCD38100FF7EB6 /* Resource.swift */; };
-		19B5D0022939BC4800140294 /* FormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA8A028CD12CD00FF7EB6 /* FormData.swift */; };
 		19C569A42912493A00745F9D /* ArchivedMemoListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */; };
 		19C569AA29125BB200745F9D /* ResourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569A929125BB200745F9D /* ResourceManager.swift */; };
 		19C569AC29125C0700745F9D /* ResourceListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569AB29125C0700745F9D /* ResourceListViewModel.swift */; };
@@ -110,8 +83,6 @@
 		19E29A7D2939A94400BE9C32 /* NSItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A7C2939A94400BE9C32 /* NSItemProvider.swift */; };
 		19E29A7E2939AC5000BE9C32 /* NSItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A7C2939A94400BE9C32 /* NSItemProvider.swift */; };
 		19E6EF1F29113EC900C998F5 /* MemoInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF1E29113EC900C998F5 /* MemoInputViewModel.swift */; };
-		19E6EF2129113FDA00C998F5 /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF2029113FDA00C998F5 /* UserState.swift */; };
-		19E6EF2329115A2800C998F5 /* MemosManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E6EF2229115A2800C998F5 /* MemosManager.swift */; };
 		19E866612AB84EBA00E33521 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 19E866602AB84EBA00E33521 /* KeychainSwift */; };
 		19E866632AB851E200E33521 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 19E866622AB851E200E33521 /* KeychainSwift */; };
 		19E866652AB851E800E33521 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 19E866642AB851E800E33521 /* KeychainSwift */; };
@@ -132,20 +103,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 191339AB291D7288001F2B2E;
 			remoteInfo = MoeMemosWidgetsExtension;
-		};
-		194B273E28C3973600A48675 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 194B272528C3973400A48675 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 194B272C28C3973400A48675;
-			remoteInfo = MoeMemos;
-		};
-		194B274828C3973600A48675 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 194B272528C3973400A48675 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 194B272C28C3973400A48675;
-			remoteInfo = MoeMemos;
 		};
 		19E29A702938FBCD00BE9C32 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -175,6 +132,7 @@
 		190322DC2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MainInterface.strings; sourceTree = "<group>"; };
 		190322DD2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
 		190322DE2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		19113B8B2C1D95B700365C05 /* Env */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Env; path = Packages/Env; sourceTree = "<group>"; };
 		1911568929802F200058F18B /* QuickLookRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLookRepresentable.swift; sourceTree = "<group>"; };
 		191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MoeMemosWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		191339AE291D7288001F2B2E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -185,6 +143,8 @@
 		191339BA291D7289001F2B2E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		191339D3291D7F13001F2B2E /* MoeMemosWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MoeMemosWidgetsExtension.entitlements; sourceTree = "<group>"; };
 		191339DB291D8F15001F2B2E /* MemoryWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemoryWidget.swift; sourceTree = "<group>"; };
+		191489EC2B0082C700577BD1 /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Models; path = Packages/Models; sourceTree = "<group>"; };
+		191489F22B00837D00577BD1 /* Account */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Account; path = Packages/Account; sourceTree = "<group>"; };
 		1919FBE229CF6BDD00FEF570 /* ArchivedMemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemoCard.swift; sourceTree = "<group>"; };
 		1919FBE429CF738300FEF570 /* ExploreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewModel.swift; sourceTree = "<group>"; };
 		1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreMemoCard.swift; sourceTree = "<group>"; };
@@ -194,22 +154,14 @@
 		192383F32B6659DC00D2C9DA /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
 		192383F52B6659DD00D2C9DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
-		192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyShareSheet.swift; sourceTree = "<group>"; };
 		1934C77B2921670600A169EC /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		193938DB29CF682D0027939F /* MemoCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCardContent.swift; sourceTree = "<group>"; };
 		193AA89A28CCD34A00FF7EB6 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
-		193AA89C28CCD38100FF7EB6 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
-		193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyPhotoPicker.swift; sourceTree = "<group>"; };
-		193AA8A028CD12CD00FF7EB6 /* FormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormData.swift; sourceTree = "<group>"; };
 		193AA8A628CD9ED700FF7EB6 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		193AA8A828CDB27F00FF7EB6 /* ResourceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceCard.swift; sourceTree = "<group>"; };
 		193D274E29C8D85700BDE4A2 /* TagVisitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagVisitor.swift; sourceTree = "<group>"; };
-		193DE92028C5CFBB002651E0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		193DE92228C5E267002651E0 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
-		193DE92728C61488002651E0 /* MemosAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosAPI.swift; sourceTree = "<group>"; };
-		193DE92A28C619D9002651E0 /* HTTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTP.swift; sourceTree = "<group>"; };
 		193DE92F28C65104002651E0 /* MemosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosViewModel.swift; sourceTree = "<group>"; };
-		193DE93128C652F7002651E0 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		193F04E129CCBA320010E3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		193F04E429CCBA9C0010E3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/MoeMemosWidgets.intentdefinition; sourceTree = "<group>"; };
 		193F04E729CCBAB40010E3BF /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MoeMemosWidgets.strings"; sourceTree = "<group>"; };
@@ -225,30 +177,21 @@
 		194B273228C3973400A48675 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		194B273428C3973600A48675 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		194B273728C3973600A48675 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		194B273D28C3973600A48675 /* MoeMemosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoeMemosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		194B274128C3973600A48675 /* MoeMemosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosTests.swift; sourceTree = "<group>"; };
-		194B274728C3973600A48675 /* MoeMemosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoeMemosUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		194B274B28C3973600A48675 /* MoeMemosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosUITests.swift; sourceTree = "<group>"; };
-		194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19558A442912CEA60070CAF9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		195E5AD228C84E4F00CD4674 /* AlertToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertToast.swift; sourceTree = "<group>"; };
 		195E5D6A28C704AC00784EF5 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
-		195E5D6C28C7051F00784EF5 /* Memos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memos.swift; sourceTree = "<group>"; };
 		195E5D7028C70A3800784EF5 /* HeatmapStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapStat.swift; sourceTree = "<group>"; };
-		1968555E2B00719A009D7DC5 /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
 		19709CFB297F2C1900F6A144 /* MemoInputResourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInputResourceView.swift; sourceTree = "<group>"; };
 		1973B7D529160F48003C3710 /* MoeMemos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MoeMemos.entitlements; sourceTree = "<group>"; };
 		1973B7D62916308D003C3710 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		197A4D3229599C300027427E /* MemoCardImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCardImageView.swift; sourceTree = "<group>"; };
 		197D9D46292D4B160033AF33 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		1995E9CD28C46DC9004F2EDB /* Heatmap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Heatmap.swift; sourceTree = "<group>"; };
-		19996E5F29118AF6001E3583 /* NavLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavLink.swift; sourceTree = "<group>"; };
 		199A657A28C474BA00C39994 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		199A657C28C4761100C39994 /* Usage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Usage.swift; sourceTree = "<group>"; };
 		199A657E28C47D7C00C39994 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
-		199A658028C48A6200C39994 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
-		19A547812986E3670000E71A /* Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
+		199C6CC92B00A7DB005C6921 /* Services */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Services; path = Packages/Services; sourceTree = "<group>"; };
+		19BB8C702B83207B007BFEBF /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = DesignSystem; path = Packages/DesignSystem; sourceTree = "<group>"; };
 		19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemoListViewModel.swift; sourceTree = "<group>"; };
 		19C569A929125BB200745F9D /* ResourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceManager.swift; sourceTree = "<group>"; };
 		19C569AB29125C0700745F9D /* ResourceListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceListViewModel.swift; sourceTree = "<group>"; };
@@ -261,8 +204,6 @@
 		19E29A772938FCE000BE9C32 /* MoeMemosShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosShareView.swift; sourceTree = "<group>"; };
 		19E29A7C2939A94400BE9C32 /* NSItemProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSItemProvider.swift; sourceTree = "<group>"; };
 		19E6EF1E29113EC900C998F5 /* MemoInputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInputViewModel.swift; sourceTree = "<group>"; };
-		19E6EF2029113FDA00C998F5 /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; };
-		19E6EF2229115A2800C998F5 /* MemosManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosManager.swift; sourceTree = "<group>"; };
 		19F31BF628C3E26D000C5207 /* MemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosList.swift; sourceTree = "<group>"; };
 		19F31BFA28C3E9B2000C5207 /* Memo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memo.swift; sourceTree = "<group>"; };
 		19F31BFC28C3ED11000C5207 /* MemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCard.swift; sourceTree = "<group>"; };
@@ -278,7 +219,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				19E866632AB851E200E33521 /* KeychainSwift in Frameworks */,
+				196C7DC22B088A8800EDD8B6 /* Account in Frameworks */,
 				191339B1291D7288001F2B2E /* SwiftUI.framework in Frameworks */,
+				199C6CC82B009F2F005C6921 /* Models in Frameworks */,
 				191339AF291D7288001F2B2E /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -287,23 +230,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				197BEF472B00998F0025C17B /* Models in Frameworks */,
+				191489F02B00832C00577BD1 /* Account in Frameworks */,
 				19E866612AB84EBA00E33521 /* KeychainSwift in Frameworks */,
+				1990357E2C14A55B0011B985 /* Factory in Frameworks */,
+				19113B8D2C1D97A200365C05 /* Env in Frameworks */,
 				193D274D29C8D1EB00BDE4A2 /* MarkdownUI in Frameworks */,
 				31EE785F29B9E6F4005F62D0 /* Highlightr in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		194B273A28C3973600A48675 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		194B274428C3973600A48675 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,6 +244,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				196C7DC02B087A0000EDD8B6 /* Account in Frameworks */,
+				199C6CC62B009F19005C6921 /* Models in Frameworks */,
 				19E866652AB851E800E33521 /* KeychainSwift in Frameworks */,
 				190755992B66512200451E6D /* Markdown in Frameworks */,
 			);
@@ -342,29 +277,12 @@
 			path = MoeMemosWidgets;
 			sourceTree = "<group>";
 		};
-		193DE92628C61464002651E0 /* API */ = {
-			isa = PBXGroup;
-			children = (
-				195E5D6C28C7051F00784EF5 /* Memos.swift */,
-				193DE92728C61488002651E0 /* MemosAPI.swift */,
-			);
-			path = API;
-			sourceTree = "<group>";
-		};
 		193DE92928C619CE002651E0 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				195E5AD228C84E4F00CD4674 /* AlertToast.swift */,
-				1968555E2B00719A009D7DC5 /* AppInfo.swift */,
 				1973B7D62916308D003C3710 /* Constants.swift */,
 				195E5D6A28C704AC00784EF5 /* Date.swift */,
-				193DE93128C652F7002651E0 /* Error.swift */,
-				193AA8A028CD12CD00FF7EB6 /* FormData.swift */,
-				193DE92A28C619D9002651E0 /* HTTP.swift */,
 				197D9D46292D4B160033AF33 /* ImagePicker.swift */,
-				193AA89E28CD080000FF7EB6 /* LegacyPhotoPicker.swift */,
-				192DF0F428C7B71D0077E785 /* LegacyShareSheet.swift */,
-				19E6EF2229115A2800C998F5 /* MemosManager.swift */,
 				1911568929802F200058F18B /* QuickLookRepresentable.swift */,
 				19FC1C7B290DA47C0078A7F2 /* Route.swift */,
 				193D274E29C8D85700BDE4A2 /* TagVisitor.swift */,
@@ -382,7 +300,6 @@
 				193DE92F28C65104002651E0 /* MemosViewModel.swift */,
 				19C569AB29125C0700745F9D /* ResourceListViewModel.swift */,
 				19C569A929125BB200745F9D /* ResourceManager.swift */,
-				19E6EF2029113FDA00C998F5 /* UserState.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -406,12 +323,15 @@
 		194B272428C3973400A48675 = {
 			isa = PBXGroup;
 			children = (
+				19113B8B2C1D95B700365C05 /* Env */,
+				191489F22B00837D00577BD1 /* Account */,
+				19BB8C702B83207B007BFEBF /* DesignSystem */,
+				191489EC2B0082C700577BD1 /* Models */,
+				199C6CC92B00A7DB005C6921 /* Services */,
 				194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */,
 				191339AD291D7288001F2B2E /* Frameworks */,
 				194B272F28C3973400A48675 /* MoeMemos */,
 				19E29A692938FBCD00BE9C32 /* MoeMemosShareExtension */,
-				194B274028C3973600A48675 /* MoeMemosTests */,
-				194B274A28C3973600A48675 /* MoeMemosUITests */,
 				191339B2291D7288001F2B2E /* MoeMemosWidgets */,
 				194B272E28C3973400A48675 /* Products */,
 			);
@@ -421,8 +341,6 @@
 			isa = PBXGroup;
 			children = (
 				194B272D28C3973400A48675 /* MoeMemos.app */,
-				194B273D28C3973600A48675 /* MoeMemosTests.xctest */,
-				194B274728C3973600A48675 /* MoeMemosUITests.xctest */,
 				191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */,
 				19E29A682938FBCD00BE9C32 /* MoeMemosShareExtension.appex */,
 			);
@@ -432,8 +350,6 @@
 		194B272F28C3973400A48675 /* MoeMemos */ = {
 			isa = PBXGroup;
 			children = (
-				1948CCA92996B29500AB1986 /* Resources */,
-				193DE92628C61464002651E0 /* API */,
 				194B273428C3973600A48675 /* Assets.xcassets */,
 				199A657928C4749800C39994 /* Extensions */,
 				193DE92928C619CE002651E0 /* Helpers */,
@@ -442,6 +358,7 @@
 				1973B7D529160F48003C3710 /* MoeMemos.entitlements */,
 				194B273028C3973400A48675 /* MoeMemosApp.swift */,
 				194B273628C3973600A48675 /* Preview Content */,
+				1948CCA92996B29500AB1986 /* Resources */,
 				193DE92E28C650F8002651E0 /* ViewModel */,
 				19F31BF828C3E286000C5207 /* Views */,
 			);
@@ -454,23 +371,6 @@
 				194B273728C3973600A48675 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		194B274028C3973600A48675 /* MoeMemosTests */ = {
-			isa = PBXGroup;
-			children = (
-				194B274128C3973600A48675 /* MoeMemosTests.swift */,
-			);
-			path = MoeMemosTests;
-			sourceTree = "<group>";
-		};
-		194B274A28C3973600A48675 /* MoeMemosUITests */ = {
-			isa = PBXGroup;
-			children = (
-				194B274B28C3973600A48675 /* MoeMemosUITests.swift */,
-				194B274D28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift */,
-			);
-			path = MoeMemosUITests;
 			sourceTree = "<group>";
 		};
 		199A657928C4749800C39994 /* Extensions */ = {
@@ -508,7 +408,6 @@
 				195E5D7028C70A3800784EF5 /* HeatmapStat.swift */,
 				31EE786029B9F3A2005F62D0 /* Highlighter.swift */,
 				31EE785529B83D1B005F62D0 /* LazyImageProvider.swift */,
-				199A658028C48A6200C39994 /* Login.swift */,
 				19F31BFC28C3ED11000C5207 /* MemoCard.swift */,
 				193938DB29CF682D0027939F /* MemoCardContent.swift */,
 				197A4D3229599C300027427E /* MemoCardImageView.swift */,
@@ -516,7 +415,6 @@
 				19709CFB297F2C1900F6A144 /* MemoInputResourceView.swift */,
 				19F31BF628C3E26D000C5207 /* MemosList.swift */,
 				19FC1C7D290DA6E90078A7F2 /* Navigation.swift */,
-				19996E5F29118AF6001E3583 /* NavLink.swift */,
 				193AA8A828CDB27F00FF7EB6 /* ResourceCard.swift */,
 				193AA89A28CCD34A00FF7EB6 /* Resources.swift */,
 				193DE92228C5E267002651E0 /* Settings.swift */,
@@ -530,10 +428,7 @@
 			isa = PBXGroup;
 			children = (
 				19F31BFA28C3E9B2000C5207 /* Memo.swift */,
-				193AA89C28CCD38100FF7EB6 /* Resource.swift */,
-				19A547812986E3670000E71A /* Status.swift */,
 				199A657C28C4761100C39994 /* Usage.swift */,
-				193DE92028C5CFBB002651E0 /* User.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -556,6 +451,8 @@
 			name = MoeMemosWidgetsExtension;
 			packageProductDependencies = (
 				19E866622AB851E200E33521 /* KeychainSwift */,
+				199C6CC72B009F2F005C6921 /* Models */,
+				196C7DC12B088A8800EDD8B6 /* Account */,
 			);
 			productName = MoeMemosWidgetsExtension;
 			productReference = 191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */;
@@ -581,46 +478,14 @@
 				31EE785E29B9E6F4005F62D0 /* Highlightr */,
 				193D274C29C8D1EB00BDE4A2 /* MarkdownUI */,
 				19E866602AB84EBA00E33521 /* KeychainSwift */,
+				191489EF2B00832C00577BD1 /* Account */,
+				197BEF462B00998F0025C17B /* Models */,
+				1990357D2C14A55B0011B985 /* Factory */,
+				19113B8C2C1D97A200365C05 /* Env */,
 			);
 			productName = MoeMemos;
 			productReference = 194B272D28C3973400A48675 /* MoeMemos.app */;
 			productType = "com.apple.product-type.application";
-		};
-		194B273C28C3973600A48675 /* MoeMemosTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 194B275428C3973600A48675 /* Build configuration list for PBXNativeTarget "MoeMemosTests" */;
-			buildPhases = (
-				194B273928C3973600A48675 /* Sources */,
-				194B273A28C3973600A48675 /* Frameworks */,
-				194B273B28C3973600A48675 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				194B273F28C3973600A48675 /* PBXTargetDependency */,
-			);
-			name = MoeMemosTests;
-			productName = MoeMemosTests;
-			productReference = 194B273D28C3973600A48675 /* MoeMemosTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		194B274628C3973600A48675 /* MoeMemosUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 194B275728C3973600A48675 /* Build configuration list for PBXNativeTarget "MoeMemosUITests" */;
-			buildPhases = (
-				194B274328C3973600A48675 /* Sources */,
-				194B274428C3973600A48675 /* Frameworks */,
-				194B274528C3973600A48675 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				194B274928C3973600A48675 /* PBXTargetDependency */,
-			);
-			name = MoeMemosUITests;
-			productName = MoeMemosUITests;
-			productReference = 194B274728C3973600A48675 /* MoeMemosUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		19E29A672938FBCD00BE9C32 /* MoeMemosShareExtension */ = {
 			isa = PBXNativeTarget;
@@ -637,6 +502,8 @@
 			name = MoeMemosShareExtension;
 			packageProductDependencies = (
 				19E866642AB851E800E33521 /* KeychainSwift */,
+				199C6CC52B009F19005C6921 /* Models */,
+				196C7DBF2B087A0000EDD8B6 /* Account */,
 				190755982B66512200451E6D /* Markdown */,
 			);
 			productName = MoeMemosShareExtension;
@@ -658,14 +525,6 @@
 					};
 					194B272C28C3973400A48675 = {
 						CreatedOnToolsVersion = 13.4.1;
-					};
-					194B273C28C3973600A48675 = {
-						CreatedOnToolsVersion = 13.4.1;
-						TestTargetID = 194B272C28C3973400A48675;
-					};
-					194B274628C3973600A48675 = {
-						CreatedOnToolsVersion = 13.4.1;
-						TestTargetID = 194B272C28C3973400A48675;
 					};
 					19E29A672938FBCD00BE9C32 = {
 						CreatedOnToolsVersion = 14.1;
@@ -691,14 +550,13 @@
 				193D274B29C8D1EB00BDE4A2 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				19E8665F2AB84ACA00E33521 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				190755972B66512200451E6D /* XCRemoteSwiftPackageReference "swift-markdown" */,
+				1990357C2C14A55B0011B985 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			productRefGroup = 194B272E28C3973400A48675 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				194B272C28C3973400A48675 /* MoeMemos */,
-				194B273C28C3973600A48675 /* MoeMemosTests */,
-				194B274628C3973600A48675 /* MoeMemosUITests */,
 				191339AB291D7288001F2B2E /* MoeMemosWidgetsExtension */,
 				19E29A672938FBCD00BE9C32 /* MoeMemosShareExtension */,
 			);
@@ -727,20 +585,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		194B273B28C3973600A48675 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		194B274528C3973600A48675 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		19E29A662938FBCD00BE9C32 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -761,18 +605,9 @@
 				191339B4291D7288001F2B2E /* MoeMemosWidgetsBundle.swift in Sources */,
 				193F04E329CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */,
 				191339B6291D7288001F2B2E /* MemosGraphWidget.swift in Sources */,
-				191339C4291D763A001F2B2E /* MemosManager.swift in Sources */,
-				191339C6291D7660001F2B2E /* Memos.swift in Sources */,
-				191339C7291D7663001F2B2E /* MemosAPI.swift in Sources */,
 				191339C5291D765B001F2B2E /* Memo.swift in Sources */,
-				191339C8291D766A001F2B2E /* User.swift in Sources */,
-				191339C9291D7672001F2B2E /* Resource.swift in Sources */,
 				191339CA291D7675001F2B2E /* Usage.swift in Sources */,
 				191339D2291D7785001F2B2E /* Date.swift in Sources */,
-				19A547832986E4C10000E71A /* Status.swift in Sources */,
-				191339CB291D7699001F2B2E /* HTTP.swift in Sources */,
-				191339CC291D769C001F2B2E /* FormData.swift in Sources */,
-				191339CD291D76BB001F2B2E /* Error.swift in Sources */,
 				191339CE291D76BD001F2B2E /* Constants.swift in Sources */,
 				191339DC291D8F15001F2B2E /* MemoryWidget.swift in Sources */,
 				191339CF291D7748001F2B2E /* Heatmap.swift in Sources */,
@@ -789,17 +624,12 @@
 				19C569AC29125C0700745F9D /* ResourceListViewModel.swift in Sources */,
 				19F31BF728C3E26D000C5207 /* MemosList.swift in Sources */,
 				19E1C5BE28C4F6410072CEEF /* Stats.swift in Sources */,
-				199A658128C48A6200C39994 /* Login.swift in Sources */,
 				19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */,
 				199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */,
-				193DE92128C5CFBB002651E0 /* User.swift in Sources */,
-				195E5AD328C84E4F00CD4674 /* AlertToast.swift in Sources */,
 				19E6EF1F29113EC900C998F5 /* MemoInputViewModel.swift in Sources */,
-				19A547822986E3670000E71A /* Status.swift in Sources */,
 				193DE93028C65104002651E0 /* MemosViewModel.swift in Sources */,
 				1973B7D72916308D003C3710 /* Constants.swift in Sources */,
 				197D9D47292D4B160033AF33 /* ImagePicker.swift in Sources */,
-				19E6EF2329115A2800C998F5 /* MemosManager.swift in Sources */,
 				193D274F29C8D85700BDE4A2 /* TagVisitor.swift in Sources */,
 				192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */,
 				199A657B28C474BA00C39994 /* Color.swift in Sources */,
@@ -808,14 +638,11 @@
 				193DE92328C5E267002651E0 /* Settings.swift in Sources */,
 				193F04E229CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */,
 				1934C77C2921670600A169EC /* Attachment.swift in Sources */,
-				193DE92B28C619D9002651E0 /* HTTP.swift in Sources */,
-				193AA89D28CCD38100FF7EB6 /* Resource.swift in Sources */,
 				19709CFC297F2C1900F6A144 /* MemoInputResourceView.swift in Sources */,
 				19E29A7D2939A94400BE9C32 /* NSItemProvider.swift in Sources */,
 				197A4D3329599C300027427E /* MemoCardImageView.swift in Sources */,
 				1919FBE329CF6BDD00FEF570 /* ArchivedMemoCard.swift in Sources */,
 				193AA8A928CDB27F00FF7EB6 /* ResourceCard.swift in Sources */,
-				195E5D6D28C7051F00784EF5 /* Memos.swift in Sources */,
 				1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */,
 				1919FBE729CF77C900FEF570 /* ExploreMemoCard.swift in Sources */,
 				193938DC29CF682D0027939F /* MemoCardContent.swift in Sources */,
@@ -823,43 +650,18 @@
 				19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */,
 				194B273328C3973400A48675 /* ContentView.swift in Sources */,
 				193AA8A728CD9ED700FF7EB6 /* URL.swift in Sources */,
-				193AA8A128CD12CD00FF7EB6 /* FormData.swift in Sources */,
 				19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */,
 				19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */,
-				19E6EF2129113FDA00C998F5 /* UserState.swift in Sources */,
-				1968555F2B00719A009D7DC5 /* AppInfo.swift in Sources */,
 				1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */,
-				193DE92828C61488002651E0 /* MemosAPI.swift in Sources */,
 				1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */,
 				31EE786129B9F3A2005F62D0 /* Highlighter.swift in Sources */,
-				193AA89F28CD080000FF7EB6 /* LegacyPhotoPicker.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
 				19C569AA29125BB200745F9D /* ResourceManager.swift in Sources */,
 				195E5D6B28C704AC00784EF5 /* Date.swift in Sources */,
-				19996E6029118AF6001E3583 /* NavLink.swift in Sources */,
-				192DF0F528C7B71D0077E785 /* LegacyShareSheet.swift in Sources */,
 				19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */,
 				19C569A42912493A00745F9D /* ArchivedMemoListViewModel.swift in Sources */,
 				193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */,
-				193DE93228C652F7002651E0 /* Error.swift in Sources */,
 				1919FBE929CF78BE00FEF570 /* Explore.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		194B273928C3973600A48675 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				194B274228C3973600A48675 /* MoeMemosTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		194B274328C3973600A48675 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				194B274E28C3973600A48675 /* MoeMemosUITestsLaunchTests.swift in Sources */,
-				194B274C28C3973600A48675 /* MoeMemosUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -870,17 +672,8 @@
 				19E29A782938FCE000BE9C32 /* MoeMemosShareView.swift in Sources */,
 				19E29A6B2938FBCD00BE9C32 /* ShareViewController.swift in Sources */,
 				19E29A7E2939AC5000BE9C32 /* NSItemProvider.swift in Sources */,
-				19B5CFFA2939BB9700140294 /* Memos.swift in Sources */,
-				19B5CFFB2939BB9B00140294 /* MemosAPI.swift in Sources */,
-				19B5CFFC2939BBCA00140294 /* Error.swift in Sources */,
 				19B5CFFD2939BC1300140294 /* Constants.swift in Sources */,
-				19B5CFFE2939BC2300140294 /* HTTP.swift in Sources */,
 				19B5CFFF2939BC2F00140294 /* Memo.swift in Sources */,
-				19B5D0002939BC3200140294 /* User.swift in Sources */,
-				19B5D0012939BC3D00140294 /* Resource.swift in Sources */,
-				19A547842986E4C20000E71A /* Status.swift in Sources */,
-				19B5D0022939BC4800140294 /* FormData.swift in Sources */,
-				197C21A6293A2DCC00110EE5 /* AlertToast.swift in Sources */,
 				1907559A2B66514700451E6D /* TagVisitor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -892,16 +685,6 @@
 			isa = PBXTargetDependency;
 			target = 191339AB291D7288001F2B2E /* MoeMemosWidgetsExtension */;
 			targetProxy = 191339BD291D7289001F2B2E /* PBXContainerItemProxy */;
-		};
-		194B273F28C3973600A48675 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 194B272C28C3973400A48675 /* MoeMemos */;
-			targetProxy = 194B273E28C3973600A48675 /* PBXContainerItemProxy */;
-		};
-		194B274928C3973600A48675 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 194B272C28C3973400A48675 /* MoeMemos */;
-			targetProxy = 194B274828C3973600A48675 /* PBXContainerItemProxy */;
 		};
 		19E29A712938FBCD00BE9C32 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -959,22 +742,26 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosWidgets/MoeMemosWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 46;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MoeMemosWidgets;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.10;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -989,22 +776,26 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosWidgets/MoeMemosWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 46;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MoeMemosWidgets;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.10;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1064,7 +855,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1121,7 +912,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1139,7 +930,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MoeMemos/MoeMemos.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 46;
 				DEVELOPMENT_ASSET_PATHS = "\"MoeMemos/Preview Content\"";
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				ENABLE_PREVIEWS = YES;
@@ -1152,15 +943,20 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.10;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1174,7 +970,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MoeMemos/MoeMemos.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 46;
 				DEVELOPMENT_ASSET_PATHS = "\"MoeMemos/Preview Content\"";
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				ENABLE_PREVIEWS = YES;
@@ -1187,93 +983,22 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.10;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		194B275528C3973600A48675 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
-				DEVELOPMENT_TEAM = AHAQ4D2466;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemosTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MoeMemos.app/MoeMemos";
-			};
-			name = Debug;
-		};
-		194B275628C3973600A48675 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
-				DEVELOPMENT_TEAM = AHAQ4D2466;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemosTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MoeMemos.app/MoeMemos";
-			};
-			name = Release;
-		};
-		194B275828C3973600A48675 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AHAQ4D2466;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemosUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = MoeMemos;
-			};
-			name = Debug;
-		};
-		194B275928C3973600A48675 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AHAQ4D2466;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemosUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = MoeMemos;
 			};
 			name = Release;
 		};
@@ -1283,22 +1008,26 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosShareExtension/MoeMemosShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 46;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosShareExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MoeMemosShareExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.10;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1311,22 +1040,26 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosShareExtension/MoeMemosShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 46;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosShareExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MoeMemosShareExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.10;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1363,24 +1096,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		194B275428C3973600A48675 /* Build configuration list for PBXNativeTarget "MoeMemosTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				194B275528C3973600A48675 /* Debug */,
-				194B275628C3973600A48675 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		194B275728C3973600A48675 /* Build configuration list for PBXNativeTarget "MoeMemosUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				194B275828C3973600A48675 /* Debug */,
-				194B275928C3973600A48675 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		19E29A752938FBCD00BE9C32 /* Build configuration list for PBXNativeTarget "MoeMemosShareExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1409,12 +1124,20 @@
 				kind = branch;
 			};
 		};
+		1990357C2C14A55B0011B985 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.2;
+			};
+		};
 		19E8665F2AB84ACA00E33521 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 20.0.0;
+				minimumVersion = 21.0.0;
 			};
 		};
 		31EE785D29B9E6F4005F62D0 /* XCRemoteSwiftPackageReference "Highlightr" */ = {
@@ -1433,10 +1156,43 @@
 			package = 190755972B66512200451E6D /* XCRemoteSwiftPackageReference "swift-markdown" */;
 			productName = Markdown;
 		};
+		19113B8C2C1D97A200365C05 /* Env */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Env;
+		};
+		191489EF2B00832C00577BD1 /* Account */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Account;
+		};
 		193D274C29C8D1EB00BDE4A2 /* MarkdownUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 193D274B29C8D1EB00BDE4A2 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
+		};
+		196C7DBF2B087A0000EDD8B6 /* Account */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Account;
+		};
+		196C7DC12B088A8800EDD8B6 /* Account */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Account;
+		};
+		197BEF462B00998F0025C17B /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
+		};
+		1990357D2C14A55B0011B985 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1990357C2C14A55B0011B985 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		199C6CC52B009F19005C6921 /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
+		};
+		199C6CC72B009F2F005C6921 /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
 		};
 		19E866602AB84EBA00E33521 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;

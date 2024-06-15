@@ -67,3 +67,12 @@
 "share.memo-saved" = "Memo sauvegardé.";
 
 "explore" = "Explorer";
+
+// Account
+"account.local-user" = "Local user";
+"account.add-account" = "Add Account";
+"account.accounts" = "Accounts";
+"account.add-memos-account" = "Add a Memos Account";
+"account.memos-account-description" = "Sync with Your Memos Server";
+"account.account-detail" = "Account Detail";
+"account.switch-account" = "Switch Account";

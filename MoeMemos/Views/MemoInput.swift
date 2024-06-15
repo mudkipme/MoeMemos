@@ -7,12 +7,16 @@
 
 import SwiftUI
 import PhotosUI
+import Models
+import Account
 
+@MainActor
 struct MemoInput: View {
     let memo: Memo?
-    @EnvironmentObject private var memosViewModel: MemosViewModel
-    @EnvironmentObject var userState: UserState
-    @StateObject private var viewModel = MemoInputViewModel()
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
+    @Environment(AccountViewModel.self) var userState: AccountViewModel
+    @Environment(AccountManager.self) var accountManager: AccountManager
+    @State private var viewModel = MemoInputViewModel()
 
     @State private var text = ""
     @State private var selection: Range<String.Index>? = nil
@@ -115,9 +119,9 @@ struct MemoInput: View {
                 viewModel.visibility = memo.visibility
             } else {
                 text = draft
-                viewModel.visibility = userState.currentUser?.defaultMemoVisibility ?? .private
+                viewModel.visibility = userState.currentUser?.defaultVisibility ?? .private
             }
-            if let resourceList = memo?.resourceList {
+            if let resourceList = memo?.resources {
                 viewModel.resourceList = resourceList
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
@@ -176,40 +180,20 @@ struct MemoInput: View {
     }
 
     var body: some View {
-        if #available(iOS 16, *) {
-            NavigationStack {
-                editor()
-                    .photosPicker(isPresented: $showingPhotoPicker, selection: Binding(get: {
-                        viewModel.photos ?? []
-                    }, set: { photos in
-                        viewModel.photos = photos
-                    }))
-                    .onChange(of: viewModel.photos) { newValue in
-                        Task {
-                            guard let newValue = newValue else { return }
-                            
-                            if !newValue.isEmpty {
-                                try await upload(images: newValue)
-                                viewModel.photos = []
-                            }
+        NavigationStack {
+            editor()
+                .photosPicker(isPresented: $showingPhotoPicker, selection: $viewModel.photos)
+                .onChange(of: viewModel.photos) { _, newValue in
+                    Task {
+                        if !newValue.isEmpty {
+                            try await upload(images: newValue)
+                            viewModel.photos = []
                         }
                     }
-            }
-        } else {
-            NavigationView {
-                editor()
-                    .sheet(isPresented: $showingPhotoPicker) {
-                        LegacyPhotoPicker { images in
-                            Task {
-                                try await upload(images: images)
-                            }
-                        }
-                    }
-            }
+                }
         }
     }
     
-    @available(iOS 16, *)
     private func upload(images: [PhotosPickerItem]) async throws {
         do {
             viewModel.imageUploading = true
@@ -244,17 +228,12 @@ struct MemoInput: View {
     private func saveMemo() async throws {
         viewModel.saving = true
         let tags = viewModel.extractCustomTags(from: text)
-        do {
-            try await memosViewModel.upsertTags(names: tags)
-        } catch {
-            print(error.localizedDescription)
-        }
         
         do {
-            if let memo = memo {
-                try await memosViewModel.editMemo(id: memo.id, content: text, visibility: viewModel.visibility, resourceIdList: viewModel.resourceList.map { $0.id })
+            if let memo = memo, let remoteId = memo.remoteId {
+                try await memosViewModel.editMemo(remoteId: remoteId, content: text, visibility: viewModel.visibility, resources: viewModel.resourceList, tags: tags)
             } else {
-                try await memosViewModel.createMemo(content: text, visibility: viewModel.visibility, resourceIdList: viewModel.resourceList.map { $0.id })
+                try await memosViewModel.createMemo(content: text, visibility: viewModel.visibility, resources: viewModel.resourceList, tags: tags)
                 draft = ""
             }
             text = ""
@@ -270,7 +249,7 @@ struct MemoInput: View {
     private var privacyMenu: some View {
       Menu {
         Section("input.visibility") {
-          ForEach(MemosVisibility.allCases, id: \.self) { visibility in
+        ForEach(accountManager.currentService?.memoVisibilities() ?? [.private], id: \.self) { visibility in
             Button {
               viewModel.visibility = visibility
             } label: {
@@ -375,10 +354,5 @@ struct MemoInput: View {
     }
 }
 
-struct MemoInput_Previews: PreviewProvider {
-    static var previews: some View {
-        MemoInput(memo: nil)
-            .environmentObject(MemosViewModel())
-            .environmentObject(UserState())
-    }
-}
+
+extension PhotosPickerItem: @unchecked Sendable {}

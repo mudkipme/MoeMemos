@@ -59,26 +59,30 @@ class AppQLPreviewController: UIViewController {
 }
 
 extension AppQLPreviewController: QLPreviewControllerDataSource {
-  func numberOfPreviewItems(in _: QLPreviewController) -> Int {
+  nonisolated func numberOfPreviewItems(in _: QLPreviewController) -> Int {
     return urls.count
   }
 
-  func previewController(_: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
+  nonisolated func previewController(_: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
     return urls[index] as QLPreviewItem
   }
 }
 
 extension AppQLPreviewController: QLPreviewControllerDelegate {
-  func previewController(_: QLPreviewController, editingModeFor _: QLPreviewItem) -> QLPreviewItemEditingMode {
+  nonisolated func previewController(_: QLPreviewController, editingModeFor _: QLPreviewItem) -> QLPreviewItemEditingMode {
     .createCopy
   }
 
-  func previewControllerWillDismiss(_: QLPreviewController) {
-    dismiss(animated: true)
+  nonisolated func previewControllerWillDismiss(_: QLPreviewController) {
+      DispatchQueue.main.async {
+          self.dismiss(animated: true)
+      }
   }
     
-  func previewControllerDidDismiss(_ controller: QLPreviewController) {
-    dismiss(animated: true)
+  nonisolated func previewControllerDidDismiss(_ controller: QLPreviewController) {
+      DispatchQueue.main.async {
+          self.dismiss(animated: true)
+      }
   }
 }
 

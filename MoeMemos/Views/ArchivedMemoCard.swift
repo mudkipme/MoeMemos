@@ -7,12 +7,14 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import Models
 
+@MainActor
 struct ArchivedMemoCard: View {
     let memo: Memo
     let archivedViewModel: ArchivedMemoListViewModel
 
-    @EnvironmentObject private var memosViewModel: MemosViewModel
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @State private var showingDeleteConfirmation = false
 
     init(_ memo: Memo, archivedViewModel: ArchivedMemoListViewModel) {
@@ -50,7 +52,8 @@ struct ArchivedMemoCard: View {
         .confirmationDialog("memo.delete.confirm", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("memo.action.ok", role: .destructive) {
                 Task {
-                    try await archivedViewModel.deleteMemo(id: memo.id)
+                    guard let remoteId = memo.remoteId else { return }
+                    try await archivedViewModel.deleteMemo(remoteId: remoteId)
                 }
             }
             Button("memo.action.cancel", role: .cancel) {}
@@ -62,7 +65,8 @@ struct ArchivedMemoCard: View {
         Button {
             Task {
                 do {
-                    try await archivedViewModel.restoreMemo(id: memo.id)
+                    guard let remoteId = memo.remoteId else { return }
+                    try await archivedViewModel.restoreMemo(remoteId: remoteId)
                     try await memosViewModel.loadMemos()
                 } catch {
                     print(error)
@@ -76,12 +80,5 @@ struct ArchivedMemoCard: View {
         }, label: {
             Label("memo.delete", systemImage: "trash")
         })
-    }
-}
-
-struct ArchivedMemoCard_Previews: PreviewProvider {
-    static var previews: some View {
-        ArchivedMemoCard(Memo(id: 1, createdTs: .now.addingTimeInterval(-100), creatorId: 1, creatorName: nil, content: "Hello world\n\nThis is a **multiline** statement and thank you for everything.", pinned: false, rowStatus: .normal, updatedTs: .now, visibility: .private, resourceList: nil), archivedViewModel: ArchivedMemoListViewModel())
-            .environmentObject(MemosViewModel())
     }
 }
