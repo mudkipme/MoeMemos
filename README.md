@@ -7,8 +7,6 @@ Moe Memos
 
 *To use this app, you must have a self-hosted [✍️memos](https://github.com/usememos/memos) server set up and running.*
 
-**Moe Memos currently only supports Memos 0.21.0, as Memos 0.22.0 introduced major API-breaking changes and requires a lot of work to support. Please use the `0.21.0` Docker tag if you are using Moe Memos for now.**
-
 ## Installation
 
 [![Download Moe Memos on the App Store](https://memos.moe/app-store-badge.svg)](https://apps.apple.com/app/moe-memos/id1643902185)
@@ -29,9 +27,7 @@ Moe Memos is available on App Store for free. You can also build this app with X
 - Available on iPhone and iPad with multitasking support
 - Full privacy protection, no data collection
 
-## About
-
-Moe Memos is a third-party client for [✍️memos](https://github.com/usememos/memos) and both projects aren't affiliated with each other. Both projects are inspired by the memo-taking tool [flomo](https://flomoapp.com/). If you prefer an all-in-one alternative syncing with the cloud, it is recommended to try [flomo](https://flomoapp.com/).
+Moe Memos is a third-party client for [✍️memos](https://github.com/usememos/memos) and both projects aren't affiliated with each other.
 
 ## Development
 

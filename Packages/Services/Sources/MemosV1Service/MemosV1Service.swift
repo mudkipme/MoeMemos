@@ -97,7 +97,7 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func updateMemo(remoteId: String, content: String?, resources: [Resource]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> Memo {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_period_name: getName(remoteId: remoteId)), body: .json(.init(
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(
             content: content,
             visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
             pinned: pinned
@@ -122,12 +122,12 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func archiveMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_period_name: getName(remoteId: remoteId)), body: .json(.init(rowStatus: .ARCHIVED)))
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(rowStatus: .ARCHIVED)))
         _ = try resp.ok
     }
     
     public func restoreMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_period_name: getName(remoteId: remoteId)), body: .json(.init(rowStatus: .ACTIVE)))
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(rowStatus: .ACTIVE)))
         _ = try resp.ok
     }
     

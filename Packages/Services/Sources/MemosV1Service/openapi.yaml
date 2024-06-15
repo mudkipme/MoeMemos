@@ -995,14 +995,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
       x-codegen-request-body-name: inbox
-  /api/v1/{memo.name}:
+  /api/v1/{memo_name}:
     patch:
       tags:
       - MemoService
       summary: UpdateMemo updates a memo.
       operationId: MemoService_UpdateMemo
       parameters:
-      - name: memo.name
+      - name: memo_name
         in: path
         description: |-
           The name of the memo.
