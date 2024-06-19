@@ -30,6 +30,7 @@ public final class MemosV1Service: RemoteService {
             serverURL: hostURL,
             transport: URLSessionTransport(configuration: .init(session: urlSession)),
             middlewares: [
+                FixNamePathMiddleware(),
                 AccessTokenAuthenticationMiddleware(accessToken: accessToken),
                 grpcSetCookieMiddleware
             ]
@@ -152,8 +153,8 @@ public final class MemosV1Service: RemoteService {
         let resp = try await client.ResourceService_CreateResource(body: .json(.init(
             filename: filename,
             content: .init(data),
-            _type: type,
-            memo: memoRemoteId.map(getName(remoteId:))
+            _type: type
+//            memo: memoRemoteId.map(getName(remoteId:))
         )))
         let data = try resp.ok.body.json
         return data.toResource(host: hostURL)
