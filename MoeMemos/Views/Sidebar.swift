@@ -8,6 +8,7 @@
 import SwiftUI
 import Account
 import Env
+import Models
 
 struct Sidebar: View {
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
@@ -40,15 +41,16 @@ struct Sidebar: View {
             }
             
             Section {
-                ForEach(memosViewModel.tags) { tag in
-                    NavigationLink(value: Route.tag(tag)) {
-                        Label(tag.name, systemImage: "number")
-                    }
-                }.onDelete { indexSet in
-                    let toDeleteTags = indexSet.map { memosViewModel.tags[$0].name }
-                    Task {
-                        for tag in toDeleteTags {
-                            try await memosViewModel.deleteTag(name: tag)
+                OutlineGroup(memosViewModel.nestedTags, children: \.children) { item in
+                    NavigationLink(value: Route.tag(Tag(name: item.fullName))) {
+                        Label(item.name, systemImage: "number")
+                    }.contextMenu {
+                        Button(role: .destructive) {
+                            Task {
+                                try await memosViewModel.deleteTag(name: item.fullName)
+                            }
+                        } label: {
+                            Label("memo.delete", systemImage: "trash")
                         }
                     }
                 }
