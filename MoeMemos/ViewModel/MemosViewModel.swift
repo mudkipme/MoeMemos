@@ -22,6 +22,7 @@ import Factory
         }
     }
     private(set) var tags: [Tag] = []
+    private(set) var nestedTags: [NestedTag] = []
     private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
     private(set) var inited = false
     private(set) var loading = false
@@ -43,6 +44,7 @@ import Factory
     @MainActor
     func loadTags() async throws {
         tags = try await service.listTags()
+        nestedTags = NestedTag.fromTagList(tags.map { $0.name })
     }
     
     @MainActor
@@ -90,6 +92,7 @@ import Factory
         tags.removeAll { tag in
             tag.name == name
         }
+        nestedTags = NestedTag.fromTagList(tags.map { $0.name })
     }
 
     @MainActor

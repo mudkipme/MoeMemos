@@ -51,6 +51,7 @@
 		194C4C372BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */; };
 		194C4C382BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */; };
 		194C4C392BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */; };
+		1951055E2C287A0F009EA669 /* NestedTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1951055D2C287A0F009EA669 /* NestedTag.swift */; };
 		195E5D6B28C704AC00784EF5 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D6A28C704AC00784EF5 /* Date.swift */; };
 		195E5D7128C70A3800784EF5 /* HeatmapStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195E5D7028C70A3800784EF5 /* HeatmapStat.swift */; };
 		196C7DC02B087A0000EDD8B6 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 196C7DBF2B087A0000EDD8B6 /* Account */; };
@@ -178,6 +179,7 @@
 		194B273428C3973600A48675 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		194B273728C3973600A48675 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1951055D2C287A0F009EA669 /* NestedTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedTag.swift; sourceTree = "<group>"; };
 		19558A442912CEA60070CAF9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		195E5D6A28C704AC00784EF5 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		195E5D7028C70A3800784EF5 /* HeatmapStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapStat.swift; sourceTree = "<group>"; };
@@ -429,6 +431,7 @@
 			children = (
 				19F31BFA28C3E9B2000C5207 /* Memo.swift */,
 				199A657C28C4761100C39994 /* Usage.swift */,
+				1951055D2C287A0F009EA669 /* NestedTag.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -652,6 +655,7 @@
 				193AA8A728CD9ED700FF7EB6 /* URL.swift in Sources */,
 				19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */,
 				19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */,
+				1951055E2C287A0F009EA669 /* NestedTag.swift in Sources */,
 				1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */,
 				1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */,
 				31EE786129B9F3A2005F62D0 /* Highlighter.swift in Sources */,
