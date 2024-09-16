@@ -9,7 +9,6 @@ import SwiftUI
 import Models
 import Account
 
-@MainActor
 struct Settings: View {
     @Environment(AppInfo.self) var appInfo: AppInfo
     @Environment(AccountViewModel.self) var accountViewModel

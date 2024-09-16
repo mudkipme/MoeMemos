@@ -18,7 +18,6 @@ struct ImageInfo: Identifiable {
     }
 }
 
-@MainActor
 struct MemoCardImageView: View {
     let images: [ImageInfo]
     

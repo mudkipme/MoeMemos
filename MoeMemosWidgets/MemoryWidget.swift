@@ -31,13 +31,14 @@ extension MemoryUpdatePeriod {
     }
 }
 
-struct MemoryProvider: IntentTimelineProvider {
+struct MemoryProvider: @preconcurrency IntentTimelineProvider {
     func placeholder(in context: Context) -> MemoryEntry {
         MemoryEntry(date: Date(), configuration: MemoryWidgetConfigurationIntent(), memo: sampleMemo)
     }
 
+    @MainActor
     func getSnapshot(for configuration: MemoryWidgetConfigurationIntent, in context: Context, completion: @escaping (MemoryEntry) -> ()) {
-        Task { @MainActor in
+        Task {
             let entry = MemoryEntry(date: Date(), configuration: configuration, memo: sampleMemo)
             completion(entry)
         }
@@ -52,8 +53,9 @@ struct MemoryProvider: IntentTimelineProvider {
         return [Memo](response.shuffled().prefix(frequency.memosPerDay))
     }
 
+    @MainActor
     func getTimeline(for configuration: MemoryWidgetConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        Task { @MainActor in
+        Task {
             let memos = try? await getMemos(configuration.frequency)
             var entries = [Entry]()
             

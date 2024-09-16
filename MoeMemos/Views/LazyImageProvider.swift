@@ -10,11 +10,11 @@ import MarkdownUI
 import Account
 import Factory
 
-struct LazyImageProvider: ImageProvider {
+struct LazyImageProvider: @preconcurrency ImageProvider {
     let aspectRatio: CGFloat
     @Injected(\.accountManager) private var accountManager
 
-    func makeImage(url: URL?) -> some View {
+    @MainActor func makeImage(url: URL?) -> some View {
         if let url = makeURL(url) {
             MemoCardImageView(images: [ImageInfo(url: url, mimeType: nil)])
         }
