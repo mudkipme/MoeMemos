@@ -12,13 +12,14 @@ import KeychainSwift
 import Models
 import Account
 
-struct Provider: IntentTimelineProvider {
+struct Provider: @preconcurrency IntentTimelineProvider {
     func placeholder(in context: Context) -> MemosGraphEntry {
         MemosGraphEntry(date: Date(), configuration: MemosGraphWidgetConfigurationIntent(), matrix: nil)
     }
 
+    @MainActor
     func getSnapshot(for configuration: MemosGraphWidgetConfigurationIntent, in context: Context, completion: @escaping (MemosGraphEntry) -> ()) {
-        Task { @MainActor in
+        Task {
             var matrix: [DailyUsageStat]?
             if !context.isPreview {
                 matrix = try? await getMatrix()
@@ -40,8 +41,9 @@ struct Provider: IntentTimelineProvider {
         return DailyUsageStat.calculateMatrix(memoList: response)
     }
 
+    @MainActor
     func getTimeline(for configuration: MemosGraphWidgetConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        Task { @MainActor in
+        Task {
             let matrix = try? await getMatrix()
             let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
             let entry = MemosGraphEntry(date: entryDate, configuration: configuration, matrix: matrix)

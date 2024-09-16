@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Resource: Identifiable, Equatable {
+public struct Resource: Identifiable, Equatable, Sendable {
     public var filename: String
     public var size: Int
     public var mimeType: String

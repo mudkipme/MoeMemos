@@ -11,7 +11,7 @@ import Env
 import Account
 
 extension Route {
-    @ViewBuilder
+    @MainActor @ViewBuilder
     func destination() -> some View {
         switch self {
         case .memos:

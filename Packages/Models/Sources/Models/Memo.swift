@@ -7,12 +7,12 @@
 
 import Foundation
 
-public enum RowStatus: Codable {
+public enum RowStatus: Codable, Sendable {
     case normal
     case archived
 }
 
-public enum MemoVisibility: Codable {
+public enum MemoVisibility: Codable, Sendable {
     case `private`
     case local
     case `public`
@@ -20,7 +20,7 @@ public enum MemoVisibility: Codable {
     case direct
 }
 
-public struct Memo: Equatable {
+public struct Memo: Equatable, Sendable {
     public var user: RemoteUser?
     public var content: String
     public var pinned: Bool

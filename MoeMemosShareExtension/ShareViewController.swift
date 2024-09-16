@@ -5,7 +5,7 @@
 //  Created by Mudkip on 2022/12/1.
 //
 
-import UIKit
+@preconcurrency import UIKit
 import Social
 import SwiftUI
 import KeychainSwift
@@ -86,10 +86,11 @@ class ShareViewController: SLComposeServiceViewController {
                     resourceList.append(response)
                 }
                 
-                if attachment.canLoadObject(ofClass: NSURL.self),
-                   let url = try await attachment.loadObject(ofClass: NSURL.self),
-                   let address = url.absoluteString {
-                    contentTextList.append(address)
+                
+                if attachment.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
+                    if let url = try await attachment.loadItem(forTypeIdentifier: UTType.url.identifier) as? URL {
+                        contentTextList.append(url.absoluteString)
+                    }
                 }
             }
         }
@@ -110,4 +111,4 @@ class ShareViewController: SLComposeServiceViewController {
     }
 }
 
-extension NSItemProvider: @unchecked Sendable {}
+extension NSItemProvider: @unchecked @retroactive Sendable {}
