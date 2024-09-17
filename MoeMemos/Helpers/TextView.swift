@@ -49,9 +49,11 @@ struct TextView: UIViewRepresentable {
         
         func textViewDidChange(_ textView: UITextView) {
             parent._text.wrappedValue = textView.text
+            parent._selection.wrappedValue = Range(textView.selectedRange, in: textView.text)
         }
         
         func textViewDidChangeSelection(_ textView: UITextView) {
+            parent._text.wrappedValue = textView.text
             parent._selection.wrappedValue = Range(textView.selectedRange, in: textView.text)
         }
         
