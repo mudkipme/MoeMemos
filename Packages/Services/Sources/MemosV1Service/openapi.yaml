@@ -2964,11 +2964,11 @@ components:
           format: date-time
         content:
           type: string
-        nodes:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/v1Node'
+#        nodes:
+#          type: array
+#          readOnly: true
+#          items:
+#            $ref: '#/components/schemas/v1Node'
         visibility:
           $ref: '#/components/schemas/v1Visibility'
         tags:
