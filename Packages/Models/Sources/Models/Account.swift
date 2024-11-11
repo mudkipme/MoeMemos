@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Account: Codable {
+public enum Account: Codable, Sendable {
     case local
     case memosV0(host: String, id: String, accessToken: String)
     case memosV1(host: String, id: String, accessToken: String)
