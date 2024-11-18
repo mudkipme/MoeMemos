@@ -57,10 +57,13 @@
 		196C7DC02B087A0000EDD8B6 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 196C7DBF2B087A0000EDD8B6 /* Account */; };
 		196C7DC22B088A8800EDD8B6 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 196C7DC12B088A8800EDD8B6 /* Account */; };
 		19709CFC297F2C1900F6A144 /* MemoInputResourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19709CFB297F2C1900F6A144 /* MemoInputResourceView.swift */; };
+		197123032CEBB96E00CEEECC /* AppShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197123022CEBB96B00CEEECC /* AppShortcuts.swift */; };
+		197123DF2CEBC21900CEEECC /* AccountEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197123DE2CEBC21700CEEECC /* AccountEntity.swift */; };
 		1973B7D72916308D003C3710 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1973B7D62916308D003C3710 /* Constants.swift */; };
 		197A4D3329599C300027427E /* MemoCardImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197A4D3229599C300027427E /* MemoCardImageView.swift */; };
 		197BEF472B00998F0025C17B /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 197BEF462B00998F0025C17B /* Models */; };
 		197D9D47292D4B160033AF33 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197D9D46292D4B160033AF33 /* ImagePicker.swift */; };
+		199009B92CE4F43100578B04 /* SaveMemoIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199009B82CE4F43100578B04 /* SaveMemoIntent.swift */; };
 		1990357E2C14A55B0011B985 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 1990357D2C14A55B0011B985 /* Factory */; };
 		1995E9CE28C46DC9004F2EDB /* Heatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1995E9CD28C46DC9004F2EDB /* Heatmap.swift */; };
 		199A657B28C474BA00C39994 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657A28C474BA00C39994 /* Color.swift */; };
@@ -182,10 +185,13 @@
 		195E5D6A28C704AC00784EF5 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		195E5D7028C70A3800784EF5 /* HeatmapStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapStat.swift; sourceTree = "<group>"; };
 		19709CFB297F2C1900F6A144 /* MemoInputResourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInputResourceView.swift; sourceTree = "<group>"; };
+		197123022CEBB96B00CEEECC /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShortcuts.swift; sourceTree = "<group>"; };
+		197123DE2CEBC21700CEEECC /* AccountEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountEntity.swift; sourceTree = "<group>"; };
 		1973B7D529160F48003C3710 /* MoeMemos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MoeMemos.entitlements; sourceTree = "<group>"; };
 		1973B7D62916308D003C3710 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		197A4D3229599C300027427E /* MemoCardImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCardImageView.swift; sourceTree = "<group>"; };
 		197D9D46292D4B160033AF33 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		199009B82CE4F43100578B04 /* SaveMemoIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveMemoIntent.swift; sourceTree = "<group>"; };
 		1995E9CD28C46DC9004F2EDB /* Heatmap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Heatmap.swift; sourceTree = "<group>"; };
 		199A657A28C474BA00C39994 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		199A657C28C4761100C39994 /* Usage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Usage.swift; sourceTree = "<group>"; };
@@ -322,14 +328,15 @@
 		194B272428C3973400A48675 = {
 			isa = PBXGroup;
 			children = (
-				19113B8B2C1D95B700365C05 /* Env */,
 				191489F22B00837D00577BD1 /* Account */,
 				19BB8C702B83207B007BFEBF /* DesignSystem */,
+				19113B8B2C1D95B700365C05 /* Env */,
 				191489EC2B0082C700577BD1 /* Models */,
 				199C6CC92B00A7DB005C6921 /* Services */,
 				194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */,
 				191339AD291D7288001F2B2E /* Frameworks */,
 				194B272F28C3973400A48675 /* MoeMemos */,
+				199009B72CE4F24E00578B04 /* MoeMemosAppIntents */,
 				19E29A692938FBCD00BE9C32 /* MoeMemosShareExtension */,
 				191339B2291D7288001F2B2E /* MoeMemosWidgets */,
 				194B272E28C3973400A48675 /* Products */,
@@ -370,6 +377,16 @@
 				194B273728C3973600A48675 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		199009B72CE4F24E00578B04 /* MoeMemosAppIntents */ = {
+			isa = PBXGroup;
+			children = (
+				197123DE2CEBC21700CEEECC /* AccountEntity.swift */,
+				197123022CEBB96B00CEEECC /* AppShortcuts.swift */,
+				199009B82CE4F43100578B04 /* SaveMemoIntent.swift */,
+			);
+			path = MoeMemosAppIntents;
 			sourceTree = "<group>";
 		};
 		199A657928C4749800C39994 /* Extensions */ = {
@@ -637,6 +654,7 @@
 				193DE92328C5E267002651E0 /* Settings.swift in Sources */,
 				193F04E229CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */,
 				1934C77C2921670600A169EC /* Attachment.swift in Sources */,
+				197123032CEBB96E00CEEECC /* AppShortcuts.swift in Sources */,
 				19709CFC297F2C1900F6A144 /* MemoInputResourceView.swift in Sources */,
 				197A4D3329599C300027427E /* MemoCardImageView.swift in Sources */,
 				1919FBE329CF6BDD00FEF570 /* ArchivedMemoCard.swift in Sources */,
@@ -653,12 +671,14 @@
 				1951055E2C287A0F009EA669 /* NestedTag.swift in Sources */,
 				1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */,
 				1911568A29802F200058F18B /* QuickLookRepresentable.swift in Sources */,
+				197123DF2CEBC21900CEEECC /* AccountEntity.swift in Sources */,
 				31EE786129B9F3A2005F62D0 /* Highlighter.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
 				19C569AA29125BB200745F9D /* ResourceManager.swift in Sources */,
 				195E5D6B28C704AC00784EF5 /* Date.swift in Sources */,
 				19F31BFB28C3E9B2000C5207 /* Memo.swift in Sources */,
 				19C569A42912493A00745F9D /* ArchivedMemoListViewModel.swift in Sources */,
+				199009B92CE4F43100578B04 /* SaveMemoIntent.swift in Sources */,
 				193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */,
 				1919FBE929CF78BE00FEF570 /* Explore.swift in Sources */,
 			);
