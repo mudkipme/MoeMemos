@@ -10,7 +10,7 @@ import SwiftUI
 import Models
 import Factory
 
-@Observable public final class AccountManager {
+@Observable public final class AccountManager: @unchecked Sendable {
     @ObservationIgnored @AppStorage("currentAccountKey", store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier))
     private var currentAccountKey: String = ""
     @ObservationIgnored public private(set) var currentService: RemoteService?
