@@ -11,6 +11,7 @@ import Env
 public struct AccountSectionView: View {
     @Environment(AccountViewModel.self) private var accountViewModel
     @Environment(AccountManager.self) private var accountManager
+    @Environment(AppPath.self) private var appPath
     
     public init() {}
     
@@ -41,7 +42,7 @@ public struct AccountSectionView: View {
                 }
             }
             Button {
-                accountViewModel.showingAddAccount = true
+                appPath.presentedSheet = .addAccount
             } label: {
                 Label("account.add-account", systemImage: "plus.circle")
             }

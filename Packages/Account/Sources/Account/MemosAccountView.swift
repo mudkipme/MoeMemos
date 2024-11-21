@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Models
+import Env
 
 public struct MemosAccountView: View {
     @State var user: User? = nil
@@ -15,6 +16,7 @@ public struct MemosAccountView: View {
     private let accountKey: String
     @Environment(AccountManager.self) private var accountManager
     @Environment(AccountViewModel.self) private var accountViewModel
+    @Environment(AppPath.self) private var appPath
     private var account: Account? { accountManager.accounts.first { $0.key == accountKey } }
     @Environment(\.presentationMode) var presentationMode
     
@@ -77,7 +79,7 @@ public struct MemosAccountView: View {
                         presentationMode.wrappedValue.dismiss()
                         
                         if accountManager.currentAccount == nil {
-                            accountViewModel.showingAddAccount = true
+                            appPath.presentedSheet = .addAccount
                         }
                     }
                 } label: {

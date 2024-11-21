@@ -20,7 +20,7 @@ public enum MemoVisibility: Codable, Sendable {
     case direct
 }
 
-public struct Memo: Equatable, Sendable {
+public struct Memo: Equatable, Sendable, Hashable {
     public var user: RemoteUser?
     public var content: String
     public var pinned: Bool

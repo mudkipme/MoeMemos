@@ -18,6 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "Models", path: "../Models"),
+        .package(url: "https://github.com/hmlongco/Factory", from: "2.3.2")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -26,6 +27,7 @@ let package = Package(
             name: "Env",
             dependencies: [
                 .product(name: "Models", package: "Models"),
+                .product(name: "Factory", package: "Factory")
             ]
         ),
         .testTarget(

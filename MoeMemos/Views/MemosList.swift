@@ -8,12 +8,13 @@
 import SwiftUI
 import Account
 import Models
+import Env
 
 struct MemosList: View {
     let tag: Tag?
 
     @State private var searchString = ""
-    @State private var showingNewPost = false
+    @Environment(AppPath.self) private var appPath
     @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
@@ -32,7 +33,7 @@ struct MemosList: View {
             
             if tag == nil {
                 Button {
-                    showingNewPost = true
+                    appPath.presentedSheet = .newMemo
                 } label: {
                     Circle().overlay {
                         Image(systemName: "plus")
@@ -53,9 +54,6 @@ struct MemosList: View {
         })
         .searchable(text: $searchString)
         .navigationTitle(tag?.name ?? NSLocalizedString("memo.memos", comment: "Memos"))
-        .sheet(isPresented: $showingNewPost) {
-            MemoInput(memo: nil)
-        }
         .onAppear {
             filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: searchString)
         }
