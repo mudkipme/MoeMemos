@@ -15,7 +15,6 @@ import MemosV0Service
 @Observable public final class AccountViewModel: @unchecked Sendable {
     private var currentContext: ModelContext
     private var accountManager: AccountManager
-    public var showingAddAccount = false
 
     public init(currentContext: ModelContext, accountManager: AccountManager) {
         self.currentContext = currentContext

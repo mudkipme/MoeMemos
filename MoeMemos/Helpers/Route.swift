@@ -10,8 +10,9 @@ import Models
 import Env
 import Account
 
+@MainActor
 extension Route {
-    @MainActor @ViewBuilder
+    @ViewBuilder
     func destination() -> some View {
         switch self {
         case .memos:
@@ -28,6 +29,22 @@ extension Route {
             Explore()
         case .memosAccount(let accountKey):
             MemosAccountView(accountKey: accountKey)
+        }
+    }
+}
+
+@MainActor
+extension View {
+    func withSheetDestinations(sheetDestinations: Binding<SheetDestination?>) -> some View {
+        sheet(item: sheetDestinations) { destination in
+            switch destination {
+            case .newMemo:
+                MemoInput(memo: nil)
+            case .editMemo(let memo):
+                MemoInput(memo: memo)
+            case .addAccount:
+                AddAccountView()
+            }
         }
     }
 }

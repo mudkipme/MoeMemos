@@ -9,6 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 import MarkdownUI
 import Models
+import Env
 
 @MainActor
 struct MemoCard: View {
@@ -16,7 +17,7 @@ struct MemoCard: View {
     let defaultMemoVisilibity: MemoVisibility?
     
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
-    @State private var showingEdit = false
+    @Environment(AppPath.self) private var appPath
     @State private var showingDeleteConfirmation = false
     
     init(_ memo: Memo, defaultMemoVisibility: MemoVisibility) {
@@ -61,9 +62,6 @@ struct MemoCard: View {
                 Label("memo.copy", systemImage: "doc.on.doc")
             }
         }
-        .sheet(isPresented: $showingEdit) {
-            MemoInput(memo: memo)
-        }
         .confirmationDialog("memo.delete.confirm", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("memo.action.ok", role: .destructive) {
                 Task {
@@ -94,7 +92,7 @@ struct MemoCard: View {
             }
         }
         Button {
-            showingEdit = true
+            appPath.presentedSheet = .editMemo(memo)
         } label: {
             Label("memo.edit", systemImage: "pencil")
         }

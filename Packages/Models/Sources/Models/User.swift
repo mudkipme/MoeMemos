@@ -20,7 +20,7 @@ public protocol UserData: Equatable {
     var avatar: UserAvatar? { get }
 }
 
-public struct RemoteUser: UserData, Sendable {
+public struct RemoteUser: UserData, Sendable, Hashable {
     public var nickname: String
     public var defaultVisibility: MemoVisibility
     public var creationDate: Date

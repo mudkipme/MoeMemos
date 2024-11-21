@@ -16,17 +16,18 @@ import Env
 struct ContentView: View {
     @Environment(AccountViewModel.self) private var accountViewModel: AccountViewModel
     @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
+    @Environment(AppPath.self) private var appPath: AppPath
     @Injected(\.appInfo) private var appInfo
     @State private var selection: Route? = .memos
-    @State private var memosViewModel = MemosViewModel()
     @Environment(\.scenePhase) var scenePhase
     
     var body: some View {
         @Bindable var accountViewModel = accountViewModel
+        @Bindable var appPath = appPath
         
         Navigation(selection: $selection)
-            .tint(.green)
-            .environment(memosViewModel)
+            .environment(appPath)
             .onChange(of: scenePhase, initial: true, { _, newValue in
                 if newValue == .active {
                     Task {
@@ -42,10 +43,7 @@ struct ContentView: View {
                 try? await memosViewModel.loadTags()
             }
             .modelContext(appInfo.modelContext)
-            .sheet(isPresented: $accountViewModel.showingAddAccount) {
-                AddAccountView()
-                    .tint(.green)
-            }
+            .withSheetDestinations(sheetDestinations: $appPath.presentedSheet)
     }
     
     private func loadCurrentUser() async {
@@ -55,7 +53,7 @@ struct ContentView: View {
             }
             try await accountViewModel.reloadUsers()
         } catch MoeMemosError.notLogin {
-            accountViewModel.showingAddAccount = true
+            appPath.presentedSheet = .addAccount
         } catch {
             print(error)
         }
