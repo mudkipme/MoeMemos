@@ -37,6 +37,7 @@ public enum SheetDestination: Identifiable, Hashable {
 }
 
 @Observable public final class AppPath: Sendable {
+    @MainActor
     public var presentedSheet: SheetDestination?
     
     public init() {}

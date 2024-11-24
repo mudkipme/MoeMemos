@@ -54,3 +54,11 @@ public final class User: UserData {
     
     public var avatar: UserAvatar? { avatarData.map { .data($0) } }
 }
+
+public actor UserModelActor {
+    public init() {}
+    
+    public func deleteUser(_ context: ModelContext, accountKey: String) throws {
+        try context.delete(model: User.self, where: #Predicate<User> { user in user.accountKey == accountKey })
+    }
+}

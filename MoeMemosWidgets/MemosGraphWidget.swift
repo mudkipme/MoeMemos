@@ -81,10 +81,3 @@ struct MemosGraphWidget: Widget {
         .contentMarginsDisabled()
     }
 }
-
-struct MemosGraphWidget_Previews: PreviewProvider {
-    static var previews: some View {
-        MemosGraphEntryView(entry: MemosGraphEntry(date: Date(), configuration: MemosGraphWidgetConfigurationIntent(), matrix: nil))
-            .previewContext(WidgetPreviewContext(family: .systemSmall))
-    }
-}

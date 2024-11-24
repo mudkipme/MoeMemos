@@ -16,6 +16,7 @@ struct AppOpenIntent: AppIntent {
     @Dependency
     var appPath: AppPath
     
+    @MainActor
     func perform() async throws -> some IntentResult {
         appPath.presentedSheet = .newMemo
         return .result()

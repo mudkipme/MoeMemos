@@ -129,10 +129,3 @@ struct MemoryWidget: Widget {
         .contentMarginsDisabled()
     }
 }
-
-struct MemoryWidget_Previews: PreviewProvider {
-    static var previews: some View {
-        MemoryEntryView(entry: MemoryEntry(date: Date(), configuration: MemoryWidgetConfigurationIntent(), memo: sampleMemo))
-            .previewContext(WidgetPreviewContext(family: .systemSmall))
-    }
-}

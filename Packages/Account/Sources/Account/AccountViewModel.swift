@@ -13,8 +13,9 @@ import MemosV1Service
 import MemosV0Service
 
 @Observable public final class AccountViewModel: @unchecked Sendable {
-    private var currentContext: ModelContext
+    @ObservationIgnored private var currentContext: ModelContext
     private var accountManager: AccountManager
+    @ObservationIgnored private let userActor = UserModelActor()
 
     public init(currentContext: ModelContext, accountManager: AccountManager) {
         self.currentContext = currentContext
@@ -82,8 +83,7 @@ import MemosV0Service
         let (user, accessToken) = try await client.signIn(username: username, password: password)
         guard let accessToken = accessToken else { throw MoeMemosError.unsupportedVersion }
         let account = Account.memosV0(host: hostURL.absoluteString, id: "\(user.id)", accessToken: accessToken)
-        let accountKey = account.key
-        try currentContext.delete(model: User.self, where: #Predicate<User> { user in user.accountKey == accountKey })
+        try await userActor.deleteUser(currentContext, accountKey: account.key)
         try accountManager.add(account: account)
         try await reloadUsers()
     }
@@ -94,8 +94,7 @@ import MemosV0Service
         let user = try await client.getCurrentUser()
         guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
         let account = Account.memosV0(host: hostURL.absoluteString, id: id, accessToken: accessToken)
-        let accountKey = account.key
-        try currentContext.delete(model: User.self, where: #Predicate<User> { user in user.accountKey == accountKey })
+        try await userActor.deleteUser(currentContext, accountKey: account.key)
         try accountManager.add(account: account)
         try await reloadUsers()
     }
@@ -106,8 +105,7 @@ import MemosV0Service
         let (user, accessToken) = try await client.signIn(username: username, password: password)
         guard let accessToken = accessToken, let userId = user.id else { throw MoeMemosError.unsupportedVersion }
         let account = Account.memosV1(host: hostURL.absoluteString, id: "\(userId)", accessToken: accessToken)
-        let accountKey = account.key
-        try currentContext.delete(model: User.self, where: #Predicate<User> { user in user.accountKey == accountKey })
+        try await userActor.deleteUser(currentContext, accountKey: account.key)
         try accountManager.add(account: account)
         try await reloadUsers()
     }
@@ -118,8 +116,7 @@ import MemosV0Service
         let user = try await client.getCurrentUser()
         guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
         let account = Account.memosV1(host: hostURL.absoluteString, id: id, accessToken: accessToken)
-        let accountKey = account.key
-        try currentContext.delete(model: User.self, where: #Predicate<User> { user in user.accountKey == accountKey })
+        try await userActor.deleteUser(currentContext, accountKey: account.key)
         try accountManager.add(account: account)
         try await reloadUsers()
     }
