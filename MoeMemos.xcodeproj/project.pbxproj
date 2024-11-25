@@ -30,6 +30,8 @@
 		1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE429CF738300FEF570 /* ExploreViewModel.swift */; };
 		1919FBE729CF77C900FEF570 /* ExploreMemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */; };
 		1919FBE929CF78BE00FEF570 /* Explore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE829CF78BE00FEF570 /* Explore.swift */; };
+		192A65A92CF4C45600CEDB6B /* QuickMemoLockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192A65A82CF4C45100CEDB6B /* QuickMemoLockWidget.swift */; };
+		192A65AB2CF4C47A00CEDB6B /* QuickMemoLockWidgetIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192A65AA2CF4C47300CEDB6B /* QuickMemoLockWidgetIntent.swift */; };
 		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
 		1934C77C2921670600A169EC /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1934C77B2921670600A169EC /* Attachment.swift */; };
 		193938DC29CF682D0027939F /* MemoCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193938DB29CF682D0027939F /* MemoCardContent.swift */; };
@@ -159,6 +161,8 @@
 		1919FBE829CF78BE00FEF570 /* Explore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Explore.swift; sourceTree = "<group>"; };
 		191C49ED2B2D79A40097B98E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		191C49EE2B2D7DAB0097B98E /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		192A65A82CF4C45100CEDB6B /* QuickMemoLockWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoLockWidget.swift; sourceTree = "<group>"; };
+		192A65AA2CF4C47300CEDB6B /* QuickMemoLockWidgetIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoLockWidgetIntent.swift; sourceTree = "<group>"; };
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
 		1934C77B2921670600A169EC /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		193938DB29CF682D0027939F /* MemoCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCardContent.swift; sourceTree = "<group>"; };
@@ -279,13 +283,15 @@
 			children = (
 				191339D3291D7F13001F2B2E /* MoeMemosWidgetsExtension.entitlements */,
 				191339BA291D7289001F2B2E /* Info.plist */,
-				191339DB291D8F15001F2B2E /* MemoryWidget.swift */,
-				191339B5291D7288001F2B2E /* MemosGraphWidget.swift */,
-				191339B3291D7288001F2B2E /* MoeMemosWidgetsBundle.swift */,
-				19F81CDF2CEDAE2300728439 /* QuickMemoWidget.swift */,
 				19C9975F2CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift */,
+				191339DB291D8F15001F2B2E /* MemoryWidget.swift */,
 				19C997602CF35D49009763C5 /* MemoryWidgetConfiguration.swift */,
+				191339B5291D7288001F2B2E /* MemosGraphWidget.swift */,
 				19C997612CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift */,
+				191339B3291D7288001F2B2E /* MoeMemosWidgetsBundle.swift */,
+				192A65A82CF4C45100CEDB6B /* QuickMemoLockWidget.swift */,
+				192A65AA2CF4C47300CEDB6B /* QuickMemoLockWidgetIntent.swift */,
+				19F81CDF2CEDAE2300728439 /* QuickMemoWidget.swift */,
 				191339B8291D7289001F2B2E /* Assets.xcassets */,
 			);
 			path = MoeMemosWidgets;
@@ -637,9 +643,11 @@
 				19F81CE02CEDAE2800728439 /* QuickMemoWidget.swift in Sources */,
 				191339DC291D8F15001F2B2E /* MemoryWidget.swift in Sources */,
 				191339CF291D7748001F2B2E /* Heatmap.swift in Sources */,
+				192A65AB2CF4C47A00CEDB6B /* QuickMemoLockWidgetIntent.swift in Sources */,
 				191339D0291D774B001F2B2E /* HeatmapStat.swift in Sources */,
 				191339D1291D7765001F2B2E /* Color.swift in Sources */,
 				19F81CE12CEDAF2400728439 /* AppOpenIntent.swift in Sources */,
+				192A65A92CF4C45600CEDB6B /* QuickMemoLockWidget.swift in Sources */,
 				19C997652CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift in Sources */,
 				19C997662CF35D49009763C5 /* MemoryWidgetConfiguration.swift in Sources */,
 				19C997672CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift in Sources */,

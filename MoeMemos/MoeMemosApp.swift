@@ -38,7 +38,9 @@ struct MoeMemosApp: App {
                 .environment(appPath)
                 .environment(memosViewModel)
                 .onOpenURL { url in
-                    print(url)
+                    if url.host() == "new-memo" {
+                        appPath.presentedSheet = .newMemo
+                    }
                 }
         }
     }
