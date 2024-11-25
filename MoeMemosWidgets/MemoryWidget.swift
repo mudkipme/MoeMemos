@@ -17,7 +17,7 @@ let sampleMemo = Memo(
     createdAt: .now
 )
 
-extension MemoryUpdatePeriod {
+extension MemoryUpdatePeriodAppEnum {
     var memosPerDay: Int {
         switch self {
         case .daily: return 1
@@ -31,53 +31,45 @@ extension MemoryUpdatePeriod {
     }
 }
 
-struct MemoryProvider: @preconcurrency IntentTimelineProvider {
+struct MemoryProvider: AppIntentTimelineProvider {
+    func snapshot(for configuration: MemoryWidgetConfiguration, in context: Context) async -> MemoryEntry {
+        return MemoryEntry(date: Date(), configuration: configuration, memo: sampleMemo)
+    }
+    
+    func timeline(for configuration: MemoryWidgetConfiguration, in context: Context) async -> Timeline<MemoryEntry> {
+        let memos = try? await getMemos(configuration.frequency ?? .daily)
+        var entries = [Entry]()
+        
+        if let memos = memos {
+            for (i, memo) in memos.enumerated() {
+                let entryDate = Calendar.current.date(byAdding: .hour, value: i * (configuration.frequency ?? .daily).interval, to: Date())!
+                entries.append(MemoryEntry(date: entryDate, configuration: configuration, memo: memo))
+            }
+        } else {
+            let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
+            entries.append(MemoryEntry(date: entryDate, configuration: configuration, memo: sampleMemo))
+        }
+        
+        return Timeline(entries: entries, policy: .atEnd)
+    }
+    
     func placeholder(in context: Context) -> MemoryEntry {
-        MemoryEntry(date: Date(), configuration: MemoryWidgetConfigurationIntent(), memo: sampleMemo)
+        MemoryEntry(date: Date(), configuration: MemoryWidgetConfiguration(), memo: sampleMemo)
     }
 
     @MainActor
-    func getSnapshot(for configuration: MemoryWidgetConfigurationIntent, in context: Context, completion: @escaping (MemoryEntry) -> ()) {
-        Task {
-            let entry = MemoryEntry(date: Date(), configuration: configuration, memo: sampleMemo)
-            completion(entry)
-        }
-    }
-    
-    @MainActor
-    func getMemos(_ frequency: MemoryUpdatePeriod) async throws -> [Memo]? {
+    func getMemos(_ frequency: MemoryUpdatePeriodAppEnum) async throws -> [Memo]? {
         let accountManager = AccountManager()
         guard let memos = accountManager.currentService else { return nil }
         
         let response = try await memos.listMemos()
         return [Memo](response.shuffled().prefix(frequency.memosPerDay))
     }
-
-    @MainActor
-    func getTimeline(for configuration: MemoryWidgetConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        Task {
-            let memos = try? await getMemos(configuration.frequency)
-            var entries = [Entry]()
-            
-            if let memos = memos {
-                for (i, memo) in memos.enumerated() {
-                    let entryDate = Calendar.current.date(byAdding: .hour, value: i * configuration.frequency.interval, to: Date())!
-                    entries.append(MemoryEntry(date: entryDate, configuration: configuration, memo: memo))
-                }
-            } else {
-                let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
-                entries.append(MemoryEntry(date: entryDate, configuration: configuration, memo: sampleMemo))
-            }
-            
-            let timeline = Timeline(entries: entries, policy: .atEnd)
-            completion(timeline)
-        }
-    }
 }
 
 struct MemoryEntry: TimelineEntry {
     let date: Date
-    let configuration: MemoryWidgetConfigurationIntent
+    let configuration: MemoryWidgetConfiguration
     let memo: Memo
 }
 
@@ -98,7 +90,7 @@ struct MemoryEntryView : View {
             Spacer()
         }
         .padding()
-        
+        .containerBackground(.background, for: .widget)
     }
     
     var dateString: String {
@@ -120,7 +112,7 @@ struct MemoryWidget: Widget {
     let kind: String = "MemoryWidget"
 
     var body: some WidgetConfiguration {
-        IntentConfiguration(kind: kind, intent: MemoryWidgetConfigurationIntent.self, provider: MemoryProvider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: MemoryWidgetConfiguration.self, provider: MemoryProvider()) { entry in
             MemoryEntryView(entry: entry)
         }
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])

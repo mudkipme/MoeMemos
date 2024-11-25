@@ -12,22 +12,25 @@ import KeychainSwift
 import Models
 import Account
 
-struct Provider: @preconcurrency IntentTimelineProvider {
-    func placeholder(in context: Context) -> MemosGraphEntry {
-        MemosGraphEntry(date: Date(), configuration: MemosGraphWidgetConfigurationIntent(), matrix: nil)
-    }
-
-    @MainActor
-    func getSnapshot(for configuration: MemosGraphWidgetConfigurationIntent, in context: Context, completion: @escaping (MemosGraphEntry) -> ()) {
-        Task {
-            var matrix: [DailyUsageStat]?
-            if !context.isPreview {
-                matrix = try? await getMatrix()
-            }
-            
-            let entry = MemosGraphEntry(date: Date(), configuration: configuration, matrix: matrix)
-            completion(entry)
+struct Provider: AppIntentTimelineProvider {
+    func snapshot(for configuration: MemosGraphWidgetConfiguration, in context: Context) async -> MemosGraphEntry {
+        var matrix: [DailyUsageStat]?
+        if !context.isPreview {
+            matrix = try? await getMatrix()
         }
+        
+        return MemosGraphEntry(date: Date(), configuration: configuration, matrix: matrix)
+    }
+    
+    func timeline(for configuration: MemosGraphWidgetConfiguration, in context: Context) async -> Timeline<MemosGraphEntry> {
+        let matrix = try? await getMatrix()
+        let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
+        let entry = MemosGraphEntry(date: entryDate, configuration: configuration, matrix: matrix)
+        return Timeline(entries: [entry], policy: .atEnd)
+    }
+    
+    func placeholder(in context: Context) -> MemosGraphEntry {
+        MemosGraphEntry(date: Date(), configuration: MemosGraphWidgetConfiguration(), matrix: nil)
     }
     
     @MainActor
@@ -40,22 +43,11 @@ struct Provider: @preconcurrency IntentTimelineProvider {
         let response = try await memos.listMemos()
         return DailyUsageStat.calculateMatrix(memoList: response)
     }
-
-    @MainActor
-    func getTimeline(for configuration: MemosGraphWidgetConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        Task {
-            let matrix = try? await getMatrix()
-            let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
-            let entry = MemosGraphEntry(date: entryDate, configuration: configuration, matrix: matrix)
-            let timeline = Timeline(entries: [entry], policy: .atEnd)
-            completion(timeline)
-        }
-    }
 }
 
 struct MemosGraphEntry: TimelineEntry {
     let date: Date
-    let configuration: MemosGraphWidgetConfigurationIntent
+    let configuration: MemosGraphWidgetConfiguration
     let matrix: [DailyUsageStat]?
 }
 
@@ -65,6 +57,7 @@ struct MemosGraphEntryView : View {
     var body: some View {
         Heatmap(matrix: entry.matrix ?? DailyUsageStat.initialMatrix, alignment: .center)
             .padding()
+            .containerBackground(.background, for: .widget)
     }
 }
 
@@ -72,7 +65,7 @@ struct MemosGraphWidget: Widget {
     let kind: String = "MemosGraphWidget"
 
     var body: some WidgetConfiguration {
-        IntentConfiguration(kind: kind, intent: MemosGraphWidgetConfigurationIntent.self, provider: Provider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: MemosGraphWidgetConfiguration.self, provider: Provider()) { entry in
             MemosGraphEntryView(entry: entry)
         }
         .supportedFamilies([.systemSmall, .systemMedium])
