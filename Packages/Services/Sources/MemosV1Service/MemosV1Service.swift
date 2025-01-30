@@ -46,7 +46,7 @@ public final class MemosV1Service: RemoteService {
         var nextPageToken: String? = nil
         
         repeat {
-            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 100, pageToken: nextPageToken, filter: "creator == \"users/\(userId)\" && row_status == \"NORMAL\" && order_by_pinned == true", view: .MEMO_VIEW_FULL))
+            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 100, pageToken: nextPageToken, filter: "creator == \"users/\(userId)\" && state == \"NORMAL\" && order_by_pinned == true", view: .MEMO_VIEW_FULL))
             let data = try resp.ok.body.json
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
@@ -61,7 +61,7 @@ public final class MemosV1Service: RemoteService {
         var nextPageToken: String? = nil
         
         repeat {
-            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 100, pageToken: nextPageToken, filter: "creator == \"users/\(userId)\" && row_status == \"ARCHIVED\"", view: .MEMO_VIEW_FULL))
+            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 100, pageToken: nextPageToken, filter: "creator == \"users/\(userId)\" && state == \"ARCHIVED\"", view: .MEMO_VIEW_FULL))
             let data = try resp.ok.body.json
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
@@ -71,7 +71,7 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func listWorkspaceMemos(pageSize: Int, pageToken: String?) async throws -> (list: [Memo], nextPageToken: String?) {
-        let resp = try await client.MemoService_ListMemos(query: .init(pageSize: Int32(pageSize), pageToken: pageToken, filter: "row_status == \"NORMAL\" && visibilities == ['PUBLIC', 'PROTECTED']", view: .MEMO_VIEW_FULL))
+        let resp = try await client.MemoService_ListMemos(query: .init(pageSize: Int32(pageSize), pageToken: pageToken, filter: "state == \"NORMAL\" && visibilities == ['PUBLIC', 'PROTECTED']", view: .MEMO_VIEW_FULL))
         let data = try resp.ok.body.json
         return (data.memos?.map { $0.toMemo(host: hostURL) } ?? [], data.nextPageToken)
     }
@@ -98,6 +98,7 @@ public final class MemosV1Service: RemoteService {
     
     public func updateMemo(remoteId: String, content: String?, resources: [Resource]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> Memo {
         let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(
+            updateTime: .now,
             content: content,
             visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
             pinned: pinned
@@ -122,22 +123,22 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func archiveMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(rowStatus: .ARCHIVED)))
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(state: .ARCHIVED)))
         _ = try resp.ok
     }
     
     public func restoreMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(rowStatus: .ACTIVE)))
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(state: .NORMAL)))
         _ = try resp.ok
     }
     
     public func listTags() async throws -> [Tag] {
         guard let userId = userId else { throw MoeMemosError.notLogin }
-        let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 1000000, filter: "creator == \"users/\(userId)\" && row_status == \"NORMAL\"", view: .MEMO_VIEW_METADATA_ONLY))
+        let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 1000000, filter: "creator == \"users/\(userId)\" && state == \"NORMAL\"", view: .MEMO_VIEW_METADATA_ONLY))
         
         var tags = Set<String>()
         for memo in try resp.ok.body.json.memos ?? [] {
-            tags.formUnion(memo.property?.tags ?? [])
+            tags.formUnion(memo.tags ?? [])
         }
         return tags.map { Tag(name: $0) }
     }
@@ -232,13 +233,14 @@ public final class MemosV1Service: RemoteService {
     }
     
     func toUser(_ memosUser: MemosV1User, setting: Components.Schemas.apiv1UserSetting? = nil) async -> User {
-        let key = "memos:\(hostURL.absoluteString):\(memosUser.id ?? 0)"
+        let remoteId = getId(remoteId: memosUser.name ?? "0")
+        let key = "memos:\(hostURL.absoluteString):\(remoteId)"
         let user = User(
             accountKey: key,
             nickname: memosUser.nickname ?? memosUser.username ?? "",
             creationDate: memosUser.createTime ?? .now,
             email: memosUser.email,
-            remoteId: memosUser.id.map(String.init)
+            remoteId: remoteId
         )
         if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
             var url = url

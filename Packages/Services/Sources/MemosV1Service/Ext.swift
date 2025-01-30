@@ -19,7 +19,7 @@ extension MemosV1Memo {
         return Memo(
             content: content ?? "",
             pinned: pinned ?? false,
-            rowStatus: rowStatus == .ARCHIVED ? .archived : .normal,
+            rowStatus: state == .ARCHIVED ? .archived : .normal,
             visibility: visibility?.toMemoVisibility() ?? .private,
             resources: resources?.map { $0.toResource(host: host) } ?? [],
             createdAt: createTime ?? .now,
