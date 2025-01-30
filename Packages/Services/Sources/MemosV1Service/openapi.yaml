@@ -398,8 +398,8 @@ paths:
                 uid:
                   type: string
                   description: The user defined id of the memo.
-                rowStatus:
-                  $ref: '#/components/schemas/v1RowStatus'
+                state:
+                  $ref: '#/components/schemas/v1State'
                 creator:
                   title: "The name of the creator.\r\nFormat: users/{id}"
                   type: string
@@ -1050,8 +1050,8 @@ paths:
                   type: string
                 password:
                   type: string
-                rowStatus:
-                  $ref: '#/components/schemas/v1RowStatus'
+                state:
+                  $ref: '#/components/schemas/v1State'
                 createTime:
                   type: string
                   format: date-time
@@ -1289,8 +1289,8 @@ components:
         uid:
           type: string
           description: The user defined id of the memo.
-        rowStatus:
-          $ref: '#/components/schemas/v1RowStatus'
+        state:
+          $ref: '#/components/schemas/v1State'
         creator:
           title: "The name of the creator.\r\nFormat: users/{id}"
           type: string
@@ -1665,10 +1665,6 @@ components:
     v1MemoProperty:
       type: object
       properties:
-        tags:
-          type: array
-          items:
-            type: string
         hasLink:
           type: boolean
         hasTaskList:
@@ -1758,12 +1754,12 @@ components:
         memo:
           title: "The related memo.\r\nFormat: memos/{id}"
           type: string
-    v1RowStatus:
+    v1State:
       type: string
-      default: ROW_STATUS_UNSPECIFIED
+      default: STATE_UNSPECIFIED
       enum:
-      - ROW_STATUS_UNSPECIFIED
-      - ACTIVE
+      - STATE_UNSPECIFIED
+      - NORMAL
       - ARCHIVED
     v1User:
       type: object
@@ -1789,8 +1785,8 @@ components:
           type: string
         password:
           type: string
-        rowStatus:
-          $ref: '#/components/schemas/v1RowStatus'
+        state:
+          $ref: '#/components/schemas/v1State'
         createTime:
           type: string
           format: date-time
