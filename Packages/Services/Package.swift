@@ -18,6 +18,9 @@ let package = Package(
         .library(
             name: "MemosV1Service",
             targets: ["MemosV1Service"]),
+        .library(
+            name: "BlinkoV1Service",
+            targets: ["BlinkoV1Service"]),
     ],
     dependencies: [
         .package(name: "Models", path: "../Models"),
@@ -55,6 +58,21 @@ let package = Package(
         ),
         .target(
             name: "MemosV1Service",
+            dependencies: [
+                .product(name: "Models", package: "Models"),
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
+                "ServiceUtils"
+            ],
+            swiftSettings: [
+              .enableExperimentalFeature("StrictConcurrency"),
+            ],
+            plugins: [
+                .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")
+            ]
+        ),
+        .target(
+            name: "BlinkoV1Service",
             dependencies: [
                 .product(name: "Models", package: "Models"),
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
