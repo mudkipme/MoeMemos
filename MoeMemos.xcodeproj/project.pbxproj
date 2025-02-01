@@ -209,6 +209,8 @@
 		19C9975F2CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryUpdatePeriodAppEnum.swift; sourceTree = "<group>"; };
 		19C997602CF35D49009763C5 /* MemoryWidgetConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryWidgetConfiguration.swift; sourceTree = "<group>"; };
 		19C997612CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosGraphWidgetConfiguration.swift; sourceTree = "<group>"; };
+		19D0C59F2D4E0CC400E026CF /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/MainInterface.strings; sourceTree = "<group>"; };
+		19D0C5A02D4E0CC400E026CF /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		19E1C5BD28C4F6410072CEEF /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		19E1C5BF28C5191D0072CEEF /* MemoInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInput.swift; sourceTree = "<group>"; };
 		19E29A682938FBCD00BE9C32 /* MoeMemosShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MoeMemosShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -575,6 +577,7 @@
 				de,
 				fr,
 				it,
+				ja,
 			);
 			mainGroup = 194B272428C3973400A48675;
 			packageReferences = (
@@ -746,6 +749,7 @@
 				190322DE2A82929300CAA50D /* de */,
 				191C49ED2B2D79A40097B98E /* fr */,
 				191C49EE2B2D7DAB0097B98E /* it */,
+				19D0C5A02D4E0CC400E026CF /* ja */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -757,6 +761,7 @@
 				1948CCBA2996BFE200AB1986 /* zh-Hant */,
 				193F04E129CCBA320010E3BF /* Base */,
 				190322DC2A82929300CAA50D /* de */,
+				19D0C59F2D4E0CC400E026CF /* ja */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
