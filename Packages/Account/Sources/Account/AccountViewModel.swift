@@ -11,6 +11,7 @@ import Models
 import Factory
 import MemosV1Service
 import MemosV0Service
+import BlinkoV1Service
 
 @Observable public final class AccountViewModel: @unchecked Sendable {
     @ObservationIgnored private var currentContext: ModelContext
@@ -116,6 +117,17 @@ import MemosV0Service
         let user = try await client.getCurrentUser()
         guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
         let account = Account.memosV1(host: hostURL.absoluteString, id: id, accessToken: accessToken)
+        try await userActor.deleteUser(currentContext, accountKey: account.key)
+        try accountManager.add(account: account)
+        try await reloadUsers()
+    }
+    
+    @MainActor
+    func loginBlinkoV1(hostURL: URL, accessToken: String) async throws {
+        let client = BlinkoV1Service(hostURL: hostURL, accessToken: accessToken)
+        let user = try await client.getCurrentUser()
+        guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
+        let account = Account.blinkoV1(host: hostURL.absoluteString, id: id, accessToken: accessToken)
         try await userActor.deleteUser(currentContext, accountKey: account.key)
         try accountManager.add(account: account)
         try await reloadUsers()

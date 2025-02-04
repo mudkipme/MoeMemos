@@ -25,7 +25,7 @@ public final class BlinkoV1Service: RemoteService {
         self.accessToken = accessToken
         urlSession = URLSession(configuration: URLSessionConfiguration.default)
         client = Client(
-            serverURL: hostURL,
+            serverURL: hostURL.appending(path: "/api"),
             transport: URLSessionTransport(configuration: .init(session: urlSession)),
             middlewares: [
                 AccessTokenAuthenticationMiddleware(accessToken: accessToken),
@@ -215,7 +215,7 @@ public final class BlinkoV1Service: RemoteService {
     }
     
     public func getCurrentUser() async throws -> Models.User {
-        let resp = try await client.users_hyphen_detail(.init())
+        let resp = try await client.users_hyphen_detail(query: .init(), headers: .init())
         let json = try resp.ok.body.json
         let key = "blinko:\(hostURL.absoluteString):\(json.id)"
         

@@ -9,4 +9,5 @@ import Foundation
 
 enum AddAccountRouter: Hashable {
     case addMemosAccount
+    case addBlinkoAccount
 }

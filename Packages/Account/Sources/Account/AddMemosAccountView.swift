@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Models
-import MemosV0Service
 import DesignSystem
 
 @MainActor

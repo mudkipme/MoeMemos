@@ -105,7 +105,7 @@ public struct MemosAccountView: View {
                 hostURL = URL(string: host)
             case .memosV1(host: let host, id: _, accessToken: _):
                 hostURL = URL(string: host)
-            case .local:
+            default:
                 return
             }
             guard let hostURL = hostURL else { return }
