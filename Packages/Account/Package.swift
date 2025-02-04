@@ -33,6 +33,7 @@ let package = Package(
                 .product(name: "Models", package: "Models"),
                 .product(name: "MemosV0Service", package: "Services"),
                 .product(name: "MemosV1Service", package: "Services"),
+                .product(name: "BlinkoV1Service", package: "Services"),
                 .product(name: "DesignSystem", package: "DesignSystem"),
                 .product(name: "Env", package: "Env"),
                 .product(name: "KeychainSwift", package: "keychain-swift"),

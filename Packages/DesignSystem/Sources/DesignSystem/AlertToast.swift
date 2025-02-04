@@ -26,9 +26,9 @@ struct AlertToast: View {
                 Image(systemName: name)
                 if let title = title {
                     Text(title)
-                        .lineLimit(3)
+                        .lineLimit(5)
                         .frame(maxWidth: textMaxWidth)
-                        .fixedSize(horizontal: true, vertical: false)
+                        .multilineTextAlignment(.center)
                 }
             }
             .padding()

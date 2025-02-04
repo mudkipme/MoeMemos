@@ -1,0 +1,5396 @@
+openapi: 3.0.3
+info:
+  title: Blinko CRUD API V1
+  description: blinko api for public endpoints
+  version: 1.0.0
+servers:
+  - url: /api
+tags:
+  - name: Note
+  - name: User
+  - name: Task
+  - name: Tag
+  - name: Public
+  - name: Config
+  - name: File
+paths:
+  /v1/note/list:
+    post:
+      operationId: notes-list
+      summary: Query notes list
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagId:
+                  anyOf:
+                    - type: number
+                    - type: 'null'
+                  default: null
+                page:
+                  type: number
+                  default: 1
+                size:
+                  type: number
+                  default: 30
+                orderBy:
+                  type: string
+                  enum:
+                    - asc
+                    - desc
+                  default: desc
+                type:
+                  anyOf:
+                    - type: number
+                      enum:
+                        - 0
+                        - 1
+                    - type: number
+                      enum:
+                        - -1
+                  default: -1
+                isArchived:
+                  anyOf:
+                    - type: boolean
+                    - type: 'null'
+                  default: false
+                isShare:
+                  anyOf:
+                    - type: boolean
+                    - type: 'null'
+                  default: null
+                isRecycle:
+                  type: boolean
+                  default: false
+                searchText:
+                  type: string
+                  default: ''
+                withoutTag:
+                  type: boolean
+                  default: false
+                withFile:
+                  type: boolean
+                  default: false
+                withLink:
+                  type: boolean
+                  default: false
+                isUseAiQuery:
+                  type: boolean
+                  default: false
+                startDate:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                  default: null
+                endDate:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                  default: null
+                hasTodo:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    type:
+                      type: integer
+                    content:
+                      type: string
+                    isArchived:
+                      type: boolean
+                    isRecycle:
+                      type: boolean
+                    isShare:
+                      type: boolean
+                    isTop:
+                      type: boolean
+                    isReviewed:
+                      type: boolean
+                    sharePassword:
+                      type: string
+                    shareEncryptedUrl:
+                      type: string
+                      nullable: true
+                    shareExpiryDate:
+                      type: string
+                      nullable: true
+                    shareMaxView:
+                      type: number
+                      nullable: true
+                    shareViewCount:
+                      type: number
+                      nullable: true
+                    metadata: {}
+                    accountId:
+                      anyOf:
+                        - type: integer
+                        - type: 'null'
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                    attachments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          isShare:
+                            type: boolean
+                          sharePassword:
+                            type: string
+                          name:
+                            type: string
+                          path:
+                            type: string
+                          size:
+                            anyOf:
+                              - {}
+                              - type: number
+                              - type: string
+                          noteId:
+                            type: integer
+                            nullable: true
+                          accountId:
+                            type: integer
+                            nullable: true
+                          createdAt:
+                            type: string
+                          sortOrder:
+                            type: integer
+                          updatedAt:
+                            type: string
+                          type:
+                            type: string
+                          depth: {}
+                          perfixPath: {}
+                        required:
+                          - id
+                          - isShare
+                          - sharePassword
+                          - name
+                          - path
+                          - noteId
+                          - accountId
+                          - createdAt
+                          - sortOrder
+                          - updatedAt
+                          - type
+                    tags:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          noteId:
+                            type: integer
+                          tagId:
+                            type: integer
+                          tag:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              name:
+                                type: string
+                              icon:
+                                type: string
+                              parent:
+                                type: integer
+                              sortOrder:
+                                type: integer
+                              createdAt:
+                                type: string
+                              updatedAt:
+                                type: string
+                            required:
+                              - id
+                              - name
+                              - icon
+                              - parent
+                              - sortOrder
+                              - createdAt
+                              - updatedAt
+                        required:
+                          - id
+                          - noteId
+                          - tagId
+                          - tag
+                    references:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          toNoteId:
+                            type: number
+                          toNote:
+                            type: object
+                            properties:
+                              content:
+                                type: string
+                              createdAt:
+                                type: string
+                              updatedAt:
+                                type: string
+                        required:
+                          - toNoteId
+                    referencedBy:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          fromNoteId:
+                            type: number
+                          fromNote:
+                            type: object
+                            properties:
+                              content:
+                                type: string
+                              createdAt:
+                                type: string
+                              updatedAt:
+                                type: string
+                        required:
+                          - fromNoteId
+                    _count:
+                      type: object
+                      properties:
+                        comments:
+                          type: number
+                      required:
+                        - comments
+                  required:
+                    - id
+                    - type
+                    - content
+                    - isArchived
+                    - isRecycle
+                    - isShare
+                    - isTop
+                    - isReviewed
+                    - sharePassword
+                    - accountId
+                    - createdAt
+                    - updatedAt
+                    - attachments
+                    - tags
+                    - _count
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/public-list:
+    post:
+      operationId: notes-publicList
+      summary: Query share notes list
+      tags:
+        - Note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: number
+                  default: 1
+                size:
+                  type: number
+                  default: 30
+                searchText:
+                  type: string
+                  default: ''
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    type:
+                      type: integer
+                    content:
+                      type: string
+                    isArchived:
+                      type: boolean
+                    isRecycle:
+                      type: boolean
+                    isShare:
+                      type: boolean
+                    isTop:
+                      type: boolean
+                    isReviewed:
+                      type: boolean
+                    sharePassword:
+                      type: string
+                    shareEncryptedUrl:
+                      type: string
+                      nullable: true
+                    shareExpiryDate:
+                      type: string
+                      nullable: true
+                    shareMaxView:
+                      type: number
+                      nullable: true
+                    shareViewCount:
+                      type: number
+                      nullable: true
+                    metadata: {}
+                    accountId:
+                      anyOf:
+                        - type: integer
+                        - type: 'null'
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                    attachments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          isShare:
+                            type: boolean
+                          sharePassword:
+                            type: string
+                          name:
+                            type: string
+                          path:
+                            type: string
+                          size:
+                            anyOf:
+                              - {}
+                              - type: number
+                              - type: string
+                          noteId:
+                            type: integer
+                            nullable: true
+                          accountId:
+                            type: integer
+                            nullable: true
+                          createdAt:
+                            type: string
+                          sortOrder:
+                            type: integer
+                          updatedAt:
+                            type: string
+                          type:
+                            type: string
+                          depth: {}
+                          perfixPath: {}
+                        required:
+                          - id
+                          - isShare
+                          - sharePassword
+                          - name
+                          - path
+                          - noteId
+                          - accountId
+                          - createdAt
+                          - sortOrder
+                          - updatedAt
+                          - type
+                    account:
+                      type: object
+                      nullable: true
+                      properties:
+                        image:
+                          type: string
+                        nickname:
+                          type: string
+                        name:
+                          type: string
+                        id:
+                          type: number
+                    tags:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          noteId:
+                            type: integer
+                          tagId:
+                            type: integer
+                          tag:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              name:
+                                type: string
+                              icon:
+                                type: string
+                              parent:
+                                type: integer
+                              sortOrder:
+                                type: integer
+                              createdAt:
+                                type: string
+                              updatedAt:
+                                type: string
+                            required:
+                              - id
+                              - name
+                              - icon
+                              - parent
+                              - sortOrder
+                              - createdAt
+                              - updatedAt
+                        required:
+                          - id
+                          - noteId
+                          - tagId
+                          - tag
+                    _count:
+                      type: object
+                      properties:
+                        comments:
+                          type: number
+                      required:
+                        - comments
+                  required:
+                    - id
+                    - type
+                    - content
+                    - isArchived
+                    - isRecycle
+                    - isShare
+                    - isTop
+                    - isReviewed
+                    - sharePassword
+                    - accountId
+                    - createdAt
+                    - updatedAt
+                    - attachments
+                    - tags
+                    - _count
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/list-by-ids:
+    post:
+      operationId: notes-listByIds
+      summary: Query notes list by ids
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: number
+              required:
+                - ids
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    type:
+                      type: integer
+                    content:
+                      type: string
+                    isArchived:
+                      type: boolean
+                    isRecycle:
+                      type: boolean
+                    isShare:
+                      type: boolean
+                    isTop:
+                      type: boolean
+                    isReviewed:
+                      type: boolean
+                    sharePassword:
+                      type: string
+                    shareEncryptedUrl:
+                      type: string
+                      nullable: true
+                    shareExpiryDate:
+                      type: string
+                      nullable: true
+                    shareMaxView:
+                      type: number
+                      nullable: true
+                    shareViewCount:
+                      type: number
+                      nullable: true
+                    metadata: {}
+                    accountId:
+                      anyOf:
+                        - type: integer
+                        - type: 'null'
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                    attachments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          isShare:
+                            type: boolean
+                          sharePassword:
+                            type: string
+                          name:
+                            type: string
+                          path:
+                            type: string
+                          size:
+                            anyOf:
+                              - {}
+                              - type: number
+                              - type: string
+                          noteId:
+                            type: integer
+                            nullable: true
+                          accountId:
+                            type: integer
+                            nullable: true
+                          createdAt:
+                            type: string
+                          sortOrder:
+                            type: integer
+                          updatedAt:
+                            type: string
+                          type:
+                            type: string
+                          depth: {}
+                          perfixPath: {}
+                        required:
+                          - id
+                          - isShare
+                          - sharePassword
+                          - name
+                          - path
+                          - noteId
+                          - accountId
+                          - createdAt
+                          - sortOrder
+                          - updatedAt
+                          - type
+                    tags:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          noteId:
+                            type: integer
+                          tagId:
+                            type: integer
+                          tag:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              name:
+                                type: string
+                              icon:
+                                type: string
+                              parent:
+                                type: integer
+                              sortOrder:
+                                type: integer
+                              createdAt:
+                                type: string
+                              updatedAt:
+                                type: string
+                            required:
+                              - id
+                              - name
+                              - icon
+                              - parent
+                              - sortOrder
+                              - createdAt
+                              - updatedAt
+                        required:
+                          - id
+                          - noteId
+                          - tagId
+                          - tag
+                    references:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          toNoteId:
+                            type: number
+                          toNote:
+                            type: object
+                            properties:
+                              content:
+                                type: string
+                              createdAt:
+                                type: string
+                              updatedAt:
+                                type: string
+                        required:
+                          - toNoteId
+                    referencedBy:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          fromNoteId:
+                            type: number
+                          fromNote:
+                            type: object
+                            properties:
+                              content:
+                                type: string
+                              createdAt:
+                                type: string
+                              updatedAt:
+                                type: string
+                        required:
+                          - fromNoteId
+                    _count:
+                      type: object
+                      properties:
+                        comments:
+                          type: number
+                      required:
+                        - comments
+                  required:
+                    - id
+                    - type
+                    - content
+                    - isArchived
+                    - isRecycle
+                    - isShare
+                    - isTop
+                    - isReviewed
+                    - sharePassword
+                    - accountId
+                    - createdAt
+                    - updatedAt
+                    - attachments
+                    - tags
+                    - _count
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/public-detail:
+    post:
+      operationId: notes-publicDetail
+      summary: Query share note detail
+      tags:
+        - Note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shareEncryptedUrl:
+                  type: string
+                password:
+                  type: string
+              required:
+                - shareEncryptedUrl
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hasPassword:
+                    type: boolean
+                  data:
+                    anyOf:
+                      - type: 'null'
+                      - type: object
+                        properties:
+                          id:
+                            type: integer
+                          type:
+                            type: integer
+                          content:
+                            type: string
+                          isArchived:
+                            type: boolean
+                          isRecycle:
+                            type: boolean
+                          isShare:
+                            type: boolean
+                          isTop:
+                            type: boolean
+                          isReviewed:
+                            type: boolean
+                          sharePassword:
+                            type: string
+                          shareEncryptedUrl:
+                            type: string
+                            nullable: true
+                          shareExpiryDate:
+                            type: string
+                            nullable: true
+                          shareMaxView:
+                            type: number
+                            nullable: true
+                          shareViewCount:
+                            type: number
+                            nullable: true
+                          metadata: {}
+                          accountId:
+                            anyOf:
+                              - type: integer
+                              - type: 'null'
+                          createdAt:
+                            type: string
+                          updatedAt:
+                            type: string
+                          attachments:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                isShare:
+                                  type: boolean
+                                sharePassword:
+                                  type: string
+                                name:
+                                  type: string
+                                path:
+                                  type: string
+                                size:
+                                  anyOf:
+                                    - {}
+                                    - type: number
+                                    - type: string
+                                noteId:
+                                  type: integer
+                                  nullable: true
+                                accountId:
+                                  type: integer
+                                  nullable: true
+                                createdAt:
+                                  type: string
+                                sortOrder:
+                                  type: integer
+                                updatedAt:
+                                  type: string
+                                type:
+                                  type: string
+                                depth: {}
+                                perfixPath: {}
+                              required:
+                                - id
+                                - isShare
+                                - sharePassword
+                                - name
+                                - path
+                                - noteId
+                                - accountId
+                                - createdAt
+                                - sortOrder
+                                - updatedAt
+                                - type
+                          references:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                toNoteId:
+                                  type: number
+                                toNote:
+                                  type: object
+                                  properties:
+                                    content:
+                                      type: string
+                                    createdAt:
+                                      type: string
+                                    updatedAt:
+                                      type: string
+                              required:
+                                - toNoteId
+                          referencedBy:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                fromNoteId:
+                                  type: number
+                                fromNote:
+                                  type: object
+                                  properties:
+                                    content:
+                                      type: string
+                                    createdAt:
+                                      type: string
+                                    updatedAt:
+                                      type: string
+                              required:
+                                - fromNoteId
+                          account:
+                            type: object
+                            nullable: true
+                            properties:
+                              image:
+                                type: string
+                              nickname:
+                                type: string
+                              name:
+                                type: string
+                              id:
+                                type: number
+                          _count:
+                            type: object
+                            properties:
+                              comments:
+                                type: number
+                            required:
+                              - comments
+                        required:
+                          - id
+                          - type
+                          - content
+                          - isArchived
+                          - isRecycle
+                          - isShare
+                          - isTop
+                          - isReviewed
+                          - sharePassword
+                          - accountId
+                          - createdAt
+                          - updatedAt
+                          - attachments
+                          - _count
+                  error:
+                    anyOf:
+                      - type: string
+                        enum:
+                          - expired
+                      - type: 'null'
+                    default: null
+                required:
+                  - hasPassword
+                  - data
+                  - error
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/detail:
+    post:
+      operationId: notes-detail
+      summary: Query note detail
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+              required:
+                - id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - type: 'null'
+                  - type: object
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: integer
+                      content:
+                        type: string
+                      isArchived:
+                        type: boolean
+                      isRecycle:
+                        type: boolean
+                      isShare:
+                        type: boolean
+                      isTop:
+                        type: boolean
+                      isReviewed:
+                        type: boolean
+                      sharePassword:
+                        type: string
+                      shareEncryptedUrl:
+                        type: string
+                        nullable: true
+                      shareExpiryDate:
+                        type: string
+                        nullable: true
+                      shareMaxView:
+                        type: number
+                        nullable: true
+                      shareViewCount:
+                        type: number
+                        nullable: true
+                      metadata: {}
+                      accountId:
+                        anyOf:
+                          - type: integer
+                          - type: 'null'
+                      createdAt:
+                        type: string
+                      updatedAt:
+                        type: string
+                      attachments:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            isShare:
+                              type: boolean
+                            sharePassword:
+                              type: string
+                            name:
+                              type: string
+                            path:
+                              type: string
+                            size:
+                              anyOf:
+                                - {}
+                                - type: number
+                                - type: string
+                            noteId:
+                              type: integer
+                              nullable: true
+                            accountId:
+                              type: integer
+                              nullable: true
+                            createdAt:
+                              type: string
+                            sortOrder:
+                              type: integer
+                            updatedAt:
+                              type: string
+                            type:
+                              type: string
+                            depth: {}
+                            perfixPath: {}
+                          required:
+                            - id
+                            - isShare
+                            - sharePassword
+                            - name
+                            - path
+                            - noteId
+                            - accountId
+                            - createdAt
+                            - sortOrder
+                            - updatedAt
+                            - type
+                      tags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            noteId:
+                              type: integer
+                            tagId:
+                              type: integer
+                            tag:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                name:
+                                  type: string
+                                icon:
+                                  type: string
+                                parent:
+                                  type: integer
+                                sortOrder:
+                                  type: integer
+                                createdAt:
+                                  type: string
+                                updatedAt:
+                                  type: string
+                              required:
+                                - id
+                                - name
+                                - icon
+                                - parent
+                                - sortOrder
+                                - createdAt
+                                - updatedAt
+                          required:
+                            - id
+                            - noteId
+                            - tagId
+                            - tag
+                      references:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            toNoteId:
+                              type: number
+                            toNote:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                createdAt:
+                                  type: string
+                                updatedAt:
+                                  type: string
+                          required:
+                            - toNoteId
+                      referencedBy:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            fromNoteId:
+                              type: number
+                            fromNote:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                createdAt:
+                                  type: string
+                                updatedAt:
+                                  type: string
+                          required:
+                            - fromNoteId
+                      _count:
+                        type: object
+                        properties:
+                          comments:
+                            type: number
+                        required:
+                          - comments
+                    required:
+                      - id
+                      - type
+                      - content
+                      - isArchived
+                      - isRecycle
+                      - isShare
+                      - isTop
+                      - isReviewed
+                      - sharePassword
+                      - accountId
+                      - createdAt
+                      - updatedAt
+                      - attachments
+                      - tags
+                      - _count
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/daily-review-list:
+    get:
+      operationId: notes-dailyReviewNoteList
+      summary: Query daily review note list
+      tags:
+        - Note
+      security:
+        - bearer: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    type:
+                      type: integer
+                    content:
+                      type: string
+                    isArchived:
+                      type: boolean
+                    isRecycle:
+                      type: boolean
+                    isShare:
+                      type: boolean
+                    isTop:
+                      type: boolean
+                    isReviewed:
+                      type: boolean
+                    sharePassword:
+                      type: string
+                    shareEncryptedUrl:
+                      type: string
+                      nullable: true
+                    shareExpiryDate:
+                      type: string
+                      nullable: true
+                    shareMaxView:
+                      type: number
+                      nullable: true
+                    shareViewCount:
+                      type: number
+                      nullable: true
+                    metadata: {}
+                    accountId:
+                      anyOf:
+                        - type: integer
+                        - type: 'null'
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                    attachments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          isShare:
+                            type: boolean
+                          sharePassword:
+                            type: string
+                          name:
+                            type: string
+                          path:
+                            type: string
+                          size:
+                            anyOf:
+                              - {}
+                              - type: number
+                              - type: string
+                          noteId:
+                            type: integer
+                            nullable: true
+                          accountId:
+                            type: integer
+                            nullable: true
+                          createdAt:
+                            type: string
+                          sortOrder:
+                            type: integer
+                          updatedAt:
+                            type: string
+                          type:
+                            type: string
+                          depth: {}
+                          perfixPath: {}
+                        required:
+                          - id
+                          - isShare
+                          - sharePassword
+                          - name
+                          - path
+                          - noteId
+                          - accountId
+                          - createdAt
+                          - sortOrder
+                          - updatedAt
+                          - type
+                  required:
+                    - id
+                    - type
+                    - content
+                    - isArchived
+                    - isRecycle
+                    - isShare
+                    - isTop
+                    - isReviewed
+                    - sharePassword
+                    - accountId
+                    - createdAt
+                    - updatedAt
+                    - attachments
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/review:
+    post:
+      operationId: notes-reviewNote
+      summary: Review a note
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+              required:
+                - id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - type: 'null'
+                  - type: object
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: integer
+                      content:
+                        type: string
+                      isArchived:
+                        type: boolean
+                      isRecycle:
+                        type: boolean
+                      isShare:
+                        type: boolean
+                      isTop:
+                        type: boolean
+                      isReviewed:
+                        type: boolean
+                      sharePassword:
+                        type: string
+                      shareEncryptedUrl:
+                        type: string
+                        nullable: true
+                      shareExpiryDate:
+                        type: string
+                        nullable: true
+                      shareMaxView:
+                        type: number
+                        nullable: true
+                      shareViewCount:
+                        type: number
+                        nullable: true
+                      metadata: {}
+                      accountId:
+                        anyOf:
+                          - type: integer
+                          - type: 'null'
+                      createdAt:
+                        type: string
+                      updatedAt:
+                        type: string
+                    required:
+                      - id
+                      - type
+                      - content
+                      - isArchived
+                      - isRecycle
+                      - isShare
+                      - isTop
+                      - isReviewed
+                      - sharePassword
+                      - accountId
+                      - createdAt
+                      - updatedAt
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/upsert:
+    post:
+      operationId: notes-upsert
+      summary: Update or create note
+      description: >-
+        The attachments field is an array of objects with the following
+        properties: name, path, and size which get from /api/file/upload
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                  default: null
+                type:
+                  anyOf:
+                    - type: number
+                      enum:
+                        - 0
+                        - 1
+                    - type: number
+                      enum:
+                        - -1
+                  default: 0
+                attachments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      path:
+                        type: string
+                      size:
+                        anyOf:
+                          - type: string
+                          - type: number
+                      type:
+                        type: string
+                    required:
+                      - name
+                      - path
+                      - size
+                      - type
+                  default: []
+                id:
+                  type: number
+                isArchived:
+                  anyOf:
+                    - type: boolean
+                    - type: 'null'
+                  default: null
+                isTop:
+                  anyOf:
+                    - type: boolean
+                    - type: 'null'
+                  default: null
+                isShare:
+                  anyOf:
+                    - type: boolean
+                    - type: 'null'
+                  default: null
+                isRecycle:
+                  anyOf:
+                    - type: boolean
+                    - type: 'null'
+                  default: null
+                references:
+                  type: array
+                  items:
+                    type: number
+                createdAt:
+                  type: string
+                updatedAt:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/share:
+    post:
+      operationId: notes-shareNote
+      summary: Share note
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                isCancel:
+                  type: boolean
+                  default: false
+                password:
+                  type: string
+                expireAt:
+                  type: string
+              required:
+                - id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  type:
+                    type: integer
+                  content:
+                    type: string
+                  isArchived:
+                    type: boolean
+                  isRecycle:
+                    type: boolean
+                  isShare:
+                    type: boolean
+                  isTop:
+                    type: boolean
+                  isReviewed:
+                    type: boolean
+                  sharePassword:
+                    type: string
+                  shareEncryptedUrl:
+                    type: string
+                    nullable: true
+                  shareExpiryDate:
+                    type: string
+                    nullable: true
+                  shareMaxView:
+                    type: number
+                    nullable: true
+                  shareViewCount:
+                    type: number
+                    nullable: true
+                  metadata: {}
+                  accountId:
+                    anyOf:
+                      - type: integer
+                      - type: 'null'
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+                required:
+                  - id
+                  - type
+                  - content
+                  - isArchived
+                  - isRecycle
+                  - isShare
+                  - isTop
+                  - isReviewed
+                  - sharePassword
+                  - accountId
+                  - createdAt
+                  - updatedAt
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/batch-update:
+    post:
+      operationId: notes-updateMany
+      summary: Batch update note
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  anyOf:
+                    - type: number
+                      enum:
+                        - 0
+                        - 1
+                    - type: number
+                      enum:
+                        - -1
+                  default: -1
+                isArchived:
+                  anyOf:
+                    - type: boolean
+                    - type: 'null'
+                  default: null
+                isRecycle:
+                  anyOf:
+                    - type: boolean
+                    - type: 'null'
+                  default: null
+                ids:
+                  type: array
+                  items:
+                    type: number
+              required:
+                - ids
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/batch-trash:
+    post:
+      operationId: notes-trashMany
+      summary: Batch trash note
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: number
+              required:
+                - ids
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/batch-delete:
+    post:
+      operationId: notes-deleteMany
+      summary: Batch delete note
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: number
+              required:
+                - ids
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/add-reference:
+    post:
+      operationId: notes-addReference
+      summary: Add note reference
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fromNoteId:
+                  type: number
+                toNoteId:
+                  type: number
+              required:
+                - fromNoteId
+                - toNoteId
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/reference-list:
+    post:
+      operationId: notes-noteReferenceList
+      summary: Query note references
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                noteId:
+                  type: number
+                type:
+                  type: string
+                  enum:
+                    - references
+                    - referencedBy
+                  default: references
+              required:
+                - noteId
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    type:
+                      type: integer
+                    content:
+                      type: string
+                    isArchived:
+                      type: boolean
+                    isRecycle:
+                      type: boolean
+                    isShare:
+                      type: boolean
+                    isTop:
+                      type: boolean
+                    isReviewed:
+                      type: boolean
+                    sharePassword:
+                      type: string
+                    shareEncryptedUrl:
+                      type: string
+                      nullable: true
+                    shareExpiryDate:
+                      type: string
+                      nullable: true
+                    shareMaxView:
+                      type: number
+                      nullable: true
+                    shareViewCount:
+                      type: number
+                      nullable: true
+                    metadata: {}
+                    accountId:
+                      anyOf:
+                        - type: integer
+                        - type: 'null'
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                    attachments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          isShare:
+                            type: boolean
+                          sharePassword:
+                            type: string
+                          name:
+                            type: string
+                          path:
+                            type: string
+                          size:
+                            anyOf:
+                              - {}
+                              - type: number
+                              - type: string
+                          noteId:
+                            type: integer
+                            nullable: true
+                          accountId:
+                            type: integer
+                            nullable: true
+                          createdAt:
+                            type: string
+                          sortOrder:
+                            type: integer
+                          updatedAt:
+                            type: string
+                          type:
+                            type: string
+                          depth: {}
+                          perfixPath: {}
+                        required:
+                          - id
+                          - isShare
+                          - sharePassword
+                          - name
+                          - path
+                          - noteId
+                          - accountId
+                          - createdAt
+                          - sortOrder
+                          - updatedAt
+                          - type
+                    referenceCreatedAt:
+                      type: string
+                  required:
+                    - id
+                    - type
+                    - content
+                    - isArchived
+                    - isRecycle
+                    - isShare
+                    - isTop
+                    - isReviewed
+                    - sharePassword
+                    - accountId
+                    - createdAt
+                    - updatedAt
+                    - attachments
+                    - referenceCreatedAt
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/clear-recycle-bin:
+    post:
+      operationId: notes-clearRecycleBin
+      summary: Clear recycle bin
+      tags:
+        - Note
+      security:
+        - bearer: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/note/update-attachments-order:
+    post:
+      operationId: notes-updateAttachmentsOrder
+      summary: Update attachments order
+      tags:
+        - Note
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                attachments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      sortOrder:
+                        type: number
+                    required:
+                      - name
+                      - sortOrder
+              required:
+                - attachments
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/tags/list:
+    get:
+      operationId: tags-list
+      summary: Get user tags
+      tags:
+        - Tag
+      security:
+        - bearer: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    icon:
+                      type: string
+                    parent:
+                      type: integer
+                    sortOrder:
+                      type: integer
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                  required:
+                    - id
+                    - name
+                    - icon
+                    - parent
+                    - sortOrder
+                    - createdAt
+                    - updatedAt
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/tags/batch-update:
+    post:
+      operationId: tags-updateTagMany
+      summary: Batch update tags
+      description: Batch update tags and add tag to notes
+      tags:
+        - Tag
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: number
+                tag:
+                  type: string
+              required:
+                - ids
+                - tag
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/tags/update-name:
+    post:
+      operationId: tags-updateTagName
+      summary: Update tag name
+      description: Update tag name and update tag to notes
+      tags:
+        - Tag
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldName:
+                  type: string
+                newName:
+                  type: string
+                id:
+                  type: number
+              required:
+                - oldName
+                - newName
+                - id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/tags/update-icon:
+    post:
+      operationId: tags-updateTagIcon
+      summary: Update tag icon
+      tags:
+        - Tag
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                icon:
+                  type: string
+              required:
+                - id
+                - icon
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  icon:
+                    type: string
+                  parent:
+                    type: integer
+                  sortOrder:
+                    type: integer
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+                required:
+                  - id
+                  - name
+                  - icon
+                  - parent
+                  - sortOrder
+                  - createdAt
+                  - updatedAt
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/tags/delete-only-tag:
+    post:
+      operationId: tags-deleteOnlyTag
+      summary: Only delete tag name
+      description: Only delete tag name and remove tag from notes, but not delete notes
+      tags:
+        - Tag
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+              required:
+                - id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/tags/delete-tag-with-notes:
+    post:
+      operationId: tags-deleteTagWithAllNote
+      summary: Delete tag and delete notes
+      description: Delete tag and delete notes
+      tags:
+        - Tag
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+              required:
+                - id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/list:
+    get:
+      operationId: users-list
+      summary: Find user list
+      description: Find user list, need super admin permission
+      tags:
+        - User
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    nickname:
+                      type: string
+                    password:
+                      type: string
+                    image:
+                      type: string
+                    apiToken:
+                      type: string
+                    note:
+                      type: integer
+                    role:
+                      type: string
+                    loginType:
+                      type: string
+                    description:
+                      type: string
+                    linkAccountId:
+                      type: integer
+                      nullable: true
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                  required:
+                    - id
+                    - name
+                    - nickname
+                    - password
+                    - image
+                    - apiToken
+                    - note
+                    - role
+                    - createdAt
+                    - updatedAt
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/native-account-list:
+    get:
+      operationId: users-nativeAccountList
+      summary: Find native account list
+      description: find native account list which use username and password to login
+      tags:
+        - User
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    nickname:
+                      type: string
+                  required:
+                    - id
+                    - name
+                    - nickname
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/link-account:
+    post:
+      operationId: users-linkAccount
+      summary: Link account
+      description: Link account
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                originalPassword:
+                  type: string
+              required:
+                - id
+                - originalPassword
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/unlink-account:
+    post:
+      operationId: users-unlinkAccount
+      summary: Unlink account
+      description: Unlink account
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+              required:
+                - id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/detail:
+    get:
+      operationId: users-detail
+      summary: Find user detail from user id
+      description: Find user detail from user id, need login
+      tags:
+        - User
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  nickName:
+                    type: string
+                  token:
+                    type: string
+                  isLinked:
+                    type: boolean
+                  loginType:
+                    type: string
+                  image:
+                    type: string
+                    nullable: true
+                required:
+                  - id
+                  - name
+                  - nickName
+                  - token
+                  - isLinked
+                  - loginType
+                  - image
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/can-register:
+    post:
+      operationId: users-canRegister
+      summary: Check if can register admin
+      tags:
+        - User
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/register:
+    post:
+      operationId: users-register
+      summary: Register user or admin
+      description: Register user or admin
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+              required:
+                - name
+                - password
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - type: boolean
+                  - {}
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/regen-token:
+    post:
+      operationId: users-regenToken
+      summary: Regen token
+      tags:
+        - User
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/upsert:
+    post:
+      operationId: users-upsertUser
+      summary: Update or create user
+      description: Update or create user, need login
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                originalPassword:
+                  type: string
+                password:
+                  type: string
+                nickname:
+                  type: string
+                image:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - type: boolean
+                  - {}
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/upsert-by-admin:
+    post:
+      operationId: users-upsertUserByAdmin
+      summary: Update or create user by admin
+      description: Update or create user by admin, need super admin permission
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                password:
+                  type: string
+                nickname:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - type: boolean
+                  - {}
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/user/delete:
+    delete:
+      operationId: users-deleteUser
+      summary: Delete user
+      description: Delete user and all related data, need super admin permission
+      tags:
+        - User
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: number
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/config/list:
+    get:
+      operationId: config-list
+      summary: Query user config list
+      tags:
+        - Config
+      security:
+        - bearer: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isAutoArchived:
+                    type: boolean
+                  autoArchivedDays:
+                    type: number
+                  isUseAI:
+                    type: boolean
+                  aiModelProvider: {}
+                  aiApiKey: {}
+                  aiApiEndpoint: {}
+                  aiApiVersion: {}
+                  aiModel: {}
+                  isHiddenMobileBar:
+                    type: boolean
+                  toolbarVisibility: {}
+                  isAllowRegister: {}
+                  isCloseBackgroundAnimation:
+                    type: boolean
+                  customBackgroundUrl: {}
+                  isOrderByCreateTime: {}
+                  timeFormat: {}
+                  smallDeviceCardColumns: {}
+                  mediumDeviceCardColumns: {}
+                  largeDeviceCardColumns: {}
+                  textFoldLength:
+                    type: number
+                  objectStorage: {}
+                  s3AccessKeyId: {}
+                  s3AccessKeySecret: {}
+                  s3Endpoint: {}
+                  s3Bucket: {}
+                  s3CustomPath: {}
+                  s3Region: {}
+                  localCustomPath: {}
+                  embeddingModel: {}
+                  embeddingTopK:
+                    type: number
+                  embeddingLambda:
+                    type: number
+                  embeddingScore:
+                    type: number
+                  excludeEmbeddingTagId:
+                    type: number
+                  language: {}
+                  theme: {}
+                  themeColor: {}
+                  themeForegroundColor: {}
+                  webhookEndpoint: {}
+                  twoFactorEnabled:
+                    type: boolean
+                  twoFactorSecret:
+                    type: string
+                  spotifyConsumerKey:
+                    type: string
+                  spotifyConsumerSecret:
+                    type: string
+                  isCloseDailyReview:
+                    type: boolean
+                  maxHomePageWidth:
+                    type: number
+                  oauth2Providers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        icon:
+                          type: string
+                        wellKnown:
+                          type: string
+                        scope:
+                          type: string
+                        authorizationUrl:
+                          type: string
+                        tokenUrl:
+                          type: string
+                        userinfoUrl:
+                          type: string
+                        clientId:
+                          type: string
+                        clientSecret:
+                          type: string
+                      required:
+                        - id
+                        - name
+                        - tokenUrl
+                        - userinfoUrl
+                        - clientId
+                        - clientSecret
+                  isUseBlinkoHub:
+                    type: boolean
+                  embeddingApiEndpoint:
+                    type: string
+                  embeddingApiKey:
+                    type: string
+                  isHiddenNotification:
+                    type: boolean
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/config/update:
+    post:
+      operationId: config-update
+      summary: Update user config
+      tags:
+        - Config
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  anyOf:
+                    - type: string
+                      enum:
+                        - isAutoArchived
+                    - type: string
+                      enum:
+                        - autoArchivedDays
+                    - type: string
+                      enum:
+                        - isUseAI
+                    - type: string
+                      enum:
+                        - aiModelProvider
+                    - type: string
+                      enum:
+                        - aiApiKey
+                    - type: string
+                      enum:
+                        - aiApiEndpoint
+                    - type: string
+                      enum:
+                        - aiApiVersion
+                    - type: string
+                      enum:
+                        - aiModel
+                    - type: string
+                      enum:
+                        - isAllowRegister
+                    - type: string
+                      enum:
+                        - objectStorage
+                    - type: string
+                      enum:
+                        - s3AccessKeyId
+                    - type: string
+                      enum:
+                        - s3AccessKeySecret
+                    - type: string
+                      enum:
+                        - s3Endpoint
+                    - type: string
+                      enum:
+                        - s3Bucket
+                    - type: string
+                      enum:
+                        - s3Region
+                    - type: string
+                      enum:
+                        - s3CustomPath
+                    - type: string
+                      enum:
+                        - localCustomPath
+                    - type: string
+                      enum:
+                        - embeddingModel
+                    - type: string
+                      enum:
+                        - embeddingTopK
+                    - type: string
+                      enum:
+                        - embeddingLambda
+                    - type: string
+                      enum:
+                        - embeddingScore
+                    - type: string
+                      enum:
+                        - excludeEmbeddingTagId
+                    - type: string
+                      enum:
+                        - spotifyConsumerKey
+                    - type: string
+                      enum:
+                        - spotifyConsumerSecret
+                    - type: string
+                      enum:
+                        - isCloseBackgroundAnimation
+                    - type: string
+                      enum:
+                        - customBackgroundUrl
+                    - type: string
+                      enum:
+                        - oauth2Providers
+                    - type: string
+                      enum:
+                        - embeddingApiEndpoint
+                    - type: string
+                      enum:
+                        - embeddingApiKey
+                    - anyOf:
+                        - type: string
+                          enum:
+                            - textFoldLength
+                        - type: string
+                          enum:
+                            - smallDeviceCardColumns
+                        - type: string
+                          enum:
+                            - mediumDeviceCardColumns
+                        - type: string
+                          enum:
+                            - largeDeviceCardColumns
+                        - type: string
+                          enum:
+                            - timeFormat
+                        - type: string
+                          enum:
+                            - isHiddenMobileBar
+                        - type: string
+                          enum:
+                            - isOrderByCreateTime
+                        - type: string
+                          enum:
+                            - language
+                        - type: string
+                          enum:
+                            - theme
+                        - type: string
+                          enum:
+                            - webhookEndpoint
+                        - type: string
+                          enum:
+                            - toolbarVisibility
+                        - type: string
+                          enum:
+                            - twoFactorEnabled
+                        - type: string
+                          enum:
+                            - twoFactorSecret
+                        - type: string
+                          enum:
+                            - themeColor
+                        - type: string
+                          enum:
+                            - themeForegroundColor
+                        - type: string
+                          enum:
+                            - isCloseDailyReview
+                        - type: string
+                          enum:
+                            - maxHomePageWidth
+                        - type: string
+                          enum:
+                            - isUseBlinkoHub
+                        - type: string
+                          enum:
+                            - isHiddenNotification
+                value: {}
+              required:
+                - key
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  key:
+                    type: string
+                  config: {}
+                required:
+                  - id
+                  - key
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/public/version:
+    get:
+      operationId: public-version
+      summary: Update user config
+      tags:
+        - Public
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/public/oauth-providers:
+    get:
+      operationId: public-oauthProviders
+      summary: Get OAuth providers info
+      tags:
+        - Public
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    icon:
+                      type: string
+                  required:
+                    - id
+                    - name
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/public/latest-version:
+    get:
+      operationId: public-latestVersion
+      summary: Get a new version
+      tags:
+        - Public
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/public/link-preview:
+    get:
+      operationId: public-linkPreview
+      summary: Get a link preview info
+      tags:
+        - Public
+      parameters:
+        - in: query
+          name: url
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - type: object
+                    properties:
+                      title:
+                        type: string
+                      favicon:
+                        type: string
+                      description:
+                        type: string
+                    required:
+                      - title
+                      - favicon
+                      - description
+                  - type: 'null'
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/public/test-webhook:
+    post:
+      operationId: public-testWebhook
+      summary: Test webhook
+      tags:
+        - Public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data: {}
+                webhookType:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data: {}
+                required:
+                  - success
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/public/music-metadata:
+    get:
+      operationId: public-musicMetadata
+      summary: Get music metadata
+      tags:
+        - Public
+      parameters:
+        - in: query
+          name: filePath
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  coverUrl:
+                    type: string
+                  trackName:
+                    type: string
+                  albumName:
+                    type: string
+                  artists:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/public/site-info:
+    get:
+      operationId: public-siteInfo
+      summary: Get site info
+      tags:
+        - Public
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: number
+            nullable: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  image:
+                    type: string
+                  description:
+                    type: string
+                  role:
+                    type: string
+                required:
+                  - id
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/public/hub-list:
+    get:
+      operationId: public-hubList
+      summary: Get hub list
+      tags:
+        - Public
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    image:
+                      type: string
+                    description:
+                      type: string
+                  required:
+                    - id
+                    - name
+                    - image
+                    - description
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/public/hub-site-list:
+    get:
+      operationId: public-hubSiteList
+      summary: Get hub site list from GitHub
+      tags:
+        - Public
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: refresh
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    url:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    site_description:
+                      type: string
+                    image:
+                      type: string
+                    version:
+                      type: string
+                  required:
+                    - title
+                    - url
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/tasks/list:
+    get:
+      operationId: task-list
+      summary: Query user task list
+      tags:
+        - Task
+      security:
+        - bearer: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    schedule:
+                      type: string
+                    lastRun:
+                      type: string
+                    isSuccess:
+                      type: boolean
+                    isRunning:
+                      type: boolean
+                    output: {}
+                  required:
+                    - name
+                    - schedule
+                    - lastRun
+                    - isSuccess
+                    - isRunning
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/tasks/upsert:
+    get:
+      operationId: task-upsertTask
+      summary: Upsert Task
+      tags:
+        - Task
+      security:
+        - bearer: []
+      parameters:
+        - in: query
+          name: time
+          schema:
+            type: string
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum:
+              - start
+              - stop
+              - update
+          required: true
+        - in: query
+          name: task
+          schema:
+            type: string
+            enum:
+              - Auto Archive Blinko
+              - Backup Database
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/analytics/daily-note-count:
+    post:
+      operationId: analytics-dailyNoteCount
+      summary: Query daily note count
+      tags:
+        - Analytics
+      security:
+        - bearer: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                    count:
+                      type: number
+                  required:
+                    - date
+                    - count
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/analytics/monthly-stats:
+    post:
+      operationId: analytics-monthlyStats
+      summary: Query monthly statistics
+      tags:
+        - Analytics
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                month:
+                  type: string
+              required:
+                - month
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  noteCount:
+                    type: number
+                  totalWords:
+                    type: number
+                  maxDailyWords:
+                    type: number
+                  activeDays:
+                    type: number
+                  tagStats:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tagName:
+                          type: string
+                        count:
+                          type: number
+                      required:
+                        - tagName
+                        - count
+                required:
+                  - noteCount
+                  - totalWords
+                  - maxDailyWords
+                  - activeDays
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/comment/create:
+    post:
+      operationId: comments-create
+      summary: Create a comment
+      tags:
+        - Comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                noteId:
+                  type: number
+                parentId:
+                  type: number
+                guestName:
+                  type: string
+              required:
+                - content
+                - noteId
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/comment/list:
+    post:
+      operationId: comments-list
+      summary: Get comments list
+      tags:
+        - Comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                noteId:
+                  type: number
+                page:
+                  type: number
+                  default: 1
+                size:
+                  type: number
+                  default: 20
+                orderBy:
+                  type: string
+                  enum:
+                    - asc
+                    - desc
+                  default: desc
+              required:
+                - noteId
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: number
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        content:
+                          type: string
+                        accountId:
+                          type: integer
+                          nullable: true
+                        guestName:
+                          type: string
+                          nullable: true
+                        guestIP:
+                          type: string
+                          nullable: true
+                        guestUA:
+                          type: string
+                          nullable: true
+                        noteId:
+                          type: integer
+                        parentId:
+                          type: integer
+                          nullable: true
+                        createdAt:
+                          type: string
+                        updatedAt:
+                          type: string
+                        account:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            nickname:
+                              type: string
+                            image:
+                              type: string
+                          required:
+                            - id
+                            - name
+                            - nickname
+                            - image
+                        note:
+                          type: object
+                          nullable: true
+                          properties:
+                            account:
+                              type: object
+                              nullable: true
+                              properties:
+                                id:
+                                  type: number
+                              required:
+                                - id
+                          required:
+                            - account
+                        replies:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              content:
+                                type: string
+                              accountId:
+                                type: integer
+                                nullable: true
+                              guestName:
+                                type: string
+                                nullable: true
+                              guestIP:
+                                type: string
+                                nullable: true
+                              guestUA:
+                                type: string
+                                nullable: true
+                              noteId:
+                                type: integer
+                              parentId:
+                                type: integer
+                                nullable: true
+                              createdAt:
+                                type: string
+                              updatedAt:
+                                type: string
+                              account:
+                                type: object
+                                nullable: true
+                                properties:
+                                  id:
+                                    type: integer
+                                  name:
+                                    type: string
+                                  nickname:
+                                    type: string
+                                  image:
+                                    type: string
+                                required:
+                                  - id
+                                  - name
+                                  - nickname
+                                  - image
+                            required:
+                              - id
+                              - content
+                              - accountId
+                              - guestName
+                              - guestIP
+                              - guestUA
+                              - noteId
+                              - parentId
+                              - createdAt
+                              - updatedAt
+                              - account
+                      required:
+                        - id
+                        - content
+                        - accountId
+                        - guestName
+                        - guestIP
+                        - guestUA
+                        - noteId
+                        - parentId
+                        - createdAt
+                        - updatedAt
+                        - account
+                        - note
+                required:
+                  - total
+                  - items
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/comment/delete:
+    post:
+      operationId: comments-delete
+      summary: Delete a comment
+      tags:
+        - Comment
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+              required:
+                - id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/comment/update:
+    post:
+      operationId: comments-update
+      summary: Update a comment
+      tags:
+        - Comment
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                content:
+                  type: string
+              required:
+                - id
+                - content
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  content:
+                    type: string
+                  accountId:
+                    type: integer
+                    nullable: true
+                  guestName:
+                    type: string
+                    nullable: true
+                  guestIP:
+                    type: string
+                    nullable: true
+                  guestUA:
+                    type: string
+                    nullable: true
+                  noteId:
+                    type: integer
+                  parentId:
+                    type: integer
+                    nullable: true
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+                  account:
+                    type: object
+                    nullable: true
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      nickname:
+                        type: string
+                      image:
+                        type: string
+                    required:
+                      - id
+                      - name
+                      - nickname
+                      - image
+                  note:
+                    type: object
+                    nullable: true
+                    properties:
+                      account:
+                        type: object
+                        nullable: true
+                        properties:
+                          id:
+                            type: number
+                        required:
+                          - id
+                    required:
+                      - account
+                  replies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        content:
+                          type: string
+                        accountId:
+                          type: integer
+                          nullable: true
+                        guestName:
+                          type: string
+                          nullable: true
+                        guestIP:
+                          type: string
+                          nullable: true
+                        guestUA:
+                          type: string
+                          nullable: true
+                        noteId:
+                          type: integer
+                        parentId:
+                          type: integer
+                          nullable: true
+                        createdAt:
+                          type: string
+                        updatedAt:
+                          type: string
+                        account:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            nickname:
+                              type: string
+                            image:
+                              type: string
+                          required:
+                            - id
+                            - name
+                            - nickname
+                            - image
+                      required:
+                        - id
+                        - content
+                        - accountId
+                        - guestName
+                        - guestIP
+                        - guestUA
+                        - noteId
+                        - parentId
+                        - createdAt
+                        - updatedAt
+                        - account
+                required:
+                  - id
+                  - content
+                  - accountId
+                  - guestName
+                  - guestIP
+                  - guestUA
+                  - noteId
+                  - parentId
+                  - createdAt
+                  - updatedAt
+                  - account
+                  - note
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/follows/recommand-list:
+    get:
+      operationId: follows-recommandList
+      summary: Get recommand list by following users
+      tags:
+        - Follows
+      parameters:
+        - in: query
+          name: searchText
+          schema:
+            type: string
+            default: ''
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    type:
+                      type: integer
+                    content:
+                      type: string
+                    isArchived:
+                      type: boolean
+                    isRecycle:
+                      type: boolean
+                    isShare:
+                      type: boolean
+                    isTop:
+                      type: boolean
+                    isReviewed:
+                      type: boolean
+                    sharePassword:
+                      type: string
+                    shareEncryptedUrl:
+                      type: string
+                      nullable: true
+                    shareExpiryDate:
+                      type: string
+                      nullable: true
+                    shareMaxView:
+                      type: number
+                      nullable: true
+                    shareViewCount:
+                      type: number
+                      nullable: true
+                    metadata: {}
+                    accountId:
+                      anyOf:
+                        - type: integer
+                        - type: 'null'
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                    attachments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          isShare:
+                            type: boolean
+                          sharePassword:
+                            type: string
+                          name:
+                            type: string
+                          path:
+                            type: string
+                          size:
+                            anyOf:
+                              - {}
+                              - type: number
+                              - type: string
+                          noteId:
+                            type: integer
+                            nullable: true
+                          accountId:
+                            type: integer
+                            nullable: true
+                          createdAt:
+                            type: string
+                          sortOrder:
+                            type: integer
+                          updatedAt:
+                            type: string
+                          type:
+                            type: string
+                          depth: {}
+                          perfixPath: {}
+                        required:
+                          - id
+                          - isShare
+                          - sharePassword
+                          - name
+                          - path
+                          - noteId
+                          - accountId
+                          - createdAt
+                          - sortOrder
+                          - updatedAt
+                          - type
+                    account:
+                      type: object
+                      nullable: true
+                      properties:
+                        image:
+                          type: string
+                        nickname:
+                          type: string
+                        name:
+                          type: string
+                        id:
+                          type: number
+                    tags:
+                      type: array
+                      nullable: true
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          noteId:
+                            type: integer
+                          tagId:
+                            type: integer
+                          tag:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              name:
+                                type: string
+                              icon:
+                                type: string
+                              parent:
+                                type: integer
+                              sortOrder:
+                                type: integer
+                              createdAt:
+                                type: string
+                              updatedAt:
+                                type: string
+                            required:
+                              - id
+                              - name
+                              - icon
+                              - parent
+                              - sortOrder
+                              - createdAt
+                              - updatedAt
+                        required:
+                          - id
+                          - noteId
+                          - tagId
+                          - tag
+                    _count:
+                      type: object
+                      properties:
+                        comments:
+                          type: number
+                      required:
+                        - comments
+                    originURL:
+                      type: string
+                  required:
+                    - id
+                    - type
+                    - content
+                    - isArchived
+                    - isRecycle
+                    - isShare
+                    - isTop
+                    - isReviewed
+                    - sharePassword
+                    - accountId
+                    - createdAt
+                    - updatedAt
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/follows/follow:
+    post:
+      operationId: follows-follow
+      summary: Follow a user
+      tags:
+        - Follows
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                siteUrl:
+                  type: string
+                mySiteUrl:
+                  type: string
+              required:
+                - siteUrl
+                - mySiteUrl
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data: {}
+                required:
+                  - success
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/follows/follow-from:
+    post:
+      operationId: follows-followFrom
+      summary: Some site wants to follow me
+      tags:
+        - Follows
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mySiteAccountId:
+                  type: number
+                siteUrl:
+                  type: string
+                siteName:
+                  type: string
+                siteAvatar:
+                  type: string
+              required:
+                - mySiteAccountId
+                - siteUrl
+                - siteName
+                - siteAvatar
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data: {}
+                required:
+                  - success
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/follows/unfollow:
+    post:
+      operationId: follows-unfollow
+      summary: Unfollow a user
+      tags:
+        - Follows
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                siteUrl:
+                  type: string
+                mySiteUrl:
+                  type: string
+              required:
+                - siteUrl
+                - mySiteUrl
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/follows/unfollow-from:
+    post:
+      operationId: follows-unfollowFrom
+      summary: Some site wants to unfollow me
+      tags:
+        - Follows
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                siteUrl:
+                  type: string
+                mySiteAccountId:
+                  type: number
+              required:
+                - siteUrl
+                - mySiteAccountId
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/follows/follow-list:
+    get:
+      operationId: follows-followList
+      summary: Get following list
+      tags:
+        - Follows
+      security:
+        - bearer: []
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: number
+            nullable: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    siteName:
+                      type: string
+                    siteUrl:
+                      type: string
+                    siteAvatar:
+                      type: string
+                    description:
+                      type: string
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                    followType:
+                      type: string
+                    accountId:
+                      type: integer
+                  required:
+                    - id
+                    - siteUrl
+                    - createdAt
+                    - updatedAt
+                    - followType
+                    - accountId
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/follows/followers:
+    get:
+      operationId: follows-followerList
+      summary: Get followers list
+      tags:
+        - Follows
+      security:
+        - bearer: []
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: number
+            nullable: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    siteName:
+                      type: string
+                    siteUrl:
+                      type: string
+                    siteAvatar:
+                      type: string
+                    description:
+                      type: string
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                    followType:
+                      type: string
+                    accountId:
+                      type: integer
+                  required:
+                    - id
+                    - siteUrl
+                    - createdAt
+                    - updatedAt
+                    - followType
+                    - accountId
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/follows/is-following:
+    get:
+      operationId: follows-isFollowing
+      summary: Check if following a user
+      tags:
+        - Follows
+      security:
+        - bearer: []
+      parameters:
+        - in: query
+          name: siteUrl
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: boolean
+                required:
+                  - success
+                  - data
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '401':
+          description: Authorization not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.UNAUTHORIZED'
+        '403':
+          description: Insufficient access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.FORBIDDEN'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/notification/list:
+    get:
+      operationId: notifications-list
+      summary: Query notifications list
+      tags:
+        - Notification
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+        - in: query
+          name: size
+          schema:
+            type: number
+            default: 30
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    type:
+                      anyOf:
+                        - type: string
+                          enum:
+                            - follow
+                            - comment
+                            - system
+                        - type: string
+                    title:
+                      type: string
+                    content:
+                      type: string
+                    metadata: {}
+                    isRead:
+                      type: boolean
+                    accountId:
+                      type: integer
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                  required:
+                    - id
+                    - type
+                    - title
+                    - content
+                    - isRead
+                    - accountId
+                    - createdAt
+                    - updatedAt
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.NOT_FOUND'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /v1/notification/create:
+    post:
+      operationId: notifications-create
+      summary: Create notification
+      tags:
+        - Notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  anyOf:
+                    - type: string
+                      enum:
+                        - follow
+                        - comment
+                        - system
+                    - type: string
+                content:
+                  type: string
+                title:
+                  type: string
+                metadata: {}
+              required:
+                - type
+                - content
+                - title
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.BAD_REQUEST'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error.INTERNAL_SERVER_ERROR'
+  /file/upload:
+    post:
+      tags:
+        - File
+      summary: Upload File
+      operationId: uploadFile
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Upload File
+              required:
+                - file
+      responses:
+        '200':
+          description: Upload Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                  status:
+                    type: number
+                  path:
+                    type: string
+                  type:
+                    type: string
+                  size:
+                    type: number
+        '401':
+          description: UNAUTH
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      security:
+        - bearer: []
+  /file/delete:
+    post:
+      tags:
+        - File
+      summary: Delete File
+      operationId: deleteFile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                attachment_path:
+                  type: string
+                  description: 'File path, e.g.: /api/file/123.png'
+              required:
+                - attachment_path
+      responses:
+        '200':
+          description: Delete Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                  status:
+                    type: number
+      security:
+        - bearer: []
+  /file/upload-by-url:
+    post:
+      tags:
+        - File
+      summary: Upload File by URL
+      operationId: uploadFileByUrl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: URL of the file to upload
+              required:
+                - url
+      responses:
+        '200':
+          description: Upload Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                  status:
+                    type: number
+                  path:
+                    type: string
+                  type:
+                    type: string
+                  size:
+                    type: number
+                  originalURL:
+                    type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      security:
+        - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    error.BAD_REQUEST:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message
+          example: Invalid input data
+        code:
+          type: string
+          description: The error code
+          example: BAD_REQUEST
+        issues:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+              - message
+          description: An array of issues that were responsible for the error
+          example: []
+      required:
+        - message
+        - code
+      title: Error
+      description: The error information
+      example:
+        code: BAD_REQUEST
+        message: Invalid input data
+        issues: []
+    error.UNAUTHORIZED:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message
+          example: Authorization not provided
+        code:
+          type: string
+          description: The error code
+          example: UNAUTHORIZED
+        issues:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+              - message
+          description: An array of issues that were responsible for the error
+          example: []
+      required:
+        - message
+        - code
+      title: Error
+      description: The error information
+      example:
+        code: UNAUTHORIZED
+        message: Authorization not provided
+        issues: []
+    error.FORBIDDEN:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message
+          example: Insufficient access
+        code:
+          type: string
+          description: The error code
+          example: FORBIDDEN
+        issues:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+              - message
+          description: An array of issues that were responsible for the error
+          example: []
+      required:
+        - message
+        - code
+      title: Error
+      description: The error information
+      example:
+        code: FORBIDDEN
+        message: Insufficient access
+        issues: []
+    error.INTERNAL_SERVER_ERROR:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message
+          example: Internal server error
+        code:
+          type: string
+          description: The error code
+          example: INTERNAL_SERVER_ERROR
+        issues:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+              - message
+          description: An array of issues that were responsible for the error
+          example: []
+      required:
+        - message
+        - code
+      title: Error
+      description: The error information
+      example:
+        code: INTERNAL_SERVER_ERROR
+        message: Internal server error
+        issues: []
+    error.NOT_FOUND:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message
+          example: Not found
+        code:
+          type: string
+          description: The error code
+          example: NOT_FOUND
+        issues:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+              - message
+          description: An array of issues that were responsible for the error
+          example: []
+      required:
+        - message
+        - code
+      title: Error
+      description: The error information
+      example:
+        code: NOT_FOUND
+        message: Not found
+        issues: []
