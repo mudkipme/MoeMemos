@@ -30,6 +30,8 @@
 		1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE429CF738300FEF570 /* ExploreViewModel.swift */; };
 		1919FBE729CF77C900FEF570 /* ExploreMemoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */; };
 		1919FBE929CF78BE00FEF570 /* Explore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1919FBE829CF78BE00FEF570 /* Explore.swift */; };
+		192A65A92CF4C45600CEDB6B /* QuickMemoLockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192A65A82CF4C45100CEDB6B /* QuickMemoLockWidget.swift */; };
+		192A65AB2CF4C47A00CEDB6B /* QuickMemoLockWidgetIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192A65AA2CF4C47300CEDB6B /* QuickMemoLockWidgetIntent.swift */; };
 		192DF0F328C78BAD0077E785 /* ArchivedMemosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */; };
 		1934C77C2921670600A169EC /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1934C77B2921670600A169EC /* Attachment.swift */; };
 		193938DC29CF682D0027939F /* MemoCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193938DB29CF682D0027939F /* MemoCardContent.swift */; };
@@ -40,8 +42,6 @@
 		193D274F29C8D85700BDE4A2 /* TagVisitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D274E29C8D85700BDE4A2 /* TagVisitor.swift */; };
 		193DE92328C5E267002651E0 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92228C5E267002651E0 /* Settings.swift */; };
 		193DE93028C65104002651E0 /* MemosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92F28C65104002651E0 /* MemosViewModel.swift */; };
-		193F04E229CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 193F04E529CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition */; };
-		193F04E329CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 193F04E529CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition */; };
 		194502F52A36341D00A70A03 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194502F42A36341D00A70A03 /* TextView.swift */; };
 		1948CCAD2996B3FA00AB1986 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.strings */; };
 		194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B273028C3973400A48675 /* MoeMemosApp.swift */; };
@@ -78,6 +78,12 @@
 		19C569A42912493A00745F9D /* ArchivedMemoListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */; };
 		19C569AA29125BB200745F9D /* ResourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569A929125BB200745F9D /* ResourceManager.swift */; };
 		19C569AC29125C0700745F9D /* ResourceListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569AB29125C0700745F9D /* ResourceListViewModel.swift */; };
+		19C997622CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C9975F2CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift */; };
+		19C997632CF35D49009763C5 /* MemoryWidgetConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C997602CF35D49009763C5 /* MemoryWidgetConfiguration.swift */; };
+		19C997642CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C997612CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift */; };
+		19C997652CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C9975F2CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift */; };
+		19C997662CF35D49009763C5 /* MemoryWidgetConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C997602CF35D49009763C5 /* MemoryWidgetConfiguration.swift */; };
+		19C997672CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C997612CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift */; };
 		19E1C5BE28C4F6410072CEEF /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E1C5BD28C4F6410072CEEF /* Stats.swift */; };
 		19E1C5C028C5191D0072CEEF /* MemoInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E1C5BF28C5191D0072CEEF /* MemoInput.swift */; };
 		19E29A6B2938FBCD00BE9C32 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E29A6A2938FBCD00BE9C32 /* ShareViewController.swift */; };
@@ -135,7 +141,6 @@
 
 /* Begin PBXFileReference section */
 		190322DC2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MainInterface.strings; sourceTree = "<group>"; };
-		190322DD2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
 		190322DE2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		19113B8B2C1D95B700365C05 /* Env */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Env; path = Packages/Env; sourceTree = "<group>"; };
 		1911568929802F200058F18B /* QuickLookRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLookRepresentable.swift; sourceTree = "<group>"; };
@@ -156,8 +161,8 @@
 		1919FBE829CF78BE00FEF570 /* Explore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Explore.swift; sourceTree = "<group>"; };
 		191C49ED2B2D79A40097B98E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		191C49EE2B2D7DAB0097B98E /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
-		192383F32B6659DC00D2C9DA /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
-		192383F52B6659DD00D2C9DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/MoeMemosWidgets.strings; sourceTree = "<group>"; };
+		192A65A82CF4C45100CEDB6B /* QuickMemoLockWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoLockWidget.swift; sourceTree = "<group>"; };
+		192A65AA2CF4C47300CEDB6B /* QuickMemoLockWidgetIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoLockWidgetIntent.swift; sourceTree = "<group>"; };
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
 		1934C77B2921670600A169EC /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		193938DB29CF682D0027939F /* MemoCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCardContent.swift; sourceTree = "<group>"; };
@@ -168,9 +173,6 @@
 		193DE92228C5E267002651E0 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		193DE92F28C65104002651E0 /* MemosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosViewModel.swift; sourceTree = "<group>"; };
 		193F04E129CCBA320010E3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		193F04E429CCBA9C0010E3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/MoeMemosWidgets.intentdefinition; sourceTree = "<group>"; };
-		193F04E729CCBAB40010E3BF /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MoeMemosWidgets.strings"; sourceTree = "<group>"; };
-		193F04E929CCBAB70010E3BF /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/MoeMemosWidgets.strings"; sourceTree = "<group>"; };
 		194502F42A36341D00A70A03 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		1948CCAE2996B3FA00AB1986 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1948CCB12996BB6C00AB1986 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -204,6 +206,11 @@
 		19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemoListViewModel.swift; sourceTree = "<group>"; };
 		19C569A929125BB200745F9D /* ResourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceManager.swift; sourceTree = "<group>"; };
 		19C569AB29125C0700745F9D /* ResourceListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceListViewModel.swift; sourceTree = "<group>"; };
+		19C9975F2CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryUpdatePeriodAppEnum.swift; sourceTree = "<group>"; };
+		19C997602CF35D49009763C5 /* MemoryWidgetConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryWidgetConfiguration.swift; sourceTree = "<group>"; };
+		19C997612CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosGraphWidgetConfiguration.swift; sourceTree = "<group>"; };
+		19D0C59F2D4E0CC400E026CF /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/MainInterface.strings; sourceTree = "<group>"; };
+		19D0C5A02D4E0CC400E026CF /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		19E1C5BD28C4F6410072CEEF /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		19E1C5BF28C5191D0072CEEF /* MemoInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoInput.swift; sourceTree = "<group>"; };
 		19E29A682938FBCD00BE9C32 /* MoeMemosShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MoeMemosShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -278,12 +285,16 @@
 			children = (
 				191339D3291D7F13001F2B2E /* MoeMemosWidgetsExtension.entitlements */,
 				191339BA291D7289001F2B2E /* Info.plist */,
+				19C9975F2CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift */,
 				191339DB291D8F15001F2B2E /* MemoryWidget.swift */,
+				19C997602CF35D49009763C5 /* MemoryWidgetConfiguration.swift */,
 				191339B5291D7288001F2B2E /* MemosGraphWidget.swift */,
+				19C997612CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift */,
 				191339B3291D7288001F2B2E /* MoeMemosWidgetsBundle.swift */,
+				192A65A82CF4C45100CEDB6B /* QuickMemoLockWidget.swift */,
+				192A65AA2CF4C47300CEDB6B /* QuickMemoLockWidgetIntent.swift */,
 				19F81CDF2CEDAE2300728439 /* QuickMemoWidget.swift */,
 				191339B8291D7289001F2B2E /* Assets.xcassets */,
-				193F04E529CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition */,
 			);
 			path = MoeMemosWidgets;
 			sourceTree = "<group>";
@@ -566,6 +577,7 @@
 				de,
 				fr,
 				it,
+				ja,
 			);
 			mainGroup = 194B272428C3973400A48675;
 			packageReferences = (
@@ -626,7 +638,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				191339B4291D7288001F2B2E /* MoeMemosWidgetsBundle.swift in Sources */,
-				193F04E329CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */,
 				191339B6291D7288001F2B2E /* MemosGraphWidget.swift in Sources */,
 				191339C5291D765B001F2B2E /* Memo.swift in Sources */,
 				191339CA291D7675001F2B2E /* Usage.swift in Sources */,
@@ -635,9 +646,14 @@
 				19F81CE02CEDAE2800728439 /* QuickMemoWidget.swift in Sources */,
 				191339DC291D8F15001F2B2E /* MemoryWidget.swift in Sources */,
 				191339CF291D7748001F2B2E /* Heatmap.swift in Sources */,
+				192A65AB2CF4C47A00CEDB6B /* QuickMemoLockWidgetIntent.swift in Sources */,
 				191339D0291D774B001F2B2E /* HeatmapStat.swift in Sources */,
 				191339D1291D7765001F2B2E /* Color.swift in Sources */,
 				19F81CE12CEDAF2400728439 /* AppOpenIntent.swift in Sources */,
+				192A65A92CF4C45600CEDB6B /* QuickMemoLockWidget.swift in Sources */,
+				19C997652CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift in Sources */,
+				19C997662CF35D49009763C5 /* MemoryWidgetConfiguration.swift in Sources */,
+				19C997672CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -648,6 +664,9 @@
 				31EE785629B83D1B005F62D0 /* LazyImageProvider.swift in Sources */,
 				19C569AC29125C0700745F9D /* ResourceListViewModel.swift in Sources */,
 				19F31BF728C3E26D000C5207 /* MemosList.swift in Sources */,
+				19C997622CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift in Sources */,
+				19C997632CF35D49009763C5 /* MemoryWidgetConfiguration.swift in Sources */,
+				19C997642CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift in Sources */,
 				19E1C5BE28C4F6410072CEEF /* Stats.swift in Sources */,
 				19F31BFD28C3ED11000C5207 /* MemoCard.swift in Sources */,
 				199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */,
@@ -661,7 +680,6 @@
 				199A657D28C4761100C39994 /* Usage.swift in Sources */,
 				194502F52A36341D00A70A03 /* TextView.swift in Sources */,
 				193DE92328C5E267002651E0 /* Settings.swift in Sources */,
-				193F04E229CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition in Sources */,
 				1934C77C2921670600A169EC /* Attachment.swift in Sources */,
 				197123032CEBB96E00CEEECC /* AppShortcuts.swift in Sources */,
 				19709CFC297F2C1900F6A144 /* MemoInputResourceView.swift in Sources */,
@@ -722,19 +740,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		193F04E529CCBA9C0010E3BF /* MoeMemosWidgets.intentdefinition */ = {
-			isa = PBXVariantGroup;
-			children = (
-				193F04E429CCBA9C0010E3BF /* Base */,
-				193F04E729CCBAB40010E3BF /* zh-Hans */,
-				193F04E929CCBAB70010E3BF /* zh-Hant */,
-				190322DD2A82929300CAA50D /* de */,
-				192383F32B6659DC00D2C9DA /* fr */,
-				192383F52B6659DD00D2C9DA /* it */,
-			);
-			name = MoeMemosWidgets.intentdefinition;
-			sourceTree = "<group>";
-		};
 		1948CCAF2996B3FA00AB1986 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -744,6 +749,7 @@
 				190322DE2A82929300CAA50D /* de */,
 				191C49ED2B2D79A40097B98E /* fr */,
 				191C49EE2B2D7DAB0097B98E /* it */,
+				19D0C5A02D4E0CC400E026CF /* ja */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -755,6 +761,7 @@
 				1948CCBA2996BFE200AB1986 /* zh-Hant */,
 				193F04E129CCBA320010E3BF /* Base */,
 				190322DC2A82929300CAA50D /* de */,
+				19D0C59F2D4E0CC400E026CF /* ja */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
@@ -770,7 +777,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosWidgets/MoeMemosWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosWidgets/Info.plist;
@@ -782,7 +789,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -804,7 +811,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosWidgets/MoeMemosWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosWidgets/Info.plist;
@@ -816,7 +823,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -957,7 +964,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MoeMemos/MoeMemos.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_ASSET_PATHS = "\"MoeMemos/Preview Content\"";
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				ENABLE_PREVIEWS = YES;
@@ -976,7 +983,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -997,7 +1004,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MoeMemos/MoeMemos.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_ASSET_PATHS = "\"MoeMemos/Preview Content\"";
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				ENABLE_PREVIEWS = YES;
@@ -1016,7 +1023,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1036,7 +1043,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosShareExtension/MoeMemosShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosShareExtension/Info.plist;
@@ -1048,7 +1055,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1068,7 +1075,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = MoeMemosShareExtension/MoeMemosShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_TEAM = AHAQ4D2466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MoeMemosShareExtension/Info.plist;
@@ -1080,7 +1087,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.mudkip.MoeMemos.MoeMemosShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

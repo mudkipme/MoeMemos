@@ -8,7 +8,7 @@
 import Foundation
 import Models
 
-typealias MemosV1Memo = Components.Schemas.v1Memo
+typealias MemosV1Memo = Components.Schemas.apiv1Memo
 typealias MemosV1Resource = Components.Schemas.v1Resource
 typealias MemosV1Visibility = Components.Schemas.v1Visibility
 public typealias MemosV1User = Components.Schemas.v1User
@@ -19,7 +19,7 @@ extension MemosV1Memo {
         return Memo(
             content: content ?? "",
             pinned: pinned ?? false,
-            rowStatus: rowStatus == .ARCHIVED ? .archived : .normal,
+            rowStatus: state == .ARCHIVED ? .archived : .normal,
             visibility: visibility?.toMemoVisibility() ?? .private,
             resources: resources?.map { $0.toResource(host: host) } ?? [],
             createdAt: createTime ?? .now,

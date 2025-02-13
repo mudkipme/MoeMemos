@@ -1,0 +1,76 @@
+/* 
+  Localizable.strings
+  MoeMemos
+
+  Created by Mudkip on 2023/2/11.
+*/
+
+"moe-memos" = "Moe Memos";
+
+"memo.archive" = "アーカイブ";
+"memo.archived" = "アーカイブ済み";
+"memo.copy" = "コピー";
+"memo.delete" = "削除";
+"memo.delete.confirm" = "このメモを削除しますか？";
+"memo.edit" = "編集";
+"memo.memos" = "メモ";
+"memo.action.cancel" = "いいえ";
+"memo.pin" = "ピン留め";
+"memo.restore" = "復元";
+"memo.share" = "共有";
+"memo.unpin" = "ピン留め解除";
+"memo.action.ok" = "はい";
+"memo.visibility.public" = "ゲストに表示";
+"memo.visibility.protected" = "ローカルメンバーに表示";
+"memo.visibility.private" = "あなただけに表示";
+
+"settings" = "設定";
+"settings.about" = "Moe Memos について";
+"settings.privacy" = "プライバシー ポリシー";
+"settings.report" = "問題の報告";
+"settings.sign-out" = "サインアウト";
+"settings.website" = "ウェブサイト";
+"settings.acknowledgements" = "謝辞";
+
+"input.placeholder" = "ご意見は…";
+"input.close" = "閉じる";
+"input.compose" = "作成";
+"input.edit" = "メモの編集";
+"input.save" = "保存";
+"input.visibility" = "メモの表示";
+
+"login.host" = "ホスト";
+"login.method" = "ログイン方法";
+"login.access-token" = "アクセストークン";
+"login.access-token.hint" = "✍️memosの設定からアクセストークンを作成します。";
+"login.password" = "パスワード";
+"login.hint" = "\n[✍️memos](https://github.com/usememos/memos) サーバーのログイン情報を入力してください。";
+"login.username" = "ユーザー名";
+"login.username-and-password" = "パスワード";
+"login.sign-in" = "サインイン";
+
+"stats.day" = "日";
+"stats.memo" = "メモ";
+"stats.tag" = "タグ";
+
+"resources" = "リソース";
+
+"tags" = "タグ";
+
+"widget.memories" = "メモリー";
+"widget.memories.description" = "過去のメモを記憶します。";
+"widget.memo-graph" = "メモグラフ";
+"widget.memo-graph.description" = "最近数週間に毎日作成したメモの量を表示するグラフ。";
+
+"share.memo-saved" = "保存したメモ。";
+
+"explore" = "深堀り";
+
+// Account
+"account.local-user" = "ローカルユーザー";
+"account.add-account" = "アカウントの追加";
+"account.accounts" = "アカウント";
+"account.add-memos-account" = "Memosアカウントの追加";
+"account.memos-account-description" = "Memosサーバーと同期する";
+"account.account-detail" = "アカウントの詳細";
+"account.switch-account" = "アカウントの切替";

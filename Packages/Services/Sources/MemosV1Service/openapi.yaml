@@ -17,33 +17,6 @@ tags:
 - name: WorkspaceService
 - name: WorkspaceSettingService
 paths:
-  /api/v1/activities/{id}:
-    get:
-      tags:
-      - ActivityService
-      summary: GetActivity returns the activity with the given id.
-      operationId: ActivityService_GetActivity
-      parameters:
-      - name: id
-        in: path
-        description: The system-generated unique identifier for the activity.
-        required: true
-        schema:
-          type: integer
-          format: int32
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1Activity'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
   /api/v1/auth/signin:
     post:
       tags:
@@ -183,152 +156,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/identityProviders:
-    get:
-      tags:
-      - IdentityProviderService
-      summary: ListIdentityProviders lists identity providers.
-      operationId: IdentityProviderService_ListIdentityProviders
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ListIdentityProvidersResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-    post:
-      tags:
-      - IdentityProviderService
-      summary: CreateIdentityProvider creates an identity provider.
-      operationId: IdentityProviderService_CreateIdentityProvider
-      requestBody:
-        description: The identityProvider to create.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/apiv1IdentityProvider'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/apiv1IdentityProvider'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: identityProvider
-  /api/v1/inboxes:
-    get:
-      tags:
-      - InboxService
-      summary: ListInboxes lists inboxes for a user.
-      operationId: InboxService_ListInboxes
-      parameters:
-      - name: user
-        in: query
-        description: "Format: users/{id}"
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ListInboxesResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/markdown/link:metadata:
-    get:
-      tags:
-      - MarkdownService
-      summary: GetLinkMetadata returns metadata for a given link.
-      operationId: MarkdownService_GetLinkMetadata
-      parameters:
-      - name: link
-        in: query
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1LinkMetadata'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/markdown/parse:
-    post:
-      tags:
-      - MarkdownService
-      summary: Parses the given markdown content and returns a list of nodes.
-      operationId: MarkdownService_ParseMarkdown
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/v1ParseMarkdownRequest'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ParseMarkdownResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: body
-  /api/v1/markdown:restore:
-    post:
-      tags:
-      - MarkdownService
-      summary: Restores the given nodes to markdown content.
-      operationId: MarkdownService_RestoreMarkdown
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/v1RestoreMarkdownRequest'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1RestoreMarkdownResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: body
   /api/v1/memos:
     get:
       tags:
@@ -344,18 +171,30 @@ paths:
           format: int32
       - name: pageToken
         in: query
-        description: |-
-          A page token, received from a previous `ListMemos` call.
-          Provide this to retrieve the subsequent page.
+        description: "A page token, received from a previous `ListMemos` call.\r\n\
+          Provide this to retrieve the subsequent page."
         schema:
           type: string
       - name: filter
         in: query
-        description: |-
-          Filter is used to filter memos returned in the list.
-          Format: "creator == 'users/{uid}' && visibilities == ['PUBLIC', 'PROTECTED']"
+        description: "Filter is used to filter memos returned in the list.\r\nFormat:\
+          \ \"creator == 'users/{uid}' && visibilities == ['PUBLIC', 'PROTECTED']\""
         schema:
           type: string
+      - name: view
+        in: query
+        description: |-
+          The view of the memo.
+
+           - MEMO_VIEW_FULL: The full view of the memo. Includes all fields.
+           - MEMO_VIEW_METADATA_ONLY: The metadata only view of the memo. Excludes the content/snippet fields.
+        schema:
+          type: string
+          default: MEMO_VIEW_UNSPECIFIED
+          enum:
+          - MEMO_VIEW_UNSPECIFIED
+          - MEMO_VIEW_FULL
+          - MEMO_VIEW_METADATA_ONLY
       responses:
         "200":
           description: A successful response.
@@ -386,7 +225,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1Memo'
+                $ref: '#/components/schemas/apiv1Memo'
         default:
           description: An unexpected error response.
           content:
@@ -394,84 +233,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
       x-codegen-request-body-name: body
-  /api/v1/memos/stats:
+  /api/v1/memos:by-uid/{uid}:
     get:
       tags:
       - MemoService
-      summary: GetUserMemosStats gets stats of memos for a user.
-      operationId: MemoService_GetUserMemosStats
+      summary: GetMemoByUid gets a memo by uid
+      operationId: MemoService_GetMemoByUid
       parameters:
-      - name: name
-        in: query
-        description: |-
-          name is the name of the user to get stats for.
-          Format: users/{id}
-        schema:
-          type: string
-      - name: timezone
-        in: query
-        description: |-
-          timezone location
-          Format: uses tz identifier
-          https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-        schema:
-          type: string
-      - name: filter
-        in: query
-        description: Same as ListMemosRequest.filter
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1GetUserMemosStatsResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/memos:export:
-    post:
-      tags:
-      - MemoService
-      summary: ExportMemos exports memos.
-      operationId: MemoService_ExportMemos
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/v1ExportMemosRequest'
+      - name: uid
+        in: path
+        description: The uid of the memo.
         required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ExportMemosResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: body
-  /api/v1/memos:search:
-    get:
-      tags:
-      - MemoService
-      summary: SearchMemos searches memos.
-      operationId: MemoService_SearchMemos
-      parameters:
-      - name: filter
-        in: query
-        description: |-
-          Filter is used to filter memos returned.
-          Format: "creator == 'users/{uid}' && visibilities == ['PUBLIC', 'PROTECTED']"
         schema:
           type: string
       responses:
@@ -480,7 +252,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1SearchMemosResponse'
+                $ref: '#/components/schemas/apiv1Memo'
         default:
           description: An unexpected error response.
           content:
@@ -557,15 +329,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
       x-codegen-request-body-name: resource
-  /api/v1/resources:search:
+  /api/v1/resources:by-uid/{uid}:
     get:
       tags:
       - ResourceService
-      summary: SearchResources searches memos.
-      operationId: ResourceService_SearchResources
+      summary: GetResourceByUid returns a resource by uid.
+      operationId: ResourceService_GetResourceByUid
       parameters:
-      - name: filter
-        in: query
+      - name: uid
+        in: path
+        description: The uid of the resource.
+        required: true
         schema:
           type: string
       responses:
@@ -574,234 +348,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1SearchResourcesResponse'
+                $ref: '#/components/schemas/v1Resource'
         default:
           description: An unexpected error response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/users:
-    get:
-      tags:
-      - UserService
-      summary: ListUsers returns a list of users.
-      operationId: UserService_ListUsers
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ListUsersResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-    post:
-      tags:
-      - UserService
-      summary: CreateUser creates a new user.
-      operationId: UserService_CreateUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/v1User'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1User'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: user
-  /api/v1/users:search:
-    get:
-      tags:
-      - UserService
-      summary: SearchUsers searches users by filter.
-      operationId: UserService_SearchUsers
-      parameters:
-      - name: filter
-        in: query
-        description: |-
-          Filter is used to filter users returned in the list.
-          Format: "username == 'frank'"
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1SearchUsersResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/webhooks:
-    get:
-      tags:
-      - WebhookService
-      summary: ListWebhooks returns a list of webhooks.
-      operationId: WebhookService_ListWebhooks
-      parameters:
-      - name: creatorId
-        in: query
-        schema:
-          type: integer
-          format: int32
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ListWebhooksResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-    post:
-      tags:
-      - WebhookService
-      summary: CreateWebhook creates a new webhook.
-      operationId: WebhookService_CreateWebhook
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/v1CreateWebhookRequest'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1Webhook'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: body
-  /api/v1/webhooks/{id}:
-    get:
-      tags:
-      - WebhookService
-      summary: GetWebhook returns a webhook by id.
-      operationId: WebhookService_GetWebhook
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1Webhook'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-    delete:
-      tags:
-      - WebhookService
-      summary: DeleteWebhook deletes a webhook by id.
-      operationId: WebhookService_DeleteWebhook
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                type: object
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/webhooks/{webhook.id}:
-    patch:
-      tags:
-      - WebhookService
-      summary: UpdateWebhook updates a webhook.
-      operationId: WebhookService_UpdateWebhook
-      parameters:
-      - name: webhook.id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                creatorId:
-                  type: integer
-                  format: int32
-                createdTime:
-                  type: string
-                  format: date-time
-                updatedTime:
-                  type: string
-                  format: date-time
-                rowStatus:
-                  $ref: '#/components/schemas/v1RowStatus'
-                name:
-                  type: string
-                url:
-                  type: string
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1Webhook'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: webhook
   /api/v1/workspace/profile:
     get:
       tags:
@@ -821,180 +374,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/workspace/{name}:
-    get:
-      tags:
-      - WorkspaceSettingService
-      summary: GetWorkspaceSetting returns the setting by name.
-      operationId: WorkspaceSettingService_GetWorkspaceSetting
-      parameters:
-      - name: name
-        in: path
-        description: |-
-          The resource name of the workspace setting.
-          Format: settings/{setting}
-        required: true
-        schema:
-          pattern: "settings/[^/]+"
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/apiv1WorkspaceSetting'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/workspace/{setting.name}:
-    patch:
-      tags:
-      - WorkspaceSettingService
-      summary: SetWorkspaceSetting updates the setting.
-      operationId: WorkspaceSettingService_SetWorkspaceSetting
-      parameters:
-      - name: setting.name
-        in: path
-        description: |-
-          name is the name of the setting.
-          Format: settings/{setting}
-        required: true
-        schema:
-          pattern: "settings/[^/]+"
-          type: string
-      requestBody:
-        description: setting is the setting to update.
-        content:
-          application/json:
-            schema:
-              title: setting is the setting to update.
-              type: object
-              properties:
-                generalSetting:
-                  $ref: '#/components/schemas/apiv1WorkspaceGeneralSetting'
-                storageSetting:
-                  $ref: '#/components/schemas/apiv1WorkspaceStorageSetting'
-                memoRelatedSetting:
-                  $ref: '#/components/schemas/apiv1WorkspaceMemoRelatedSetting'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/apiv1WorkspaceSetting'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: setting
-  /api/v1/{identityProvider.name}:
-    patch:
-      tags:
-      - IdentityProviderService
-      summary: UpdateIdentityProvider updates an identity provider.
-      operationId: IdentityProviderService_UpdateIdentityProvider
-      parameters:
-      - name: identityProvider.name
-        in: path
-        description: |-
-          The name of the identityProvider.
-          Format: identityProviders/{id}
-        required: true
-        schema:
-          pattern: "identityProviders/[^/]+"
-          type: string
-      requestBody:
-        description: The identityProvider to update.
-        content:
-          application/json:
-            schema:
-              title: The identityProvider to update.
-              type: object
-              properties:
-                type:
-                  $ref: '#/components/schemas/apiv1IdentityProviderType'
-                title:
-                  type: string
-                identifierFilter:
-                  type: string
-                config:
-                  $ref: '#/components/schemas/apiv1IdentityProviderConfig'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/apiv1IdentityProvider'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: identityProvider
-  /api/v1/{inbox.name}:
-    patch:
-      tags:
-      - InboxService
-      summary: UpdateInbox updates an inbox.
-      operationId: InboxService_UpdateInbox
-      parameters:
-      - name: inbox.name
-        in: path
-        description: |-
-          The name of the inbox.
-          Format: inboxes/{id}
-        required: true
-        schema:
-          pattern: "inboxes/[^/]+"
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                sender:
-                  title: "Format: users/{id}"
-                  type: string
-                receiver:
-                  title: "Format: users/{id}"
-                  type: string
-                status:
-                  $ref: '#/components/schemas/v1InboxStatus'
-                createTime:
-                  type: string
-                  format: date-time
-                type:
-                  $ref: '#/components/schemas/v1InboxType'
-                activityId:
-                  type: integer
-                  format: int32
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1Inbox'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: inbox
   /api/v1/{memo_name}:
     patch:
       tags:
@@ -1004,10 +383,8 @@ paths:
       parameters:
       - name: memo_name
         in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
-          id is the system generated id.
+        description: "The name of the memo.\r\nFormat: memos/{id}\r\nid is the system\
+          \ generated id."
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1021,12 +398,10 @@ paths:
                 uid:
                   type: string
                   description: The user defined id of the memo.
-                rowStatus:
-                  $ref: '#/components/schemas/v1RowStatus'
+                state:
+                  $ref: '#/components/schemas/v1State'
                 creator:
-                  title: |-
-                    The name of the creator.
-                    Format: users/{id}
+                  title: "The name of the creator.\r\nFormat: users/{id}"
                   type: string
                 createTime:
                   type: string
@@ -1039,11 +414,6 @@ paths:
                   format: date-time
                 content:
                   type: string
-                nodes:
-                  type: array
-                  readOnly: true
-                  items:
-                    $ref: '#/components/schemas/v1Node'
                 visibility:
                   $ref: '#/components/schemas/v1Visibility'
                 tags:
@@ -1052,18 +422,12 @@ paths:
                     type: string
                 pinned:
                   type: boolean
-                parentId:
-                  type: integer
-                  format: int32
-                  readOnly: true
                 resources:
                   type: array
-                  readOnly: true
                   items:
                     $ref: '#/components/schemas/v1Resource'
                 relations:
                   type: array
-                  readOnly: true
                   items:
                     $ref: '#/components/schemas/v1MemoRelation'
                 reactions:
@@ -1074,11 +438,15 @@ paths:
                 property:
                   $ref: '#/components/schemas/v1MemoProperty'
                 parent:
-                  title: |-
-                    The name of the parent memo.
-                    Format: memos/{id}
+                  title: "The name of the parent memo.\r\nFormat: memos/{id}"
                   type: string
                   readOnly: true
+                snippet:
+                  type: string
+                  description: The snippet of the memo content. Plain text only.
+                  readOnly: true
+                location:
+                  $ref: '#/components/schemas/apiv1Location'
         required: true
       responses:
         "200":
@@ -1086,7 +454,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1Memo'
+                $ref: '#/components/schemas/apiv1Memo'
         default:
           description: An unexpected error response.
           content:
@@ -1094,76 +462,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
       x-codegen-request-body-name: memo
-  /api/v1/{name_1}:
-    get:
-      tags:
-      - IdentityProviderService
-      summary: GetIdentityProvider gets an identity provider.
-      operationId: IdentityProviderService_GetIdentityProvider
-      parameters:
-      - name: name_1
-        in: path
-        description: |-
-          The name of the identityProvider to get.
-          Format: identityProviders/{id}
-        required: true
-        schema:
-          pattern: "identityProviders/[^/]+"
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/apiv1IdentityProvider'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-    delete:
-      tags:
-      - IdentityProviderService
-      summary: DeleteIdentityProvider deletes an identity provider.
-      operationId: IdentityProviderService_DeleteIdentityProvider
-      parameters:
-      - name: name_1
-        in: path
-        description: |-
-          The name of the identityProvider to delete.
-          Format: identityProviders/{id}
-        required: true
-        schema:
-          pattern: "identityProviders/[^/]+"
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                type: object
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/{name_2}:
+  /api/v1/{name_3}:
     get:
       tags:
       - ResourceService
       summary: GetResource returns a resource by name.
       operationId: ResourceService_GetResource
       parameters:
-      - name: name_2
+      - name: name_3
         in: path
-        description: |-
-          The name of the resource.
-          Format: resources/{id}
-          id is the system generated unique identifier.
+        description: "The name of the resource.\r\nFormat: resources/{id}\r\nid is\
+          \ the system generated unique identifier."
         required: true
         schema:
           pattern: "resources/[^/]+"
@@ -1183,73 +492,14 @@ paths:
                 $ref: '#/components/schemas/googlerpcStatus'
     delete:
       tags:
-      - InboxService
-      summary: DeleteInbox deletes an inbox.
-      operationId: InboxService_DeleteInbox
-      parameters:
-      - name: name_2
-        in: path
-        description: |-
-          The name of the inbox to delete.
-          Format: inboxes/{id}
-        required: true
-        schema:
-          pattern: "inboxes/[^/]+"
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                type: object
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/{name_3}:
-    get:
-      tags:
-      - MemoService
-      summary: GetMemo gets a memo.
-      operationId: MemoService_GetMemo
-      parameters:
-      - name: name_3
-        in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
-        required: true
-        schema:
-          pattern: "memos/[^/]+"
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1Memo'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-    delete:
-      tags:
       - ResourceService
       summary: DeleteResource deletes a resource by name.
       operationId: ResourceService_DeleteResource
       parameters:
       - name: name_3
         in: path
-        description: |-
-          The name of the resource.
-          Format: resources/{id}
-          id is the system generated unique identifier.
+        description: "The name of the resource.\r\nFormat: resources/{id}\r\nid is\
+          \ the system generated unique identifier."
         required: true
         schema:
           pattern: "resources/[^/]+"
@@ -1268,17 +518,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
   /api/v1/{name_4}:
-    delete:
+    get:
       tags:
       - MemoService
-      summary: DeleteMemo deletes a memo.
-      operationId: MemoService_DeleteMemo
+      summary: GetMemo gets a memo.
+      operationId: MemoService_GetMemo
       parameters:
       - name: name_4
         in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
+        description: "The name of the memo.\r\nFormat: memos/{id}"
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1289,36 +537,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/{name}:
-    get:
-      tags:
-      - UserService
-      summary: GetUser gets a user by name.
-      operationId: UserService_GetUser
-      parameters:
-      - name: name
-        in: path
-        description: |-
-          The name of the user.
-          Format: users/{id}
-        required: true
-        schema:
-          pattern: "users/[^/]+"
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1User'
+                $ref: '#/components/schemas/apiv1Memo'
         default:
           description: An unexpected error response.
           content:
@@ -1327,117 +546,16 @@ paths:
                 $ref: '#/components/schemas/googlerpcStatus'
     delete:
       tags:
-      - UserService
-      summary: DeleteUser deletes a user.
-      operationId: UserService_DeleteUser
+      - MemoService
+      summary: DeleteMemo deletes a memo.
+      operationId: MemoService_DeleteMemo
       parameters:
-      - name: name
+      - name: name_4
         in: path
-        description: |-
-          The name of the user.
-          Format: users/{id}
+        description: "The name of the memo.\r\nFormat: memos/{id}"
         required: true
         schema:
-          pattern: "users/[^/]+"
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                type: object
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/{name}/access_tokens:
-    get:
-      tags:
-      - UserService
-      summary: ListUserAccessTokens returns a list of access tokens for a user.
-      operationId: UserService_ListUserAccessTokens
-      parameters:
-      - name: name
-        in: path
-        description: |-
-          The name of the user.
-          Format: users/{id}
-        required: true
-        schema:
-          pattern: "users/[^/]+"
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ListUserAccessTokensResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-    post:
-      tags:
-      - UserService
-      summary: CreateUserAccessToken creates a new access token for a user.
-      operationId: UserService_CreateUserAccessToken
-      parameters:
-      - name: name
-        in: path
-        description: |-
-          The name of the user.
-          Format: users/{id}
-        required: true
-        schema:
-          pattern: "users/[^/]+"
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserServiceCreateUserAccessTokenBody'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1UserAccessToken'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: body
-  /api/v1/{name}/access_tokens/{accessToken}:
-    delete:
-      tags:
-      - UserService
-      summary: DeleteUserAccessToken deletes an access token for a user.
-      operationId: UserService_DeleteUserAccessToken
-      parameters:
-      - name: name
-        in: path
-        description: |-
-          The name of the user.
-          Format: users/{id}
-        required: true
-        schema:
-          pattern: "users/[^/]+"
-          type: string
-      - name: accessToken
-        in: path
-        description: access_token is the access token to delete.
-        required: true
-        schema:
+          pattern: "memos/[^/]+"
           type: string
       responses:
         "200":
@@ -1461,9 +579,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
+        description: "The name of the memo.\r\nFormat: memos/{id}"
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1489,9 +605,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
+        description: "The name of the memo.\r\nFormat: memos/{id}"
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1508,7 +622,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1Memo'
+                $ref: '#/components/schemas/apiv1Memo'
         default:
           description: An unexpected error response.
           content:
@@ -1516,71 +630,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
       x-codegen-request-body-name: comment
-  /api/v1/{name}/properties:
-    get:
-      tags:
-      - MemoService
-      summary: ListMemoProperties lists memo properties.
-      operationId: MemoService_ListMemoProperties
-      parameters:
-      - name: name
-        in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}. Use "memos/-" to list all properties.
-        required: true
-        schema:
-          pattern: "memos/[^/]+"
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ListMemoPropertiesResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/{name}/properties:rebuild:
-    post:
-      tags:
-      - MemoService
-      summary: RebuildMemoProperty rebuilds a memo property.
-      operationId: MemoService_RebuildMemoProperty
-      parameters:
-      - name: name
-        in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}. Use "memos/-" to rebuild all memos.
-        required: true
-        schema:
-          pattern: "memos/[^/]+"
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MemoServiceRebuildMemoPropertyBody'
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                type: object
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: body
   /api/v1/{name}/reactions:
     get:
       tags:
@@ -1590,9 +639,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
+        description: "The name of the memo.\r\nFormat: memos/{id}"
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1618,9 +665,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
+        description: "The name of the memo.\r\nFormat: memos/{id}"
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1654,9 +699,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
+        description: "The name of the memo.\r\nFormat: memos/{id}"
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1682,9 +725,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
+        description: "The name of the memo.\r\nFormat: memos/{id}"
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1718,9 +759,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
+        description: "The name of the memo.\r\nFormat: memos/{id}"
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1746,9 +785,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the memo.
-          Format: memos/{id}
+        description: "The name of the memo.\r\nFormat: memos/{id}"
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1782,9 +819,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the user.
-          Format: users/{id}
+        description: "The name of the user.\r\nFormat: users/{id}"
         required: true
         schema:
           pattern: "users/[^/]+"
@@ -1802,42 +837,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/{parent}/tags:
-    get:
-      tags:
-      - MemoService
-      summary: ListMemoTags lists tags for a memo.
-      operationId: MemoService_ListMemoTags
-      parameters:
-      - name: parent
-        in: path
-        description: |-
-          The parent, who owns the tags.
-          Format: memos/{id}. Use "memos/-" to list all tags.
-        required: true
-        schema:
-          pattern: "memos/[^/]+"
-          type: string
-      - name: filter
-        in: query
-        description: |-
-          Filter is used to filter memos.
-          Format: "creator == 'users/{uid}' && visibilities == ['PUBLIC', 'PROTECTED']"
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1ListMemoTagsResponse'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
   /api/v1/{parent}/tags/{tag}:
     delete:
       tags:
@@ -1847,9 +846,8 @@ paths:
       parameters:
       - name: parent
         in: path
-        description: |-
-          The parent, who owns the tags.
-          Format: memos/{id}. Use "memos/-" to delete all tags.
+        description: "The parent, who owns the tags.\r\nFormat: memos/{id}. Use \"\
+          memos/-\" to delete all tags."
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1885,9 +883,8 @@ paths:
       parameters:
       - name: parent
         in: path
-        description: |-
-          The parent, who owns the tags.
-          Format: memos/{id}. Use "memos/-" to rename all tags.
+        description: "The parent, who owns the tags.\r\nFormat: memos/{id}. Use \"\
+          memos/-\" to rename all tags."
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -1921,10 +918,8 @@ paths:
       parameters:
       - name: resource.name
         in: path
-        description: |-
-          The name of the resource.
-          Format: resources/{id}
-          id is the system generated unique identifier.
+        description: "The name of the resource.\r\nFormat: resources/{id}\r\nid is\
+          \ the system generated unique identifier."
         required: true
         schema:
           pattern: "resources/[^/]+"
@@ -1956,9 +951,7 @@ paths:
                   type: string
                   format: int64
                 memo:
-                  title: |-
-                    The related memo.
-                    Format: memos/{id}
+                  title: "The related memo.\r\nFormat: memos/{id}"
                   type: string
         required: true
       responses:
@@ -1984,9 +977,7 @@ paths:
       parameters:
       - name: setting.name
         in: path
-        description: |-
-          The name of the user.
-          Format: users/{id}
+        description: "The name of the user.\r\nFormat: users/{id}"
         required: true
         schema:
           pattern: "users/[^/]+/setting"
@@ -2030,9 +1021,7 @@ paths:
       parameters:
       - name: user.name
         in: path
-        description: |-
-          The name of the user.
-          Format: users/{id}
+        description: "The name of the user.\r\nFormat: users/{id}"
         required: true
         schema:
           pattern: "users/[^/]+"
@@ -2061,8 +1050,8 @@ paths:
                   type: string
                 password:
                   type: string
-                rowStatus:
-                  $ref: '#/components/schemas/v1RowStatus'
+                state:
+                  $ref: '#/components/schemas/v1State'
                 createTime:
                   type: string
                   format: date-time
@@ -2093,9 +1082,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the user.
-          Format: users/{id}
+        description: "The name of the user.\r\nFormat: users/{id}"
         required: true
         schema:
           pattern: "users/[^/]+"
@@ -2134,10 +1121,8 @@ paths:
       parameters:
       - name: name
         in: path
-        description: |-
-          The name of the resource.
-          Format: resources/{id}
-          id is the system generated unique identifier.
+        description: "The name of the resource.\r\nFormat: resources/{id}\r\nid is\
+          \ the system generated unique identifier."
         required: true
         schema:
           pattern: "resources/[^/]+"
@@ -2148,6 +1133,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: thumbnail
+        in: query
+        description: A flag indicating if the thumbnail version of the resource should
+          be returned
+        schema:
+          type: boolean
       responses:
         "200":
           description: A successful response.
@@ -2163,8 +1154,14 @@ paths:
                 $ref: '#/components/schemas/googlerpcStatus'
 components:
   schemas:
-    MemoServiceRebuildMemoPropertyBody:
-      type: object
+    ListNodeKind:
+      type: string
+      default: KIND_UNSPECIFIED
+      enum:
+      - KIND_UNSPECIFIED
+      - ORDERED
+      - UNORDERED
+      - DESCRIPTION
     MemoServiceRenameMemoTagBody:
       type: object
       properties:
@@ -2191,13 +1188,6 @@ components:
       properties:
         reaction:
           $ref: '#/components/schemas/v1Reaction'
-    TableNodeRow:
-      type: object
-      properties:
-        cells:
-          type: array
-          items:
-            type: string
     UserRole:
       type: string
       default: ROLE_UNSPECIFIED
@@ -2206,28 +1196,6 @@ components:
       - HOST
       - ADMIN
       - USER
-    UserServiceCreateUserAccessTokenBody:
-      type: object
-      properties:
-        description:
-          type: string
-        expiresAt:
-          type: string
-          format: date-time
-    WorkspaceStorageSettingS3Config:
-      title: "Reference: https://developers.cloudflare.com/r2/examples/aws/aws-sdk-go/"
-      type: object
-      properties:
-        accessKeyId:
-          type: string
-        accessKeySecret:
-          type: string
-        endpoint:
-          type: string
-        region:
-          type: string
-        bucket:
-          type: string
     apiHttpBody:
       type: object
       properties:
@@ -2291,32 +1259,6 @@ components:
 
         Use of this type only changes how the request and response bodies are
         handled, all other features will continue to work unchanged.
-    apiv1ActivityMemoCommentPayload:
-      type: object
-      properties:
-        memoId:
-          type: integer
-          description: The memo id of comment.
-          format: int32
-        relatedMemoId:
-          type: integer
-          description: The memo id of related memo.
-          format: int32
-      description: ActivityMemoCommentPayload represents the payload of a memo comment
-        activity.
-    apiv1ActivityPayload:
-      type: object
-      properties:
-        memoComment:
-          $ref: '#/components/schemas/apiv1ActivityMemoCommentPayload'
-        versionUpdate:
-          $ref: '#/components/schemas/apiv1ActivityVersionUpdatePayload'
-    apiv1ActivityVersionUpdatePayload:
-      type: object
-      properties:
-        version:
-          type: string
-          description: The updated version of memos.
     apiv1FieldMapping:
       type: object
       properties:
@@ -2326,33 +1268,76 @@ components:
           type: string
         email:
           type: string
-    apiv1IdentityProvider:
+    apiv1Location:
+      type: object
+      properties:
+        placeholder:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+    apiv1Memo:
       type: object
       properties:
         name:
-          title: |-
-            The name of the identityProvider.
-            Format: identityProviders/{id}
           type: string
-        type:
-          $ref: '#/components/schemas/apiv1IdentityProviderType'
-        title:
+          description: "The name of the memo.\r\nFormat: memos/{id}\r\nid is the system\
+            \ generated id."
+        uid:
           type: string
-        identifierFilter:
+          description: The user defined id of the memo.
+        state:
+          $ref: '#/components/schemas/v1State'
+        creator:
+          title: "The name of the creator.\r\nFormat: users/{id}"
           type: string
-        config:
-          $ref: '#/components/schemas/apiv1IdentityProviderConfig'
-    apiv1IdentityProviderConfig:
-      type: object
-      properties:
-        oauth2Config:
-          $ref: '#/components/schemas/apiv1OAuth2Config'
-    apiv1IdentityProviderType:
-      type: string
-      default: TYPE_UNSPECIFIED
-      enum:
-      - TYPE_UNSPECIFIED
-      - OAUTH2
+        createTime:
+          type: string
+          format: date-time
+        updateTime:
+          type: string
+          format: date-time
+        displayTime:
+          type: string
+          format: date-time
+        content:
+          type: string
+        visibility:
+          $ref: '#/components/schemas/v1Visibility'
+        tags:
+          type: array
+          items:
+            type: string
+        pinned:
+          type: boolean
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1Resource'
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1MemoRelation'
+        reactions:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/v1Reaction'
+        property:
+          $ref: '#/components/schemas/v1MemoProperty'
+        parent:
+          title: "The name of the parent memo.\r\nFormat: memos/{id}"
+          type: string
+          readOnly: true
+        snippet:
+          type: string
+          description: The snippet of the memo content. Plain text only.
+          readOnly: true
+        location:
+          $ref: '#/components/schemas/apiv1Location'
     apiv1OAuth2Config:
       type: object
       properties:
@@ -2376,9 +1361,7 @@ components:
       type: object
       properties:
         name:
-          title: |-
-            The name of the user.
-            Format: users/{id}
+          title: "The name of the user.\r\nFormat: users/{id}"
           type: string
         locale:
           type: string
@@ -2405,12 +1388,12 @@ components:
     apiv1WorkspaceGeneralSetting:
       type: object
       properties:
-        disallowSignup:
+        disallowUserRegistration:
           type: boolean
-          description: disallow_signup is the flag to disallow signup.
-        disallowPasswordLogin:
+          description: disallow_user_registration disallows user registration.
+        disallowPasswordAuth:
           type: boolean
-          description: disallow_password_login is the flag to disallow password login.
+          description: disallow_password_auth disallows password authentication.
         additionalScript:
           type: string
           description: additional_script is the additional script.
@@ -2419,12 +1402,24 @@ components:
           description: additional_style is the additional style.
         customProfile:
           $ref: '#/components/schemas/apiv1WorkspaceCustomProfile'
+        weekStartDayOffset:
+          type: integer
+          description: "week_start_day_offset is the week start day offset from Sunday.\r\
+            \n0: Sunday, 1: Monday, 2: Tuesday, 3: Wednesday, 4: Thursday, 5: Friday,\
+            \ 6: Saturday\r\nDefault is Sunday."
+          format: int32
+        disallowChangeUsername:
+          type: boolean
+          description: disallow_change_username disallows changing username.
+        disallowChangeNickname:
+          type: boolean
+          description: disallow_change_nickname disallows changing nickname.
     apiv1WorkspaceMemoRelatedSetting:
       type: object
       properties:
-        disallowPublicVisible:
+        disallowPublicVisibility:
           type: boolean
-          description: disallow_public_share disallows set memo as public visible.
+          description: disallow_public_visibility disallows set memo as public visibility.
         displayWithUpdateTime:
           type: boolean
           description: display_with_update_time orders and displays memo with update
@@ -2440,48 +1435,27 @@ components:
         enableDoubleClickEdit:
           type: boolean
           description: enable_double_click_edit enables editing on double click.
-    apiv1WorkspaceSetting:
-      type: object
-      properties:
-        name:
-          title: |-
-            name is the name of the setting.
-            Format: settings/{setting}
+        enableLinkPreview:
+          type: boolean
+          description: enable_link_preview enables links preview.
+        enableComment:
+          type: boolean
+          description: enable_comment enables comment.
+        enableLocation:
+          type: boolean
+          description: enable_location enables setting location for memo.
+        defaultVisibility:
           type: string
-        generalSetting:
-          $ref: '#/components/schemas/apiv1WorkspaceGeneralSetting'
-        storageSetting:
-          $ref: '#/components/schemas/apiv1WorkspaceStorageSetting'
-        memoRelatedSetting:
-          $ref: '#/components/schemas/apiv1WorkspaceMemoRelatedSetting'
-    apiv1WorkspaceStorageSetting:
-      type: object
-      properties:
-        storageType:
-          $ref: '#/components/schemas/apiv1WorkspaceStorageSettingStorageType'
-        filepathTemplate:
-          title: |-
-            The template of file path.
-            e.g. assets/{timestamp}_{filename}
-          type: string
-        uploadSizeLimitMb:
-          type: string
-          description: The max upload size in megabytes.
-          format: int64
-        s3Config:
-          $ref: '#/components/schemas/WorkspaceStorageSettingS3Config'
-    apiv1WorkspaceStorageSettingStorageType:
-      type: string
-      description: |2-
-         - DATABASE: DATABASE is the database storage type.
-         - LOCAL: LOCAL is the local storage type.
-         - S3: S3 is the S3 storage type.
-      default: STORAGE_TYPE_UNSPECIFIED
-      enum:
-      - STORAGE_TYPE_UNSPECIFIED
-      - DATABASE
-      - LOCAL
-      - S3
+          description: default_visibility set the global memos default visibility.
+        reactions:
+          type: array
+          description: reactions is the list of reactions.
+          items:
+            type: string
+        disableMarkdownShortcuts:
+          type: boolean
+          description: disable_markdown_shortcuts disallow the registration of markdown
+            shortcuts.
     googlerpcStatus:
       type: object
       properties:
@@ -2616,73 +1590,6 @@ components:
               "@type": "type.googleapis.com/google.protobuf.Duration",
               "value": "1.212s"
             }
-    v1Activity:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The system-generated unique identifier for the activity.
-          format: int32
-        creatorId:
-          type: integer
-          description: The system-generated unique identifier for the user who created
-            the activity.
-          format: int32
-        type:
-          type: string
-          description: The type of the activity.
-        level:
-          type: string
-          description: The level of the activity.
-        createTime:
-          type: string
-          description: The create time of the activity.
-          format: date-time
-          readOnly: true
-        payload:
-          $ref: '#/components/schemas/apiv1ActivityPayload'
-    v1AutoLinkNode:
-      type: object
-      properties:
-        url:
-          type: string
-        isRawText:
-          type: boolean
-    v1BlockquoteNode:
-      type: object
-      properties:
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Node'
-    v1BoldItalicNode:
-      type: object
-      properties:
-        symbol:
-          type: string
-        content:
-          type: string
-    v1BoldNode:
-      type: object
-      properties:
-        symbol:
-          type: string
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Node'
-    v1CodeBlockNode:
-      type: object
-      properties:
-        language:
-          type: string
-        content:
-          type: string
-    v1CodeNode:
-      type: object
-      properties:
-        content:
-          type: string
     v1CreateMemoRequest:
       type: object
       properties:
@@ -2690,123 +1597,16 @@ components:
           type: string
         visibility:
           $ref: '#/components/schemas/v1Visibility'
-    v1CreateWebhookRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        url:
-          type: string
-    v1EmbeddedContentNode:
-      type: object
-      properties:
-        resourceName:
-          type: string
-        params:
-          type: string
-    v1EscapingCharacterNode:
-      type: object
-      properties:
-        symbol:
-          type: string
-    v1ExportMemosRequest:
-      type: object
-      properties:
-        filter:
-          title: Same as ListMemosRequest.filter
-          type: string
-    v1ExportMemosResponse:
-      type: object
-      properties:
-        content:
-          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
-          type: string
-          format: byte
-    v1GetUserMemosStatsResponse:
-      type: object
-      properties:
-        stats:
-          type: object
-          additionalProperties:
-            type: integer
-            format: int32
-          description: |-
-            stats is the stats of memo creating/updating activities.
-            key is the year-month-day string. e.g. "2020-01-01".
-    v1HeadingNode:
-      type: object
-      properties:
-        level:
-          type: integer
-          format: int32
-        children:
+        resources:
           type: array
           items:
-            $ref: '#/components/schemas/v1Node'
-    v1HighlightNode:
-      type: object
-      properties:
-        content:
-          type: string
-    v1HorizontalRuleNode:
-      type: object
-      properties:
-        symbol:
-          type: string
-    v1ImageNode:
-      type: object
-      properties:
-        altText:
-          type: string
-        url:
-          type: string
-    v1Inbox:
-      type: object
-      properties:
-        name:
-          title: |-
-            The name of the inbox.
-            Format: inboxes/{id}
-          type: string
-        sender:
-          title: "Format: users/{id}"
-          type: string
-        receiver:
-          title: "Format: users/{id}"
-          type: string
-        status:
-          $ref: '#/components/schemas/v1InboxStatus'
-        createTime:
-          type: string
-          format: date-time
-        type:
-          $ref: '#/components/schemas/v1InboxType'
-        activityId:
-          type: integer
-          format: int32
-    v1InboxStatus:
-      type: string
-      default: STATUS_UNSPECIFIED
-      enum:
-      - STATUS_UNSPECIFIED
-      - UNREAD
-      - ARCHIVED
-    v1InboxType:
-      type: string
-      default: TYPE_UNSPECIFIED
-      enum:
-      - TYPE_UNSPECIFIED
-      - MEMO_COMMENT
-      - VERSION_UPDATE
-    v1ItalicNode:
-      type: object
-      properties:
-        symbol:
-          type: string
-        content:
-          type: string
-    v1LineBreakNode:
-      type: object
+            $ref: '#/components/schemas/v1Resource'
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1MemoRelation'
+        location:
+          $ref: '#/components/schemas/apiv1Location'
     v1LinkMetadata:
       type: object
       properties:
@@ -2816,41 +1616,13 @@ components:
           type: string
         image:
           type: string
-    v1LinkNode:
-      type: object
-      properties:
-        text:
-          type: string
-        url:
-          type: string
-    v1ListIdentityProvidersResponse:
-      type: object
-      properties:
-        identityProviders:
-          type: array
-          items:
-            $ref: '#/components/schemas/apiv1IdentityProvider'
-    v1ListInboxesResponse:
-      type: object
-      properties:
-        inboxes:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Inbox'
     v1ListMemoCommentsResponse:
       type: object
       properties:
         memos:
           type: array
           items:
-            $ref: '#/components/schemas/v1Memo'
-    v1ListMemoPropertiesResponse:
-      type: object
-      properties:
-        properties:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1MemoProperty'
+            $ref: '#/components/schemas/apiv1Memo'
     v1ListMemoReactionsResponse:
       type: object
       properties:
@@ -2872,30 +1644,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/v1Resource'
-    v1ListMemoTagsResponse:
-      type: object
-      properties:
-        tagAmounts:
-          type: object
-          additionalProperties:
-            type: integer
-            format: int32
-          description: |-
-            tag_amounts is the amount of tags.
-            key is the tag name. e.g. "tag1".
-            value is the amount of the tag.
     v1ListMemosResponse:
       type: object
       properties:
         memos:
           type: array
           items:
-            $ref: '#/components/schemas/v1Memo'
+            $ref: '#/components/schemas/apiv1Memo'
         nextPageToken:
           type: string
-          description: |-
-            A token, which can be sent as `page_token` to retrieve the next page.
-            If this field is omitted, there are no subsequent pages.
+          description: "A token, which can be sent as `page_token` to retrieve the\
+            \ next page.\r\nIf this field is omitted, there are no subsequent pages."
     v1ListResourcesResponse:
       type: object
       properties:
@@ -2903,135 +1662,38 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/v1Resource'
-    v1ListUserAccessTokensResponse:
-      type: object
-      properties:
-        accessTokens:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1UserAccessToken'
-    v1ListUsersResponse:
-      type: object
-      properties:
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1User'
-    v1ListWebhooksResponse:
-      type: object
-      properties:
-        webhooks:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Webhook'
-    v1MathBlockNode:
-      type: object
-      properties:
-        content:
-          type: string
-    v1MathNode:
-      type: object
-      properties:
-        content:
-          type: string
-    v1Memo:
-      type: object
-      properties:
-        name:
-          type: string
-          description: |-
-            The name of the memo.
-            Format: memos/{id}
-            id is the system generated id.
-        uid:
-          type: string
-          description: The user defined id of the memo.
-        rowStatus:
-          $ref: '#/components/schemas/v1RowStatus'
-        creator:
-          title: |-
-            The name of the creator.
-            Format: users/{id}
-          type: string
-        createTime:
-          type: string
-          format: date-time
-        updateTime:
-          type: string
-          format: date-time
-        displayTime:
-          type: string
-          format: date-time
-        content:
-          type: string
-#        nodes:
-#          type: array
-#          readOnly: true
-#          items:
-#            $ref: '#/components/schemas/v1Node'
-        visibility:
-          $ref: '#/components/schemas/v1Visibility'
-        tags:
-          type: array
-          items:
-            type: string
-        pinned:
-          type: boolean
-        parentId:
-          type: integer
-          format: int32
-          readOnly: true
-        resources:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/v1Resource'
-        relations:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/v1MemoRelation'
-        reactions:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/v1Reaction'
-        property:
-          $ref: '#/components/schemas/v1MemoProperty'
-        parent:
-          title: |-
-            The name of the parent memo.
-            Format: memos/{id}
-          type: string
-          readOnly: true
     v1MemoProperty:
       type: object
       properties:
-        tags:
-          type: array
-          items:
-            type: string
         hasLink:
           type: boolean
         hasTaskList:
           type: boolean
         hasCode:
           type: boolean
+        hasIncompleteTasks:
+          type: boolean
     v1MemoRelation:
       type: object
       properties:
         memo:
-          title: |-
-            The name of memo.
-            Format: "memos/{uid}"
-          type: string
+          $ref: '#/components/schemas/v1MemoRelationMemo'
         relatedMemo:
-          title: |-
-            The name of related memo.
-            Format: "memos/{uid}"
-          type: string
+          $ref: '#/components/schemas/v1MemoRelationMemo'
         type:
           $ref: '#/components/schemas/v1MemoRelationType'
+    v1MemoRelationMemo:
+      type: object
+      properties:
+        name:
+          title: "The name of the memo.\r\nFormat: memos/{id}"
+          type: string
+        uid:
+          type: string
+        snippet:
+          type: string
+          description: The snippet of the memo content. Plain text only.
+          readOnly: true
     v1MemoRelationType:
       type: string
       default: TYPE_UNSPECIFIED
@@ -3039,134 +1701,16 @@ components:
       - TYPE_UNSPECIFIED
       - REFERENCE
       - COMMENT
-    v1Node:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/v1NodeType'
-        lineBreakNode:
-          $ref: '#/components/schemas/v1LineBreakNode'
-        paragraphNode:
-          $ref: '#/components/schemas/v1ParagraphNode'
-        codeBlockNode:
-          $ref: '#/components/schemas/v1CodeBlockNode'
-        headingNode:
-          $ref: '#/components/schemas/v1HeadingNode'
-        horizontalRuleNode:
-          $ref: '#/components/schemas/v1HorizontalRuleNode'
-        blockquoteNode:
-          $ref: '#/components/schemas/v1BlockquoteNode'
-        orderedListNode:
-          $ref: '#/components/schemas/v1OrderedListNode'
-        unorderedListNode:
-          $ref: '#/components/schemas/v1UnorderedListNode'
-        taskListNode:
-          $ref: '#/components/schemas/v1TaskListNode'
-        mathBlockNode:
-          $ref: '#/components/schemas/v1MathBlockNode'
-        tableNode:
-          $ref: '#/components/schemas/v1TableNode'
-        embeddedContentNode:
-          $ref: '#/components/schemas/v1EmbeddedContentNode'
-        textNode:
-          $ref: '#/components/schemas/v1TextNode'
-        boldNode:
-          $ref: '#/components/schemas/v1BoldNode'
-        italicNode:
-          $ref: '#/components/schemas/v1ItalicNode'
-        boldItalicNode:
-          $ref: '#/components/schemas/v1BoldItalicNode'
-        codeNode:
-          $ref: '#/components/schemas/v1CodeNode'
-        imageNode:
-          $ref: '#/components/schemas/v1ImageNode'
-        linkNode:
-          $ref: '#/components/schemas/v1LinkNode'
-        autoLinkNode:
-          $ref: '#/components/schemas/v1AutoLinkNode'
-        tagNode:
-          $ref: '#/components/schemas/v1TagNode'
-        strikethroughNode:
-          $ref: '#/components/schemas/v1StrikethroughNode'
-        escapingCharacterNode:
-          $ref: '#/components/schemas/v1EscapingCharacterNode'
-        mathNode:
-          $ref: '#/components/schemas/v1MathNode'
-        highlightNode:
-          $ref: '#/components/schemas/v1HighlightNode'
-        subscriptNode:
-          $ref: '#/components/schemas/v1SubscriptNode'
-        superscriptNode:
-          $ref: '#/components/schemas/v1SuperscriptNode'
-        referencedContentNode:
-          $ref: '#/components/schemas/v1ReferencedContentNode'
-        spoilerNode:
-          $ref: '#/components/schemas/v1SpoilerNode'
-    v1NodeType:
+    v1MemoView:
       type: string
-      default: NODE_UNSPECIFIED
+      description: |2-
+         - MEMO_VIEW_FULL: The full view of the memo. Includes all fields.
+         - MEMO_VIEW_METADATA_ONLY: The metadata only view of the memo. Excludes the content/snippet fields.
+      default: MEMO_VIEW_UNSPECIFIED
       enum:
-      - NODE_UNSPECIFIED
-      - LINE_BREAK
-      - PARAGRAPH
-      - CODE_BLOCK
-      - HEADING
-      - HORIZONTAL_RULE
-      - BLOCKQUOTE
-      - ORDERED_LIST
-      - UNORDERED_LIST
-      - TASK_LIST
-      - MATH_BLOCK
-      - TABLE
-      - EMBEDDED_CONTENT
-      - TEXT
-      - BOLD
-      - ITALIC
-      - BOLD_ITALIC
-      - CODE
-      - IMAGE
-      - LINK
-      - AUTO_LINK
-      - TAG
-      - STRIKETHROUGH
-      - ESCAPING_CHARACTER
-      - MATH
-      - HIGHLIGHT
-      - SUBSCRIPT
-      - SUPERSCRIPT
-      - REFERENCED_CONTENT
-      - SPOILER
-    v1OrderedListNode:
-      type: object
-      properties:
-        number:
-          type: string
-        indent:
-          type: integer
-          format: int32
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Node'
-    v1ParagraphNode:
-      type: object
-      properties:
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Node'
-    v1ParseMarkdownRequest:
-      type: object
-      properties:
-        markdown:
-          type: string
-    v1ParseMarkdownResponse:
-      type: object
-      properties:
-        nodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Node'
+      - MEMO_VIEW_UNSPECIFIED
+      - MEMO_VIEW_FULL
+      - MEMO_VIEW_METADATA_ONLY
     v1Reaction:
       type: object
       properties:
@@ -3174,47 +1718,19 @@ components:
           type: integer
           format: int32
         creator:
-          title: |-
-            The name of the creator.
-            Format: users/{id}
+          title: "The name of the creator.\r\nFormat: users/{id}"
           type: string
         contentId:
           type: string
         reactionType:
-          $ref: '#/components/schemas/v1ReactionType'
-    v1ReactionType:
-      type: string
-      default: TYPE_UNSPECIFIED
-      enum:
-      - TYPE_UNSPECIFIED
-      - THUMBS_UP
-      - THUMBS_DOWN
-      - HEART
-      - FIRE
-      - CLAPPING_HANDS
-      - LAUGH
-      - OK_HAND
-      - ROCKET
-      - EYES
-      - THINKING_FACE
-      - CLOWN_FACE
-      - QUESTION_MARK
-    v1ReferencedContentNode:
-      type: object
-      properties:
-        resourceName:
-          type: string
-        params:
           type: string
     v1Resource:
       type: object
       properties:
         name:
           type: string
-          description: |-
-            The name of the resource.
-            Format: resources/{id}
-            id is the system generated unique identifier.
+          description: "The name of the resource.\r\nFormat: resources/{id}\r\nid\
+            \ is the system generated unique identifier."
         uid:
           type: string
           description: The user defined id of the resource.
@@ -3236,128 +1752,20 @@ components:
           type: string
           format: int64
         memo:
-          title: |-
-            The related memo.
-            Format: memos/{id}
+          title: "The related memo.\r\nFormat: memos/{id}"
           type: string
-    v1RestoreMarkdownRequest:
-      type: object
-      properties:
-        nodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Node'
-    v1RestoreMarkdownResponse:
-      type: object
-      properties:
-        markdown:
-          type: string
-    v1RowStatus:
+    v1State:
       type: string
-      default: ROW_STATUS_UNSPECIFIED
+      default: STATE_UNSPECIFIED
       enum:
-      - ROW_STATUS_UNSPECIFIED
-      - ACTIVE
+      - STATE_UNSPECIFIED
+      - NORMAL
       - ARCHIVED
-    v1SearchMemosResponse:
-      type: object
-      properties:
-        memos:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Memo'
-    v1SearchResourcesResponse:
-      type: object
-      properties:
-        resources:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Resource'
-    v1SearchUsersResponse:
-      type: object
-      properties:
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1User'
-    v1SpoilerNode:
-      type: object
-      properties:
-        content:
-          type: string
-    v1StrikethroughNode:
-      type: object
-      properties:
-        content:
-          type: string
-    v1SubscriptNode:
-      type: object
-      properties:
-        content:
-          type: string
-    v1SuperscriptNode:
-      type: object
-      properties:
-        content:
-          type: string
-    v1TableNode:
-      type: object
-      properties:
-        header:
-          type: array
-          items:
-            type: string
-        delimiter:
-          type: array
-          items:
-            type: string
-        rows:
-          type: array
-          items:
-            $ref: '#/components/schemas/TableNodeRow'
-    v1TagNode:
-      type: object
-      properties:
-        content:
-          type: string
-    v1TaskListNode:
-      type: object
-      properties:
-        symbol:
-          type: string
-        indent:
-          type: integer
-          format: int32
-        complete:
-          type: boolean
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Node'
-    v1TextNode:
-      type: object
-      properties:
-        content:
-          type: string
-    v1UnorderedListNode:
-      type: object
-      properties:
-        symbol:
-          type: string
-        indent:
-          type: integer
-          format: int32
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Node'
     v1User:
       type: object
       properties:
         name:
-          title: |-
-            The name of the user.
-            Format: users/{id}
+          title: "The name of the user.\r\nFormat: users/{id}"
           type: string
         id:
           type: integer
@@ -3377,25 +1785,12 @@ components:
           type: string
         password:
           type: string
-        rowStatus:
-          $ref: '#/components/schemas/v1RowStatus'
+        state:
+          $ref: '#/components/schemas/v1State'
         createTime:
           type: string
           format: date-time
         updateTime:
-          type: string
-          format: date-time
-    v1UserAccessToken:
-      type: object
-      properties:
-        accessToken:
-          type: string
-        description:
-          type: string
-        issuedAt:
-          type: string
-          format: date-time
-        expiresAt:
           type: string
           format: date-time
     v1Visibility:
@@ -3406,34 +1801,11 @@ components:
       - PRIVATE
       - PROTECTED
       - PUBLIC
-    v1Webhook:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-        creatorId:
-          type: integer
-          format: int32
-        createdTime:
-          type: string
-          format: date-time
-        updatedTime:
-          type: string
-          format: date-time
-        rowStatus:
-          $ref: '#/components/schemas/v1RowStatus'
-        name:
-          type: string
-        url:
-          type: string
     v1WorkspaceProfile:
       type: object
       properties:
         owner:
-          title: |-
-            The name of instance owner.
-            Format: "users/{id}"
+          title: "The name of instance owner.\r\nFormat: \"users/{id}\""
           type: string
         version:
           title: version is the current version of instance
@@ -3442,4 +1814,7 @@ components:
           type: string
           description: "mode is the instance mode (e.g. \"prod\", \"dev\" or \"demo\"\
             )."
+        instanceUrl:
+          type: string
+          description: instance_url is the URL of the instance.
 x-original-swagger-version: "2.0"
