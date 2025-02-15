@@ -39,17 +39,6 @@ extension MemosV0Memo {
     }
 }
 
-extension MemosV0User {
-    var defaultMemoVisibility: MemosV0Visibility {
-        guard let visibilityJson = self.userSettingList?.first(where: { $0.key == "memo-visibility" })?.value?.data(using: .utf8) else { return .PRIVATE }
-        do {
-            return try JSONDecoder().decode(MemosV0Visibility.self, from: visibilityJson)
-        } catch {
-            return .PRIVATE
-        }
-    }
-}
-
 extension MemosV0Resource: Identifiable {
     func path() -> String {
         if let uid = uid, !uid.isEmpty {

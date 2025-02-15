@@ -12,21 +12,13 @@ import DesignSystem
 
 @MainActor
 struct AddMemosAccountView: View {
-    private enum LoginMethod: Hashable {
-        case usernamdAndPassword
-        case accessToken
-    }
-    
     @State private var host = ""
-    @State private var username = ""
-    @State private var password = ""
     @State private var accessToken = ""
     let dismiss: DismissAction
     @Environment(AccountViewModel.self) private var accountViewModel
     @State private var loginError: Error?
     @State private var showingErrorToast = false
     @State private var showLoadingToast = false
-    @State private var loginMethod: LoginMethod = .usernamdAndPassword
     
     var body: some View {
         VStack {
@@ -36,13 +28,6 @@ struct AddMemosAccountView: View {
                 .foregroundStyle(.secondary)
                 .padding(.bottom, 20)
             
-            Picker("login.method", selection: $loginMethod) {
-                Text("login.username-and-password").tag(LoginMethod.usernamdAndPassword)
-                Text("login.access-token").tag(LoginMethod.accessToken)
-            }
-            .pickerStyle(.segmented)
-            .padding(.bottom, 10)
-            
             TextField("login.host", text: $host)
                 .textContentType(.URL)
                 .keyboardType(.URL)
@@ -50,22 +35,11 @@ struct AddMemosAccountView: View {
                 .disableAutocorrection(true)
                 .textFieldStyle(.roundedBorder)
             
-            if loginMethod == .usernamdAndPassword {
-                TextField("login.username", text: $username)
-                    .textContentType(.emailAddress)
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                    .disableAutocorrection(true)
-                    .textFieldStyle(.roundedBorder)
-                SecureField("login.password", text: $password)
-                    .textFieldStyle(.roundedBorder)
-            } else if loginMethod == .accessToken {
-                SecureField("login.access-token", text: $accessToken)
-                    .textFieldStyle(.roundedBorder)
-                Text("login.access-token.hint")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
+            SecureField("login.access-token", text: $accessToken)
+                .textFieldStyle(.roundedBorder)
+            Text("login.access-token.hint")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
             
             Button {
                 Task {
@@ -102,33 +76,23 @@ struct AddMemosAccountView: View {
         if !hostAddress.contains("//") {
             hostAddress = "https://" + hostAddress
         }
+        if hostAddress.last == "/" {
+            hostAddress.removeLast()
+        }
+        
         guard let hostURL = URL(string: hostAddress) else { throw MoeMemosError.invalidParams }
         let server = try await detectMemosVersion(hostURL: hostURL)
 
-        if loginMethod == .usernamdAndPassword {
-            let username = username.trimmingCharacters(in: .whitespaces)
-            if username.isEmpty || password.isEmpty {
-                throw MoeMemosError.invalidParams
-            }
-            
-            switch server {
-            case .v1(version: _):
-                try await accountViewModel.loginMemosV1(hostURL: hostURL, username: username, password: password)
-            case .v0(version: _):
-                try await accountViewModel.loginMemosV0(hostURL: hostURL, username: username, password: password)
-            }
-        } else if loginMethod == .accessToken {
-            let accessToken = accessToken.trimmingCharacters(in: .whitespaces)
-            if accessToken.isEmpty {
-                throw MoeMemosError.invalidParams
-            }
-            
-            switch server {
-            case .v1(version: _):
-                try await accountViewModel.loginMemosV1(hostURL: hostURL, accessToken: accessToken)
-            case .v0(version: _):
-                try await accountViewModel.loginMemosV0(hostURL: hostURL, accessToken: accessToken)
-            }
+        let accessToken = accessToken.trimmingCharacters(in: .whitespaces)
+        if accessToken.isEmpty {
+            throw MoeMemosError.invalidParams
+        }
+        
+        switch server {
+        case .v1(version: _):
+            try await accountViewModel.loginMemosV1(hostURL: hostURL, accessToken: accessToken)
+        case .v0(version: _):
+            try await accountViewModel.loginMemosV0(hostURL: hostURL, accessToken: accessToken)
         }
         dismiss()
     }

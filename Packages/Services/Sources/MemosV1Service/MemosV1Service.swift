@@ -46,7 +46,7 @@ public final class MemosV1Service: RemoteService {
         var nextPageToken: String? = nil
         
         repeat {
-            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 100, pageToken: nextPageToken, filter: "creator == \"users/\(userId)\" && state == \"NORMAL\" && order_by_pinned == true", view: .MEMO_VIEW_FULL))
+            let resp = try await client.MemoService_ListMemos(query: .init(parent: "users/\(userId)", pageSize: 200, pageToken: nextPageToken, state: .NORMAL))
             let data = try resp.ok.body.json
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
@@ -61,7 +61,7 @@ public final class MemosV1Service: RemoteService {
         var nextPageToken: String? = nil
         
         repeat {
-            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 100, pageToken: nextPageToken, filter: "creator == \"users/\(userId)\" && state == \"ARCHIVED\"", view: .MEMO_VIEW_FULL))
+            let resp = try await client.MemoService_ListMemos(query: .init(parent: "users/\(userId)", pageSize: 200, pageToken: nextPageToken, state: .ARCHIVED))
             let data = try resp.ok.body.json
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
@@ -71,7 +71,7 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func listWorkspaceMemos(pageSize: Int, pageToken: String?) async throws -> (list: [Memo], nextPageToken: String?) {
-        let resp = try await client.MemoService_ListMemos(query: .init(pageSize: Int32(pageSize), pageToken: pageToken, filter: "state == \"NORMAL\" && visibilities == ['PUBLIC', 'PROTECTED']", view: .MEMO_VIEW_FULL))
+        let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: pageToken))
         let data = try resp.ok.body.json
         return (data.memos?.map { $0.toMemo(host: hostURL) } ?? [], data.nextPageToken)
     }
@@ -86,11 +86,14 @@ public final class MemosV1Service: RemoteService {
         }
         
         guard let name = memo.name else { throw MoeMemosError.unsupportedVersion }
-        let setResourceResp = try await client.MemoService_SetMemoResources(path: .init(name: name), body: .json(.init(resources: resources.compactMap {
-            guard let remoteId = $0.remoteId else { return nil }
-            let (name, uid) = getNameAndUid(remoteId: remoteId)
-            return MemosV1Resource(name: name, uid: uid)
-        })))
+        let memosResources: [MemosV1Resource] = resources.compactMap {
+            var resource: MemosV1Resource? = nil
+            if let remoteId = $0.remoteId {
+                resource = MemosV1Resource(name: getName(remoteId: remoteId))
+            }
+            return resource
+        }
+        let setResourceResp = try await client.MemoService_SetMemoResources(path: .init(name: name), body: .json(.init(resources: memosResources)))
         _ = try setResourceResp.ok
         result.resources = resources
         return result
@@ -107,11 +110,14 @@ public final class MemosV1Service: RemoteService {
         var result = memo.toMemo(host: hostURL)
         
         guard let resources = resources, Set(resources.map { $0.remoteId }) != Set(result.resources.map { $0.remoteId }) else { return result }
-        let setResourceResp = try await client.MemoService_SetMemoResources(path: .init(name: getName(remoteId: remoteId)), body: .json(.init(resources: resources.compactMap {
-            guard let remoteId = $0.remoteId else { return nil }
-            let (name, uid) = getNameAndUid(remoteId: remoteId)
-            return MemosV1Resource(name: name, uid: uid)
-        })))
+        let memosResources: [MemosV1Resource] = resources.compactMap {
+            var resource: MemosV1Resource? = nil
+            if let remoteId = $0.remoteId {
+                resource = MemosV1Resource(name: getName(remoteId: remoteId))
+            }
+            return resource
+        }
+        let setResourceResp = try await client.MemoService_SetMemoResources(path: .init(name: getName(remoteId: remoteId)), body: .json(.init(resources: memosResources)))
         _ = try setResourceResp.ok
         result.resources = resources
         return result
@@ -134,13 +140,16 @@ public final class MemosV1Service: RemoteService {
     
     public func listTags() async throws -> [Tag] {
         guard let userId = userId else { throw MoeMemosError.notLogin }
-        let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 1000000, filter: "creator == \"users/\(userId)\" && state == \"NORMAL\"", view: .MEMO_VIEW_METADATA_ONLY))
+        let resp = try await client.UserService_GetUserStats(path: .init(name: "users/\(userId)"))
+        let data = try resp.ok.body.json
         
-        var tags = Set<String>()
-        for memo in try resp.ok.body.json.memos ?? [] {
-            tags.formUnion(memo.tags ?? [])
+        var tags = [Tag]()
+        if let tagCount = data.tagCount?.additionalProperties {
+            for (tag, _) in tagCount {
+                tags.append(.init(name: tag))
+            }
         }
-        return tags.map { Tag(name: $0) }
+        return tags
     }
     
     public func deleteTag(name: String) async throws {
@@ -186,24 +195,6 @@ public final class MemosV1Service: RemoteService {
         return await toUser(user, setting: setting)
     }
     
-    public func logout() async throws {
-        let resp = try await client.AuthService_SignOut()
-        _ = try resp.ok
-    }
-    
-    public func signIn(username: String, password: String) async throws -> (MemosV1User, String?) {
-        let resp = try await client.AuthService_SignIn(query: .init(username: username, password: password, neverExpire: true))
-        let user = try resp.ok.body.json
-        
-        let cookieStorage = urlSession.configuration.httpCookieStorage ?? .shared
-        var accessToken = cookieStorage.cookies(for: self.hostURL)?.first(where: { $0.name == "memos.access-token" })?.value
-        if accessToken == nil {
-            guard let setCookieHeader = await grpcSetCookieMiddleware.setCookieHeaderValue else { throw MoeMemosError.unsupportedVersion }
-            accessToken = setCookieHeader.split(separator: ";", maxSplits: 1, omittingEmptySubsequences: true).first?.components(separatedBy: "memos.access-token=").last
-        }
-        return (user, accessToken)
-    }
-    
     public func getWorkspaceProfile() async throws -> MemosV1Profile {
         let resp = try await client.WorkspaceService_GetWorkspaceProfile()
         return try resp.ok.body.json
@@ -223,13 +214,6 @@ public final class MemosV1Service: RemoteService {
     
     private func getId(remoteId: String) -> String {
         return remoteId.split(separator: "|").first?.split(separator: "/").last.map(String.init) ?? ""
-    }
-    
-    private func getNameAndUid(remoteId: String) -> (String, String) {
-        let components = remoteId.split(separator: "|").map(String.init)
-        let name = components.first ?? ""
-        let uid = components.count > 1 ? components[1] : ""
-        return (name, uid)
     }
     
     func toUser(_ memosUser: MemosV1User, setting: Components.Schemas.apiv1UserSetting? = nil) async -> User {

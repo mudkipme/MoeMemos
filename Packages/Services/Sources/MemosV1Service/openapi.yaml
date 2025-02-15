@@ -5,138 +5,12 @@ info:
 servers:
 - url: /
 tags:
-- name: ActivityService
 - name: UserService
 - name: AuthService
-- name: IdentityProviderService
-- name: InboxService
-- name: MarkdownService
 - name: ResourceService
 - name: MemoService
-- name: WebhookService
 - name: WorkspaceService
-- name: WorkspaceSettingService
 paths:
-  /api/v1/auth/signin:
-    post:
-      tags:
-      - AuthService
-      summary: SignIn signs in the user with the given username and password.
-      operationId: AuthService_SignIn
-      parameters:
-      - name: username
-        in: query
-        description: The username to sign in with.
-        schema:
-          type: string
-      - name: password
-        in: query
-        description: The password to sign in with.
-        schema:
-          type: string
-      - name: neverExpire
-        in: query
-        description: Whether the session should never expire.
-        schema:
-          type: boolean
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1User'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/auth/signin/sso:
-    post:
-      tags:
-      - AuthService
-      summary: SignInWithSSO signs in the user with the given SSO code.
-      operationId: AuthService_SignInWithSSO
-      parameters:
-      - name: idpId
-        in: query
-        description: The ID of the SSO provider.
-        schema:
-          type: integer
-          format: int32
-      - name: code
-        in: query
-        description: The code to sign in with.
-        schema:
-          type: string
-      - name: redirectUri
-        in: query
-        description: The redirect URI.
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1User'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/auth/signout:
-    post:
-      tags:
-      - AuthService
-      summary: SignOut signs out the user.
-      operationId: AuthService_SignOut
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                type: object
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/auth/signup:
-    post:
-      tags:
-      - AuthService
-      summary: SignUp signs up the user with the given username and password.
-      operationId: AuthService_SignUp
-      parameters:
-      - name: username
-        in: query
-        description: The username to sign up with.
-        schema:
-          type: string
-      - name: password
-        in: query
-        description: The password to sign up with.
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1User'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
   /api/v1/auth/status:
     post:
       tags:
@@ -163,6 +37,12 @@ paths:
       summary: ListMemos lists memos with pagination and filter.
       operationId: MemoService_ListMemos
       parameters:
+      - name: parent
+        in: query
+        description: "The parent is the owner of the memos.\r\nIf not specified or\
+          \ `users/-`, it will list all memos."
+        schema:
+          type: string
       - name: pageSize
         in: query
         description: The maximum number of memos to return.
@@ -175,26 +55,44 @@ paths:
           Provide this to retrieve the subsequent page."
         schema:
           type: string
+      - name: state
+        in: query
+        description: "The state of the memos to list.\r\nDefault to `NORMAL`. Set\
+          \ to `ARCHIVED` to list archived memos."
+        schema:
+          type: string
+          default: STATE_UNSPECIFIED
+          enum:
+          - STATE_UNSPECIFIED
+          - NORMAL
+          - ARCHIVED
+      - name: sort
+        in: query
+        description: "What field to sort the results by.\r\nDefault to display_time."
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "The direction to sort the results by.\r\nDefault to DESC."
+        schema:
+          type: string
+          default: DIRECTION_UNSPECIFIED
+          enum:
+          - DIRECTION_UNSPECIFIED
+          - ASC
+          - DESC
       - name: filter
         in: query
-        description: "Filter is used to filter memos returned in the list.\r\nFormat:\
-          \ \"creator == 'users/{uid}' && visibilities == ['PUBLIC', 'PROTECTED']\""
+        description: "Filter is a CEL expression to filter memos.\r\nRefer to `Shortcut.filter`."
         schema:
           type: string
-      - name: view
+      - name: oldFilter
         in: query
-        description: |-
-          The view of the memo.
-
-           - MEMO_VIEW_FULL: The full view of the memo. Includes all fields.
-           - MEMO_VIEW_METADATA_ONLY: The metadata only view of the memo. Excludes the content/snippet fields.
+        description: "[Deprecated] Old filter contains some specific conditions to\
+          \ filter memos.\r\nFormat: \"creator == 'users/{user}' && visibilities ==\
+          \ ['PUBLIC', 'PROTECTED']\""
         schema:
           type: string
-          default: MEMO_VIEW_UNSPECIFIED
-          enum:
-          - MEMO_VIEW_UNSPECIFIED
-          - MEMO_VIEW_FULL
-          - MEMO_VIEW_METADATA_ONLY
       responses:
         "200":
           description: A successful response.
@@ -214,10 +112,11 @@ paths:
       summary: CreateMemo creates a memo.
       operationId: MemoService_CreateMemo
       requestBody:
+        description: The memo to create.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/v1CreateMemoRequest'
+              $ref: '#/components/schemas/apiv1Memo'
         required: true
       responses:
         "200":
@@ -232,42 +131,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: body
-  /api/v1/memos:by-uid/{uid}:
-    get:
-      tags:
-      - MemoService
-      summary: GetMemoByUid gets a memo by uid
-      operationId: MemoService_GetMemoByUid
-      parameters:
-      - name: uid
-        in: path
-        description: The uid of the memo.
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/apiv1Memo'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-  /api/v1/reactions/{reactionId}:
+      x-codegen-request-body-name: memo
+  /api/v1/reactions/{id}:
     delete:
       tags:
       - MemoService
       summary: DeleteMemoReaction deletes a reaction for a memo.
       operationId: MemoService_DeleteMemoReaction
       parameters:
-      - name: reactionId
+      - name: id
         in: path
+        description: "The id of the reaction.\r\nRefer to the `Reaction.id`."
         required: true
         schema:
           type: integer
@@ -329,32 +203,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
       x-codegen-request-body-name: resource
-  /api/v1/resources:by-uid/{uid}:
-    get:
-      tags:
-      - ResourceService
-      summary: GetResourceByUid returns a resource by uid.
-      operationId: ResourceService_GetResourceByUid
-      parameters:
-      - name: uid
-        in: path
-        description: The uid of the resource.
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1Resource'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
   /api/v1/workspace/profile:
     get:
       tags:
@@ -383,25 +231,24 @@ paths:
       parameters:
       - name: memo_name
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}\r\nid is the system\
-          \ generated id."
+        description: "The name of the memo.\r\nFormat: memos/{memo}, memo is the user\
+          \ defined id or uuid."
         required: true
         schema:
           pattern: "memos/[^/]+"
           type: string
       requestBody:
+        description: "The memo to update.\r\nThe `name` field is required."
         content:
           application/json:
             schema:
+              title: "The memo to update.\r\nThe `name` field is required."
               type: object
               properties:
-                uid:
-                  type: string
-                  description: The user defined id of the memo.
                 state:
                   $ref: '#/components/schemas/v1State'
                 creator:
-                  title: "The name of the creator.\r\nFormat: users/{id}"
+                  title: "The name of the creator.\r\nFormat: users/{user}"
                   type: string
                 createTime:
                   type: string
@@ -418,6 +265,7 @@ paths:
                   $ref: '#/components/schemas/v1Visibility'
                 tags:
                   type: array
+                  readOnly: true
                   items:
                     type: string
                 pinned:
@@ -462,6 +310,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
       x-codegen-request-body-name: memo
+  /api/v1/{name_1}:
+    get:
+      tags:
+      - UserService
+      summary: GetUser gets a user by name.
+      operationId: UserService_GetUser
+      parameters:
+      - name: name_1
+        in: path
+        description: The name of the user.
+        required: true
+        schema:
+          pattern: "users/[^/]+"
+          type: string
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1User'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
   /api/v1/{name_3}:
     get:
       tags:
@@ -471,8 +346,7 @@ paths:
       parameters:
       - name: name_3
         in: path
-        description: "The name of the resource.\r\nFormat: resources/{id}\r\nid is\
-          \ the system generated unique identifier."
+        description: The name of the resource.
         required: true
         schema:
           pattern: "resources/[^/]+"
@@ -498,8 +372,7 @@ paths:
       parameters:
       - name: name_3
         in: path
-        description: "The name of the resource.\r\nFormat: resources/{id}\r\nid is\
-          \ the system generated unique identifier."
+        description: The name of the resource.
         required: true
         schema:
           pattern: "resources/[^/]+"
@@ -526,7 +399,7 @@ paths:
       parameters:
       - name: name_4
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}"
+        description: The name of the memo.
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -552,7 +425,7 @@ paths:
       parameters:
       - name: name_4
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}"
+        description: The name of the memo.
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -579,7 +452,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}"
+        description: The name of the memo.
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -605,16 +478,17 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}"
+        description: The name of the memo.
         required: true
         schema:
           pattern: "memos/[^/]+"
           type: string
       requestBody:
+        description: The comment to create.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/v1CreateMemoRequest'
+              $ref: '#/components/schemas/apiv1Memo'
         required: true
       responses:
         "200":
@@ -639,7 +513,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}"
+        description: The name of the memo.
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -665,7 +539,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}"
+        description: The name of the memo.
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -699,7 +573,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}"
+        description: The name of the memo.
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -725,7 +599,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}"
+        description: The name of the memo.
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -759,7 +633,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}"
+        description: The name of the memo.
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -785,7 +659,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the memo.\r\nFormat: memos/{id}"
+        description: The name of the memo.
         required: true
         schema:
           pattern: "memos/[^/]+"
@@ -819,7 +693,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the user.\r\nFormat: users/{id}"
+        description: The name of the user.
         required: true
         schema:
           pattern: "users/[^/]+"
@@ -831,6 +705,111 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/apiv1UserSetting'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+  /api/v1/{name}/stats:
+    get:
+      tags:
+      - UserService
+      summary: GetUserStats returns the stats of a user.
+      operationId: UserService_GetUserStats
+      parameters:
+      - name: name
+        in: path
+        description: The name of the user.
+        required: true
+        schema:
+          pattern: "users/[^/]+"
+          type: string
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1UserStats'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/googlerpcStatus'
+  /api/v1/{parent}/memos:
+    get:
+      tags:
+      - MemoService
+      summary: ListMemos lists memos with pagination and filter.
+      operationId: MemoService_ListMemos2
+      parameters:
+      - name: parent
+        in: path
+        description: "The parent is the owner of the memos.\r\nIf not specified or\
+          \ `users/-`, it will list all memos."
+        required: true
+        schema:
+          pattern: "users/[^/]+"
+          type: string
+      - name: pageSize
+        in: query
+        description: The maximum number of memos to return.
+        schema:
+          type: integer
+          format: int32
+      - name: pageToken
+        in: query
+        description: "A page token, received from a previous `ListMemos` call.\r\n\
+          Provide this to retrieve the subsequent page."
+        schema:
+          type: string
+      - name: state
+        in: query
+        description: "The state of the memos to list.\r\nDefault to `NORMAL`. Set\
+          \ to `ARCHIVED` to list archived memos."
+        schema:
+          type: string
+          default: STATE_UNSPECIFIED
+          enum:
+          - STATE_UNSPECIFIED
+          - NORMAL
+          - ARCHIVED
+      - name: sort
+        in: query
+        description: "What field to sort the results by.\r\nDefault to display_time."
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "The direction to sort the results by.\r\nDefault to DESC."
+        schema:
+          type: string
+          default: DIRECTION_UNSPECIFIED
+          enum:
+          - DIRECTION_UNSPECIFIED
+          - ASC
+          - DESC
+      - name: filter
+        in: query
+        description: "Filter is a CEL expression to filter memos.\r\nRefer to `Shortcut.filter`."
+        schema:
+          type: string
+      - name: oldFilter
+        in: query
+        description: "[Deprecated] Old filter contains some specific conditions to\
+          \ filter memos.\r\nFormat: \"creator == 'users/{user}' && visibilities ==\
+          \ ['PUBLIC', 'PROTECTED']\""
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1ListMemosResponse'
         default:
           description: An unexpected error response.
           content:
@@ -918,8 +897,9 @@ paths:
       parameters:
       - name: resource.name
         in: path
-        description: "The name of the resource.\r\nFormat: resources/{id}\r\nid is\
-          \ the system generated unique identifier."
+        description: |-
+          The name of the resource.
+          Format: resources/{resource}, resource is the user defined if or uuid.
         required: true
         schema:
           pattern: "resources/[^/]+"
@@ -930,9 +910,6 @@ paths:
             schema:
               type: object
               properties:
-                uid:
-                  type: string
-                  description: The user defined id of the resource.
                 createTime:
                   type: string
                   format: date-time
@@ -951,8 +928,8 @@ paths:
                   type: string
                   format: int64
                 memo:
-                  title: "The related memo.\r\nFormat: memos/{id}"
                   type: string
+                  description: The related memo. Refer to `Memo.name`.
         required: true
       responses:
         "200":
@@ -968,111 +945,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/googlerpcStatus'
       x-codegen-request-body-name: resource
-  /api/v1/{setting.name}:
-    patch:
-      tags:
-      - UserService
-      summary: UpdateUserSetting updates the setting of a user.
-      operationId: UserService_UpdateUserSetting
-      parameters:
-      - name: setting.name
-        in: path
-        description: "The name of the user.\r\nFormat: users/{id}"
-        required: true
-        schema:
-          pattern: "users/[^/]+/setting"
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                locale:
-                  type: string
-                  description: The preferred locale of the user.
-                appearance:
-                  type: string
-                  description: The preferred appearance of the user.
-                memoVisibility:
-                  type: string
-                  description: The default visibility of the memo.
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/apiv1UserSetting'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: setting
-  /api/v1/{user.name}:
-    patch:
-      tags:
-      - UserService
-      summary: UpdateUser updates a user.
-      operationId: UserService_UpdateUser
-      parameters:
-      - name: user.name
-        in: path
-        description: "The name of the user.\r\nFormat: users/{id}"
-        required: true
-        schema:
-          pattern: "users/[^/]+"
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  description: The system generated uid of the user.
-                  format: int32
-                role:
-                  $ref: '#/components/schemas/UserRole'
-                username:
-                  type: string
-                email:
-                  type: string
-                nickname:
-                  type: string
-                avatarUrl:
-                  type: string
-                description:
-                  type: string
-                password:
-                  type: string
-                state:
-                  $ref: '#/components/schemas/v1State'
-                createTime:
-                  type: string
-                  format: date-time
-                updateTime:
-                  type: string
-                  format: date-time
-        required: true
-      responses:
-        "200":
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1User'
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/googlerpcStatus'
-      x-codegen-request-body-name: user
   /file/{name}/avatar:
     get:
       tags:
@@ -1082,7 +954,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the user.\r\nFormat: users/{id}"
+        description: The name of the user.
         required: true
         schema:
           pattern: "users/[^/]+"
@@ -1121,8 +993,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: "The name of the resource.\r\nFormat: resources/{id}\r\nid is\
-          \ the system generated unique identifier."
+        description: The name of the resource.
         required: true
         schema:
           pattern: "resources/[^/]+"
@@ -1154,14 +1025,6 @@ paths:
                 $ref: '#/components/schemas/googlerpcStatus'
 components:
   schemas:
-    ListNodeKind:
-      type: string
-      default: KIND_UNSPECIFIED
-      enum:
-      - KIND_UNSPECIFIED
-      - ORDERED
-      - UNORDERED
-      - DESCRIPTION
     MemoServiceRenameMemoTagBody:
       type: object
       properties:
@@ -1259,15 +1122,6 @@ components:
 
         Use of this type only changes how the request and response bodies are
         handled, all other features will continue to work unchanged.
-    apiv1FieldMapping:
-      type: object
-      properties:
-        identifier:
-          type: string
-        displayName:
-          type: string
-        email:
-          type: string
     apiv1Location:
       type: object
       properties:
@@ -1284,15 +1138,13 @@ components:
       properties:
         name:
           type: string
-          description: "The name of the memo.\r\nFormat: memos/{id}\r\nid is the system\
-            \ generated id."
-        uid:
-          type: string
-          description: The user defined id of the memo.
+          description: "The name of the memo.\r\nFormat: memos/{memo}, memo is the\
+            \ user defined id or uuid."
+          readOnly: true
         state:
           $ref: '#/components/schemas/v1State'
         creator:
-          title: "The name of the creator.\r\nFormat: users/{id}"
+          title: "The name of the creator.\r\nFormat: users/{user}"
           type: string
         createTime:
           type: string
@@ -1309,6 +1161,7 @@ components:
           $ref: '#/components/schemas/v1Visibility'
         tags:
           type: array
+          readOnly: true
           items:
             type: string
         pinned:
@@ -1338,31 +1191,12 @@ components:
           readOnly: true
         location:
           $ref: '#/components/schemas/apiv1Location'
-    apiv1OAuth2Config:
-      type: object
-      properties:
-        clientId:
-          type: string
-        clientSecret:
-          type: string
-        authUrl:
-          type: string
-        tokenUrl:
-          type: string
-        userInfoUrl:
-          type: string
-        scopes:
-          type: array
-          items:
-            type: string
-        fieldMapping:
-          $ref: '#/components/schemas/apiv1FieldMapping'
     apiv1UserSetting:
       type: object
       properties:
         name:
-          title: "The name of the user.\r\nFormat: users/{id}"
           type: string
+          description: The name of the user.
         locale:
           type: string
           description: The preferred locale of the user.
@@ -1385,77 +1219,6 @@ components:
           type: string
         appearance:
           type: string
-    apiv1WorkspaceGeneralSetting:
-      type: object
-      properties:
-        disallowUserRegistration:
-          type: boolean
-          description: disallow_user_registration disallows user registration.
-        disallowPasswordAuth:
-          type: boolean
-          description: disallow_password_auth disallows password authentication.
-        additionalScript:
-          type: string
-          description: additional_script is the additional script.
-        additionalStyle:
-          type: string
-          description: additional_style is the additional style.
-        customProfile:
-          $ref: '#/components/schemas/apiv1WorkspaceCustomProfile'
-        weekStartDayOffset:
-          type: integer
-          description: "week_start_day_offset is the week start day offset from Sunday.\r\
-            \n0: Sunday, 1: Monday, 2: Tuesday, 3: Wednesday, 4: Thursday, 5: Friday,\
-            \ 6: Saturday\r\nDefault is Sunday."
-          format: int32
-        disallowChangeUsername:
-          type: boolean
-          description: disallow_change_username disallows changing username.
-        disallowChangeNickname:
-          type: boolean
-          description: disallow_change_nickname disallows changing nickname.
-    apiv1WorkspaceMemoRelatedSetting:
-      type: object
-      properties:
-        disallowPublicVisibility:
-          type: boolean
-          description: disallow_public_visibility disallows set memo as public visibility.
-        displayWithUpdateTime:
-          type: boolean
-          description: display_with_update_time orders and displays memo with update
-            time.
-        contentLengthLimit:
-          type: integer
-          description: content_length_limit is the limit of content length. Unit is
-            byte.
-          format: int32
-        enableAutoCompact:
-          type: boolean
-          description: enable_auto_compact enables auto compact for large content.
-        enableDoubleClickEdit:
-          type: boolean
-          description: enable_double_click_edit enables editing on double click.
-        enableLinkPreview:
-          type: boolean
-          description: enable_link_preview enables links preview.
-        enableComment:
-          type: boolean
-          description: enable_comment enables comment.
-        enableLocation:
-          type: boolean
-          description: enable_location enables setting location for memo.
-        defaultVisibility:
-          type: string
-          description: default_visibility set the global memos default visibility.
-        reactions:
-          type: array
-          description: reactions is the list of reactions.
-          items:
-            type: string
-        disableMarkdownShortcuts:
-          type: boolean
-          description: disable_markdown_shortcuts disallow the registration of markdown
-            shortcuts.
     googlerpcStatus:
       type: object
       properties:
@@ -1590,32 +1353,13 @@ components:
               "@type": "type.googleapis.com/google.protobuf.Duration",
               "value": "1.212s"
             }
-    v1CreateMemoRequest:
-      type: object
-      properties:
-        content:
-          type: string
-        visibility:
-          $ref: '#/components/schemas/v1Visibility'
-        resources:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1Resource'
-        relations:
-          type: array
-          items:
-            $ref: '#/components/schemas/v1MemoRelation'
-        location:
-          $ref: '#/components/schemas/apiv1Location'
-    v1LinkMetadata:
-      type: object
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        image:
-          type: string
+    v1Direction:
+      type: string
+      default: DIRECTION_UNSPECIFIED
+      enum:
+      - DIRECTION_UNSPECIFIED
+      - ASC
+      - DESC
     v1ListMemoCommentsResponse:
       type: object
       properties:
@@ -1686,7 +1430,9 @@ components:
       type: object
       properties:
         name:
-          title: "The name of the memo.\r\nFormat: memos/{id}"
+          title: |-
+            The name of the memo.
+            Format: memos/{id}
           type: string
         uid:
           type: string
@@ -1701,16 +1447,6 @@ components:
       - TYPE_UNSPECIFIED
       - REFERENCE
       - COMMENT
-    v1MemoView:
-      type: string
-      description: |2-
-         - MEMO_VIEW_FULL: The full view of the memo. Includes all fields.
-         - MEMO_VIEW_METADATA_ONLY: The metadata only view of the memo. Excludes the content/snippet fields.
-      default: MEMO_VIEW_UNSPECIFIED
-      enum:
-      - MEMO_VIEW_UNSPECIFIED
-      - MEMO_VIEW_FULL
-      - MEMO_VIEW_METADATA_ONLY
     v1Reaction:
       type: object
       properties:
@@ -1718,10 +1454,15 @@ components:
           type: integer
           format: int32
         creator:
-          title: "The name of the creator.\r\nFormat: users/{id}"
+          title: |-
+            The name of the creator.
+            Format: users/{user}
           type: string
         contentId:
           type: string
+          description: |-
+            The content identifier.
+            For memo, it should be the `Memo.name`.
         reactionType:
           type: string
     v1Resource:
@@ -1729,11 +1470,9 @@ components:
       properties:
         name:
           type: string
-          description: "The name of the resource.\r\nFormat: resources/{id}\r\nid\
-            \ is the system generated unique identifier."
-        uid:
-          type: string
-          description: The user defined id of the resource.
+          description: |-
+            The name of the resource.
+            Format: resources/{resource}, resource is the user defined if or uuid.
         createTime:
           type: string
           format: date-time
@@ -1752,8 +1491,8 @@ components:
           type: string
           format: int64
         memo:
-          title: "The related memo.\r\nFormat: memos/{id}"
           type: string
+          description: The related memo. Refer to `Memo.name`.
     v1State:
       type: string
       default: STATE_UNSPECIFIED
@@ -1765,12 +1504,9 @@ components:
       type: object
       properties:
         name:
-          title: "The name of the user.\r\nFormat: users/{id}"
           type: string
-        id:
-          type: integer
-          description: The system generated uid of the user.
-          format: int32
+          description: "The name of the user.\r\nFormat: users/{id}, id is the system\
+            \ generated auto-incremented id."
         role:
           $ref: '#/components/schemas/UserRole'
         username:
@@ -1783,16 +1519,36 @@ components:
           type: string
         description:
           type: string
-        password:
-          type: string
         state:
           $ref: '#/components/schemas/v1State'
         createTime:
           type: string
           format: date-time
+          readOnly: true
         updateTime:
           type: string
           format: date-time
+          readOnly: true
+    v1UserStats:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the user.
+        memoDisplayTimestamps:
+          type: array
+          description: "The timestamps when the memos were displayed.\r\nWe should\
+            \ return raw data to the client, and let the client format the data with\
+            \ the user's timezone."
+          items:
+            type: string
+            format: date-time
+        tagCount:
+          title: "The count of tags.\r\nFormat: \"tag1\": 1, \"tag2\": 2"
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
     v1Visibility:
       type: string
       default: VISIBILITY_UNSPECIFIED
@@ -1805,7 +1561,9 @@ components:
       type: object
       properties:
         owner:
-          title: "The name of instance owner.\r\nFormat: \"users/{id}\""
+          title: |-
+            The name of instance owner.
+            Format: users/{user}
           type: string
         version:
           title: version is the current version of instance
@@ -1817,4 +1575,3 @@ components:
         instanceUrl:
           type: string
           description: instance_url is the URL of the instance.
-x-original-swagger-version: "2.0"

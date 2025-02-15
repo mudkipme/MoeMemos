@@ -40,13 +40,9 @@
 "input.visibility" = "Memo Sichtbarkeit";
 
 "login.host" = "Host";
-"login.method" = "Anmeldemethode";
 "login.access-token" = "Access Token";
 "login.access-token.hint" = "Create an Access Token from Setting in ✍️memos.";
-"login.password" = "Passwort";
 "login.hint" = "Bitte geben Sie die Anmeldeinformationen für Ihren ✍️memos Server ein (https://github.com/usememos/memos) ein.";
-"login.username" = "Benutzername";
-"login.username-and-password" = "Benutzername und Passwort";
 "login.sign-in" = "Anmelden";
 
 "stats.day" = "Tag";

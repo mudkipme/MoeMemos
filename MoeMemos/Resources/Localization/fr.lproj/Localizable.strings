@@ -41,14 +41,10 @@
 
 "login.open-id.hint" = "Copier “Open ID” à partir du réglage dans ✍️memos.";
 "login.host" = "Hôte";
-"login.method" = "Méthode de connexion";
 "login.open-id" = "Open ID";
 "login.access-token" = "Jeton d'accès";
 "login.access-token.hint" = "Créer un jeton d'accès à partir du paramétrage ✍️memos.";
-"login.password" = "Mot de passe";
 "login.hint" = "Veuillez saisir les informations de connexion de votre serveur\n[✍️memos](https://github.com/usememos/memos).";
-"login.username" = "Nom d'utilisateur";
-"login.username-and-password" = "Mot de passe";
 "login.sign-in" = "S'identifier";
 
 "stats.day" = "Jour";

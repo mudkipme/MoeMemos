@@ -174,20 +174,6 @@ public final class MemosV0Service: RemoteService {
         return await toUser(memosUser)
     }
     
-    public func logout() async throws {
-        let resp = try await client.signOut()
-        _ = try resp.ok.body.json
-    }
-    
-    public func signIn(username: String, password: String) async throws -> (MemosV0User, String?) {
-        let resp = try await client.signIn(body: .json(.init(password: password, username: username, remember: true)))
-        let user = try resp.ok.body.json
-        
-        let cookieStorage = urlSession.configuration.httpCookieStorage ?? .shared
-        let accessToken = cookieStorage.cookies(for: self.hostURL)?.first(where: { $0.name == "memos.access-token" })?.value
-        return (user, accessToken)
-    }
-    
     public func getStatus() async throws -> MemosV0Status {
         let resp = try await client.getStatus()
         return try resp.ok.body.json
@@ -209,7 +195,7 @@ public final class MemosV0Service: RemoteService {
         } else {
             createdAt = .now
         }
-        let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: memosUser.defaultMemoVisibility.toMemoVisibility(), creationDate: createdAt, email: memosUser.email, remoteId: String(memosUser.id))
+        let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: .private, creationDate: createdAt, email: memosUser.email, remoteId: String(memosUser.id))
         if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
             var url = url
             if url.host() == nil {

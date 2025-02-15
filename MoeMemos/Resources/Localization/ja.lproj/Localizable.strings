@@ -40,13 +40,9 @@
 "input.visibility" = "メモの表示";
 
 "login.host" = "ホスト";
-"login.method" = "ログイン方法";
 "login.access-token" = "アクセストークン";
 "login.access-token.hint" = "✍️memosの設定からアクセストークンを作成します。";
-"login.password" = "パスワード";
 "login.hint" = "\n[✍️memos](https://github.com/usememos/memos) サーバーのログイン情報を入力してください。";
-"login.username" = "ユーザー名";
-"login.username-and-password" = "パスワード";
 "login.sign-in" = "サインイン";
 
 "stats.day" = "日";
