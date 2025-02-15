@@ -65,7 +65,6 @@ import MemosV0Service
     
     @MainActor
     func logout(account: Account) async throws {
-        try? await account.remoteService()?.logout()
         accountManager.delete(account: account)
         try await reloadUsers()
     }
@@ -78,33 +77,11 @@ import MemosV0Service
     }
     
     @MainActor
-    func loginMemosV0(hostURL: URL, username: String, password: String) async throws {
-        let client = MemosV0Service(hostURL: hostURL, accessToken: nil)
-        let (user, accessToken) = try await client.signIn(username: username, password: password)
-        guard let accessToken = accessToken else { throw MoeMemosError.unsupportedVersion }
-        let account = Account.memosV0(host: hostURL.absoluteString, id: "\(user.id)", accessToken: accessToken)
-        try await userActor.deleteUser(currentContext, accountKey: account.key)
-        try accountManager.add(account: account)
-        try await reloadUsers()
-    }
-    
-    @MainActor
     func loginMemosV0(hostURL: URL, accessToken: String) async throws {
         let client = MemosV0Service(hostURL: hostURL, accessToken: accessToken)
         let user = try await client.getCurrentUser()
         guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
         let account = Account.memosV0(host: hostURL.absoluteString, id: id, accessToken: accessToken)
-        try await userActor.deleteUser(currentContext, accountKey: account.key)
-        try accountManager.add(account: account)
-        try await reloadUsers()
-    }
-    
-    @MainActor
-    func loginMemosV1(hostURL: URL, username: String, password: String) async throws {
-        let client = MemosV1Service(hostURL: hostURL, accessToken: nil, userId: nil)
-        let (user, accessToken) = try await client.signIn(username: username, password: password)
-        guard let accessToken = accessToken, let userId = user.id else { throw MoeMemosError.unsupportedVersion }
-        let account = Account.memosV1(host: hostURL.absoluteString, id: "\(userId)", accessToken: accessToken)
         try await userActor.deleteUser(currentContext, accountKey: account.key)
         try accountManager.add(account: account)
         try await reloadUsers()

@@ -186,24 +186,6 @@ public final class MemosV1Service: RemoteService {
         return await toUser(user, setting: setting)
     }
     
-    public func logout() async throws {
-        let resp = try await client.AuthService_SignOut()
-        _ = try resp.ok
-    }
-    
-    public func signIn(username: String, password: String) async throws -> (MemosV1User, String?) {
-        let resp = try await client.AuthService_SignIn(query: .init(username: username, password: password, neverExpire: true))
-        let user = try resp.ok.body.json
-        
-        let cookieStorage = urlSession.configuration.httpCookieStorage ?? .shared
-        var accessToken = cookieStorage.cookies(for: self.hostURL)?.first(where: { $0.name == "memos.access-token" })?.value
-        if accessToken == nil {
-            guard let setCookieHeader = await grpcSetCookieMiddleware.setCookieHeaderValue else { throw MoeMemosError.unsupportedVersion }
-            accessToken = setCookieHeader.split(separator: ";", maxSplits: 1, omittingEmptySubsequences: true).first?.components(separatedBy: "memos.access-token=").last
-        }
-        return (user, accessToken)
-    }
-    
     public func getWorkspaceProfile() async throws -> MemosV1Profile {
         let resp = try await client.WorkspaceService_GetWorkspaceProfile()
         return try resp.ok.body.json

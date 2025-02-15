@@ -40,13 +40,9 @@
 "input.visibility" = "MEMO 可见性";
 
 "login.host" = "服务器地址";
-"login.method" = "登录方式";
 "login.access-token" = "Access Token";
 "login.access-token.hint" = "从 ✍️memos 设置中创建 Access Token。";
-"login.password" = "密码";
 "login.hint" = "请输入您的 [✍️memos](https://github.com/usememos/memos) 服务器的登录信息。";
-"login.username" = "用户名";
-"login.username-and-password" = "用户名和密码";
 "login.sign-in" = "登录";
 
 "stats.day" = "天";

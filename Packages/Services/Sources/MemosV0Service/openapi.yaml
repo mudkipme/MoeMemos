@@ -1,69 +1,11 @@
-openapi: 3.1.0
+openapi: 3.0.1
 info:
-  title: memos API
-  description: "A privacy-first, lightweight note-taking service."
-  contact:
-    name: API Support
-    url: https://github.com/orgs/usememos/discussions
-  license:
-    name: MIT License
-    url: https://github.com/usememos/memos/blob/main/LICENSE
-  version: "1.0"
-externalDocs:
-  description: Find out more about Memos.
-  url: https://usememos.com/
+  title: Mortis
+  description: API Definitions for Memos 0.21.0-compatible Apps
+  version: 0.21.0
 servers:
 - url: /
 paths:
-  /api/v1/auth/signin:
-    post:
-      operationId: signIn
-      tags:
-      - auth
-      summary: Sign-in to memos.
-      requestBody:
-        description: Sign-in object
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SignIn'
-        required: true
-      responses:
-        "200":
-          description: User information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        "400":
-          description: Malformatted signin request
-          content: {}
-        "401":
-          description: "Password login is deactivated | Incorrect login credentials,\
-            \ please try again"
-          content: {}
-        "403":
-          description: User has been archived with username %s
-          content: {}
-        "500":
-          description: "Failed to find system setting | Failed to unmarshal system\
-            \ setting | Incorrect login credentials, please try again | Failed to\
-            \ generate tokens | Failed to create activity"
-          content: {}
-      x-codegen-request-body-name: body
-  /api/v1/auth/signout:
-    post:
-      operationId: signOut
-      tags:
-      - auth
-      summary: Sign-out from memos.
-      responses:
-        "200":
-          description: Sign-out success
-          content:
-            application/json:
-              schema:
-                type: boolean
   /api/v1/memo:
     get:
       operationId: listMemos
@@ -189,9 +131,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Memo'
+                $ref: '#/components/schemas/Memo'
         "400":
           description: "ID is not a number: %s"
           content: {}
@@ -416,7 +356,7 @@ paths:
           type: string
           enum:
           - REFERENCE
-          - ADDITIONAL
+          - COMMENT
       responses:
         "200":
           description: Memo relation deleted
@@ -463,40 +403,6 @@ paths:
         "500":
           description: Failed to get memo display with updated ts setting value |
             Failed to fetch all memo list | Failed to compose memo response
-          content: {}
-  /api/v1/memo/stats:
-    get:
-      operationId: getMemoStats
-      tags:
-      - memo
-      summary: Get memo stats by creator ID or username
-      description: Used to generate the heatmap
-      parameters:
-      - name: creatorId
-        in: query
-        description: Creator ID
-        schema:
-          type: integer
-      - name: creatorUsername
-        in: query
-        description: Creator username
-        schema:
-          type: string
-      responses:
-        "200":
-          description: Memo createdTs list
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: integer
-        "400":
-          description: Missing user id to find memo
-          content: {}
-        "500":
-          description: Failed to get memo display with updated ts setting value |
-            Failed to find memo list | Failed to compose memo response
           content: {}
   /api/v1/resource:
     get:
@@ -791,112 +697,23 @@ paths:
           content: {}
 components:
   schemas:
-    Profile:
+    CreateResourceRequest:
       type: object
       properties:
-        version:
+        externalLink:
           type: string
-          description: Version is the current version of server
-    Memo:
-      type: object
-      properties:
-        content:
+        filename:
           type: string
-          description: Domain specific fields
-        createdTs:
-          type: integer
-        creatorID:
-          type: integer
-        id:
-          type: integer
-        parentID:
-          type: integer
-          description: |-
-            Composed fields
-            For those comment memos, the parent ID is the memo ID of the memo being commented.
-            If the parent ID is nil, then this memo is not a comment.
-        pinned:
-          type: boolean
-        relationList:
-          type: array
-          items:
-            $ref: '#/components/schemas/MemoRelation'
-        resourceIDList:
-          type: array
-          items:
-            type: integer
-        rowStatus:
-          $ref: '#/components/schemas/RowStatus'
-        updatedTs:
-          type: integer
-        visibility:
-          $ref: '#/components/schemas/Visibility'
-        creatorName:
-          type: string
-          nullable: true
-        resourceList:
-          type: array
-          items:
-            $ref: '#/components/schemas/Resource'
-      required:
-        - id
-        - createdTs
-        - content
-    MemoRelation:
-      type: object
-      properties:
-        memoID:
-          type: integer
-        relatedMemoID:
-          type: integer
         type:
-          $ref: '#/components/schemas/MemoRelationType'
+          type: string
     MemoRelationType:
       type: string
       enum:
       - REFERENCE
       - COMMENT
-      - ADDITIONAL
       x-enum-varnames:
       - MemoRelationReference
       - MemoRelationComment
-      - MemoRelationAdditional
-    Resource:
-      type: object
-      properties:
-        blob:
-          type: array
-          items:
-            type: integer
-        createdTs:
-          type: integer
-        creatorID:
-          type: integer
-          description: Standard fields
-        externalLink:
-          type: string
-        filename:
-          type: string
-          description: Domain specific fields
-        id:
-          type: integer
-        internalPath:
-          type: string
-        memoID:
-          type: integer
-        size:
-          type: integer
-        type:
-          type: string
-        updatedTs:
-          type: integer
-        name:
-          type: string
-        uid:
-          type: string
-      required:
-        - id
-        - filename
     Role:
       type: string
       enum:
@@ -915,81 +732,6 @@ components:
       x-enum-varnames:
       - Normal
       - Archived
-    Visibility:
-      type: string
-      enum:
-      - PUBLIC
-      - PROTECTED
-      - PRIVATE
-      x-enum-varnames:
-      - Public
-      - Protected
-      - Private
-    CreateMemoRequest:
-      type: object
-      properties:
-        content:
-          type: string
-        createdTs:
-          type: integer
-        relationList:
-          type: array
-          items:
-            $ref: '#/components/schemas/UpsertMemoRelationRequest'
-        resourceIdList:
-          type: array
-          description: Related fields
-          items:
-            type: integer
-        visibility:
-          $ref: '#/components/schemas/Visibility'
-    CreateResourceRequest:
-      type: object
-      properties:
-        externalLink:
-          type: string
-        filename:
-          type: string
-        type:
-          type: string
-    DeleteTagRequest:
-      type: object
-      properties:
-        name:
-          type: string
-    PatchMemoRequest:
-      type: object
-      properties:
-        content:
-          type: string
-          description: Domain specific fields
-        createdTs:
-          type: integer
-          description: Standard fields
-        relationList:
-          type: array
-          items:
-            $ref: '#/components/schemas/UpsertMemoRelationRequest'
-        resourceIdList:
-          type: array
-          description: Related fields
-          items:
-            type: integer
-        rowStatus:
-          $ref: '#/components/schemas/RowStatus'
-        updatedTs:
-          type: integer
-        visibility:
-          $ref: '#/components/schemas/Visibility'
-    SignIn:
-      type: object
-      properties:
-        password:
-          type: string
-        username:
-          type: string
-        remember:
-          type: boolean
     SystemStatus:
       type: object
       properties:
@@ -999,21 +741,6 @@ components:
       type: object
       properties:
         filename:
-          type: string
-    UpdateUserRequest:
-      type: object
-      properties:
-        avatarUrl:
-          type: string
-        email:
-          type: string
-        nickname:
-          type: string
-        password:
-          type: string
-        rowStatus:
-          $ref: '#/components/schemas/RowStatus'
-        username:
           type: string
     UpsertMemoOrganizerRequest:
       type: object
@@ -1050,27 +777,149 @@ components:
         rowStatus:
           type: object
           description: Standard fields
-          allOf:
-          - $ref: '#/components/schemas/RowStatus'
+          $ref: '#/components/schemas/RowStatus'
         updatedTs:
           type: integer
-        userSettingList:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserSetting'
         username:
           type: string
           description: Domain specific fields
       required:
-        - id
-    UserSetting:
+      - id
+    Visibility:
+      type: string
+      enum:
+      - PUBLIC
+      - PROTECTED
+      - PRIVATE
+      x-enum-varnames:
+      - Public
+      - Protected
+      - Private
+    CreateMemoRequest:
       type: object
       properties:
-        key:
-          $ref: '#/components/schemas/UserSettingKey'
-        userId:
-          type: integer
-        value:
+        content:
           type: string
-    UserSettingKey:
-      type: string
+        createdTs:
+          type: integer
+        relationList:
+          type: array
+          items:
+            $ref: '#/components/schemas/UpsertMemoRelationRequest'
+        resourceIdList:
+          type: array
+          description: Related fields
+          items:
+            type: integer
+        visibility:
+          type: object
+          description: Domain specific fields
+          $ref: '#/components/schemas/Visibility'
+    DeleteTagRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    PatchMemoRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          description: Domain specific fields
+        createdTs:
+          type: integer
+          description: Standard fields
+        relationList:
+          type: array
+          items:
+            $ref: '#/components/schemas/UpsertMemoRelationRequest'
+        resourceIdList:
+          type: array
+          description: Related fields
+          items:
+            type: integer
+        rowStatus:
+          $ref: '#/components/schemas/RowStatus'
+        updatedTs:
+          type: integer
+        visibility:
+          $ref: '#/components/schemas/Visibility'
+    Profile:
+      type: object
+      properties:
+        mode:
+          type: string
+          description: Mode can be "prod" or "dev" or "demo"
+        version:
+          type: string
+          description: Version is the current version of server
+    Memo:
+      type: object
+      properties:
+        content:
+          type: string
+          description: Domain specific fields
+        createdTs:
+          type: integer
+        creatorID:
+          type: integer
+        id:
+          type: integer
+        parentID:
+          type: integer
+        pinned:
+          type: boolean
+          description: Composed fields
+        resourceList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+        rowStatus:
+          type: object
+          description: Standard fields
+          $ref: '#/components/schemas/RowStatus'
+        updatedTs:
+          type: integer
+        visibility:
+          $ref: '#/components/schemas/Visibility'
+      required:
+      - id
+      - createdTs
+      - content
+    MemoRelation:
+      type: object
+      properties:
+        memoID:
+          type: integer
+        relatedMemoID:
+          type: integer
+        type:
+          $ref: '#/components/schemas/MemoRelationType'
+    Resource:
+      type: object
+      properties:
+        createdTs:
+          type: integer
+        creatorID:
+          type: integer
+          description: Standard fields
+        externalLink:
+          type: string
+        filename:
+          type: string
+          description: Domain specific fields
+        id:
+          type: integer
+        size:
+          type: integer
+        type:
+          type: string
+        updatedTs:
+          type: integer
+        name:
+          type: string
+        uid:
+          type: string
+      required:
+      - id
+      - filename
