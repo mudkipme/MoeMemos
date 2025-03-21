@@ -1,0 +1,72 @@
+/*
+  Localizable.strings
+  MoeMemos
+
+  Created by Mudkip on 2023/2/11.
+*/
+
+"moe-memos" = "Moe Memos";
+
+"memo.archive" = "Архив";
+"memo.archived" = "Архивировано";
+"memo.copy" = "Копировать";
+"memo.delete" = "Удалить";
+"memo.delete.confirm" = "Удалить эту memo?";
+"memo.edit" = "Редактировать";
+"memo.memos" = "Memos";
+"memo.action.cancel" = "Нет";
+"memo.pin" = "Закрепить";
+"memo.restore" = "Восстановить";
+"memo.share" = "Поделиться";
+"memo.unpin" = "Открепить";
+"memo.action.ok" = "Да";
+"memo.visibility.public" = "Видно гостям";
+"memo.visibility.protected" = "Видно локальным пользователям";
+"memo.visibility.private" = "Видно только вам";
+
+"settings" = "Настройки";
+"settings.about" = "О Moe Memos";
+"settings.privacy" = "Политика конфиденциальности";
+"settings.report" = "Сообщить о проблеме";
+"settings.sign-out" = "Выйти";
+"settings.website" = "Вебсайт";
+"settings.acknowledgements" = "Благодарности";
+
+"input.placeholder" = "Ваши мысли...";
+"input.close" = "Закрыть";
+"input.compose" = "Создать";
+"input.edit" = "Редактировать Memo";
+"input.save" = "Сохранить";
+"input.visibility" = "Видимость Memo";
+
+"login.host" = "Хост";
+"login.access-token" = "Токен доступа";
+"login.access-token.hint" = "Создайте токен доступа в Настройках ✍️memos.";
+"login.hint" = "Пожалуйста, введите данные для входа в ваш\n[✍️memos](https://github.com/usememos/memos) сервер.";
+"login.sign-in" = "Войти";
+
+"stats.day" = "День";
+"stats.memo" = "Memo";
+"stats.tag" = "Тег";
+
+"resources" = "Ресурсы";
+
+"tags" = "Теги";
+
+"widget.memories" = "Воспоминания";
+"widget.memories.description" = "Вспомните ваши прошлые заметки.";
+"widget.memo-graph" = "График Memos";
+"widget.memo-graph.description" = "График, показывающий количество созданных Memos за последние недели.";
+
+"share.memo-saved" = "Memo сохранена.";
+
+"explore" = "Обзор";
+
+// Account
+"account.local-user" = "Локальный пользователь";
+"account.add-account" = "Добавить аккаунт";
+"account.accounts" = "Аккаунты";
+"account.add-memos-account" = "Добавить аккаунт Memos";
+"account.memos-account-description" = "Синхронизация с вашим сервером Memos";
+"account.account-detail" = "Детали аккаунта";
+"account.switch-account" = "Переключить аккаунт";
