@@ -103,3 +103,9 @@ import Factory
         })
     }
 }
+
+extension Container {
+    var memosViewModel: Factory<MemosViewModel> {
+        self { MemosViewModel() }.shared
+    }
+}
