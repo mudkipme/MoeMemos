@@ -32,11 +32,7 @@ struct MoeMemosApp: App {
         WindowGroup {
             ContentView()
                 .tint(.green)
-                .environment(userState)
-                .environment(accountManager)
-                .environment(appInfo)
-                .environment(appPath)
-                .environment(memosViewModel)
+                .withEnvironments()
                 .onOpenURL { url in
                     if url.host() == "new-memo" {
                         appPath.presentedSheet = .newMemo

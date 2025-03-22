@@ -9,6 +9,7 @@ import SwiftUI
 import Models
 import Env
 import Account
+import Factory
 
 @MainActor
 extension Route {
@@ -40,11 +41,22 @@ extension View {
             switch destination {
             case .newMemo:
                 MemoInput(memo: nil)
+                    .withEnvironments()
             case .editMemo(let memo):
                 MemoInput(memo: memo)
+                    .withEnvironments()
             case .addAccount:
                 AddAccountView()
+                    .withEnvironments()
             }
         }
+    }
+    
+    func withEnvironments() -> some View {
+        environment(Container.shared.accountViewModel())
+            .environment(Container.shared.accountManager())
+            .environment(Container.shared.appInfo())
+            .environment(Container.shared.appPath())
+            .environment(Container.shared.memosViewModel())
     }
 }
