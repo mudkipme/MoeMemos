@@ -228,6 +228,8 @@
 		19FC1C7D290DA6E90078A7F2 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		31EE785529B83D1B005F62D0 /* LazyImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyImageProvider.swift; sourceTree = "<group>"; };
 		31EE786029B9F3A2005F62D0 /* Highlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Highlighter.swift; sourceTree = "<group>"; };
+		EE17AC762D8E12E500C01504 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainInterface.strings; sourceTree = "<group>"; };
+		EE17AC772D8E12E500C01504 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -578,6 +580,7 @@
 				fr,
 				it,
 				ja,
+				ru,
 			);
 			mainGroup = 194B272428C3973400A48675;
 			packageReferences = (
@@ -750,6 +753,7 @@
 				191C49ED2B2D79A40097B98E /* fr */,
 				191C49EE2B2D7DAB0097B98E /* it */,
 				19D0C5A02D4E0CC400E026CF /* ja */,
+				EE17AC772D8E12E500C01504 /* ru */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -762,6 +766,7 @@
 				193F04E129CCBA320010E3BF /* Base */,
 				190322DC2A82929300CAA50D /* de */,
 				19D0C59F2D4E0CC400E026CF /* ja */,
+				EE17AC762D8E12E500C01504 /* ru */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
