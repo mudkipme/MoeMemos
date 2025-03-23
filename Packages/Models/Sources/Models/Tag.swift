@@ -16,3 +16,19 @@ public struct Tag: Hashable, Identifiable {
         self.name = name
     }
 }
+
+@Model
+public final class TagModel {
+    #Unique<TagModel>([\.user, \.name])
+    public var user: User?
+    public var name: String
+    
+    @Relationship(inverse: \MemoModel.tags)
+    public var memos: [MemoModel]
+    
+    public init(user: User? = nil, name: String, memos: [MemoModel] = []) {
+        self.user = user
+        self.name = name
+        self.memos = memos
+    }
+}

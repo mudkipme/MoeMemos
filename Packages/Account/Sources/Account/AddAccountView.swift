@@ -17,21 +17,21 @@ public struct AddAccountView: View {
     public var body: some View {
         NavigationStack(path: $path) {
             List {
-//                HStack {
-//                    Image(systemName: "house")
-//                    VStack(alignment: .leading) {
-//                        Text("Add a Local Account")
-//                            .foregroundStyle(.primary)
-//                            .font(.headline)
-//                        Text("On this Device")
-//                            .font(.subheadline)
-//                            .foregroundStyle(.secondary)
-//                    }
-//                }
-//                .onTapGesture {
-//                    try? accountManager.add(account: .local)
-//                    dismiss()
-//                }
+                HStack {
+                    Image(systemName: "house")
+                    VStack(alignment: .leading) {
+                        Text("Add a Local Account")
+                            .foregroundStyle(.primary)
+                            .font(.headline)
+                        Text("On this Device")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .onTapGesture {
+                    try? accountManager.add(account: .local)
+                    dismiss()
+                }
                 
                 NavigationLink(value: AddAccountRouter.addMemosAccount) {
                     HStack {

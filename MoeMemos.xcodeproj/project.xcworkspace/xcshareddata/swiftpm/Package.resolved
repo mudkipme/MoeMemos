@@ -1,4 +1,5 @@
 {
+  "originHash" : "a78bd7e5b747e052e88b823be850d0f34537a2a2ddcc096175494be3f90609b4",
   "pins" : [
     {
       "identity" : "data-uri",
@@ -14,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/hmlongco/Factory",
       "state" : {
-        "revision" : "587995f7d5cc667951d635fbf6b4252324ba0439",
-        "version" : "2.3.2"
+        "revision" : "fb04a8918848e413d3921d346a23bae7f81088d9",
+        "version" : "2.4.3"
       }
     },
     {
@@ -93,7 +94,7 @@
     {
       "identity" : "swift-markdown",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mudkipme/swift-markdown.git",
+      "location" : "https://github.com/mudkipme/swift-markdown",
       "state" : {
         "branch" : "main",
         "revision" : "2e0ffeea72a69c36eed2966528df30e75f3c2cf3"
@@ -154,5 +155,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
