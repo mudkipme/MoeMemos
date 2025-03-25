@@ -1,8 +1,8 @@
 //
-//  AddMemosAccountView.swift
-//  MoeMemos
+//  AddBlinkoAccountView.swift
+//  Account
 //
-//  Created by Mudkip on 2022/9/4.
+//  Created by Mudkip on 2025/2/4.
 //
 
 import SwiftUI
@@ -10,7 +10,7 @@ import Models
 import DesignSystem
 
 @MainActor
-struct AddMemosAccountView: View {
+struct AddBlinkoAccountView: View {
     @State private var host = ""
     @State private var accessToken = ""
     let dismiss: DismissAction
@@ -18,10 +18,10 @@ struct AddMemosAccountView: View {
     @State private var loginError: Error?
     @State private var showingErrorToast = false
     @State private var showLoadingToast = false
-    
+
     var body: some View {
         VStack {
-            Text("login.hint")
+            Text("account.blinko.hint")
                 .multilineTextAlignment(.center)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -36,9 +36,6 @@ struct AddMemosAccountView: View {
             
             SecureField("login.access-token", text: $accessToken)
                 .textFieldStyle(.roundedBorder)
-            Text("login.access-token.hint")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
             
             Button {
                 Task {
@@ -62,7 +59,7 @@ struct AddMemosAccountView: View {
         .padding()
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", loginError?.localizedDescription))
         .toast(isPresenting: $showLoadingToast, alertType: .loading)
-        .navigationTitle("account.add-memos-account")
+        .navigationTitle("account.add-blinko-account")
         .navigationBarTitleDisplayMode(.inline)
     }
     
@@ -75,24 +72,14 @@ struct AddMemosAccountView: View {
         if !hostAddress.contains("//") {
             hostAddress = "https://" + hostAddress
         }
-        if hostAddress.last == "/" {
-            hostAddress.removeLast()
-        }
-        
         guard let hostURL = URL(string: hostAddress) else { throw MoeMemosError.invalidParams }
-        let server = try await detectMemosVersion(hostURL: hostURL)
 
         let accessToken = accessToken.trimmingCharacters(in: .whitespaces)
         if accessToken.isEmpty {
             throw MoeMemosError.invalidParams
         }
         
-        switch server {
-        case .v1(version: _):
-            try await accountViewModel.loginMemosV1(hostURL: hostURL, accessToken: accessToken)
-        case .v0(version: _):
-            try await accountViewModel.loginMemosV0(hostURL: hostURL, accessToken: accessToken)
-        }
+        try await accountViewModel.loginBlinkoV1(hostURL: hostURL, accessToken: accessToken)
         dismiss()
     }
 }
