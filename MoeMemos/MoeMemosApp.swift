@@ -36,6 +36,18 @@ struct MoeMemosApp: App {
                 .onOpenURL { url in
                     if url.host() == "new-memo" {
                         appPath.presentedSheet = .newMemo
+                    } else if url.host() == "edit-memo" {
+                        if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                           let id = components.queryItems?.first(where: { $0.name == "id" })?.value {
+                            Task {
+                                do {
+                                    let memo = try await memosViewModel.getMemo(remoteId: id)
+                                    appPath.presentedSheet = .editMemo(memo)
+                                } catch {
+                                    // ignore
+                                }
+                            }
+                        }
                     }
                 }
         }

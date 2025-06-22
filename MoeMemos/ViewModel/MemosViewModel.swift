@@ -102,6 +102,11 @@ import Factory
             memo.remoteId != remoteId
         })
     }
+    
+    @MainActor
+    func getMemo(remoteId: String) async throws -> Memo {
+       return try await service.getMemo(remoteId: remoteId)
+    }
 }
 
 extension Container {

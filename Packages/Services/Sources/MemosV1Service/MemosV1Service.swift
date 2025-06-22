@@ -204,6 +204,12 @@ public final class MemosV1Service: RemoteService {
         return try await ServiceUtils.download(urlSession: urlSession, url: url, mimeType: mimeType, middleware: rawAccessTokenMiddlware(hostURL: hostURL, accessToken: accessToken))
     }
     
+    public func getMemo(remoteId: String) async throws -> Memo {
+        let resp = try await client.MemoService_GetMemo(path: .init(name_4: getName(remoteId: remoteId)))
+        let memo = try resp.ok.body.json
+        return memo.toMemo(host: hostURL)
+    }
+    
     func downloadData(url: URL) async throws -> Data {
         return try await ServiceUtils.downloadData(urlSession: urlSession, url: url, middleware: rawAccessTokenMiddlware(hostURL: hostURL, accessToken: accessToken))
     }
