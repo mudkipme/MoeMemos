@@ -93,7 +93,7 @@ public final class MemosV1Service: RemoteService {
             }
             return resource
         }
-        let setResourceResp = try await client.MemoService_SetMemoResources(path: .init(name: name), body: .json(.init(resources: memosResources)))
+        let setResourceResp = try await client.MemoService_SetMemoAttachments(path: .init(name: name), body: .json(.init(attachments: memosResources)))
         _ = try setResourceResp.ok
         result.resources = resources
         return result
@@ -117,14 +117,14 @@ public final class MemosV1Service: RemoteService {
             }
             return resource
         }
-        let setResourceResp = try await client.MemoService_SetMemoResources(path: .init(name: getName(remoteId: remoteId)), body: .json(.init(resources: memosResources)))
+        let setResourceResp = try await client.MemoService_SetMemoAttachments(path: .init(name: getName(remoteId: remoteId)), body: .json(.init(attachments: memosResources)))
         _ = try setResourceResp.ok
         result.resources = resources
         return result
     }
     
     public func deleteMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_DeleteMemo(path: .init(name_4: getName(remoteId: remoteId)))
+        let resp = try await client.MemoService_DeleteMemo(path: .init(name_6: getName(remoteId: remoteId)))
         _ = try resp.ok
     }
     
@@ -158,13 +158,13 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func listResources() async throws -> [Resource] {
-        let resp = try await client.ResourceService_ListResources()
+        let resp = try await client.AttachmentService_ListAttachments()
         let data = try resp.ok.body.json
-        return data.resources?.map { $0.toResource(host: hostURL) } ?? []
+        return data.attachments?.map { $0.toResource(host: hostURL) } ?? []
     }
     
     public func createResource(filename: String, data: Data, type: String, memoRemoteId: String?) async throws -> Resource {
-        let resp = try await client.ResourceService_CreateResource(body: .json(.init(
+        let resp = try await client.AttachmentService_CreateAttachment(body: .json(.init(
             filename: filename,
             content: .init(data),
             _type: type,
@@ -175,18 +175,17 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func deleteResource(remoteId: String) async throws {
-        let resp = try await client.ResourceService_DeleteResource(path: .init(name_3: getName(remoteId: remoteId)))
+        let resp = try await client.AttachmentService_DeleteAttachment(path: .init(name: getName(remoteId: remoteId)))
         _ = try resp.ok
     }
     
     public func getCurrentUser() async throws -> User {
-        let resp = try await client.AuthService_GetAuthStatus()
+        let resp = try await client.AuthService_GetCurrentSession()
         
-        if case .default(statusCode: let statusCode, _) = resp, statusCode == HTTPResponse.Status.unauthorized.code {
+        let json = try resp.ok.body.json
+        guard let user = json.user else {
             throw MoeMemosError.notLogin
         }
-        
-        let user = try resp.ok.body.json
         
         guard let name = user.name else { throw MoeMemosError.unsupportedVersion }
         let userSettingResp = try await client.UserService_GetUserSetting(path: .init(name: name))
@@ -221,7 +220,7 @@ public final class MemosV1Service: RemoteService {
         let key = "memos:\(hostURL.absoluteString):\(remoteId)"
         let user = User(
             accountKey: key,
-            nickname: memosUser.nickname ?? memosUser.username ?? "",
+            nickname: memosUser.displayName ?? memosUser.username,
             creationDate: memosUser.createTime ?? .now,
             email: memosUser.email,
             remoteId: remoteId
