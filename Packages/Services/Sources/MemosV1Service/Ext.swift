@@ -9,7 +9,7 @@ import Foundation
 import Models
 
 typealias MemosV1Memo = Components.Schemas.apiv1Memo
-typealias MemosV1Resource = Components.Schemas.v1Resource
+typealias MemosV1Resource = Components.Schemas.v1Attachment
 typealias MemosV1Visibility = Components.Schemas.v1Visibility
 public typealias MemosV1User = Components.Schemas.v1User
 public typealias MemosV1Profile = Components.Schemas.v1WorkspaceProfile
@@ -17,11 +17,11 @@ public typealias MemosV1Profile = Components.Schemas.v1WorkspaceProfile
 extension MemosV1Memo {
     func toMemo(host: URL) -> Memo {
         return Memo(
-            content: content ?? "",
+            content: content,
             pinned: pinned ?? false,
             rowStatus: state == .ARCHIVED ? .archived : .normal,
             visibility: visibility?.toMemoVisibility() ?? .private,
-            resources: resources?.map { $0.toResource(host: host) } ?? [],
+            resources: attachments?.map { $0.toResource(host: host) } ?? [],
             createdAt: createTime ?? .now,
             updatedAt: updateTime ?? .now,
             remoteId: name
