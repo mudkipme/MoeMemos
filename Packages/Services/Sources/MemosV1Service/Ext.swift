@@ -8,16 +8,16 @@
 import Foundation
 import Models
 
-typealias MemosV1Memo = Components.Schemas.apiv1Memo
-typealias MemosV1Resource = Components.Schemas.v1Attachment
-typealias MemosV1Visibility = Components.Schemas.v1Visibility
-public typealias MemosV1User = Components.Schemas.v1User
-public typealias MemosV1Profile = Components.Schemas.v1WorkspaceProfile
+typealias MemosV1Memo = Components.Schemas.Memo
+typealias MemosV1Resource = Components.Schemas.Attachment
+typealias MemosV1Visibility = Components.Schemas.Memo.visibilityPayload
+public typealias MemosV1User = Components.Schemas.User
+public typealias MemosV1Profile = Components.Schemas.WorkspaceProfile
 
 extension MemosV1Memo {
     func toMemo(host: URL) -> Memo {
         return Memo(
-            content: content,
+            content: content ?? "",
             pinned: pinned ?? false,
             rowStatus: state == .ARCHIVED ? .archived : .normal,
             visibility: visibility?.toMemoVisibility() ?? .private,

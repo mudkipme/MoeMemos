@@ -46,7 +46,7 @@ public final class MemosV1Service: RemoteService {
         var nextPageToken: String? = nil
         
         repeat {
-            let resp = try await client.MemoService_ListMemos(query: .init(parent: "users/\(userId)", pageSize: 200, pageToken: nextPageToken, state: .NORMAL))
+            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .NORMAL, filter: "creator_id == \(userId)"))
             let data = try resp.ok.body.json
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
@@ -61,7 +61,7 @@ public final class MemosV1Service: RemoteService {
         var nextPageToken: String? = nil
         
         repeat {
-            let resp = try await client.MemoService_ListMemos(query: .init(parent: "users/\(userId)", pageSize: 200, pageToken: nextPageToken, state: .ARCHIVED))
+            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .ARCHIVED, filter: "creator_id == \(userId)"))
             let data = try resp.ok.body.json
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
@@ -93,14 +93,14 @@ public final class MemosV1Service: RemoteService {
             }
             return resource
         }
-        let setResourceResp = try await client.MemoService_SetMemoAttachments(path: .init(name: name), body: .json(.init(attachments: memosResources)))
+        let setResourceResp = try await client.MemoService_SetMemoAttachments(path: .init(memo: getId(remoteId: name)), body: .json(.init(name: name, attachments: memosResources)))
         _ = try setResourceResp.ok
         result.resources = resources
         return result
     }
     
     public func updateMemo(remoteId: String, content: String?, resources: [Resource]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> Memo {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(
             updateTime: .now,
             content: content,
             visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
@@ -117,30 +117,30 @@ public final class MemosV1Service: RemoteService {
             }
             return resource
         }
-        let setResourceResp = try await client.MemoService_SetMemoAttachments(path: .init(name: getName(remoteId: remoteId)), body: .json(.init(attachments: memosResources)))
+        let setResourceResp = try await client.MemoService_SetMemoAttachments(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(name: getName(remoteId: remoteId), attachments: memosResources)))
         _ = try setResourceResp.ok
         result.resources = resources
         return result
     }
     
     public func deleteMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_DeleteMemo(path: .init(name_6: getName(remoteId: remoteId)))
+        let resp = try await client.MemoService_DeleteMemo(path: .init(memo: getId(remoteId: remoteId)))
         _ = try resp.ok
     }
     
     public func archiveMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(state: .ARCHIVED)))
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(state: .ARCHIVED)))
         _ = try resp.ok
     }
     
     public func restoreMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo_name: getName(remoteId: remoteId)), body: .json(.init(state: .NORMAL)))
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(state: .NORMAL)))
         _ = try resp.ok
     }
     
     public func listTags() async throws -> [Tag] {
         guard let userId = userId else { throw MoeMemosError.notLogin }
-        let resp = try await client.UserService_GetUserStats(path: .init(name: "users/\(userId)"))
+        let resp = try await client.UserService_GetUserStats(path: .init(user: "\(userId)"))
         let data = try resp.ok.body.json
         
         var tags = [Tag]()
@@ -153,7 +153,7 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func deleteTag(name: String) async throws {
-        let resp = try await client.MemoService_DeleteMemoTag(path: .init(parent: "memos/-", tag: name), query: .init(deleteRelatedMemos: false))
+        let resp = try await client.MemoService_DeleteMemoTag(path: .init(memo: "-"), body: .json(.init(parent: "memos/-", tag: name, deleteRelatedMemos: false)))
         _ = try resp.ok
     }
     
@@ -175,7 +175,7 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func deleteResource(remoteId: String) async throws {
-        let resp = try await client.AttachmentService_DeleteAttachment(path: .init(name: getName(remoteId: remoteId)))
+        let resp = try await client.AttachmentService_DeleteAttachment(path: .init(attachment: getId(remoteId: remoteId)))
         _ = try resp.ok
     }
     
@@ -188,7 +188,7 @@ public final class MemosV1Service: RemoteService {
         }
         
         guard let name = user.name else { throw MoeMemosError.unsupportedVersion }
-        let userSettingResp = try await client.UserService_GetUserSetting(path: .init(name: name))
+        let userSettingResp = try await client.UserService_GetUserSetting(path: .init(user: getId(remoteId: name), setting: "GENERAL"))
         
         let setting = try userSettingResp.ok.body.json
         return await toUser(user, setting: setting)
@@ -215,7 +215,7 @@ public final class MemosV1Service: RemoteService {
         return remoteId.split(separator: "|").first?.split(separator: "/").last.map(String.init) ?? ""
     }
     
-    func toUser(_ memosUser: MemosV1User, setting: Components.Schemas.apiv1UserSetting? = nil) async -> User {
+    func toUser(_ memosUser: MemosV1User, setting: Components.Schemas.UserSetting? = nil) async -> User {
         let remoteId = getId(remoteId: memosUser.name ?? "0")
         let key = "memos:\(hostURL.absoluteString):\(remoteId)"
         let user = User(
@@ -232,7 +232,7 @@ public final class MemosV1Service: RemoteService {
             }
             user.avatarData = try? await downloadData(url: url)
         }
-        if let visibilityString = setting?.memoVisibility, let visibility = MemosV1Visibility(rawValue: visibilityString) {
+        if let visibilityString = setting?.generalSetting?.memoVisibility, let visibility = MemosV1Visibility(rawValue: visibilityString) {
             user.defaultVisibility = visibility.toMemoVisibility()
         }
         return user
