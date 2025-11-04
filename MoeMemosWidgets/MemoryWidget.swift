@@ -91,6 +91,14 @@ struct MemoryEntryView : View {
         }
         .padding()
         .containerBackground(.background, for: .widget)
+        .widgetURL(widgetURL)
+    }
+    
+    var widgetURL: URL? {
+        if let remoteId = entry.memo.remoteId {
+            return URL(string: "moememos://edit-memo?id=" + remoteId)
+        }
+        return nil
     }
     
     var dateString: String {
