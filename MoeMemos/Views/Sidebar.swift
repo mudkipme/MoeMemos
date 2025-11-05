@@ -64,11 +64,11 @@ struct Sidebar: View {
                 Button(action: {
                     selection = .settings
                 }) {
-                    Image(systemName: "ellipsis.circle")
+                    Image(systemName: "ellipsis")
                 }
             } else {
                 NavigationLink(value: Route.settings) {
-                    Image(systemName: "ellipsis.circle")
+                    Image(systemName: "ellipsis")
                 }
             }
         }

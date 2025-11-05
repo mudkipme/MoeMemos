@@ -31,7 +31,7 @@ struct MemosList: View {
             }
             .listStyle(InsetGroupedListStyle())
             
-            if tag == nil {
+            if #unavailable(iOS 26.0) {
                 Button {
                     appPath.presentedSheet = .newMemo
                 } label: {
@@ -45,6 +45,19 @@ struct MemosList: View {
                     .frame(width: 60, height: 60)
                 }
                 .padding(20)
+            }
+        }
+        .toolbar {
+            if #available(iOS 26.0, *) {
+                DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                ToolbarSpacer(.flexible, placement: .bottomBar)
+                ToolbarItem(placement: .bottomBar) {
+                    Button {
+                        appPath.presentedSheet = .newMemo
+                    } label: {
+                        Label("input.save", systemImage: "plus")
+                    }
+                }
             }
         }
         .overlay(content: {
