@@ -70,3 +70,7 @@
 "account.memos-account-description" = "Sync with Your Memos Server";
 "account.account-detail" = "Account Detail";
 "account.switch-account" = "Switch Account";
+
+"account.blinko.hint" = "Please input the URL and Access Token of \nyour [Blinko](https://github.com/blinko-space/blinko) instance.";
+"account.add-blinko-account" = "Add a Blinko Account";
+"account.blinko-account-description" = "Experimental Support of Blinko";

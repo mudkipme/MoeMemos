@@ -10,6 +10,7 @@ import Models
 import KeychainSwift
 import MemosV0Service
 import MemosV1Service
+import BlinkoV1Service
 
 public extension Account {
     private static var keychain: KeychainSwift {
@@ -42,11 +43,14 @@ public extension Account {
     }
     
     func remoteService() -> RemoteService? {
-        if case .memosV0(host: let host, id: _, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
+        if case .memosV0(let host, _, let accessToken) = self, let hostURL = URL(string: host) {
             return MemosV0Service(hostURL: hostURL, accessToken: accessToken)
         }
-        if case .memosV1(host: let host, id: let userId, accessToken: let accessToken) = self, let hostURL = URL(string: host) {
+        if case .memosV1(let host, let userId, let accessToken) = self, let hostURL = URL(string: host) {
             return MemosV1Service(hostURL: hostURL, accessToken: accessToken, userId: userId)
+        }
+        if case .blinkoV1(let host, _, let accessToken) = self, let hostURL = URL(string: host) {
+            return BlinkoV1Service(hostURL: hostURL, accessToken: accessToken)
         }
         return nil
     }
