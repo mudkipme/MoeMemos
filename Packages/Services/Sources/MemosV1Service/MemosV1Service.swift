@@ -190,7 +190,7 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func getWorkspaceProfile() async throws -> MemosV1Profile {
-        let resp = try await client.WorkspaceService_GetWorkspaceProfile()
+        let resp = try await client.InstanceService_GetInstanceProfile()
         return try resp.ok.body.json
     }
     
