@@ -70,3 +70,7 @@
 "account.memos-account-description" = "Memosサーバーと同期する";
 "account.account-detail" = "アカウントの詳細";
 "account.switch-account" = "アカウントの切替";
+
+"account.blinko.hint" = "Please input the URL and Access Token of \nyour [Blinko](https://github.com/blinko-space/blinko) instance.";
+"account.add-blinko-account" = "Add a Blinko Account";
+"account.blinko-account-description" = "Experimental Support of Blinko";

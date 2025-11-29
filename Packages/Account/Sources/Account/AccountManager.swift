@@ -34,8 +34,6 @@ import Factory
         accounts = Account.retriveAll()
         if !currentAccountKey.isEmpty, let currentAccount = accounts.first(where: { $0.key == currentAccountKey }) {
             self.currentAccount = currentAccount
-        } else {
-            self.currentAccount = accounts.last
         }
     }
     
