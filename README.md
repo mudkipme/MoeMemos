@@ -3,23 +3,23 @@ Moe Memos
 
 [![justforfunnoreally.dev badge](https://img.shields.io/badge/justforfunnoreally-dev-9ff)](https://justforfunnoreally.dev)
 
-<img alt="Moe Memos" src="https://memos.moe/memos.png" width="160" height="160" />
+<img alt="Moe Memos" src="https://memos.littledaemon.dev/memos.png" width="160" height="160" />
 
 **Moe Memos** is an app to help you capture thoughts and ideas.
 
 *To use this app, you must have a self-hosted [✍️memos](https://github.com/usememos/memos) server set up and running.*
 
-**Note: Current Moe Memos version supports Memos 0.21.0 and 0.25.0. Memos update may introduce breaking API changes. If you are using a version higher than 0.25.0, it is recommended to use [Mortis](https://github.com/mudkipme/mortis) to convert the newer Memos API to the Memos 0.21.0 API and re-login in Moe Memos.**
+**Note: Current Moe Memos version supports Memos 0.21.0 and 0.25.3. Memos update may introduce breaking API changes. If you are using a version higher than 0.25.3, it is recommended to use [Mortis](https://github.com/mudkipme/mortis) to convert the newer Memos API to the Memos 0.21.0 API and re-login in Moe Memos.**
 
 ## Installation
 
-[![Download Moe Memos on the App Store](https://memos.moe/app-store-badge.svg)](https://apps.apple.com/app/moe-memos/id1643902185)
+[![Download Moe Memos on the App Store](https://memos.littledaemon.dev/app-store-badge.svg)](https://apps.apple.com/app/moe-memos/id1643902185)
 
 Moe Memos is available on App Store for free. You can also build this app with Xcode and run on your devices. iOS 15 or higher is required.
 
 ## Features
 
-![Screenshot](https://memos.moe/screenshot.png)
+![Screenshot](https://memos.littledaemon.dev/screenshot.png)
 
 - Write memos like tweeting to yourself
 - Sync with your own ✍️memos server

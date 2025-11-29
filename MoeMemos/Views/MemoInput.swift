@@ -353,6 +353,3 @@ struct MemoInput: View {
         return true
     }
 }
-
-
-extension PhotosPickerItem: @unchecked Sendable {}
