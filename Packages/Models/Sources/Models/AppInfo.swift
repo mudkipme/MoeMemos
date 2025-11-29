@@ -26,9 +26,12 @@ import Factory
     }
     
     @ObservationIgnored private lazy var region = SKPaymentQueue.default().storefront?.countryCode
-    @ObservationIgnored public lazy var website = region == "CHN" ? URL(string: "https://memos.vintage-wiki.com")! : URL(string: "https://memos.moe")!
-    @ObservationIgnored public lazy var privacy = region == "CHN" ? URL(string: "https://memos.vintage-wiki.com/privacy")! : URL(string: "https://memos.moe/privacy")!
-    @ObservationIgnored public lazy var registration = region == "CHN" ? "晋ICP备2022000288号-2A" : ""
+//    @ObservationIgnored public lazy var website = region == "CHN" ? URL(string: "https://memos.vintage-wiki.com")! : URL(string: "https://memos.littledaemon.dev")!
+//    @ObservationIgnored public lazy var privacy = region == "CHN" ? URL(string: "https://memos.vintage-wiki.com/privacy")! : URL(string: "https://memos.littledaemon.dev/privacy")!
+//    @ObservationIgnored public lazy var registration = region == "CHN" ? "" : ""
+    @ObservationIgnored public lazy var website = URL(string: "https://memos.littledaemon.dev")!
+    @ObservationIgnored public lazy var privacy = URL(string: "https://memos.littledaemon.dev/privacy")!
+    @ObservationIgnored public lazy var registration = ""
 }
 
 public extension Container {

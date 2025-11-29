@@ -152,11 +152,6 @@ public final class MemosV1Service: RemoteService {
         return tags
     }
     
-    public func deleteTag(name: String) async throws {
-        let resp = try await client.MemoService_DeleteMemoTag(path: .init(memo: "-"), body: .json(.init(parent: "memos/-", tag: name, deleteRelatedMemos: false)))
-        _ = try resp.ok
-    }
-    
     public func listResources() async throws -> [Resource] {
         let resp = try await client.AttachmentService_ListAttachments()
         let data = try resp.ok.body.json

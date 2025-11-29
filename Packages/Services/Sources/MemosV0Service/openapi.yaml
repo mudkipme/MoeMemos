@@ -646,36 +646,6 @@ paths:
           description: Failed to upsert tag | Failed to create activity
           content: {}
       x-codegen-request-body-name: body
-  /api/v1/tag/delete:
-    post:
-      operationId: deleteTag
-      tags:
-      - tag
-      summary: Delete a tag
-      requestBody:
-        description: Request object.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DeleteTagRequest'
-        required: true
-      responses:
-        "200":
-          description: Tag deleted
-          content:
-            application/json:
-              schema:
-                type: boolean
-        "400":
-          description: Malformatted post tag request | Tag name shouldn't be empty
-          content: {}
-        "401":
-          description: Missing user in session
-          content: {}
-        "500":
-          description: "Failed to delete tag name: %v"
-          content: {}
-      x-codegen-request-body-name: body
   /api/v1/user/me:
     get:
       operationId: getCurrentUser
