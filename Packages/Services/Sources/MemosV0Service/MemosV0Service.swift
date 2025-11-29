@@ -139,11 +139,6 @@ public final class MemosV0Service: RemoteService {
         return tags.map { Tag(name: $0) }
     }
     
-    public func deleteTag(name: String) async throws {
-        let resp = try await client.deleteTag(body: .json(.init(name: name)))
-        _ = try resp.ok
-    }
-    
     public func listResources() async throws -> [Resource] {
         let resp = try await client.listResources()
         let resources = try resp.ok.body.json

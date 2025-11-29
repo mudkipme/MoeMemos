@@ -19,7 +19,6 @@ public protocol RemoteService: Sendable {
     func archiveMemo(remoteId: String) async throws
     func restoreMemo(remoteId: String) async throws
     func listTags() async throws -> [Tag]
-    func deleteTag(name: String) async throws
     func listResources() async throws -> [Resource]
     func createResource(filename: String, data: Data, type: String, memoRemoteId: String?) async throws -> Resource
     func deleteResource(remoteId: String) async throws

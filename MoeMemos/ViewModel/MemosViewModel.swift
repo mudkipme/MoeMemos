@@ -84,16 +84,6 @@ import Factory
         updateMemo(response)
         try await loadTags()
     }
-    
-    @MainActor
-    func deleteTag(name: String) async throws {
-        _ = try await service.deleteTag(name: name)
-        
-        tags.removeAll { tag in
-            tag.name == name
-        }
-        nestedTags = NestedTag.fromTagList(tags.map { $0.name })
-    }
 
     @MainActor
     func deleteMemo(remoteId: String) async throws {

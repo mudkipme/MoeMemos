@@ -44,14 +44,6 @@ struct Sidebar: View {
                 OutlineGroup(memosViewModel.nestedTags, children: \.children) { item in
                     NavigationLink(value: Route.tag(Tag(name: item.fullName))) {
                         Label(item.name, systemImage: "number")
-                    }.contextMenu {
-                        Button(role: .destructive) {
-                            Task {
-                                try await memosViewModel.deleteTag(name: item.fullName)
-                            }
-                        } label: {
-                            Label("memo.delete", systemImage: "trash")
-                        }
                     }
                 }
             } header: {
