@@ -46,6 +46,20 @@ public struct AddAccountView: View {
                         }
                     }
                 }
+                
+                NavigationLink(value: AddAccountRouter.addBlinkoAccount) {
+                    HStack {
+                        Image(systemName: "face.smiling")
+                        VStack(alignment: .leading) {
+                            Text("account.add-blinko-account")
+                                .foregroundStyle(.primary)
+                                .font(.headline)
+                            Text("account.blinko-account-description")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
             }
             .toolbar {
                 if !accountManager.accounts.isEmpty {
@@ -61,6 +75,8 @@ public struct AddAccountView: View {
                 switch router {
                 case .addMemosAccount:
                     AddMemosAccountView(dismiss: dismiss)
+                case .addBlinkoAccount:
+                    AddBlinkoAccountView(dismiss: dismiss)
                 }
             }
         }
