@@ -43,8 +43,8 @@ import Factory
     
     @MainActor
     func loadTags() async throws {
-        tags = try await service.listTags()
-        nestedTags = NestedTag.fromTagList(tags.map { $0.name })
+        tags = try await service.listTags().sorted { $0.name.lowercased() < $1.name.lowercased() }
+        nestedTags = NestedTag.fromTagList(tags.map { $0.name }).sorted { $0.name.lowercased() < $1.name.lowercased() }
     }
     
     @MainActor
