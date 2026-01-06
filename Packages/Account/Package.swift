@@ -22,7 +22,7 @@ let package = Package(
         .package(name: "DesignSystem", path: "../DesignSystem"),
         .package(name: "Env", path: "../Env"),
         .package(url: "https://github.com/evgenyneu/keychain-swift", from: "21.0.0"),
-        .package(url: "https://github.com/hmlongco/Factory", from: "2.3.2")
+        .package(url: "https://github.com/hmlongco/Factory", from: "2.5.3")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
