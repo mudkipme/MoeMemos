@@ -12,7 +12,7 @@ import KeychainSwift
 import Models
 import Account
 import UniformTypeIdentifiers
-import Markdown
+import MemoKit
 
 class ShareViewController: SLComposeServiceViewController {
     
@@ -104,10 +104,7 @@ class ShareViewController: SLComposeServiceViewController {
     }
     
     private func extractCustomTags(from markdownText: String) -> [String] {
-        let document = Document(parsing: markdownText)
-        var tagVisitor = TagVisitor()
-        document.accept(&tagVisitor)
-        return tagVisitor.tags
+        MemoTagExtractor.extract(from: markdownText)
     }
 }
 

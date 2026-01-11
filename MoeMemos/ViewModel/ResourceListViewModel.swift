@@ -9,6 +9,7 @@ import Foundation
 import Account
 import Models
 import Factory
+import MemoKit
 
 @Observable class ResourceListViewModel: ResourceManager {
     @ObservationIgnored

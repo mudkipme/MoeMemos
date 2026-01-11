@@ -1,24 +1,21 @@
-//
-//  Attachment.swift
-//  MoeMemos
-//
-//  Created by Mudkip on 2022/11/14.
-//
-
 import SwiftUI
 import Models
 import Account
+import DesignSystem
 
-struct Attachment: View {
-    let resource: Resource
-    @State var showingAttachment = false
+public struct Attachment: View {
+    public let resource: Resource
     @Environment(AccountManager.self) private var memosManager: AccountManager
     @State private var downloadedURL: URL?
     @State private var downloadError: Error?
     @State private var showingErrorToast = false
     @State private var downloading = false
-    
-    var body: some View {
+
+    public init(resource: Resource) {
+        self.resource = resource
+    }
+
+    public var body: some View {
         Button {
             Task {
                 do {

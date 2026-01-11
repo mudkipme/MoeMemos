@@ -1,30 +1,21 @@
-// Copyright (C) 2023 Thomas Ricouard
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 import QuickLook
 import SwiftUI
 import UIKit
 
-struct QuickLookPreview: UIViewControllerRepresentable {
-  let selectedURL: URL
-  let urls: [URL]
+public struct QuickLookPreview: UIViewControllerRepresentable {
+  public let selectedURL: URL
+  public let urls: [URL]
 
-  func makeUIViewController(context _: Context) -> UIViewController {
+  public init(selectedURL: URL, urls: [URL]) {
+    self.selectedURL = selectedURL
+    self.urls = urls
+  }
+
+  public func makeUIViewController(context _: Context) -> UIViewController {
     return AppQLPreviewController(selectedURL: selectedURL, urls: urls)
   }
 
-  func updateUIViewController(
+  public func updateUIViewController(
     _: UIViewController, context _: Context
   ) {}
 }
@@ -78,7 +69,7 @@ extension AppQLPreviewController: QLPreviewControllerDelegate {
           self.dismiss(animated: true)
       }
   }
-    
+
   nonisolated func previewControllerDidDismiss(_ controller: QLPreviewController) {
       DispatchQueue.main.async {
           self.dismiss(animated: true)
@@ -86,7 +77,9 @@ extension AppQLPreviewController: QLPreviewControllerDelegate {
   }
 }
 
-struct TransparentBackground: UIViewControllerRepresentable {
+public struct TransparentBackground: UIViewControllerRepresentable {
+  public init() {}
+
   public func makeUIViewController(context _: Context) -> UIViewController {
     return TransparentController()
   }

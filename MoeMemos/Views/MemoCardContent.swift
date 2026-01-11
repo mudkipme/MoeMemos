@@ -9,6 +9,7 @@ import SwiftUI
 @preconcurrency import MarkdownUI
 import Models
 import Account
+import MemoKit
 
 @MainActor
 struct MemoCardContent: View {
