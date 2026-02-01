@@ -175,10 +175,10 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func getCurrentUser() async throws -> User {
-        let resp = try await client.AuthService_GetCurrentSession()
+        let resp = try await client.AuthService_GetCurrentUser()
         
         let json = try resp.ok.body.json
-        guard let user = json.user else {
+        guard let user = json.user?.value1 else {
             throw MoeMemosError.notLogin
         }
         

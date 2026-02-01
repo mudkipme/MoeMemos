@@ -3,7 +3,7 @@ Moe Memos
 
 [![justforfunnoreally.dev badge](https://img.shields.io/badge/justforfunnoreally-dev-9ff)](https://justforfunnoreally.dev)
 
-<img alt="Moe Memos" src="https://memos.littledaemon.dev/memos.png" width="160" height="160" />
+<img alt="Moe Memos" src="https://memos.moe/memos.png" width="160" height="160" />
 
 **Moe Memos** is an app to help you capture thoughts and ideas.
 
@@ -13,13 +13,13 @@ Moe Memos
 
 ## Installation
 
-[![Download Moe Memos on the App Store](https://memos.littledaemon.dev/app-store-badge.svg)](https://apps.apple.com/app/moe-memos/id1643902185)
+[![Download Moe Memos on the App Store](https://memos.moe/app-store-badge.svg)](https://apps.apple.com/app/moe-memos/id1643902185)
 
 Moe Memos is available on App Store for free. You can also build this app with Xcode and run on your devices. iOS 15 or higher is required.
 
 ## Features
 
-![Screenshot](https://memos.littledaemon.dev/screenshot.png)
+![Screenshot](https://memos.moe/screenshot.png)
 
 - Write memos like tweeting to yourself
 - Sync with your own ✍️memos server
