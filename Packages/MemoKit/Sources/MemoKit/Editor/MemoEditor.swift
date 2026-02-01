@@ -35,63 +35,21 @@ public struct MemoEditor: View {
 
     @ViewBuilder
     private func toolbar() -> some View {
-        VStack(spacing: 0) {
-            Divider()
-            HStack(alignment: .center) {
-                if !availableTags.isEmpty {
-                    ZStack {
-                        Menu {
-                            ForEach(availableTags) { tag in
-                                Button(tag.name) {
-                                    insert(tag: tag)
-                                }
-                            }
-                        } label: {
-                            // On iOS 16, the position of menu label is unstable after keyboard change,
-                            // So we use a transparent menu label here
-                            Color.clear.frame(width: 15)
-                        }
-                        Button {
-                            // Do nothing, pass through to the menu
-                        } label: {
-                            Image(systemName: "number")
-                        }
-                        .allowsHitTesting(false)
-                    }
-
-                } else {
-                    Button {
-                        insert(tag: nil)
-                    } label: {
-                        Image(systemName: "number")
-                    }
-                }
-
-                Button {
-                    toggleTodoItem()
-                } label: {
-                    Image(systemName: "checkmark.square")
-                }
-
-                Button {
-                    showingPhotoPicker = true
-                } label: {
-                    Image(systemName: "photo.on.rectangle")
-                }
-
-                Button {
-                    showingImagePicker = true
-                } label: {
-                    Image(systemName: "camera")
-                }
-
-                Spacer()
+        MemoEditorToolbar(
+            tags: availableTags,
+            onInsertTag: { tag in
+                insert(tag: tag)
+            },
+            onToggleTodo: {
+                toggleTodoItem()
+            },
+            onPickPhotos: {
+                showingPhotoPicker = true
+            },
+            onPickCamera: {
+                showingImagePicker = true
             }
-            .frame(height: 20)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(.ultraThinMaterial)
-        }
+        )
     }
 
     @ViewBuilder
@@ -112,8 +70,9 @@ public struct MemoEditor: View {
                     .padding(.horizontal)
                 MemoEditorResourceView(viewModel: viewModel)
             }
-            .padding(.bottom, 40)
-            toolbar()
+            .safeAreaInset(edge: .bottom) {
+                toolbar()
+            }
         }
 
         .onAppear {
