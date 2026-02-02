@@ -2,6 +2,7 @@ import Foundation
 import UIKit
 import PhotosUI
 import SwiftUI
+import UniformTypeIdentifiers
 import Markdown
 import Account
 import Models
@@ -25,6 +26,27 @@ import Factory
     public func upload(image: UIImage) async throws {
         guard let data = image.jpegData(compressionQuality: 0.8) else { throw MoeMemosError.invalidParams }
         let response = try await service.createResource(filename: "\(UUID().uuidString).jpg", data: data, type: "image/jpeg", memoRemoteId: nil)
+        resourceList.append(response)
+    }
+
+    public func upload(fileURL: URL) async throws {
+        let accessed = fileURL.startAccessingSecurityScopedResource()
+        defer {
+            if accessed {
+                fileURL.stopAccessingSecurityScopedResource()
+            }
+        }
+
+        let resourceValues = try? fileURL.resourceValues(forKeys: [.contentTypeKey, .nameKey])
+        let filename = resourceValues?.name ?? fileURL.lastPathComponent
+        let mimeType = resourceValues?.contentType?.preferredMIMEType ?? "application/octet-stream"
+        let data = try Data(contentsOf: fileURL)
+        let response = try await service.createResource(
+            filename: filename.isEmpty ? "\(UUID().uuidString).dat" : filename,
+            data: data,
+            type: mimeType,
+            memoRemoteId: nil
+        )
         resourceList.append(response)
     }
 

@@ -33,6 +33,8 @@ public struct Attachment: View {
             HStack {
                 Image(systemName: "paperclip")
                 Text(resource.filename)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
             }
         }
         .buttonStyle(BorderlessButtonStyle())

@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import UniformTypeIdentifiers
 import Models
 import Account
 import DesignSystem
@@ -24,6 +25,7 @@ public struct MemoEditor: View {
 
     @State private var showingPhotoPicker = false
     @State private var showingImagePicker = false
+    @State private var showingFilePicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
     @State private var availableTags: [Tag] = []
@@ -48,6 +50,9 @@ public struct MemoEditor: View {
             },
             onPickCamera: {
                 showingImagePicker = true
+            },
+            onPickFiles: {
+                showingFilePicker = true
             }
         )
     }
@@ -153,6 +158,22 @@ public struct MemoEditor: View {
                         }
                     }
                 }
+                .fileImporter(
+                    isPresented: $showingFilePicker,
+                    allowedContentTypes: [.data],
+                    allowsMultipleSelection: false
+                ) { result in
+                    switch result {
+                    case .success(let urls):
+                        guard let url = urls.first else { return }
+                        Task {
+                            try await upload(fileURL: url)
+                        }
+                    case .failure(let error):
+                        submitError = error
+                        showingErrorToast = true
+                    }
+                }
         }
     }
 
@@ -179,6 +200,18 @@ public struct MemoEditor: View {
             for image in images {
                 try await viewModel.upload(image: image)
             }
+            submitError = nil
+        } catch {
+            submitError = error
+            showingErrorToast = true
+        }
+        viewModel.imageUploading = false
+    }
+
+    private func upload(fileURL: URL) async throws {
+        do {
+            viewModel.imageUploading = true
+            try await viewModel.upload(fileURL: fileURL)
             submitError = nil
         } catch {
             submitError = error
