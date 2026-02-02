@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
-import QuickLook
 import Account
+import MemoKit
+import DesignSystem
 
 struct ImageInfo: Identifiable {
     let url: URL

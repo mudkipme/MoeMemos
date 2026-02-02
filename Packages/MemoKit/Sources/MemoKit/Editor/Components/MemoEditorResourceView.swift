@@ -1,15 +1,9 @@
-//
-//  MemoInputResourceView.swift
-//  MoeMemos
-//
-//  Created by Mudkip on 2023/1/24.
-//
-
 import SwiftUI
+import Models
 
-struct MemoInputResourceView: View {
-    var viewModel: MemoInputViewModel
-    
+struct MemoEditorResourceView: View {
+    var viewModel: MemoEditorViewModel
+
     var body: some View {
         if !viewModel.resourceList.isEmpty || viewModel.imageUploading {
             ScrollView(.horizontal, showsIndicators: false) {
@@ -34,11 +28,5 @@ struct MemoInputResourceView: View {
                 .padding([.leading, .trailing, .bottom])
             }
         }
-    }
-}
-
-struct MemoInputResourceView_Previews: PreviewProvider {
-    static var previews: some View {
-        MemoInputResourceView(viewModel: MemoInputViewModel())
     }
 }

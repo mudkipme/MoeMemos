@@ -10,6 +10,7 @@ import Models
 import Env
 import Account
 import Factory
+import MemoKit
 
 @MainActor
 extension Route {
@@ -40,10 +41,10 @@ extension View {
         sheet(item: sheetDestinations) { destination in
             switch destination {
             case .newMemo:
-                MemoInput(memo: nil)
+                MemoEditorSheet(memo: nil)
                     .withEnvironments()
             case .editMemo(let memo):
-                MemoInput(memo: memo)
+                MemoEditorSheet(memo: memo)
                     .withEnvironments()
             case .addAccount:
                 AddAccountView()
@@ -58,5 +59,29 @@ extension View {
             .environment(Container.shared.appInfo())
             .environment(Container.shared.appPath())
             .environment(Container.shared.memosViewModel())
+    }
+}
+
+@MainActor
+private struct MemoEditorSheet: View {
+    let memo: Memo?
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
+
+    var body: some View {
+        MemoEditor(
+            memo: memo,
+            actions: MemoEditorActions(
+                loadTags: {
+                    try await memosViewModel.loadTags()
+                    return memosViewModel.tags
+                },
+                createMemo: { content, visibility, resources, tags in
+                    try await memosViewModel.createMemo(content: content, visibility: visibility, resources: resources, tags: tags)
+                },
+                editMemo: { remoteId, content, visibility, resources, tags in
+                    try await memosViewModel.editMemo(remoteId: remoteId, content: content, visibility: visibility, resources: resources, tags: tags)
+                }
+            )
+        )
     }
 }

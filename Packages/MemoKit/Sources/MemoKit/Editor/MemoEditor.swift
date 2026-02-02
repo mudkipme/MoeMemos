@@ -1,96 +1,57 @@
-//
-//  MemoInput.swift
-//  MoeMemos
-//
-//  Created by Mudkip on 2022/9/5.
-//
-
 import SwiftUI
 import PhotosUI
 import Models
 import Account
+import DesignSystem
+
+private let listItemSymbolList = ["- [ ] ", "- [x] ", "- [X] ", "* ", "- "]
 
 @MainActor
-struct MemoInput: View {
-    let memo: Memo?
-    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
-    @Environment(AccountViewModel.self) var userState: AccountViewModel
-    @Environment(AccountManager.self) var accountManager: AccountManager
-    @State private var viewModel = MemoInputViewModel()
+public struct MemoEditor: View {
+    public let memo: Memo?
+    public let actions: MemoEditorActions
+
+    @Environment(AccountViewModel.self) private var userState
+    @Environment(AccountManager.self) private var accountManager
+    @State private var viewModel = MemoEditorViewModel()
 
     @State private var text = ""
     @State private var selection: Range<String.Index>? = nil
     @AppStorage("draft") private var draft = ""
-    
+
     @FocusState private var focused: Bool
-    @Environment(\.dismiss) var dismiss
-    
+    @Environment(\.dismiss) private var dismiss
+
     @State private var showingPhotoPicker = false
     @State private var showingImagePicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
-    
+    @State private var availableTags: [Tag] = []
+
+    public init(memo: Memo?, actions: MemoEditorActions) {
+        self.memo = memo
+        self.actions = actions
+    }
+
     @ViewBuilder
     private func toolbar() -> some View {
-        VStack(spacing: 0) {
-            Divider()
-            HStack(alignment: .center) {
-                if !memosViewModel.tags.isEmpty {
-                    ZStack {
-                        Menu {
-                            ForEach(memosViewModel.tags) { tag in
-                                Button(tag.name) {
-                                    insert(tag: tag)
-                                }
-                            }
-                        } label: {
-                            // On iOS 16, the position of menu label is unstable after keyboard change,
-                            // So we use a transparent menu label here
-                            Color.clear.frame(width: 15)
-                        }
-                        Button {
-                            // Do nothing, pass through to the menu
-                        } label: {
-                            Image(systemName: "number")
-                        }
-                        .allowsHitTesting(false)
-                    }
-                    
-                } else {
-                    Button {
-                        insert(tag: nil)
-                    } label: {
-                        Image(systemName: "number")
-                    }
-                }
-                
-                Button {
-                    toggleTodoItem()
-                } label: {
-                    Image(systemName: "checkmark.square")
-                }
-                
-                Button {
-                    showingPhotoPicker = true
-                } label: {
-                    Image(systemName: "photo.on.rectangle")
-                }
-                
-                Button {
-                    showingImagePicker = true
-                } label: {
-                    Image(systemName: "camera")
-                }
-                
-                Spacer()
+        MemoEditorToolbar(
+            tags: availableTags,
+            onInsertTag: { tag in
+                insert(tag: tag)
+            },
+            onToggleTodo: {
+                toggleTodoItem()
+            },
+            onPickPhotos: {
+                showingPhotoPicker = true
+            },
+            onPickCamera: {
+                showingImagePicker = true
             }
-            .frame(height: 20)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(.ultraThinMaterial)
-        }
+        )
     }
-    
+
     @ViewBuilder
     private func editor() -> some View {
         ZStack(alignment: .bottom) {
@@ -107,12 +68,13 @@ struct MemoInput: View {
                         }
                     }
                     .padding(.horizontal)
-                MemoInputResourceView(viewModel: viewModel)
+                MemoEditorResourceView(viewModel: viewModel)
             }
-            .padding(.bottom, 40)
-            toolbar()
+            .safeAreaInset(edge: .bottom) {
+                toolbar()
+            }
         }
-        
+
         .onAppear {
             if let memo = memo {
                 text = memo.content
@@ -130,7 +92,7 @@ struct MemoInput: View {
         }
         .task {
             do {
-                try await memosViewModel.loadTags()
+                availableTags = try await actions.loadTags()
             } catch {
                 print(error)
             }
@@ -156,7 +118,7 @@ struct MemoInput: View {
                     Text("input.close")
                 }
             }
-            
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     Task {
@@ -179,7 +141,7 @@ struct MemoInput: View {
         .interactiveDismissDisabled()
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             editor()
                 .photosPicker(isPresented: $showingPhotoPicker, selection: $viewModel.photos)
@@ -193,7 +155,7 @@ struct MemoInput: View {
                 }
         }
     }
-    
+
     private func upload(images: [PhotosPickerItem]) async throws {
         do {
             viewModel.imageUploading = true
@@ -210,7 +172,7 @@ struct MemoInput: View {
         }
         viewModel.imageUploading = false
     }
-    
+
     private func upload(images: [UIImage]) async throws {
         do {
             viewModel.imageUploading = true
@@ -224,16 +186,16 @@ struct MemoInput: View {
         }
         viewModel.imageUploading = false
     }
-    
+
     private func saveMemo() async throws {
         viewModel.saving = true
         let tags = viewModel.extractCustomTags(from: text)
-        
+
         do {
             if let memo = memo, let remoteId = memo.remoteId {
-                try await memosViewModel.editMemo(remoteId: remoteId, content: text, visibility: viewModel.visibility, resources: viewModel.resourceList, tags: tags)
+                try await actions.editMemo(remoteId, text, viewModel.visibility, viewModel.resourceList, tags)
             } else {
-                try await memosViewModel.createMemo(content: text, visibility: viewModel.visibility, resources: viewModel.resourceList, tags: tags)
+                try await actions.createMemo(text, viewModel.visibility, viewModel.resourceList, tags)
                 draft = ""
             }
             text = ""
@@ -245,11 +207,11 @@ struct MemoInput: View {
         }
         viewModel.saving = false
     }
-    
+
     private var privacyMenu: some View {
       Menu {
         Section("input.visibility") {
-        ForEach(accountManager.currentService?.memoVisibilities() ?? [.private], id: \.self) { visibility in
+        ForEach(availableVisibilities, id: \.self) { visibility in
             Button {
               viewModel.visibility = visibility
             } label: {
@@ -270,23 +232,27 @@ struct MemoInput: View {
         )
       }
     }
-    
+
+    private var availableVisibilities: [MemoVisibility] {
+        accountManager.currentService?.memoVisibilities() ?? [.private]
+    }
+
     private func insert(tag: Tag?) {
         let tagText = "#\(tag?.name ?? "") "
         guard let selection = selection else {
             text += tagText
             return
         }
-        
+
         text = text.replacingCharacters(in: selection, with: tagText)
         let index = text.index(selection.lowerBound, offsetBy: tagText.count)
         self.selection = index..<text.index(selection.lowerBound, offsetBy: tagText.count)
     }
-    
+
     private func toggleTodoItem() {
         let currentText = text
         guard let currentSelection = selection else { return }
-        
+
         let contentBefore = currentText[currentText.startIndex..<currentSelection.lowerBound]
         let lastLineBreak = contentBefore.lastIndex(of: "\n")
         let nextLineBreak = currentText[currentSelection.lowerBound...].firstIndex(of: "\n") ?? currentText.endIndex
@@ -296,35 +262,35 @@ struct MemoInput: View {
         } else {
             currentLine = currentText[currentText.startIndex..<nextLineBreak]
         }
-    
+
         let contentBeforeCurrentLine = currentText[currentText.startIndex..<currentLine.startIndex]
         let contentAfterCurrentLine = currentText[nextLineBreak..<currentText.endIndex]
-        
+
         for prefixStr in listItemSymbolList {
             if (!currentLine.hasPrefix(prefixStr)) {
                 continue
             }
-            
+
             if prefixStr == "- [ ] " {
                 text = contentBeforeCurrentLine + "- [x] " + currentLine[currentLine.index(currentLine.startIndex, offsetBy: prefixStr.count)..<currentLine.endIndex] + contentAfterCurrentLine
                 return
             }
-            
+
             let offset = "- [ ] ".count - prefixStr.count
             text = contentBeforeCurrentLine + "- [ ] " + currentLine[currentLine.index(currentLine.startIndex, offsetBy: prefixStr.count)..<currentLine.endIndex] + contentAfterCurrentLine
             selection = text.index(currentSelection.lowerBound, offsetBy: offset)..<text.index(currentSelection.upperBound, offsetBy: offset)
             return
         }
-        
+
         text = contentBeforeCurrentLine + "- [ ] " + currentLine + contentAfterCurrentLine
         selection = text.index(currentSelection.lowerBound, offsetBy: "- [ ] ".count)..<text.index(currentSelection.upperBound, offsetBy: "- [ ] ".count)
     }
-    
+
     private func shouldChangeText(in range: Range<String.Index>, replacementText text: String) -> Bool {
         if text != "\n" || range.upperBound != range.lowerBound {
             return true
         }
-        
+
         let currentText = self.text
         let contentBefore = currentText[currentText.startIndex..<range.lowerBound]
         let lastLineBreak = contentBefore.lastIndex(of: "\n")
@@ -335,16 +301,16 @@ struct MemoInput: View {
         } else {
             currentLine = currentText[currentText.startIndex..<nextLineBreak]
         }
-        
+
         for prefixStr in listItemSymbolList {
             if (!currentLine.hasPrefix(prefixStr)) {
                 continue
             }
-            
+
             if currentLine.count <= prefixStr.count || currentText.index(currentLine.startIndex, offsetBy: prefixStr.count) >= range.lowerBound {
                 break
             }
-            
+
             self.text = currentText[currentText.startIndex..<range.lowerBound] + "\n" + prefixStr + currentText[range.upperBound..<currentText.endIndex]
             selection = self.text.index(range.lowerBound, offsetBy: prefixStr.count + 1)..<self.text.index(range.upperBound, offsetBy: prefixStr.count + 1)
             return false

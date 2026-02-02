@@ -1,30 +1,23 @@
-//
-//  ResourceCard.swift
-//  MoeMemos
-//
-//  Created by Mudkip on 2022/9/11.
-//
-
 import SwiftUI
 import Models
 import Account
+import DesignSystem
 
 @MainActor
-struct ResourceCard: View {
-    let resource: Resource
-    let resourceManager: ResourceManager
-    
-    init(resource: Resource, resourceManager: ResourceManager) {
+public struct ResourceCard: View {
+    private let resource: Resource
+    private let resourceManager: ResourceManager
+
+    public init(resource: Resource, resourceManager: ResourceManager) {
         self.resource = resource
         self.resourceManager = resourceManager
     }
-    
-    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
+
     @Environment(AccountManager.self) private var memosManager: AccountManager
     @State private var imagePreviewURL: URL?
     @State private var downloadedURL: URL?
-    
-    var body: some View {
+
+    public var body: some View {
         Color.clear
             .aspectRatio(1, contentMode: .fit)
             .overlay {
@@ -58,7 +51,7 @@ struct ResourceCard: View {
                     .background(TransparentBackground())
             }
     }
-    
+
     @ViewBuilder
     func menu(for resource: Resource) -> some View {
         Button(role: .destructive, action: {
