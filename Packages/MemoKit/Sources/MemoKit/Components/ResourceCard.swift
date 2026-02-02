@@ -1,6 +1,7 @@
 import SwiftUI
 import Models
 import Account
+import DesignSystem
 
 @MainActor
 public struct ResourceCard: View {

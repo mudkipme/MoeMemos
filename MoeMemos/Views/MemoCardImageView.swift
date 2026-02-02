@@ -8,6 +8,7 @@
 import SwiftUI
 import Account
 import MemoKit
+import DesignSystem
 
 struct ImageInfo: Identifiable {
     let url: URL
