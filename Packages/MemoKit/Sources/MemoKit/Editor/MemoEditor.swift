@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import UniformTypeIdentifiers
 import Models
 import Account
 import DesignSystem
@@ -24,6 +25,7 @@ public struct MemoEditor: View {
 
     @State private var showingPhotoPicker = false
     @State private var showingImagePicker = false
+    @State private var showingFilePicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
     @State private var availableTags: [Tag] = []
@@ -48,6 +50,9 @@ public struct MemoEditor: View {
             },
             onPickCamera: {
                 showingImagePicker = true
+            },
+            onPickFiles: {
+                showingFilePicker = true
             }
         )
     }
@@ -108,6 +113,7 @@ public struct MemoEditor: View {
             }
         }
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
+        .toast(isPresenting: imageUploadingBinding, alertType: .loading)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(memo == nil ? NSLocalizedString("input.compose", comment: "Compose") : NSLocalizedString("input.edit", comment: "Edit"))
         .toolbar {
@@ -153,17 +159,44 @@ public struct MemoEditor: View {
                         }
                     }
                 }
+                .fileImporter(
+                    isPresented: $showingFilePicker,
+                    allowedContentTypes: [.data],
+                    allowsMultipleSelection: false
+                ) { result in
+                    switch result {
+                    case .success(let urls):
+                        guard let url = urls.first else { return }
+                        Task {
+                            try await upload(fileURL: url)
+                        }
+                    case .failure(let error):
+                        submitError = error
+                        showingErrorToast = true
+                    }
+                }
         }
+    }
+
+    private var imageUploadingBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.imageUploading },
+            set: { viewModel.imageUploading = $0 }
+        )
     }
 
     private func upload(images: [PhotosPickerItem]) async throws {
         do {
             viewModel.imageUploading = true
             for item in images {
+                let contentType = item.supportedContentTypes.first
                 let imageData = try await item.loadTransferable(type: Data.self)
-                if let imageData = imageData, let image = UIImage(data: imageData) {
-                    try await viewModel.upload(image: image)
-                }
+                guard let imageData = imageData else { continue }
+
+                let fileExtension = contentType?.preferredFilenameExtension
+                let filename = fileExtension.map { "\(UUID().uuidString).\($0)" } ?? "\(UUID().uuidString).dat"
+                let mimeType = contentType?.preferredMIMEType ?? "application/octet-stream"
+                try await viewModel.upload(data: imageData, filename: filename, mimeType: mimeType)
             }
             submitError = nil
         } catch {
@@ -177,8 +210,21 @@ public struct MemoEditor: View {
         do {
             viewModel.imageUploading = true
             for image in images {
-                try await viewModel.upload(image: image)
+                guard let data = image.jpegData(compressionQuality: 1.0) else { continue }
+                try await viewModel.upload(data: data, filename: "\(UUID().uuidString).jpg", mimeType: "image/jpeg")
             }
+            submitError = nil
+        } catch {
+            submitError = error
+            showingErrorToast = true
+        }
+        viewModel.imageUploading = false
+    }
+
+    private func upload(fileURL: URL) async throws {
+        do {
+            viewModel.imageUploading = true
+            try await viewModel.upload(fileURL: fileURL)
             submitError = nil
         } catch {
             submitError = error

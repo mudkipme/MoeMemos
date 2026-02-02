@@ -7,6 +7,7 @@ struct MemoEditorToolbar: View {
     let onToggleTodo: () -> Void
     let onPickPhotos: () -> Void
     let onPickCamera: () -> Void
+    let onPickFiles: () -> Void
     
     @ViewBuilder
     private var contentView: some View {
@@ -45,6 +46,12 @@ struct MemoEditorToolbar: View {
                 onPickCamera()
             } label: {
                 Image(systemName: "camera")
+            }
+
+            Button {
+                onPickFiles()
+            } label: {
+                Image(systemName: "doc")
             }
             
             Spacer()
