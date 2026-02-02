@@ -23,9 +23,9 @@ import Factory
 
     public init() {}
 
-    public func upload(image: UIImage) async throws {
-        guard let data = image.jpegData(compressionQuality: 0.8) else { throw MoeMemosError.invalidParams }
-        let response = try await service.createResource(filename: "\(UUID().uuidString).jpg", data: data, type: "image/jpeg", memoRemoteId: nil)
+    public func upload(data: Data, filename: String, mimeType: String) async throws {
+        let safeFilename = filename.isEmpty ? "\(UUID().uuidString).dat" : filename
+        let response = try await service.createResource(filename: safeFilename, data: data, type: mimeType, memoRemoteId: nil)
         resourceList.append(response)
     }
 

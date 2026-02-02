@@ -113,6 +113,7 @@ public struct MemoEditor: View {
             }
         }
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
+        .toast(isPresenting: imageUploadingBinding, alertType: .loading)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(memo == nil ? NSLocalizedString("input.compose", comment: "Compose") : NSLocalizedString("input.edit", comment: "Edit"))
         .toolbar {
@@ -177,14 +178,25 @@ public struct MemoEditor: View {
         }
     }
 
+    private var imageUploadingBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.imageUploading },
+            set: { viewModel.imageUploading = $0 }
+        )
+    }
+
     private func upload(images: [PhotosPickerItem]) async throws {
         do {
             viewModel.imageUploading = true
             for item in images {
+                let contentType = item.supportedContentTypes.first
                 let imageData = try await item.loadTransferable(type: Data.self)
-                if let imageData = imageData, let image = UIImage(data: imageData) {
-                    try await viewModel.upload(image: image)
-                }
+                guard let imageData = imageData else { continue }
+
+                let fileExtension = contentType?.preferredFilenameExtension
+                let filename = fileExtension.map { "\(UUID().uuidString).\($0)" } ?? "\(UUID().uuidString).dat"
+                let mimeType = contentType?.preferredMIMEType ?? "application/octet-stream"
+                try await viewModel.upload(data: imageData, filename: filename, mimeType: mimeType)
             }
             submitError = nil
         } catch {
