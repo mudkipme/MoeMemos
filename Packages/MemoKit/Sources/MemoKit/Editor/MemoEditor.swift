@@ -210,7 +210,8 @@ public struct MemoEditor: View {
         do {
             viewModel.imageUploading = true
             for image in images {
-                try await viewModel.upload(image: image)
+                guard let data = image.jpegData(compressionQuality: 1.0) else { continue }
+                try await viewModel.upload(data: data, filename: "\(UUID().uuidString).jpg", mimeType: "image/jpeg")
             }
             submitError = nil
         } catch {
