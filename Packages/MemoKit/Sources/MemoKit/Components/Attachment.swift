@@ -4,14 +4,14 @@ import Account
 import DesignSystem
 
 public struct Attachment: View {
-    public let resource: Resource
+    public let resource: any ResourcePresentable
     @Environment(AccountManager.self) private var memosManager: AccountManager
     @State private var downloadedURL: URL?
     @State private var downloadError: Error?
     @State private var showingErrorToast = false
     @State private var downloading = false
 
-    public init(resource: Resource) {
+    public init(resource: any ResourcePresentable) {
         self.resource = resource
     }
 
@@ -20,8 +20,9 @@ public struct Attachment: View {
             Task {
                 do {
                     downloading = true
+                    guard let url = resource.url else { throw MoeMemosError.invalidParams }
                     if let memos = memosManager.currentService {
-                        downloadedURL = try await memos.download(url: resource.url, mimeType: resource.mimeType)
+                        downloadedURL = try await memos.download(url: url, mimeType: resource.mimeType)
                     }
                 } catch {
                     showingErrorToast = true

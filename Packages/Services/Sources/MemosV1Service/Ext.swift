@@ -42,14 +42,14 @@ extension MemosV1Resource {
         if let s = self.size, let s = Int(s) {
             size = s
         }
-        
+        let remoteId = name
         return Resource(
             filename: filename ?? "",
             size: size,
             mimeType: _type ?? "application/octet-stream",
             createdAt: createTime ?? .now,
             updatedAt: createTime ?? .now,
-            remoteId: name,
+            remoteId: remoteId,
             url: url(for: host)
         )
     }

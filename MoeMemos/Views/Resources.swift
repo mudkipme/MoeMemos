@@ -18,8 +18,8 @@ struct Resources: View {
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columns) {
-                ForEach(viewModel.resourceList) { resource in
-                    ResourceCard(resource: resource, resourceManager: viewModel)
+                ForEach(viewModel.resourceList) { item in
+                    ResourceCard(resource: item, resourceManager: viewModel)
                 }
             }
             .padding()

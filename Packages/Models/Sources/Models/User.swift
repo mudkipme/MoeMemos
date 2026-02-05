@@ -55,7 +55,8 @@ public final class User: UserData {
     public var avatar: UserAvatar? { avatarData.map { .data($0) } }
 }
 
-public actor UserModelActor {
+@MainActor
+public final class UserModelActor {
     public init() {}
     
     public func deleteUser(_ context: ModelContext, accountKey: String) throws {

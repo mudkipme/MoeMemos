@@ -9,6 +9,7 @@ import SwiftUI
 import Account
 import Models
 import Env
+import SwiftData
 
 struct MemosList: View {
     let tag: Tag?
@@ -18,15 +19,15 @@ struct MemosList: View {
     @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
-    @State private var filteredMemoList: [Memo] = []
     
     var body: some View {
         let defaultMemoVisibility = userState.currentUser?.defaultVisibility ?? .private
+        let filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: searchString)
         
         ZStack(alignment: .bottomTrailing) {
-            List(filteredMemoList, id: \.remoteId) { memo in
+            List(filteredMemoList, id: \.id) { item in
                 Section {
-                    MemoCard(memo, defaultMemoVisibility: defaultMemoVisibility)
+                    MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
                 }
             }
             .listStyle(InsetGroupedListStyle())
@@ -67,24 +68,12 @@ struct MemosList: View {
         })
         .searchable(text: $searchString)
         .navigationTitle(tag?.name ?? NSLocalizedString("memo.memos", comment: "Memos"))
-        .onAppear {
-            filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: searchString)
-        }
         .refreshable {
             do {
                 try await memosViewModel.loadMemos()
             } catch {
                 print(error)
             }
-        }
-        .onChange(of: memosViewModel.memoList) { _, newValue in
-            filteredMemoList = filterMemoList(newValue, tag: tag, searchString: searchString)
-        }
-        .onChange(of: tag) { _, newValue in
-            filteredMemoList = filterMemoList(memosViewModel.memoList, tag: newValue, searchString: searchString)
-        }
-        .onChange(of: searchString) { _, newValue in
-            filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: newValue)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             Task {
@@ -95,7 +84,7 @@ struct MemosList: View {
         }
     }
     
-    private func filterMemoList(_ memoList: [Memo], tag: Tag?, searchString: String) -> [Memo] {
+    private func filterMemoList(_ memoList: [StoredMemo], tag: Tag?, searchString: String) -> [StoredMemo] {
         let pinned = memoList.filter { $0.pinned == true }
         let nonPinned = memoList.filter { !($0.pinned == true) }
         var fullList = pinned + nonPinned

@@ -71,7 +71,7 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func listWorkspaceMemos(pageSize: Int, pageToken: String?) async throws -> (list: [Memo], nextPageToken: String?) {
-        let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: pageToken))
+        let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: pageToken, filter: "visibility in [\"PUBLIC\", \"PROTECTED\"]"))
         let data = try resp.ok.body.json
         return (data.memos?.map { $0.toMemo(host: hostURL) } ?? [], data.nextPageToken)
     }

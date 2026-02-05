@@ -10,17 +10,18 @@ import UniformTypeIdentifiers
 import MarkdownUI
 import Models
 import Env
+import SwiftData
 
 @MainActor
 struct MemoCard: View {
-    let memo: Memo
+    let memo: StoredMemo
     let defaultMemoVisilibity: MemoVisibility?
     
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @Environment(AppPath.self) private var appPath
     @State private var showingDeleteConfirmation = false
     
-    init(_ memo: Memo, defaultMemoVisibility: MemoVisibility) {
+    init(_ memo: StoredMemo, defaultMemoVisibility: MemoVisibility) {
         self.memo = memo
         self.defaultMemoVisilibity = defaultMemoVisibility
     }
@@ -65,8 +66,7 @@ struct MemoCard: View {
         .confirmationDialog("memo.delete.confirm", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("memo.action.ok", role: .destructive) {
                 Task {
-                    guard let remoteId = memo.remoteId else { return }
-                    try await memosViewModel.deleteMemo(remoteId: remoteId)
+                    try await memosViewModel.deleteMemo(id: memo.id)
                 }
             }
             Button("memo.action.cancel", role: .cancel) {}
@@ -78,8 +78,7 @@ struct MemoCard: View {
         Button {
             Task {
                 do {
-                    guard let remoteId = memo.remoteId else { return }
-                    try await memosViewModel.updateMemoOrganizer(remoteId: remoteId, pinned: !(memo.pinned == true))
+                    try await memosViewModel.updateMemoOrganizer(id: memo.id, pinned: !(memo.pinned == true))
                 } catch {
                     print(error)
                 }
@@ -92,7 +91,7 @@ struct MemoCard: View {
             }
         }
         Button {
-            appPath.presentedSheet = .editMemo(memo)
+            appPath.presentedSheet = .editMemo(memo.id)
         } label: {
             Label("memo.edit", systemImage: "pencil")
         }
@@ -102,8 +101,7 @@ struct MemoCard: View {
         Button(role: .destructive, action: {
             Task {
                 do {
-                    guard let remoteId = memo.remoteId else { return }
-                    try await memosViewModel.archiveMemo(remoteId: remoteId)
+                    try await memosViewModel.archiveMemo(id: memo.id)
                 } catch {
                     print(error)
                 }
@@ -122,8 +120,8 @@ struct MemoCard: View {
         do {
             guard var node = configuration.node else { return }
             node.checkbox = configuration.isCompleted ? .unchecked : .checked
-            guard let remoteId = memo.remoteId else { return }
-            try await memosViewModel.editMemo(remoteId: remoteId, content: node.root.format(), visibility: memo.visibility, resources: memo.resources, tags: nil)
+            let resourceIds = memo.resources.filter { !$0.isDeleted }.map(\.id)
+            try await memosViewModel.editMemo(id: memo.id, content: node.root.format(), visibility: memo.visibility, resources: resourceIds, tags: nil)
         } catch {
             print(error)
         }

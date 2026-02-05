@@ -15,19 +15,22 @@ import MemoKit
 struct MemoCardContent: View {
     private enum MemoResource: Identifiable {
         case images([ImageInfo])
-        case attachment(Resource)
+        case attachment(any ResourcePresentable)
         
         var id: String {
             switch self {
             case .images(let pairs):
                 return pairs.map { $0.url.absoluteString }.joined(separator: ",")
             case .attachment(let resource):
-                return "\(resource.remoteId ?? "")"
+                if let url = resource.url {
+                    return url.absoluteString
+                }
+                return "\(resource.filename)|\(resource.createdAt.timeIntervalSince1970)"
             }
         }
     }
 
-    let memo: Memo
+    let memo: any MemoPresentable
     let toggleTaskItem: ((TaskListMarkerConfiguration) async -> Void)?
     @Environment(\.colorScheme) var colorScheme
     @Environment(AccountManager.self) private var memosManager: AccountManager
@@ -62,7 +65,7 @@ struct MemoCardContent: View {
     
     private func resources() -> [MemoResource] {
         var attachments = [MemoResource]()
-        let resourceList = memo.resources
+        let resourceList = memo.attachments
         let imageResources = resourceList.filter { resource in
             resource.mimeType.hasPrefix("image/") == true
         }
@@ -71,7 +74,10 @@ struct MemoCardContent: View {
         }
         
         if !imageResources.isEmpty {
-            attachments.append(.images(imageResources.map { ImageInfo(url: $0.url, mimeType: $0.mimeType) }))
+            attachments.append(.images(imageResources.compactMap { resource in
+                guard let url = resource.url else { return nil }
+                return ImageInfo(url: url, mimeType: resource.mimeType)
+            }))
         }
         
         attachments += otherResources.map { .attachment($0) }

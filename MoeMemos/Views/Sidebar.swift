@@ -17,6 +17,13 @@ struct Sidebar: View {
     @Binding var selection: Route?
 
     var body: some View {
+        let isLocalAccount = accountManager.currentAccount.map { account in
+            if case .local = account {
+                return true
+            }
+            return false
+        } ?? false
+
         List(selection: UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .vision ? $selection : nil) {
             Stats()
                 .listRowSeparator(.hidden)
@@ -27,8 +34,10 @@ struct Sidebar: View {
                 NavigationLink(value: Route.memos) {
                     Label("memo.memos", systemImage: "rectangle.grid.1x2")
                 }
-                NavigationLink(value: Route.explore) {
-                    Label("explore", systemImage: "house")
+                if !isLocalAccount {
+                    NavigationLink(value: Route.explore) {
+                        Label("explore", systemImage: "house")
+                    }
                 }
                 NavigationLink(value: Route.resources) {
                     Label("resources", systemImage: "photo.on.rectangle")

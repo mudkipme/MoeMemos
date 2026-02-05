@@ -1,6 +1,7 @@
 import Foundation
+import SwiftData
 
 public protocol ResourceManager {
     @MainActor
-    func deleteResource(remoteId: String) async throws
+    func deleteResource(id: PersistentIdentifier) async throws
 }

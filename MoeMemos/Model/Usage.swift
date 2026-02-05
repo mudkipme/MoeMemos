@@ -24,7 +24,7 @@ struct DailyUsageStat: Identifiable {
         }.reversed()
     }()
     
-    static func calculateMatrix(memoList: [Memo]) -> [DailyUsageStat] {
+    static func calculateMatrix<M: MemoPresentable>(memoList: [M]) -> [DailyUsageStat] {
         var result = DailyUsageStat.initialMatrix
         var countDict = [String: Int]()
         

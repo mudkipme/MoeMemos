@@ -94,7 +94,11 @@ public struct MemosAccountView: View {
         .navigationTitle("account.account-detail")
         .task {
             guard let account = account else { return }
-            user = try? await account.remoteService()?.getCurrentUser()
+            if let cached = accountViewModel.users.first(where: { $0.accountKey == accountKey }) {
+                user = cached
+            } else {
+                user = try? await account.toUser()
+            }
         }
         .task {
             guard let account = account else { return }

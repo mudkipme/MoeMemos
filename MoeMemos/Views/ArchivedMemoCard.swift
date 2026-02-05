@@ -8,16 +8,17 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import Models
+import SwiftData
 
 @MainActor
 struct ArchivedMemoCard: View {
-    let memo: Memo
+    let memo: StoredMemo
     let archivedViewModel: ArchivedMemoListViewModel
 
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @State private var showingDeleteConfirmation = false
 
-    init(_ memo: Memo, archivedViewModel: ArchivedMemoListViewModel) {
+    init(_ memo: StoredMemo, archivedViewModel: ArchivedMemoListViewModel) {
         self.memo = memo
         self.archivedViewModel = archivedViewModel
     }
@@ -52,8 +53,7 @@ struct ArchivedMemoCard: View {
         .confirmationDialog("memo.delete.confirm", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("memo.action.ok", role: .destructive) {
                 Task {
-                    guard let remoteId = memo.remoteId else { return }
-                    try await archivedViewModel.deleteMemo(remoteId: remoteId)
+                    try await archivedViewModel.deleteMemo(id: memo.id)
                 }
             }
             Button("memo.action.cancel", role: .cancel) {}
@@ -65,8 +65,7 @@ struct ArchivedMemoCard: View {
         Button {
             Task {
                 do {
-                    guard let remoteId = memo.remoteId else { return }
-                    try await archivedViewModel.restoreMemo(remoteId: remoteId)
+                    try await archivedViewModel.restoreMemo(id: memo.id)
                     try await memosViewModel.loadMemos()
                 } catch {
                     print(error)

@@ -10,6 +10,7 @@ import Social
 import SwiftUI
 import KeychainSwift
 import Models
+import SwiftData
 import Account
 import UniformTypeIdentifiers
 import MemoKit
@@ -65,9 +66,10 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
     private func handleShare() async throws {
-        let accountManager = AccountManager()
-        guard let memos = accountManager.currentService else { throw MoeMemosError.notLogin }
-        var resourceList = [Resource]()
+        let accountManager = await MainActor.run { AccountManager(modelContext: AppInfo().modelContext) }
+        let memos = await MainActor.run { accountManager.currentService }
+        guard let memos else { throw MoeMemosError.notLogin }
+        var resourceIds: [PersistentIdentifier] = []
         var contentTextList = [String]()
         contentTextList.append(contentText)
         
@@ -82,8 +84,8 @@ class ShareViewController: SLComposeServiceViewController {
                     }
                     guard let image = image else { throw MoeMemosError.invalidParams }
                     guard let data = image.jpegData(compressionQuality: 0.8) else { throw MoeMemosError.invalidParams }
-                    let response = try await memos.createResource(filename: "\(UUID().uuidString).jpg", data: data, type: "image/jpeg", memoRemoteId: nil)
-                    resourceList.append(response)
+                    let response = try await memos.createResource(filename: "\(UUID().uuidString).jpg", data: data, type: "image/jpeg", memoId: nil)
+                    resourceIds.append(response.id)
                 }
                 
                 
@@ -96,11 +98,11 @@ class ShareViewController: SLComposeServiceViewController {
         }
         
         let content = contentTextList.joined(separator: "\n").trimmingCharacters(in: .whitespaces)
-        if content.isEmpty && resourceList.isEmpty {
+        if content.isEmpty && resourceIds.isEmpty {
             throw MoeMemosError.invalidParams
         }
         let tags = extractCustomTags(from: content)
-        _ = try await memos.createMemo(content: content, visibility: nil, resources: resourceList, tags: tags)
+        _ = try await memos.createMemo(content: content, visibility: nil, resources: resourceIds, tags: tags)
     }
     
     private func extractCustomTags(from markdownText: String) -> [String] {

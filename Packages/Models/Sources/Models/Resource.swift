@@ -7,12 +7,13 @@
 
 import Foundation
 
-public struct Resource: Identifiable, Equatable, Sendable, Hashable {
+public struct Resource: Equatable, Sendable, Hashable {
     public var filename: String
     public var size: Int
     public var mimeType: String
     public var createdAt: Date
     public var updatedAt: Date
+    /// Server identifier. `nil` until the resource is uploaded to the server.
     public var remoteId: String?
     public var url: URL
     
@@ -25,6 +26,4 @@ public struct Resource: Identifiable, Equatable, Sendable, Hashable {
         self.remoteId = remoteId
         self.url = url
     }
-    
-    public var id: String { remoteId ?? "" }
 }

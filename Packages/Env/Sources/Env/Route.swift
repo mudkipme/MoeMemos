@@ -8,6 +8,7 @@
 import Models
 import Observation
 import Factory
+import SwiftData
 
 public enum Route: Hashable {
     case memos
@@ -21,7 +22,7 @@ public enum Route: Hashable {
 
 public enum SheetDestination: Identifiable, Hashable {
     case newMemo
-    case editMemo(Memo)
+    case editMemo(PersistentIdentifier)
     case addAccount
     
     public var id: String {

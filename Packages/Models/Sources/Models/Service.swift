@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 @MainActor
 public protocol RemoteService: Sendable {
@@ -24,4 +25,34 @@ public protocol RemoteService: Sendable {
     func deleteResource(remoteId: String) async throws
     func getCurrentUser() async throws -> User
     func download(url: URL, mimeType: String?) async throws -> URL
+}
+
+/// Local-first service used by the app UI for both Local and Remote accounts.
+/// Identifiers are SwiftData `PersistentIdentifier`s, not server ids.
+@MainActor
+public protocol Service: Sendable {
+    func memoVisibilities() -> [MemoVisibility]
+    func listMemos() async throws -> [StoredMemo]
+    func listArchivedMemos() async throws -> [StoredMemo]
+    func memo(id: PersistentIdentifier) -> StoredMemo?
+
+    func createMemo(content: String, visibility: MemoVisibility?, resources: [PersistentIdentifier], tags: [String]?) async throws -> StoredMemo
+    func updateMemo(id: PersistentIdentifier, content: String?, resources: [PersistentIdentifier]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> StoredMemo
+    func deleteMemo(id: PersistentIdentifier) async throws
+    func archiveMemo(id: PersistentIdentifier) async throws
+    func restoreMemo(id: PersistentIdentifier) async throws
+
+    func listTags() async throws -> [Tag]
+    func listResources() async throws -> [StoredResource]
+    func resource(id: PersistentIdentifier) -> StoredResource?
+    func createResource(filename: String, data: Data, type: String, memoId: PersistentIdentifier?) async throws -> StoredResource
+    func deleteResource(id: PersistentIdentifier) async throws
+
+    func getCurrentUser() async throws -> User
+    func download(url: URL, mimeType: String?) async throws -> URL
+}
+
+@MainActor
+public protocol SyncableService: Sendable {
+    func sync() async throws
 }

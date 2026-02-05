@@ -11,6 +11,7 @@ import Env
 import Account
 import Factory
 import MemoKit
+import SwiftData
 
 @MainActor
 extension Route {
@@ -41,10 +42,10 @@ extension View {
         sheet(item: sheetDestinations) { destination in
             switch destination {
             case .newMemo:
-                MemoEditorSheet(memo: nil)
+                MemoEditorSheet(memoId: nil)
                     .withEnvironments()
-            case .editMemo(let memo):
-                MemoEditorSheet(memo: memo)
+            case .editMemo(let memoId):
+                MemoEditorSheet(memoId: memoId)
                     .withEnvironments()
             case .addAccount:
                 AddAccountView()
@@ -64,10 +65,13 @@ extension View {
 
 @MainActor
 private struct MemoEditorSheet: View {
-    let memo: Memo?
+    let memoId: PersistentIdentifier?
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
 
     var body: some View {
+        let memo = memoId.flatMap { id in
+            (try? memosViewModel.service)?.memo(id: id)
+        }
         MemoEditor(
             memo: memo,
             actions: MemoEditorActions(
@@ -78,8 +82,8 @@ private struct MemoEditorSheet: View {
                 createMemo: { content, visibility, resources, tags in
                     try await memosViewModel.createMemo(content: content, visibility: visibility, resources: resources, tags: tags)
                 },
-                editMemo: { remoteId, content, visibility, resources, tags in
-                    try await memosViewModel.editMemo(remoteId: remoteId, content: content, visibility: visibility, resources: resources, tags: tags)
+                editMemo: { id, content, visibility, resources, tags in
+                    try await memosViewModel.editMemo(id: id, content: content, visibility: visibility, resources: resources, tags: tags)
                 }
             )
         )

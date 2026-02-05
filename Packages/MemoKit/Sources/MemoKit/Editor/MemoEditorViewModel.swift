@@ -3,10 +3,10 @@ import UIKit
 import PhotosUI
 import SwiftUI
 import UniformTypeIdentifiers
-import Markdown
 import Account
 import Models
 import Factory
+import SwiftData
 
 @MainActor
 @Observable public class MemoEditorViewModel: ResourceManager {
@@ -14,11 +14,9 @@ import Factory
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
-    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
+    var service: Service { get throws { try accountManager.mustCurrentService } }
 
-    public var resourceList = [Resource]()
-    public var imageUploading = false
-    public var saving = false
+    public var resourceList = [StoredResource]()
     public var visibility: MemoVisibility = .private
     public var photos: [PhotosPickerItem] = []
 
@@ -27,8 +25,9 @@ import Factory
     public func upload(data: Data, filename: String, mimeType: String) async throws {
         try validateUploadSize(Int64(data.count))
         let safeFilename = filename.isEmpty ? "\(UUID().uuidString).dat" : filename
-        let response = try await service.createResource(filename: safeFilename, data: data, type: mimeType, memoRemoteId: nil)
-        resourceList.append(response)
+        let service = try self.service
+        let stored = try await service.createResource(filename: safeFilename, data: data, type: mimeType, memoId: nil)
+        resourceList.append(stored)
     }
 
     public func upload(fileURL: URL) async throws {
@@ -49,11 +48,10 @@ import Factory
         try await upload(data: data, filename: filename, mimeType: mimeType)
     }
 
-    public func deleteResource(remoteId: String) async throws {
-        _ = try await service.deleteResource(remoteId: remoteId)
-        resourceList = resourceList.filter { resource in
-            resource.remoteId != remoteId
-        }
+    public func deleteResource(id: PersistentIdentifier) async throws {
+        let service = try self.service
+        try await service.deleteResource(id: id)
+        resourceList.removeAll { $0.id == id }
     }
 
     public func extractCustomTags(from markdownText: String) -> [String] {

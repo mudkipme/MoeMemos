@@ -9,6 +9,7 @@ import Foundation
 import AppIntents
 import Account
 import Models
+import SwiftData
 
 struct SaveMemoIntent: AppIntent {
     static let title: LocalizedStringResource = "Save Memo"
@@ -32,15 +33,21 @@ struct SaveMemoIntent: AppIntent {
     
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        guard let service = accountManager.accounts.first(where: { $0.key == account.id })?.remoteService() else { return .result(dialog: "Account not found.") }
+        guard let service = accountManager.service(for: account.id) else { return .result(dialog: "Account not found.") }
         
-        var resources: [Resource] = []
+        var resourceIds: [PersistentIdentifier] = []
         if let attachments = attachments {
             for attachment in attachments {
-                resources.append(try await service.createResource(filename: attachment.filename, data: attachment.data, type: attachment.type?.preferredMIMEType ?? "application/octet-stream", memoRemoteId: nil))
+                let created = try await service.createResource(
+                    filename: attachment.filename,
+                    data: attachment.data,
+                    type: attachment.type?.preferredMIMEType ?? "application/octet-stream",
+                    memoId: nil
+                )
+                resourceIds.append(created.id)
             }
         }
-        _ = try await service.createMemo(content: content, visibility: nil, resources: resources, tags: nil)
+        _ = try await service.createMemo(content: content, visibility: nil, resources: resourceIds, tags: nil)
         return .result(dialog: "Memo saved.")
     }
 }

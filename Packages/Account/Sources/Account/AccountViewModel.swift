@@ -12,6 +12,7 @@ import Factory
 import MemosV1Service
 import MemosV0Service
 
+@MainActor
 @Observable public final class AccountViewModel: @unchecked Sendable {
     @ObservationIgnored private var currentContext: ModelContext
     private var accountManager: AccountManager
@@ -82,7 +83,7 @@ import MemosV0Service
         let user = try await client.getCurrentUser()
         guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
         let account = Account.memosV0(host: hostURL.absoluteString, id: id, accessToken: accessToken)
-        try await userActor.deleteUser(currentContext, accountKey: account.key)
+        try userActor.deleteUser(currentContext, accountKey: account.key)
         try accountManager.add(account: account)
         try await reloadUsers()
     }
@@ -93,14 +94,17 @@ import MemosV0Service
         let user = try await client.getCurrentUser()
         guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
         let account = Account.memosV1(host: hostURL.absoluteString, id: id, accessToken: accessToken)
-        try await userActor.deleteUser(currentContext, accountKey: account.key)
+        try userActor.deleteUser(currentContext, accountKey: account.key)
         try accountManager.add(account: account)
         try await reloadUsers()
     }
 }
 
 public extension Container {
+    @MainActor
     var accountViewModel: Factory<AccountViewModel> {
-        self { AccountViewModel(currentContext: self.appInfo().modelContext, accountManager: self.accountManager()) }.shared
+        self { @MainActor in
+            AccountViewModel(currentContext: self.appInfo().modelContext, accountManager: self.accountManager())
+        }.shared
     }
 }

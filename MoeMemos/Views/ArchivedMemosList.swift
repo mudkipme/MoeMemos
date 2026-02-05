@@ -11,10 +11,10 @@ import Models
 struct ArchivedMemosList: View {
     @State private var viewModel = ArchivedMemoListViewModel()
     @State private var searchString = ""
-    @State private var filteredMemoList: [Memo] = []
 
     var body: some View {
-        List(filteredMemoList, id: \.remoteId) { memo in
+        let filteredMemoList = filterMemoList(viewModel.archivedMemoList)
+        List(filteredMemoList, id: \.id) { memo in
             Section {
                 ArchivedMemoCard(memo, archivedViewModel: viewModel)
             }
@@ -36,18 +36,9 @@ struct ArchivedMemosList: View {
             }
         }
         .searchable(text: $searchString)
-        .onAppear {
-            filteredMemoList = filterMemoList(viewModel.archivedMemoList)
-        }
-        .onChange(of: viewModel.archivedMemoList) { _, newValue in
-            filteredMemoList = filterMemoList(newValue)
-        }
-        .onChange(of: searchString) { _, newValue in
-            filteredMemoList = filterMemoList(viewModel.archivedMemoList)
-        }
     }
     
-    private func filterMemoList(_ memoList: [Memo]) -> [Memo] {
+    private func filterMemoList(_ memoList: [StoredMemo]) -> [StoredMemo] {
         var memoList = memoList
         if !searchString.isEmpty {
             memoList = memoList.filter({ memo in

@@ -18,10 +18,19 @@ import Factory
     @ObservationIgnored public let modelContext: ModelContext
     
     public init() {
-        let container = try! ModelContainer(
-            for: User.self,
-            configurations: .init(groupContainer: .identifier(AppInfo.groupContainerIdentifier))
-        )
+        let fileManager = FileManager.default
+        let groupURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: AppInfo.groupContainerIdentifier)!
+        let storeURL = groupURL.appendingPathComponent("MoeMemos.store", isDirectory: false)
+
+        #if DEBUG
+        let env = ProcessInfo.processInfo.environment
+        if env["MOEMEMOS_WIPE_STORE"] == "1" || ProcessInfo.processInfo.arguments.contains("--wipe-store") {
+            try? fileManager.removeItem(at: storeURL)
+        }
+        #endif
+
+        let configuration = ModelConfiguration(url: storeURL)
+        let container = try! ModelContainer(for: User.self, StoredMemo.self, StoredResource.self, configurations: configuration)
         modelContext = ModelContext(container)
     }
     
