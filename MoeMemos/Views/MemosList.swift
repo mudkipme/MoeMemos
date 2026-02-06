@@ -9,24 +9,28 @@ import SwiftUI
 import Account
 import Models
 import Env
+import DesignSystem
 
 struct MemosList: View {
     let tag: Tag?
 
     @State private var searchString = ""
     @Environment(AppPath.self) private var appPath
-    @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
-    @State private var filteredMemoList: [Memo] = []
+    @State private var manualSyncError: Error?
+    @State private var showingSyncErrorToast = false
     
     var body: some View {
         let defaultMemoVisibility = userState.currentUser?.defaultVisibility ?? .private
+        let filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: searchString)
+        let unsyncedCount = memosViewModel.memoList.filter { $0.syncState != .synced }.count
+        let canSync = ((try? memosViewModel.service) as? SyncableService) != nil
         
         ZStack(alignment: .bottomTrailing) {
-            List(filteredMemoList, id: \.remoteId) { memo in
+            List(filteredMemoList, id: \.id) { item in
                 Section {
-                    MemoCard(memo, defaultMemoVisibility: defaultMemoVisibility)
+                    MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
                 }
             }
             .listStyle(InsetGroupedListStyle())
@@ -48,6 +52,20 @@ struct MemosList: View {
             }
         }
         .toolbar {
+            if canSync {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SyncStatusBadge(syncing: memosViewModel.syncing, unsyncedCount: unsyncedCount) {
+                        Task {
+                            do {
+                                try await memosViewModel.syncNow()
+                            } catch {
+                                manualSyncError = error
+                                showingSyncErrorToast = true
+                            }
+                        }
+                    }
+                }
+            }
             if #available(iOS 26.0, *) {
                 DefaultToolbarItem(kind: .search, placement: .bottomBar)
                 ToolbarSpacer(.flexible, placement: .bottomBar)
@@ -60,32 +78,9 @@ struct MemosList: View {
                 }
             }
         }
-        .overlay(content: {
-            if memosViewModel.loading && !memosViewModel.inited {
-                ProgressView()
-            }
-        })
         .searchable(text: $searchString)
         .navigationTitle(tag?.name ?? NSLocalizedString("memo.memos", comment: "Memos"))
-        .onAppear {
-            filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: searchString)
-        }
-        .refreshable {
-            do {
-                try await memosViewModel.loadMemos()
-            } catch {
-                print(error)
-            }
-        }
-        .onChange(of: memosViewModel.memoList) { _, newValue in
-            filteredMemoList = filterMemoList(newValue, tag: tag, searchString: searchString)
-        }
-        .onChange(of: tag) { _, newValue in
-            filteredMemoList = filterMemoList(memosViewModel.memoList, tag: newValue, searchString: searchString)
-        }
-        .onChange(of: searchString) { _, newValue in
-            filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: newValue)
-        }
+        .toast(isPresenting: $showingSyncErrorToast, alertType: .systemImage("xmark.circle", manualSyncError?.localizedDescription))
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             Task {
                 if memosViewModel.inited {
@@ -95,16 +90,14 @@ struct MemosList: View {
         }
     }
     
-    private func filterMemoList(_ memoList: [Memo], tag: Tag?, searchString: String) -> [Memo] {
+    private func filterMemoList(_ memoList: [StoredMemo], tag: Tag?, searchString: String) -> [StoredMemo] {
         let pinned = memoList.filter { $0.pinned == true }
         let nonPinned = memoList.filter { !($0.pinned == true) }
         var fullList = pinned + nonPinned
         
         if let tag = tag {
             fullList = fullList.filter({ memo in
-                memo.content.contains("#\(tag.name) ") || memo.content.contains("#\(tag.name)/")
-                || memo.content.contains("#\(tag.name)\n")
-                || memo.content.hasSuffix("#\(tag.name)")
+                MemoTagExtractor.extract(from: memo.content).contains(tag.name)
             })
         }
         
@@ -115,5 +108,28 @@ struct MemosList: View {
         }
         
         return fullList
+    }
+}
+
+private struct SyncStatusBadge: View {
+    let syncing: Bool
+    let unsyncedCount: Int
+    let syncAction: () -> Void
+
+    var body: some View {
+        if syncing {
+            HStack(spacing: 5) {
+                ProgressView()
+                    .controlSize(.mini)
+            }
+        } else {
+            Button(action: syncAction) {
+                if unsyncedCount > 0 {
+                    Image(systemName: "icloud.slash")
+                } else {
+                    Image(systemName: "arrow.clockwise")
+                }
+            }
+        }
     }
 }

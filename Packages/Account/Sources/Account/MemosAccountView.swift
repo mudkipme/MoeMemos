@@ -9,10 +9,15 @@ import Foundation
 import SwiftUI
 import Models
 import Env
+import DesignSystem
 
 public struct MemosAccountView: View {
     @State var user: User? = nil
     @State var version: MemosVersion? = nil
+    @State private var pendingUnsyncedMemoCount = 0
+    @State private var showingUnsyncedDeleteConfirmation = false
+    @State private var deleteError: Error?
+    @State private var showingDeleteErrorToast = false
     private let accountKey: String
     @Environment(AccountManager.self) private var accountManager
     @Environment(AccountViewModel.self) private var accountViewModel
@@ -71,30 +76,45 @@ public struct MemosAccountView: View {
                 }
             }
             
-            Section {
-                Button(role: .destructive) {
-                    Task {
-                        guard let account = account else { return }
-                        try await accountViewModel.logout(account: account)
-                        presentationMode.wrappedValue.dismiss()
-                        
-                        if accountManager.currentAccount == nil {
-                            appPath.presentedSheet = .addAccount
+            if isLocalAccount {
+                Section {
+                    Text("Local account cannot be removed.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                Section {
+                    Button(role: .destructive) {
+                        requestDeleteAccount()
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("settings.sign-out")
+                            Spacer()
                         }
-                    }
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("settings.sign-out")
-                        Spacer()
                     }
                 }
             }
         }
         .navigationTitle("account.account-detail")
+        .alert("Delete account?", isPresented: $showingUnsyncedDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete account", role: .destructive) {
+                Task {
+                    await performDeleteAccount()
+                }
+            }
+        } message: {
+            Text("This account has \(pendingUnsyncedMemoCount) unsynced memo(s). Deleting the account will remove all local data for this account and these memo changes will be lost.")
+        }
+        .toast(isPresenting: $showingDeleteErrorToast, alertType: .systemImage("xmark.circle", deleteError?.localizedDescription))
         .task {
             guard let account = account else { return }
-            user = try? await account.remoteService()?.getCurrentUser()
+            if let cached = accountViewModel.users.first(where: { $0.accountKey == accountKey }) {
+                user = cached
+            } else {
+                user = try? await account.toUser()
+            }
         }
         .task {
             guard let account = account else { return }
@@ -110,6 +130,41 @@ public struct MemosAccountView: View {
             }
             guard let hostURL = hostURL else { return }
             version = try? await detectMemosVersion(hostURL: hostURL)
+        }
+    }
+
+    private var isLocalAccount: Bool {
+        guard let account else { return false }
+        if case .local = account {
+            return true
+        }
+        return false
+    }
+
+    private func requestDeleteAccount() {
+        guard let account else { return }
+        let unsyncedCount = accountManager.unsyncedMemoCount(for: account.key)
+        if unsyncedCount > 0 {
+            pendingUnsyncedMemoCount = unsyncedCount
+            showingUnsyncedDeleteConfirmation = true
+            return
+        }
+        Task {
+            await performDeleteAccount()
+        }
+    }
+
+    private func performDeleteAccount() async {
+        guard let account else { return }
+        do {
+            try await accountViewModel.logout(account: account)
+            presentationMode.wrappedValue.dismiss()
+            if accountManager.currentAccount == nil {
+                appPath.presentedSheet = .addAccount
+            }
+        } catch {
+            deleteError = error
+            showingDeleteErrorToast = true
         }
     }
 }

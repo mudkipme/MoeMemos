@@ -67,7 +67,16 @@ extension MemosV0Resource: Identifiable {
         } else {
             updatedAt = .now
         }
-        return Resource(filename: filename, size: size ?? 0, mimeType: self._type ?? "application/octet-stream", createdAt: createdAt, updatedAt: updatedAt, remoteId: String(id), url: self.url(for: host))
+        let remoteId = String(id)
+        return Resource(
+            filename: filename,
+            size: size ?? 0,
+            mimeType: self._type ?? "application/octet-stream",
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            remoteId: remoteId,
+            url: self.url(for: host)
+        )
     }
 }
 

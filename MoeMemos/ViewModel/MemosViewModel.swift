@@ -9,14 +9,16 @@ import Foundation
 import Account
 import Models
 import Factory
+import SwiftData
 
+@MainActor
 @Observable class MemosViewModel {
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
-    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
+    var service: Service { get throws { try accountManager.mustCurrentService } }
 
-    private(set) var memoList: [Memo] = [] {
+    private(set) var memoList: [StoredMemo] = [] {
         didSet {
             matrix = DailyUsageStat.calculateMatrix(memoList: memoList)
         }
@@ -25,77 +27,98 @@ import Factory
     private(set) var nestedTags: [NestedTag] = []
     private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
     private(set) var inited = false
-    private(set) var loading = false
+    private(set) var syncing = false
     
     @MainActor
     func loadMemos() async throws {
-        do {
-            loading = true
-            let response = try await service.listMemos()
-            memoList = response
-            loading = false
-            inited = true
-        } catch {
-            loading = false
-            throw error
+        let service = try self.service
+        memoList = try await service.listMemos()
+        inited = true
+        if service is SyncableService {
+            startBackgroundSync()
         }
     }
     
     @MainActor
     func loadTags() async throws {
+        let service = try self.service
         tags = try await service.listTags()
         nestedTags = NestedTag.fromTagList(tags.map { $0.name })
     }
     
     @MainActor
-    func createMemo(content: String, visibility: MemoVisibility = .private, resources: [Resource]? = nil, tags: [String]?) async throws {
-        let response = try await service.createMemo(content: content, visibility: visibility, resources: resources ?? [], tags: tags)
-        memoList.insert(response, at: 0)
+    func createMemo(content: String, visibility: MemoVisibility = .private, resources: [PersistentIdentifier]? = nil, tags: [String]?) async throws {
+        let service = try self.service
+        let created = try await service.createMemo(content: content, visibility: visibility, resources: resources ?? [], tags: tags)
+        memoList.insert(created, at: 0)
         try await loadTags()
     }
     
     @MainActor
-    private func updateMemo(_ memo: Memo) {
-        for (i, item) in memoList.enumerated() {
-            if memo.remoteId != nil && item.remoteId == memo.remoteId {
-                memoList[i] = memo
-                break
-            }
-        }
+    func updateMemoOrganizer(id: PersistentIdentifier, pinned: Bool) async throws {
+        let service = try self.service
+        _ = try await service.updateMemo(id: id, content: nil, resources: nil, visibility: nil, tags: nil, pinned: pinned)
     }
     
     @MainActor
-    func updateMemoOrganizer(remoteId: String, pinned: Bool) async throws {
-        let response = try await service.updateMemo(remoteId: remoteId, content: nil, resources: nil, visibility: nil, tags: nil, pinned: pinned)
-        updateMemo(response)
-    }
-    
-    @MainActor
-    func archiveMemo(remoteId: String) async throws {
-        try await service.archiveMemo(remoteId: remoteId)
+    func archiveMemo(id: PersistentIdentifier) async throws {
+        let service = try self.service
+        try await service.archiveMemo(id: id)
         memoList = memoList.filter({ memo in
-            memo.remoteId != remoteId
+            memo.id != id
         })
     }
     
     @MainActor
-    func editMemo(remoteId: String, content: String, visibility: MemoVisibility = .private, resources: [Resource]? = nil, tags: [String]?) async throws {
-        let response = try await service.updateMemo(remoteId: remoteId, content: content, resources: resources, visibility: visibility, tags: nil, pinned: nil)
-        updateMemo(response)
+    func editMemo(id: PersistentIdentifier, content: String, visibility: MemoVisibility = .private, resources: [PersistentIdentifier]? = nil, tags: [String]?) async throws {
+        let service = try self.service
+        _ = try await service.updateMemo(id: id, content: content, resources: resources, visibility: visibility, tags: tags, pinned: nil)
         try await loadTags()
     }
 
     @MainActor
-    func deleteMemo(remoteId: String) async throws {
-        _ = try await service.deleteMemo(remoteId: remoteId)
+    func deleteMemo(id: PersistentIdentifier) async throws {
+        let service = try self.service
+        try await service.deleteMemo(id: id)
         memoList = memoList.filter({ memo in
-            memo.remoteId != remoteId
+            memo.id != id
         })
+    }
+
+    @MainActor
+    func syncNow() async throws {
+        guard !syncing else { return }
+        let service = try self.service
+        guard let syncService = service as? SyncableService else { return }
+
+        syncing = true
+        defer {
+            syncing = false
+        }
+
+        try await syncService.sync()
+        memoList = try await service.listMemos()
+        try await loadTags()
+    }
+
+    @MainActor
+    private func startBackgroundSync() {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                try await self.syncNow()
+            } catch {
+                return
+            }
+        }
     }
 }
 
 extension Container {
+    @MainActor
     var memosViewModel: Factory<MemosViewModel> {
-        self { MemosViewModel() }.shared
+        self { @MainActor in
+            MemosViewModel()
+        }.shared
     }
 }

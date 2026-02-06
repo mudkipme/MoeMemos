@@ -10,28 +10,38 @@ import Account
 import Models
 import Factory
 import MemoKit
+import SwiftData
 
+@MainActor
 @Observable class ResourceListViewModel: ResourceManager {
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
-    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
+    @Injected(\.memosViewModel) private var memosViewModel
+    @ObservationIgnored
+    var service: Service { get throws { try accountManager.mustCurrentService } }
 
-    private(set) var resourceList: [Resource] = []
+    private(set) var resourceList: [StoredResource] = []
     
     @MainActor
     func loadResources() async throws {
-        let response = try await service.listResources()
-        resourceList = response.filter({ resource in
-            resource.mimeType.hasPrefix("image/")
-        })
+        let service = try self.service
+        resourceList = try await service.listResources()
+        if service is SyncableService {
+            do {
+                try await memosViewModel.syncNow()
+                resourceList = try await service.listResources()
+            } catch {
+                return
+            }
+        }
+        resourceList = resourceList.filter { $0.mimeType.hasPrefix("image/") }
     }
     
     @MainActor
-    func deleteResource(remoteId: String) async throws {
-        _ = try await service.deleteResource(remoteId: remoteId)
-        resourceList = resourceList.filter({ resource in
-            resource.remoteId != remoteId
-        })
+    func deleteResource(id: PersistentIdentifier) async throws {
+        let service = try self.service
+        try await service.deleteResource(id: id)
+        resourceList.removeAll { $0.id == id }
     }
 }

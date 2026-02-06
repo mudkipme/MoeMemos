@@ -10,28 +10,42 @@ import SwiftUI
 public struct AddAccountView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AccountManager.self) private var accountManager: AccountManager
+    @Environment(AccountViewModel.self) private var accountViewModel: AccountViewModel
     @State private var path: [AddAccountRouter] = []
     
     public init() {}
     
     public var body: some View {
+        let hasLocalAccount = accountManager.accounts.contains { account in
+            if case .local = account {
+                return true
+            }
+            return false
+        }
+
         NavigationStack(path: $path) {
             List {
-//                HStack {
-//                    Image(systemName: "house")
-//                    VStack(alignment: .leading) {
-//                        Text("Add a Local Account")
-//                            .foregroundStyle(.primary)
-//                            .font(.headline)
-//                        Text("On this Device")
-//                            .font(.subheadline)
-//                            .foregroundStyle(.secondary)
-//                    }
-//                }
-//                .onTapGesture {
-//                    try? accountManager.add(account: .local)
-//                    dismiss()
-//                }
+                if !hasLocalAccount {
+                    Button {
+                        Task {
+                            try? accountManager.add(account: .local)
+                            try? await accountViewModel.reloadUsers()
+                            dismiss()
+                        }
+                    } label: {
+                        HStack {
+                            Image(systemName: "house")
+                            VStack(alignment: .leading) {
+                                Text("account.add-local-account")
+                                    .foregroundStyle(.primary)
+                                    .font(.headline)
+                                Text("account.local-account-description")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
                 
                 NavigationLink(value: AddAccountRouter.addMemosAccount) {
                     HStack {

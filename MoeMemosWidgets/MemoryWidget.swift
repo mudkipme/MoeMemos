@@ -59,11 +59,29 @@ struct MemoryProvider: AppIntentTimelineProvider {
 
     @MainActor
     func getMemos(_ frequency: MemoryUpdatePeriodAppEnum) async throws -> [Memo]? {
-        let accountManager = AccountManager()
-        guard let memos = accountManager.currentService else { return nil }
+        let accountManager = await MainActor.run(resultType: AccountManager.self) {
+            AccountManager(modelContext: AppInfo().modelContext)
+        }
+        let memos = await MainActor.run(resultType: (any Service)?.self) {
+            accountManager.currentService
+        }
+        guard let memos else { return nil }
         
         let response = try await memos.listMemos()
-        return [Memo](response.shuffled().prefix(frequency.memosPerDay))
+        let snapshots: [Memo] = response.map { stored in
+            Memo(
+                user: nil,
+                content: stored.content,
+                pinned: stored.pinned,
+                rowStatus: stored.rowStatus,
+                visibility: stored.visibility,
+                resources: stored.resources.compactMap { $0.toResource() },
+                createdAt: stored.createdAt,
+                updatedAt: stored.updatedAt,
+                remoteId: stored.serverId
+            )
+        }
+        return [Memo](snapshots.shuffled().prefix(frequency.memosPerDay))
     }
 }
 

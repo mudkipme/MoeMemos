@@ -35,8 +35,13 @@ struct Provider: AppIntentTimelineProvider {
     
     @MainActor
     func getMatrix() async throws -> [DailyUsageStat]? {
-        let accountManager = AccountManager()
-        guard let memos = accountManager.currentService else {
+        let accountManager = await MainActor.run(resultType: AccountManager.self) {
+            AccountManager(modelContext: AppInfo().modelContext)
+        }
+        let memos = await MainActor.run(resultType: (any Service)?.self) {
+            accountManager.currentService
+        }
+        guard let memos else {
             return nil
         }
         

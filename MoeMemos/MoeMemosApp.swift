@@ -13,6 +13,7 @@ import AppIntents
 import Env
 
 @main
+@MainActor
 struct MoeMemosApp: App {
     @Injected(\.appInfo) private var appInfo
     @Injected(\.accountViewModel) private var userState
@@ -21,9 +22,13 @@ struct MoeMemosApp: App {
     @State private var memosViewModel = MemosViewModel()
 
     init() {
-        AppDependencyManager.shared.add(dependency: Container.shared.accountManager())
-        AppDependencyManager.shared.add(dependency: Container.shared.accountViewModel())
-        AppDependencyManager.shared.add(dependency: Container.shared.appPath())
+        let accountManager = Container.shared.accountManager()
+        let accountViewModel = Container.shared.accountViewModel()
+        let appPath = Container.shared.appPath()
+
+        AppDependencyManager.shared.add(dependency: accountManager)
+        AppDependencyManager.shared.add(dependency: accountViewModel)
+        AppDependencyManager.shared.add(dependency: appPath)
 
         AppShortcuts.updateAppShortcutParameters()
     }

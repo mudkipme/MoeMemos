@@ -17,7 +17,8 @@ let package = Package(
             targets: ["Models"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/hmlongco/Factory", from: "2.3.2")
+        .package(url: "https://github.com/hmlongco/Factory", from: "2.3.2"),
+        .package(url: "https://github.com/mudkipme/swift-markdown", from: "0.3.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -25,7 +26,8 @@ let package = Package(
         .target(
             name: "Models",
             dependencies: [
-                .product(name: "Factory", package: "Factory")
+                .product(name: "Factory", package: "Factory"),
+                .product(name: "Markdown", package: "swift-markdown")
             ],
             swiftSettings: [
               .enableExperimentalFeature("StrictConcurrency"),

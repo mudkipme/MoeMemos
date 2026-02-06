@@ -9,34 +9,48 @@ import Foundation
 import Account
 import Factory
 import Models
+import SwiftData
 
+@MainActor
 @Observable class ArchivedMemoListViewModel {
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
-    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
+    @Injected(\.memosViewModel) private var memosViewModel
+    @ObservationIgnored
+    var service: Service { get throws { try accountManager.mustCurrentService } }
 
-    private(set) var archivedMemoList: [Memo] = []
+    private(set) var archivedMemoList: [StoredMemo] = []
     
     @MainActor
     func loadArchivedMemos() async throws {
-        let response = try await service.listArchivedMemos()
-        archivedMemoList = response
+        let service = try self.service
+        archivedMemoList = try await service.listArchivedMemos()
+        if service is SyncableService {
+            do {
+                try await memosViewModel.syncNow()
+                archivedMemoList = try await service.listArchivedMemos()
+            } catch {
+                return
+            }
+        }
     }
     
     @MainActor
-    func restoreMemo(remoteId: String) async throws {
-        _ = try await service.restoreMemo(remoteId: remoteId)
+    func restoreMemo(id: PersistentIdentifier) async throws {
+        let service = try self.service
+        try await service.restoreMemo(id: id)
         archivedMemoList = archivedMemoList.filter({ memo in
-            memo.remoteId != remoteId
+            memo.id != id
         })
     }
     
     @MainActor
-    func deleteMemo(remoteId: String) async throws {
-        _ = try await service.deleteMemo(remoteId: remoteId)
+    func deleteMemo(id: PersistentIdentifier) async throws {
+        let service = try self.service
+        try await service.deleteMemo(id: id)
         archivedMemoList = archivedMemoList.filter({ memo in
-            memo.remoteId != remoteId
+            memo.id != id
         })
     }
 }

@@ -58,13 +58,22 @@ public final class MemosV0Service: RemoteService {
         return (memos.map { $0.toMemo(host: hostURL) }, String(offset + pageSize))
     }
     
-    public func createMemo(content: String, visibility: MemoVisibility?, resources: [Resource], tags: [String]?) async throws -> Memo {
+    public func createMemo(
+        content: String,
+        visibility: MemoVisibility?,
+        resources: [Resource],
+        tags: [String]?,
+        createdAt: Date?,
+        updatedAt: Date?
+    ) async throws -> Memo {
+        _ = updatedAt
         var memosVisibility: MemosV0Visibility? = nil
         if let visibility = visibility {
             memosVisibility = .init(memoVisibility: visibility)
         }
         let resp = try await client.createMemo(body: .json(.init(
             content: content,
+            createdTs: createdAt.map { Int($0.timeIntervalSince1970) },
             resourceIdList: resources.compactMap { if let remoteId = $0.remoteId { return Int(remoteId) } else { return nil } },
             visibility: memosVisibility
         )))
@@ -78,7 +87,15 @@ public final class MemosV0Service: RemoteService {
         return memo.toMemo(host: hostURL)
     }
     
-    public func updateMemo(remoteId: String, content: String?, resources: [Resource]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> Memo {
+    public func updateMemo(
+        remoteId: String,
+        content: String?,
+        resources: [Resource]?,
+        visibility: MemoVisibility?,
+        tags: [String]?,
+        pinned: Bool?,
+        updatedAt: Date?
+    ) async throws -> Memo {
         guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
         var memo: MemosV0Memo?
         if let pinned = pinned {
@@ -96,6 +113,7 @@ public final class MemosV0Service: RemoteService {
             let resp = try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
                 content: content,
                 resourceIdList: resources?.compactMap { if let remoteId = $0.remoteId { return Int(remoteId) } else { return nil } },
+                updatedTs: updatedAt.map { Int($0.timeIntervalSince1970) },
                 visibility: memosVisibility
             )))
             memo = try resp.ok.body.json

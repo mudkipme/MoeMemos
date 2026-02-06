@@ -5,10 +5,10 @@ import DesignSystem
 
 @MainActor
 public struct ResourceCard: View {
-    private let resource: Resource
+    private let resource: StoredResource
     private let resourceManager: ResourceManager
 
-    public init(resource: Resource, resourceManager: ResourceManager) {
+    public init(resource: StoredResource, resourceManager: ResourceManager) {
         self.resource = resource
         self.resourceManager = resourceManager
     }
@@ -36,12 +36,19 @@ public struct ResourceCard: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .contextMenu {
-                menu(for: resource)
+                menu()
             }
             .task {
                 do {
-                    if downloadedURL == nil, let memos = memosManager.currentService {
-                        downloadedURL = try await memos.download(url: resource.url, mimeType: resource.mimeType)
+                    if downloadedURL != nil {
+                        return
+                    }
+                    if let localPath = resource.localPath, FileManager.default.fileExists(atPath: localPath) {
+                        downloadedURL = URL(fileURLWithPath: localPath)
+                        return
+                    }
+                    if let memos = memosManager.currentService {
+                        downloadedURL = try await memos.ensureLocalResourceFile(id: resource.id)
                     }
                 } catch {}
             }
@@ -53,11 +60,10 @@ public struct ResourceCard: View {
     }
 
     @ViewBuilder
-    func menu(for resource: Resource) -> some View {
+    func menu() -> some View {
         Button(role: .destructive, action: {
             Task {
-                guard let remoteId = resource.remoteId else { return }
-                try await resourceManager.deleteResource(remoteId: remoteId)
+                try await resourceManager.deleteResource(id: resource.id)
             }
         }, label: {
             Label("Delete", systemImage: "trash")

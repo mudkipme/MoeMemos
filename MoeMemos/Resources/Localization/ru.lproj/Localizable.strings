@@ -64,6 +64,8 @@
 
 // Account
 "account.local-user" = "Локальный пользователь";
+"account.add-local-account" = "Add a Local Account";
+"account.local-account-description" = "On this device";
 "account.add-account" = "Добавить аккаунт";
 "account.accounts" = "Аккаунты";
 "account.add-memos-account" = "Добавить аккаунт Memos";

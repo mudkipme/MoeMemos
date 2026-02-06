@@ -31,18 +31,24 @@ public struct DefaultAccountEntityQuery: EntityQuery {
     public init() {}
 
     public func entities(for identifiers: [AccountEntity.ID]) async throws -> [AccountEntity] {
-        return accountViewModel.users.filter { user in
-            identifiers.contains { id in
-                id == user.accountKey
-            }
-        }.map { AccountEntity(accountKey: $0.accountKey, nickname: $0.nickname) }
+        await MainActor.run(resultType: [AccountEntity].self) {
+            accountViewModel.users.filter { user in
+                identifiers.contains { id in
+                    id == user.accountKey
+                }
+            }.map { AccountEntity(accountKey: $0.accountKey, nickname: $0.nickname) }
+        }
     }
 
     public func suggestedEntities() async throws -> [AccountEntity] {
-        accountViewModel.users.map { .init(accountKey: $0.accountKey, nickname: $0.nickname) }
+        await MainActor.run(resultType: [AccountEntity].self) {
+            accountViewModel.users.map { .init(accountKey: $0.accountKey, nickname: $0.nickname) }
+        }
     }
 
     public func defaultResult() async -> AccountEntity? {
-        accountViewModel.currentUser.map { .init(accountKey: $0.accountKey, nickname: $0.nickname) }
+        await MainActor.run(resultType: AccountEntity?.self) {
+            accountViewModel.currentUser.map { .init(accountKey: $0.accountKey, nickname: $0.nickname) }
+        }
     }
 }

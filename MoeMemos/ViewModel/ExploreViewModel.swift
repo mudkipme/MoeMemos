@@ -10,11 +10,12 @@ import Account
 import Models
 import Factory
 
+@MainActor
 @Observable class ExploreViewModel {
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
-    var service: RemoteService { get throws { try accountManager.mustCurrentService } }
+    var service: RemoteService { get throws { try accountManager.mustCurrentRemoteService } }
 
     private(set) var memoList: [Memo] = []
     private(set) var loading = false

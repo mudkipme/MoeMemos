@@ -4,12 +4,13 @@ import UniformTypeIdentifiers
 import Models
 import Account
 import DesignSystem
+import SwiftData
 
 private let listItemSymbolList = ["- [ ] ", "- [x] ", "- [X] ", "* ", "- "]
 
 @MainActor
 public struct MemoEditor: View {
-    public let memo: Memo?
+    public let memo: StoredMemo?
     public let actions: MemoEditorActions
 
     @Environment(AccountViewModel.self) private var userState
@@ -30,7 +31,7 @@ public struct MemoEditor: View {
     @State private var showingErrorToast = false
     @State private var availableTags: [Tag] = []
 
-    public init(memo: Memo?, actions: MemoEditorActions) {
+    public init(memo: StoredMemo?, actions: MemoEditorActions) {
         self.memo = memo
         self.actions = actions
     }
@@ -88,8 +89,8 @@ public struct MemoEditor: View {
                 text = draft
                 viewModel.visibility = userState.currentUser?.defaultVisibility ?? .private
             }
-            if let resourceList = memo?.resources {
-                viewModel.resourceList = resourceList
+            if let memo {
+                viewModel.resourceList = memo.resources.filter { !$0.isDeleted }.sorted { $0.createdAt > $1.createdAt }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                 focused = true
@@ -113,7 +114,6 @@ public struct MemoEditor: View {
             }
         }
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
-        .toast(isPresenting: imageUploadingBinding, alertType: .loading)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(memo == nil ? NSLocalizedString("input.compose", comment: "Compose") : NSLocalizedString("input.edit", comment: "Edit"))
         .toolbar {
@@ -133,7 +133,7 @@ public struct MemoEditor: View {
                 } label: {
                     Label("input.save", systemImage: "paperplane")
                 }
-                .disabled((text.isEmpty && viewModel.resourceList.isEmpty) || viewModel.imageUploading || viewModel.saving)
+                .disabled((text.isEmpty && viewModel.resourceList.isEmpty))
             }
         }
         .fullScreenCover(isPresented: $showingImagePicker, content: {
@@ -178,16 +178,8 @@ public struct MemoEditor: View {
         }
     }
 
-    private var imageUploadingBinding: Binding<Bool> {
-        Binding(
-            get: { viewModel.imageUploading },
-            set: { viewModel.imageUploading = $0 }
-        )
-    }
-
     private func upload(images: [PhotosPickerItem]) async throws {
         do {
-            viewModel.imageUploading = true
             for item in images {
                 let contentType = item.supportedContentTypes.first
                 let imageData = try await item.loadTransferable(type: Data.self)
@@ -203,12 +195,10 @@ public struct MemoEditor: View {
             submitError = error
             showingErrorToast = true
         }
-        viewModel.imageUploading = false
     }
 
     private func upload(images: [UIImage]) async throws {
         do {
-            viewModel.imageUploading = true
             for image in images {
                 guard let data = image.jpegData(compressionQuality: 1.0) else { continue }
                 try await viewModel.upload(data: data, filename: "\(UUID().uuidString).jpg", mimeType: "image/jpeg")
@@ -218,30 +208,27 @@ public struct MemoEditor: View {
             submitError = error
             showingErrorToast = true
         }
-        viewModel.imageUploading = false
     }
 
     private func upload(fileURL: URL) async throws {
         do {
-            viewModel.imageUploading = true
             try await viewModel.upload(fileURL: fileURL)
             submitError = nil
         } catch {
             submitError = error
             showingErrorToast = true
         }
-        viewModel.imageUploading = false
     }
 
     private func saveMemo() async throws {
-        viewModel.saving = true
         let tags = viewModel.extractCustomTags(from: text)
 
         do {
-            if let memo = memo, let remoteId = memo.remoteId {
-                try await actions.editMemo(remoteId, text, viewModel.visibility, viewModel.resourceList, tags)
+            let resourceIds = viewModel.resourceList.map(\.id)
+            if let memo = memo {
+                try await actions.editMemo(memo.id, text, viewModel.visibility, resourceIds, tags)
             } else {
-                try await actions.createMemo(text, viewModel.visibility, viewModel.resourceList, tags)
+                try await actions.createMemo(text, viewModel.visibility, resourceIds, tags)
                 draft = ""
             }
             text = ""
@@ -251,7 +238,6 @@ public struct MemoEditor: View {
             submitError = error
             showingErrorToast = true
         }
-        viewModel.saving = false
     }
 
     private var privacyMenu: some View {

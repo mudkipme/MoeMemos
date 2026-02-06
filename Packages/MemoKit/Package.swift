@@ -20,7 +20,6 @@ let package = Package(
         .package(name: "Models", path: "../Models"),
         .package(name: "Account", path: "../Account"),
         .package(name: "DesignSystem", path: "../DesignSystem"),
-        .package(url: "https://github.com/mudkipme/swift-markdown", from: "0.3.0"),
         .package(url: "https://github.com/hmlongco/Factory", from: "2.5.3"),
     ],
     targets: [
@@ -30,7 +29,6 @@ let package = Package(
                 .product(name: "Models", package: "Models"),
                 .product(name: "Account", package: "Account"),
                 .product(name: "DesignSystem", package: "DesignSystem"),
-                .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "Factory", package: "Factory"),
             ],
             swiftSettings: [
