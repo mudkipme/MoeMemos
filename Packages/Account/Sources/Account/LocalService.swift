@@ -169,16 +169,19 @@ final class LocalService: Service {
         return User(accountKey: accountKey, nickname: NSLocalizedString("account.local-user", comment: "account.local-user"))
     }
 
-    func download(url: URL, mimeType: String?) async throws -> URL {
-        if url.isFileURL {
-            return url
+    func ensureLocalResourceFile(id: PersistentIdentifier) async throws -> URL {
+        guard let resource = store.fetchResource(id: id) else {
+            throw MoeMemosError.invalidParams
         }
-        if let resource = store.fetchResource(urlString: url.absoluteString),
-           let localPath = resource.localPath,
-           FileManager.default.fileExists(atPath: localPath) {
+        if let localPath = resource.localPath, FileManager.default.fileExists(atPath: localPath) {
             return URL(fileURLWithPath: localPath)
         }
-        return url
+        if let url = resource.url, url.isFileURL, FileManager.default.fileExists(atPath: url.path) {
+            resource.localPath = url.path
+            try? store.save()
+            return url
+        }
+        throw MoeMemosError.invalidParams
     }
 
     // MARK: - Unsupported (Remote Only)

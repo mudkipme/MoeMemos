@@ -12,13 +12,32 @@ import Models
 
 enum ResourceFileStore {
     static func store(data: Data, filename: String, mimeType: String, accountKey: String, resourceId: String) throws -> URL {
-        let directory = try resourcesDirectory(accountKey: accountKey)
-        let pathExtension = resolveExtension(filename: filename, mimeType: mimeType)
-        let fileName = pathExtension.isEmpty ? resourceId : "\(resourceId).\(pathExtension)"
-        let destination = directory.appendingPathComponent(fileName, isDirectory: false)
-
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let destination = try resourceFileURL(filename: filename, mimeType: mimeType, accountKey: accountKey, resourceId: resourceId)
+        try FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
         try data.write(to: destination, options: [.atomic])
+        return destination
+    }
+
+    static func store(fileAt sourceURL: URL, filename: String, mimeType: String, accountKey: String, resourceId: String) throws -> URL {
+        guard sourceURL.isFileURL else { throw MoeMemosError.invalidParams }
+        let destination = try resourceFileURL(filename: filename, mimeType: mimeType, accountKey: accountKey, resourceId: resourceId)
+        let fileManager = FileManager.default
+
+        if sourceURL.standardizedFileURL == destination.standardizedFileURL {
+            return destination
+        }
+
+        try fileManager.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+        if fileManager.fileExists(atPath: destination.path) {
+            try? fileManager.removeItem(at: destination)
+        }
+
+        do {
+            try fileManager.moveItem(at: sourceURL, to: destination)
+        } catch {
+            try fileManager.copyItem(at: sourceURL, to: destination)
+            try? fileManager.removeItem(at: sourceURL)
+        }
         return destination
     }
 
@@ -80,6 +99,13 @@ enum ResourceFileStore {
         let root = try resourcesRootDirectory()
         let safeAccount = accountKey.replacingOccurrences(of: "[^A-Za-z0-9_-]", with: "_", options: .regularExpression)
         return root.appendingPathComponent(safeAccount, isDirectory: true)
+    }
+
+    private static func resourceFileURL(filename: String, mimeType: String, accountKey: String, resourceId: String) throws -> URL {
+        let directory = try resourcesDirectory(accountKey: accountKey)
+        let pathExtension = resolveExtension(filename: filename, mimeType: mimeType)
+        let fileName = pathExtension.isEmpty ? resourceId : "\(resourceId).\(pathExtension)"
+        return directory.appendingPathComponent(fileName, isDirectory: false)
     }
 
     private static func resolveExtension(filename: String, mimeType: String) -> String {

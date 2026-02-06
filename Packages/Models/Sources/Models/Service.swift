@@ -14,8 +14,23 @@ public protocol RemoteService: Sendable {
     func listMemos() async throws -> [Memo]
     func listArchivedMemos() async throws -> [Memo]
     func listWorkspaceMemos(pageSize: Int, pageToken: String?) async throws -> (list: [Memo], nextPageToken: String?)
-    func createMemo(content: String, visibility: MemoVisibility?, resources: [Resource], tags: [String]?) async throws -> Memo
-    func updateMemo(remoteId: String, content: String?, resources: [Resource]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> Memo
+    func createMemo(
+        content: String,
+        visibility: MemoVisibility?,
+        resources: [Resource],
+        tags: [String]?,
+        createdAt: Date?,
+        updatedAt: Date?
+    ) async throws -> Memo
+    func updateMemo(
+        remoteId: String,
+        content: String?,
+        resources: [Resource]?,
+        visibility: MemoVisibility?,
+        tags: [String]?,
+        pinned: Bool?,
+        updatedAt: Date?
+    ) async throws -> Memo
     func deleteMemo(remoteId: String) async throws
     func archiveMemo(remoteId: String) async throws
     func restoreMemo(remoteId: String) async throws
@@ -49,7 +64,7 @@ public protocol Service: Sendable {
     func deleteResource(id: PersistentIdentifier) async throws
 
     func getCurrentUser() async throws -> User
-    func download(url: URL, mimeType: String?) async throws -> URL
+    func ensureLocalResourceFile(id: PersistentIdentifier) async throws -> URL
 }
 
 @MainActor

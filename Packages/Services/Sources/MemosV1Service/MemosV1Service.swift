@@ -76,7 +76,15 @@ public final class MemosV1Service: RemoteService {
         return (data.memos?.map { $0.toMemo(host: hostURL) } ?? [], data.nextPageToken)
     }
     
-    public func createMemo(content: String, visibility: MemoVisibility?, resources: [Resource], tags: [String]?) async throws -> Memo {
+    public func createMemo(
+        content: String,
+        visibility: MemoVisibility?,
+        resources: [Resource],
+        tags: [String]?,
+        createdAt: Date?,
+        updatedAt: Date?
+    ) async throws -> Memo {
+        _ = tags
         let memosResources: [MemosV1Resource] = resources.compactMap {
             var resource: MemosV1Resource? = nil
             if let remoteId = $0.remoteId {
@@ -85,14 +93,29 @@ public final class MemosV1Service: RemoteService {
             return resource
         }
         
-        let resp = try await client.MemoService_CreateMemo(body: .json(.init(content: content, visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)), attachments: memosResources)))
+        let resp = try await client.MemoService_CreateMemo(body: .json(.init(
+            createTime: createdAt,
+            updateTime: updatedAt,
+            content: content,
+            visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
+            attachments: memosResources
+        )))
         let memo = try resp.ok.body.json
         
         let result = memo.toMemo(host: hostURL)
         return result
     }
     
-    public func updateMemo(remoteId: String, content: String?, resources: [Resource]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> Memo {
+    public func updateMemo(
+        remoteId: String,
+        content: String?,
+        resources: [Resource]?,
+        visibility: MemoVisibility?,
+        tags: [String]?,
+        pinned: Bool?,
+        updatedAt: Date?
+    ) async throws -> Memo {
+        _ = tags
         let memosResources: [MemosV1Resource]? = resources?.compactMap {
             var resource: MemosV1Resource? = nil
             if let remoteId = $0.remoteId {
@@ -102,7 +125,7 @@ public final class MemosV1Service: RemoteService {
         }
 
         let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(
-            updateTime: .now,
+            updateTime: updatedAt ?? .now,
             content: content,
             visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
             pinned: pinned,

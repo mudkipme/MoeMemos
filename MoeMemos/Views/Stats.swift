@@ -64,7 +64,7 @@ struct Stats: View {
                 Heatmap(matrix: memosViewModel.matrix, alignment: .trailing)
             }
             .frame(minHeight: 120, maxHeight: 120)
-            .padding(.bottom, 10)
+            .padding(.bottom, 20)
         }
     }
     

@@ -121,31 +121,15 @@ private struct SyncStatusBadge: View {
             HStack(spacing: 5) {
                 ProgressView()
                     .controlSize(.mini)
-                Text("Syncing")
             }
-            .font(.caption2)
-            .foregroundStyle(.secondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(.thinMaterial, in: Capsule())
         } else {
             Button(action: syncAction) {
-                HStack(spacing: 5) {
-                    if unsyncedCount > 0 {
-                        Image(systemName: "icloud.slash")
-                        Text("\(unsyncedCount)")
-                    } else {
-                        Image(systemName: "arrow.clockwise")
-                        Text("Sync")
-                    }
+                if unsyncedCount > 0 {
+                    Image(systemName: "icloud.slash")
+                } else {
+                    Image(systemName: "arrow.clockwise")
                 }
-                .font(.caption2)
-                .foregroundStyle(unsyncedCount > 0 ? .orange : .secondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.thinMaterial, in: Capsule())
             }
-            .buttonStyle(.plain)
         }
     }
 }
