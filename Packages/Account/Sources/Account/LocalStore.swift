@@ -183,23 +183,14 @@ final class LocalStore {
         return try? context.fetch(descriptor).first
     }
 
-    /// When a locally-created memo is created on the server, reconcile local state so:
-    /// - `serverId` is set on the existing local row
-    /// - any existing duplicate server-id row (inserted earlier by a pull) is merged and removed
-    /// - memo fields are updated to the server result
-    ///
-    /// - Parameters:
-    ///   - mergeAttachments: When `true`, local attachments are reconciled to match `created.resources` exactly
-    ///     (this may unlink local-only attachments). Use `false` right after server create when the server
-    ///     memo doesn't yet include local attachments.
-    ///   - finalSyncState: Usually `.synced` when everything matches server, or `.pendingUpdate` when more
-    ///     work (e.g. attachments) still needs to be pushed.
+    /// Reconcile a locally-created memo after server create succeeds.
+    /// - `serverId` is set on the existing local row.
+    /// - any duplicate server-id row (inserted earlier by pull) is merged and removed.
+    /// - memo fields and attachments are updated to the server result.
     func reconcileServerCreatedMemo(
         local: StoredMemo,
         created: Memo,
-        syncedAt: Date,
-        mergeAttachments: Bool = true,
-        finalSyncState: SyncState = .synced
+        syncedAt: Date
     ) {
         guard let serverId = created.remoteId, !serverId.isEmpty else { return }
 
@@ -220,12 +211,10 @@ final class LocalStore {
         local.createdAt = created.createdAt
         local.updatedAt = created.updatedAt
         local.isDeleted = false
-        local.syncState = finalSyncState
+        local.syncState = .synced
         local.lastSyncedAt = syncedAt
 
-        if mergeAttachments {
-            reconcileResources(created.resources, to: local, preserveLocalOnly: true)
-        }
+        reconcileResources(created.resources, to: local, preserveLocalOnly: true)
     }
 
     func upsertMemo(_ memo: Memo, syncState: SyncState, keepSyncState: Bool = false) -> StoredMemo {

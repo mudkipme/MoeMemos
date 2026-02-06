@@ -631,34 +631,26 @@ final class SyncingRemoteService: Service, SyncableService {
     }
 
     private func pushLocalCreate(local: StoredMemo, tags: [String]?) async throws -> Memo {
+        let resources = try await ensureUploadedResources(for: local, memoServerId: nil)
         let memo = memoFromStored(local)
-        let created = try await remote.createMemo(content: memo.content, visibility: memo.visibility, resources: [], tags: tags)
+        let created = try await remote.createMemo(
+            content: memo.content,
+            visibility: memo.visibility,
+            resources: resources,
+            tags: tags
+        )
         store.reconcileServerCreatedMemo(
             local: local,
             created: created,
-            syncedAt: created.updatedAt,
-            mergeAttachments: false,
-            finalSyncState: .pendingUpdate
+            syncedAt: created.updatedAt
         )
         try store.save()
-
-        return try await pushLocalUpdate(local: local, tags: tags)
+        return created
     }
 
     private func pushLocalUpdate(local: StoredMemo, tags: [String]?) async throws -> Memo {
         guard let serverId = local.serverId else { throw MoeMemosError.invalidParams }
-
-        let storedResources = local.resources
-            .filter { $0.accountKey == accountKey && !$0.isDeleted }
-        // Ensure resources are uploaded.
-        for res in storedResources where res.serverId == nil && res.syncState != .pendingDelete {
-            _ = try await pushLocalResourceCreate(local: res, memoServerId: serverId)
-        }
-
-        let resources = local.resources
-            .filter { $0.accountKey == accountKey && !$0.isDeleted }
-            .compactMap { $0.toResource() }
-            .filter { $0.remoteId != nil }
+        let resources = try await ensureUploadedResources(for: local, memoServerId: serverId)
 
         let memo = memoFromStored(local)
         let updated = try await remote.updateMemo(
@@ -671,6 +663,20 @@ final class SyncingRemoteService: Service, SyncableService {
         )
         applyRemoteMemo(updated, syncedAt: updated.updatedAt)
         return updated
+    }
+
+    private func ensureUploadedResources(for local: StoredMemo, memoServerId: String?) async throws -> [Resource] {
+        let storedResources = local.resources
+            .filter { $0.accountKey == accountKey && !$0.isDeleted }
+
+        for res in storedResources where res.serverId == nil && res.syncState != .pendingDelete {
+            _ = try await pushLocalResourceCreate(local: res, memoServerId: memoServerId)
+        }
+
+        return local.resources
+            .filter { $0.accountKey == accountKey && !$0.isDeleted }
+            .compactMap { $0.toResource() }
+            .filter { $0.remoteId != nil }
     }
 
     private func pushLocalResourceCreate(local: StoredResource, memoServerId: String? = nil) async throws -> Resource {

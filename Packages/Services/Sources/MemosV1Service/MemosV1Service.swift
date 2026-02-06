@@ -77,15 +77,6 @@ public final class MemosV1Service: RemoteService {
     }
     
     public func createMemo(content: String, visibility: MemoVisibility?, resources: [Resource], tags: [String]?) async throws -> Memo {
-        let resp = try await client.MemoService_CreateMemo(body: .json(.init(content: content, visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)))))
-        let memo = try resp.ok.body.json
-        
-        var result = memo.toMemo(host: hostURL)
-        if resources.isEmpty {
-            return result
-        }
-        
-        guard let name = memo.name else { throw MoeMemosError.unsupportedVersion }
         let memosResources: [MemosV1Resource] = resources.compactMap {
             var resource: MemosV1Resource? = nil
             if let remoteId = $0.remoteId {
@@ -93,33 +84,32 @@ public final class MemosV1Service: RemoteService {
             }
             return resource
         }
-        let setResourceResp = try await client.MemoService_SetMemoAttachments(path: .init(memo: getId(remoteId: name)), body: .json(.init(name: name, attachments: memosResources)))
-        _ = try setResourceResp.ok
-        result.resources = resources
+        
+        let resp = try await client.MemoService_CreateMemo(body: .json(.init(content: content, visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)), attachments: memosResources)))
+        let memo = try resp.ok.body.json
+        
+        let result = memo.toMemo(host: hostURL)
         return result
     }
     
     public func updateMemo(remoteId: String, content: String?, resources: [Resource]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> Memo {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(
-            updateTime: .now,
-            content: content,
-            visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
-            pinned: pinned
-        )))
-        let memo = try resp.ok.body.json
-        var result = memo.toMemo(host: hostURL)
-        
-        guard let resources = resources, Set(resources.map { $0.remoteId }) != Set(result.resources.map { $0.remoteId }) else { return result }
-        let memosResources: [MemosV1Resource] = resources.compactMap {
+        let memosResources: [MemosV1Resource]? = resources?.compactMap {
             var resource: MemosV1Resource? = nil
             if let remoteId = $0.remoteId {
                 resource = MemosV1Resource(name: getName(remoteId: remoteId))
             }
             return resource
         }
-        let setResourceResp = try await client.MemoService_SetMemoAttachments(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(name: getName(remoteId: remoteId), attachments: memosResources)))
-        _ = try setResourceResp.ok
-        result.resources = resources
+
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(
+            updateTime: .now,
+            content: content,
+            visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
+            pinned: pinned,
+            attachments: memosResources
+        )))
+        let memo = try resp.ok.body.json
+        let result = memo.toMemo(host: hostURL)
         return result
     }
     
