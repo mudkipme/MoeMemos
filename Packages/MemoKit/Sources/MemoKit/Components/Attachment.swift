@@ -23,7 +23,7 @@ public struct Attachment: View {
                     guard let stored = resource as? StoredResource else {
                         // Non-local resources (e.g. Explore from other users) open directly in browser.
                         if let url = resource.url {
-                            _ = await openURL(url)
+                            openURL(url)
                             return
                         }
                         throw MoeMemosError.invalidParams

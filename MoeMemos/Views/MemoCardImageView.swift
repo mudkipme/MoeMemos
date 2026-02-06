@@ -105,7 +105,7 @@ struct MemoCardImageView: View {
 
         if let remoteURL = resource.url {
             Task {
-                _ = await openURL(remoteURL)
+                openURL(remoteURL)
             }
         }
     }
