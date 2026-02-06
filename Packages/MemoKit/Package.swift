@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "MemoKit",
     platforms: [
-      .iOS(.v17),
+      .iOS(.v18),
       .visionOS(.v1),
-      .macCatalyst(.v17),
+      .macCatalyst(.v18),
     ],
     products: [
         .library(

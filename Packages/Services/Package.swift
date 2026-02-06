@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "Services",
     platforms: [
-      .iOS(.v17),
+      .iOS(.v18),
       .visionOS(.v1),
-      .macCatalyst(.v17),
+      .macCatalyst(.v18),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
