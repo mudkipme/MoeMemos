@@ -17,6 +17,8 @@ import SwiftData
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
+    @Injected(\.memosViewModel) private var memosViewModel
+    @ObservationIgnored
     var service: Service { get throws { try accountManager.mustCurrentService } }
 
     private(set) var resourceList: [StoredResource] = []
@@ -25,9 +27,9 @@ import SwiftData
     func loadResources() async throws {
         let service = try self.service
         resourceList = try await service.listResources()
-        if let syncService = service as? SyncableService {
+        if service is SyncableService {
             do {
-                try await syncService.sync()
+                try await memosViewModel.syncNow()
                 resourceList = try await service.listResources()
             } catch {
                 return

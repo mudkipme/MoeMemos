@@ -9,20 +9,23 @@ import SwiftUI
 import Account
 import Models
 import Env
-import SwiftData
+import DesignSystem
 
 struct MemosList: View {
     let tag: Tag?
 
     @State private var searchString = ""
     @Environment(AppPath.self) private var appPath
-    @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
+    @State private var manualSyncError: Error?
+    @State private var showingSyncErrorToast = false
     
     var body: some View {
         let defaultMemoVisibility = userState.currentUser?.defaultVisibility ?? .private
         let filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: searchString)
+        let unsyncedCount = memosViewModel.memoList.filter { $0.syncState != .synced }.count
+        let canSync = ((try? memosViewModel.service) as? SyncableService) != nil
         
         ZStack(alignment: .bottomTrailing) {
             List(filteredMemoList, id: \.id) { item in
@@ -49,6 +52,20 @@ struct MemosList: View {
             }
         }
         .toolbar {
+            if canSync {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SyncStatusBadge(syncing: memosViewModel.syncing, unsyncedCount: unsyncedCount) {
+                        Task {
+                            do {
+                                try await memosViewModel.syncNow()
+                            } catch {
+                                manualSyncError = error
+                                showingSyncErrorToast = true
+                            }
+                        }
+                    }
+                }
+            }
             if #available(iOS 26.0, *) {
                 DefaultToolbarItem(kind: .search, placement: .bottomBar)
                 ToolbarSpacer(.flexible, placement: .bottomBar)
@@ -61,20 +78,9 @@ struct MemosList: View {
                 }
             }
         }
-        .overlay(content: {
-            if memosViewModel.loading && !memosViewModel.inited {
-                ProgressView()
-            }
-        })
         .searchable(text: $searchString)
         .navigationTitle(tag?.name ?? NSLocalizedString("memo.memos", comment: "Memos"))
-        .refreshable {
-            do {
-                try await memosViewModel.loadMemos()
-            } catch {
-                print(error)
-            }
-        }
+        .toast(isPresenting: $showingSyncErrorToast, alertType: .systemImage("xmark.circle", manualSyncError?.localizedDescription))
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             Task {
                 if memosViewModel.inited {
@@ -102,5 +108,44 @@ struct MemosList: View {
         }
         
         return fullList
+    }
+}
+
+private struct SyncStatusBadge: View {
+    let syncing: Bool
+    let unsyncedCount: Int
+    let syncAction: () -> Void
+
+    var body: some View {
+        if syncing {
+            HStack(spacing: 5) {
+                ProgressView()
+                    .controlSize(.mini)
+                Text("Syncing")
+            }
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(.thinMaterial, in: Capsule())
+        } else {
+            Button(action: syncAction) {
+                HStack(spacing: 5) {
+                    if unsyncedCount > 0 {
+                        Image(systemName: "icloud.slash")
+                        Text("\(unsyncedCount)")
+                    } else {
+                        Image(systemName: "arrow.clockwise")
+                        Text("Sync")
+                    }
+                }
+                .font(.caption2)
+                .foregroundStyle(unsyncedCount > 0 ? .orange : .secondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(.thinMaterial, in: Capsule())
+            }
+            .buttonStyle(.plain)
+        }
     }
 }

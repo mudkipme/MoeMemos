@@ -16,6 +16,8 @@ import SwiftData
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
+    @Injected(\.memosViewModel) private var memosViewModel
+    @ObservationIgnored
     var service: Service { get throws { try accountManager.mustCurrentService } }
 
     private(set) var archivedMemoList: [StoredMemo] = []
@@ -24,9 +26,9 @@ import SwiftData
     func loadArchivedMemos() async throws {
         let service = try self.service
         archivedMemoList = try await service.listArchivedMemos()
-        if let syncService = service as? SyncableService {
+        if service is SyncableService {
             do {
-                try await syncService.sync()
+                try await memosViewModel.syncNow()
                 archivedMemoList = try await service.listArchivedMemos()
             } catch {
                 return

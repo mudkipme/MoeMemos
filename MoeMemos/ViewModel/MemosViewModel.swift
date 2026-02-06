@@ -27,28 +27,15 @@ import SwiftData
     private(set) var nestedTags: [NestedTag] = []
     private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
     private(set) var inited = false
-    private(set) var loading = false
+    private(set) var syncing = false
     
     @MainActor
     func loadMemos() async throws {
-        do {
-            loading = true
-            let service = try self.service
-            memoList = try await service.listMemos()
-            loading = false
-            inited = true
-            if let syncService = service as? SyncableService {
-                do {
-                    try await syncService.sync()
-                    memoList = try await service.listMemos()
-                    try await loadTags()
-                } catch {
-                    return
-                }
-            }
-        } catch {
-            loading = false
-            throw error
+        let service = try self.service
+        memoList = try await service.listMemos()
+        inited = true
+        if service is SyncableService {
+            startBackgroundSync()
         }
     }
     
@@ -96,6 +83,34 @@ import SwiftData
         memoList = memoList.filter({ memo in
             memo.id != id
         })
+    }
+
+    @MainActor
+    func syncNow() async throws {
+        guard !syncing else { return }
+        let service = try self.service
+        guard let syncService = service as? SyncableService else { return }
+
+        syncing = true
+        defer {
+            syncing = false
+        }
+
+        try await syncService.sync()
+        memoList = try await service.listMemos()
+        try await loadTags()
+    }
+
+    @MainActor
+    private func startBackgroundSync() {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                try await self.syncNow()
+            } catch {
+                return
+            }
+        }
     }
 }
 

@@ -42,6 +42,12 @@ struct MemoCard: View {
                     Image(systemName: "flag.fill")
                         .renderingMode(.original)
                 }
+
+                if memo.syncState != .synced {
+                    Image(systemName: syncIconName(for: memo.syncState))
+                        .imageScale(.small)
+                        .foregroundStyle(.orange)
+                }
                 
                 Spacer()
                 
@@ -124,6 +130,19 @@ struct MemoCard: View {
             try await memosViewModel.editMemo(id: memo.id, content: node.root.format(), visibility: memo.visibility, resources: resourceIds, tags: nil)
         } catch {
             print(error)
+        }
+    }
+
+    private func syncIconName(for state: SyncState) -> String {
+        switch state {
+        case .synced:
+            return "checkmark.icloud"
+        case .pendingCreate:
+            return "plus.circle"
+        case .pendingUpdate:
+            return "arrow.triangle.2.circlepath"
+        case .pendingDelete:
+            return "trash"
         }
     }
 }

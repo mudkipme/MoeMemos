@@ -66,7 +66,7 @@ import MemosV0Service
     
     @MainActor
     func logout(account: Account) async throws {
-        accountManager.delete(account: account)
+        try accountManager.delete(account: account)
         try await reloadUsers()
     }
     

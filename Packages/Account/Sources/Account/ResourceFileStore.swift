@@ -32,6 +32,11 @@ enum ResourceFileStore {
         deleteFile(at: URL(fileURLWithPath: path))
     }
 
+    static func deleteAccountFiles(accountKey: String) {
+        guard let directory = try? resourcesDirectory(accountKey: accountKey) else { return }
+        try? FileManager.default.removeItem(at: directory)
+    }
+
     @MainActor
     static func cleanupOrphanedFiles(context: ModelContext) throws {
         let fileManager = FileManager.default

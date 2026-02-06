@@ -62,12 +62,64 @@ import Factory
         currentAccount = account
     }
     
-    internal func delete(account: Account) {
+    internal func unsyncedMemoCount(for accountKey: String) -> Int {
+        let descriptor = FetchDescriptor<StoredMemo>(
+            predicate: #Predicate { memo in
+                memo.accountKey == accountKey
+            }
+        )
+        let memos = (try? modelContext.fetch(descriptor)) ?? []
+        return memos.filter { $0.syncState != .synced }.count
+    }
+
+    internal func delete(account: Account) throws {
+        if case .local = account {
+            return
+        }
+        try deleteLocalData(accountKey: account.key)
         accounts.removeAll { $0.key == account.key }
         account.delete()
         if currentAccount?.key == account.key {
             currentAccount = accounts.last
         }
+    }
+
+    private func deleteLocalData(accountKey: String) throws {
+        let memoDescriptor = FetchDescriptor<StoredMemo>(
+            predicate: #Predicate { memo in
+                memo.accountKey == accountKey
+            }
+        )
+        let resourceDescriptor = FetchDescriptor<StoredResource>(
+            predicate: #Predicate { resource in
+                resource.accountKey == accountKey
+            }
+        )
+        let userDescriptor = FetchDescriptor<User>(
+            predicate: #Predicate { user in
+                user.accountKey == accountKey
+            }
+        )
+
+        let resources = try modelContext.fetch(resourceDescriptor)
+        for resource in resources {
+            ResourceFileStore.deleteFile(atPath: resource.localPath)
+            modelContext.delete(resource)
+        }
+
+        let memos = try modelContext.fetch(memoDescriptor)
+        for memo in memos {
+            modelContext.delete(memo)
+        }
+
+        let users = try modelContext.fetch(userDescriptor)
+        for user in users {
+            modelContext.delete(user)
+        }
+
+        try modelContext.save()
+        ResourceFileStore.deleteAccountFiles(accountKey: accountKey)
+        try? ResourceFileStore.cleanupOrphanedFiles(context: modelContext)
     }
 
     public func service(for accountKey: String) -> Service? {
