@@ -6,6 +6,7 @@ import DesignSystem
 public struct Attachment: View {
     public let resource: any ResourcePresentable
     @Environment(AccountManager.self) private var memosManager: AccountManager
+    @Environment(\.openURL) private var openURL
     @State private var downloadedURL: URL?
     @State private var downloadError: Error?
     @State private var showingErrorToast = false
@@ -19,10 +20,20 @@ public struct Attachment: View {
         Button {
             Task {
                 do {
+                    guard let stored = resource as? StoredResource else {
+                        // Non-local resources (e.g. Explore from other users) open directly in browser.
+                        if let url = resource.url {
+                            _ = await openURL(url)
+                            return
+                        }
+                        throw MoeMemosError.invalidParams
+                    }
+
                     downloading = true
-                    guard let url = resource.url else { throw MoeMemosError.invalidParams }
-                    if let memos = memosManager.currentService {
-                        downloadedURL = try await memos.download(url: url, mimeType: resource.mimeType)
+                    if let localPath = stored.localPath, FileManager.default.fileExists(atPath: localPath) {
+                        downloadedURL = URL(fileURLWithPath: localPath)
+                    } else if let memos = memosManager.currentService {
+                        downloadedURL = try await memos.ensureLocalResourceFile(id: stored.id)
                     }
                 } catch {
                     showingErrorToast = true

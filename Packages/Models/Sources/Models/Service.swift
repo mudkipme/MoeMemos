@@ -49,7 +49,7 @@ public protocol Service: Sendable {
     func deleteResource(id: PersistentIdentifier) async throws
 
     func getCurrentUser() async throws -> User
-    func download(url: URL, mimeType: String?) async throws -> URL
+    func ensureLocalResourceFile(id: PersistentIdentifier) async throws -> URL
 }
 
 @MainActor

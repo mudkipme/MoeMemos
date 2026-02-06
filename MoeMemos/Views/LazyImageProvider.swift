@@ -14,8 +14,17 @@ struct LazyImageProvider: @preconcurrency ImageProvider {
     let aspectRatio: CGFloat
 
     @MainActor func makeImage(url: URL?) -> some View {
-        if let url = makeURL(url) {
-            MemoCardImageView(images: [ImageInfo(url: url, mimeType: nil)])
+        if let imageURL = makeURL(url) {
+            AsyncImage(url: imageURL) { image in
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .clipped()
+            } placeholder: {
+                ProgressView()
+            }
+            .aspectRatio(aspectRatio, contentMode: .fit)
+            .cornerRadius(8)
         }
     }
     

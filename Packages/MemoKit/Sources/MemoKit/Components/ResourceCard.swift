@@ -40,9 +40,15 @@ public struct ResourceCard: View {
             }
             .task {
                 do {
-                    guard let url = resource.url else { return }
-                    if downloadedURL == nil, let memos = memosManager.currentService {
-                        downloadedURL = try await memos.download(url: url, mimeType: resource.mimeType)
+                    if downloadedURL != nil {
+                        return
+                    }
+                    if let localPath = resource.localPath, FileManager.default.fileExists(atPath: localPath) {
+                        downloadedURL = URL(fileURLWithPath: localPath)
+                        return
+                    }
+                    if let memos = memosManager.currentService {
+                        downloadedURL = try await memos.ensureLocalResourceFile(id: resource.id)
                     }
                 } catch {}
             }

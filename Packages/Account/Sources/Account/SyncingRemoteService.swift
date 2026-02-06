@@ -344,21 +344,50 @@ final class SyncingRemoteService: Service, SyncableService {
         return user
     }
 
-    func download(url: URL, mimeType: String?) async throws -> URL {
-        if url.isFileURL {
-            return url
+    func ensureLocalResourceFile(id: PersistentIdentifier) async throws -> URL {
+        guard let resource = store.fetchResource(id: id) else {
+            throw MoeMemosError.invalidParams
         }
-        if let resource = store.fetchResource(urlString: url.absoluteString),
-           let localPath = resource.localPath,
-           FileManager.default.fileExists(atPath: localPath) {
+        if let localPath = resource.localPath, FileManager.default.fileExists(atPath: localPath) {
             return URL(fileURLWithPath: localPath)
         }
-        let downloaded = try await remote.download(url: url, mimeType: mimeType)
-        if let resource = store.fetchResource(urlString: url.absoluteString), downloaded.isFileURL {
-            resource.localPath = downloaded.path
+        if let url = resource.url, url.isFileURL, FileManager.default.fileExists(atPath: url.path) {
+            resource.localPath = url.path
             try? store.save()
+            return url
         }
-        return downloaded
+        guard let remoteURL = resource.url else {
+            throw MoeMemosError.invalidParams
+        }
+
+        let downloaded = try await remote.download(url: remoteURL, mimeType: resource.mimeType)
+        let storedURL: URL
+        if downloaded.isFileURL {
+            storedURL = try ResourceFileStore.store(
+                fileAt: downloaded,
+                filename: resource.filename,
+                mimeType: resource.mimeType,
+                accountKey: accountKey,
+                resourceId: UUID().uuidString
+            )
+        } else {
+            let data = try Data(contentsOf: downloaded)
+            storedURL = try ResourceFileStore.store(
+                data: data,
+                filename: resource.filename,
+                mimeType: resource.mimeType,
+                accountKey: accountKey,
+                resourceId: UUID().uuidString
+            )
+        }
+        resource.localPath = storedURL.path
+        if resource.serverId != nil {
+            resource.urlString = remoteURL.absoluteString
+        } else {
+            resource.urlString = storedURL.absoluteString
+        }
+        try? store.save()
+        return storedURL
     }
 
     // MARK: - SyncableService
