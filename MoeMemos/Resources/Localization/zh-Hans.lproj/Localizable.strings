@@ -41,7 +41,7 @@
 "input.visibility" = "MEMO 可见性";
 
 "login.host" = "服务器地址";
-"login.access-token" = "Access Token";
+"login.access-token" = "访问令牌";
 "login.access-token.hint" = "从 ✍️memos 设置中创建 Access Token。";
 "login.hint" = "请输入您的 [✍️memos](https://github.com/usememos/memos) 服务器的登录信息。";
 "login.sign-in" = "登录";
@@ -64,12 +64,12 @@
 "explore" = "探索";
 
 // Account
-"account.local-user" = "Local user";
-"account.add-local-account" = "Add a Local Account";
-"account.local-account-description" = "On this device";
-"account.add-account" = "Add Account";
-"account.accounts" = "Accounts";
-"account.add-memos-account" = "Add a Memos Account";
-"account.memos-account-description" = "Sync with Your Memos Server";
-"account.account-detail" = "Account Detail";
-"account.switch-account" = "Switch Account";
+"account.local-user" = "本地用户";
+"account.add-local-account" = "添加本地账号";
+"account.local-account-description" = "在此设备上";
+"account.add-account" = "添加账号";
+"account.accounts" = "账号";
+"account.add-memos-account" = "添加 Memos 账号";
+"account.memos-account-description" = "与您的 Memos 服务器同步";
+"account.account-detail" = "账号详情";
+"account.switch-account" = "切换账号";
