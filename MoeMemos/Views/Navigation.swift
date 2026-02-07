@@ -10,46 +10,42 @@ import Env
 
 struct Navigation: View {
     @Binding var selection: Route?
-    @State private var path: [Route] = [.memos]
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
+    @State private var currentRoute: Route = .memos
 
     var body: some View {
-        if UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .vision {
-            NavigationSplitView(sidebar: {
-                Sidebar(selection: $selection)
-            }) {
-                NavigationStack {
-                    Group {
-                        if let selection = selection {
-                            selection.destination()
-                        } else {
-                            EmptyView()
-                        }
-                    }.navigationDestination(for: Route.self) { route in
-                        route.destination()
-                    }
+        NavigationSplitView(columnVisibility: $columnVisibility) {
+            Sidebar(selection: $selection)
+        } detail: {
+            NavigationStack {
+                currentRoute.destination()
+                .navigationDestination(for: Route.self) { route in
+                    route.destination()
                 }
             }
-        } else {
-            NavigationStack(path: $path) {
-                Sidebar(selection: $selection)
-                    .navigationDestination(for: Route.self) { route in
-                        route.destination()
-                    }
+        }
+        .onChange(of: horizontalSizeClass, initial: true) { _, newValue in
+            if newValue == .compact {
+                columnVisibility = .detailOnly
+            } else {
+                columnVisibility = .all
             }
-            .onChange(of: selection, initial: true) { _, newValue in
-                guard let route = newValue else {
-                    return
-                }
-
-                if path != [route] {
-                    path = [route]
-                }
+        }
+        .onChange(of: selection) { _, newValue in
+            guard let newValue else {
+                return
             }
-            .onChange(of: path) { _, newValue in
-                let newSelection = newValue.last
-                if selection != newSelection {
-                    selection = newSelection
-                }
+            currentRoute = newValue
+            if horizontalSizeClass == .compact {
+                columnVisibility = .detailOnly
+            }
+        }
+        .onAppear {
+            if let selection {
+                currentRoute = selection
+            } else {
+                selection = currentRoute
             }
         }
     }

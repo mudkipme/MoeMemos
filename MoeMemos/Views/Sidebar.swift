@@ -24,7 +24,7 @@ struct Sidebar: View {
             return false
         } ?? false
 
-        List(selection: UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .vision ? $selection : nil) {
+        List(selection: $selection) {
             Stats()
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets())
@@ -61,16 +61,10 @@ struct Sidebar: View {
         }
         .listStyle(.sidebar)
         .toolbar {
-            if UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .vision {
-                Button(action: {
-                    selection = .settings
-                }) {
-                    Image(systemName: "ellipsis")
-                }
-            } else {
-                NavigationLink(value: Route.settings) {
-                    Image(systemName: "ellipsis")
-                }
+            Button(action: {
+                selection = .settings
+            }) {
+                Image(systemName: "ellipsis")
             }
         }
         .navigationTitle(userState.currentUser?.nickname ?? NSLocalizedString("memo.memos", comment: "Memos"))
