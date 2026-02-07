@@ -18,6 +18,7 @@
 "memo.pin" = "Закрепить";
 "memo.restore" = "Восстановить";
 "memo.share" = "Поделиться";
+"memo.view-more" = "Показать больше";
 "memo.unpin" = "Открепить";
 "memo.action.ok" = "Да";
 "memo.visibility.public" = "Видно гостям";

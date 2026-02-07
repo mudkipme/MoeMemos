@@ -64,13 +64,6 @@ struct MemoView: View {
                 }
             }
         }
-        .contextMenu {
-            Button {
-                UIPasteboard.general.setValue(memo.content, forPasteboardType: UTType.plainText.identifier)
-            } label: {
-                Label("memo.copy", systemImage: "doc.on.doc")
-            }
-        }
         .confirmationDialog("memo.delete.confirm", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("memo.action.ok", role: .destructive) {
                 Task {
@@ -103,6 +96,11 @@ struct MemoView: View {
             appPath.presentedSheet = .editMemo(memo.id)
         } label: {
             Label("memo.edit", systemImage: "pencil")
+        }
+        Button {
+            UIPasteboard.general.setValue(memo.content, forPasteboardType: UTType.plainText.identifier)
+        } label: {
+            Label("memo.copy", systemImage: "doc.on.doc")
         }
         ShareLink(item: memo.content) {
             Label("memo.share", systemImage: "square.and.arrow.up")

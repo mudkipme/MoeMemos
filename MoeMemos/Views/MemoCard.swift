@@ -59,7 +59,7 @@ struct MemoCard: View {
                 }
             }
             
-            MemoCardContent(memo: memo, toggleTaskItem: toggleTaskItem)
+            MemoCardContent(memo: memo, toggleTaskItem: toggleTaskItem, truncate: true)
         }
         .padding([.top, .bottom], 5)
         .contextMenu {

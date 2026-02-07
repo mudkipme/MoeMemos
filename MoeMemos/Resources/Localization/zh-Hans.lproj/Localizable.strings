@@ -18,6 +18,7 @@
 "memo.pin" = "置顶";
 "memo.restore" = "恢复";
 "memo.share" = "分享";
+"memo.view-more" = "查看更多";
 "memo.unpin" = "取消置顶";
 "memo.action.ok" = "确认";
 "memo.visibility.public" = "访客可见";

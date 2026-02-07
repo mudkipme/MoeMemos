@@ -18,6 +18,7 @@
 "memo.pin" = "Pin";
 "memo.restore" = "Restore";
 "memo.share" = "Share";
+"memo.view-more" = "View more";
 "memo.unpin" = "Unpin";
 "memo.action.ok" = "Yes";
 "memo.visibility.public" = "Visible to guests";
