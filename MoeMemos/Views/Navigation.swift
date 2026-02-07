@@ -10,7 +10,7 @@ import Env
 
 struct Navigation: View {
     @Binding var selection: Route?
-    @State private var path = NavigationPath([Route.memos])
+    @State private var path: [Route] = [.memos]
 
     var body: some View {
         if UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .vision {
@@ -35,6 +35,21 @@ struct Navigation: View {
                     .navigationDestination(for: Route.self) { route in
                         route.destination()
                     }
+            }
+            .onChange(of: selection, initial: true) { _, newValue in
+                guard let route = newValue else {
+                    return
+                }
+
+                if path != [route] {
+                    path = [route]
+                }
+            }
+            .onChange(of: path) { _, newValue in
+                let newSelection = newValue.last
+                if selection != newSelection {
+                    selection = newSelection
+                }
             }
         }
     }

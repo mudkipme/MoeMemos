@@ -95,6 +95,9 @@ struct MemosList: View {
                 MemoView(memo: memo, defaultMemoVisibility: defaultMemoVisibility)
             }
         }
+        .task(id: appPath.pendingMemoPersistentIdentifier) {
+            await openPendingMemoFromWidgetIfNeeded()
+        }
         .toast(isPresenting: $showingSyncErrorToast, alertType: .systemImage("xmark.circle", manualSyncError?.localizedDescription))
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             Task {
@@ -123,6 +126,37 @@ struct MemosList: View {
         }
         
         return fullList
+    }
+
+    @MainActor
+    private func openPendingMemoFromWidgetIfNeeded() async {
+        guard let encodedIdentifier = appPath.pendingMemoPersistentIdentifier else {
+            return
+        }
+
+        guard let persistentIdentifier = decodePersistentIdentifier(from: encodedIdentifier) else {
+            appPath.pendingMemoPersistentIdentifier = nil
+            return
+        }
+
+        if memosViewModel.memoList.contains(where: { $0.id == persistentIdentifier }) {
+            selectedMemo = .init(id: persistentIdentifier)
+            appPath.pendingMemoPersistentIdentifier = nil
+            return
+        }
+
+        try? await memosViewModel.loadMemos()
+        if memosViewModel.memoList.contains(where: { $0.id == persistentIdentifier }) {
+            selectedMemo = .init(id: persistentIdentifier)
+        }
+        appPath.pendingMemoPersistentIdentifier = nil
+    }
+
+    private func decodePersistentIdentifier(from encodedIdentifier: String) -> PersistentIdentifier? {
+        guard let data = Data(base64Encoded: encodedIdentifier) else {
+            return nil
+        }
+        return try? JSONDecoder().decode(PersistentIdentifier.self, from: data)
     }
 }
 
