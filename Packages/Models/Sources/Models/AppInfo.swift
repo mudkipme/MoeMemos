@@ -20,7 +20,7 @@ import Factory
     public init() {
         let fileManager = FileManager.default
         let groupURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: AppInfo.groupContainerIdentifier)!
-        let storeURL = groupURL.appendingPathComponent("MoeMemos.store", isDirectory: false)
+        let storeURL = groupURL.appendingPathComponent("MoeMemos_20260207.store", isDirectory: false)
 
         #if DEBUG
         let env = ProcessInfo.processInfo.environment
@@ -34,7 +34,6 @@ import Factory
         modelContext = ModelContext(container)
     }
     
-    @ObservationIgnored private lazy var region = SKPaymentQueue.default().storefront?.countryCode
     @ObservationIgnored public lazy var website = URL(string: "https://memos.moe")!
     @ObservationIgnored public lazy var privacy = URL(string: "https://memos.moe/privacy")!
     @ObservationIgnored public lazy var registration = ""

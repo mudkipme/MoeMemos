@@ -96,7 +96,7 @@ final class LocalService: Service {
 
     func deleteMemo(id: PersistentIdentifier) async throws {
         guard let stored = store.fetchMemo(id: id) else { return }
-        stored.isDeleted = true
+        stored.softDeleted = true
         stored.syncState = .synced
         stored.lastSyncedAt = .now
         try store.save()
@@ -156,7 +156,7 @@ final class LocalService: Service {
     func deleteResource(id: PersistentIdentifier) async throws {
         guard let resource = store.fetchResource(id: id) else { return }
         ResourceFileStore.deleteFile(atPath: resource.localPath)
-        resource.isDeleted = true
+        resource.softDeleted = true
         resource.syncState = .synced
         resource.lastSyncedAt = .now
         try store.save()

@@ -91,7 +91,7 @@ public struct MemoEditor: View {
                 viewModel.visibility = userState.currentUser?.defaultVisibility ?? .private
             }
             if let memo {
-                viewModel.resourceList = memo.resources.filter { !$0.isDeleted }.sorted { $0.createdAt > $1.createdAt }
+                viewModel.resourceList = memo.resources.filter { !$0.softDeleted }.sorted { $0.createdAt > $1.createdAt }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                 focused = true

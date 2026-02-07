@@ -26,7 +26,7 @@ final class LocalStore {
         visibility: MemoVisibility,
         createdAt: Date,
         updatedAt: Date,
-        isDeleted: Bool = false,
+        softDeleted: Bool = false,
         syncState: SyncState,
         lastSyncedAt: Date? = nil
     ) -> StoredMemo {
@@ -39,7 +39,7 @@ final class LocalStore {
             visibility: visibility,
             createdAt: createdAt,
             updatedAt: updatedAt,
-            isDeleted: isDeleted,
+            softDeleted: softDeleted,
             syncState: syncState,
             lastSyncedAt: lastSyncedAt
         )
@@ -57,7 +57,7 @@ final class LocalStore {
         urlString: String,
         localPath: String? = nil,
         memo: StoredMemo? = nil,
-        isDeleted: Bool = false,
+        softDeleted: Bool = false,
         syncState: SyncState,
         lastSyncedAt: Date? = nil
     ) -> StoredResource {
@@ -72,7 +72,7 @@ final class LocalStore {
             urlString: urlString,
             localPath: localPath,
             memo: memo,
-            isDeleted: isDeleted,
+            softDeleted: softDeleted,
             syncState: syncState,
             lastSyncedAt: lastSyncedAt
         )
@@ -107,7 +107,7 @@ final class LocalStore {
         if includeDeleted {
             return memos
         }
-        return memos.filter { !$0.isDeleted }
+        return memos.filter { !$0.softDeleted }
     }
 
     func allResources(includeDeleted: Bool = true) -> [StoredResource] {
@@ -119,7 +119,7 @@ final class LocalStore {
         if includeDeleted {
             return resources
         }
-        return resources.filter { !$0.isDeleted }
+        return resources.filter { !$0.softDeleted }
     }
 
     func fetchUser() -> User? {
@@ -210,7 +210,7 @@ final class LocalStore {
         local.visibility = created.visibility
         local.createdAt = created.createdAt
         local.updatedAt = created.updatedAt
-        local.isDeleted = false
+        local.softDeleted = false
         local.syncState = .synced
         local.lastSyncedAt = syncedAt
 
@@ -240,7 +240,7 @@ final class LocalStore {
         stored.rowStatus = memo.rowStatus
         stored.visibility = memo.visibility
         stored.updatedAt = memo.updatedAt
-        stored.isDeleted = false
+        stored.softDeleted = false
         stored.serverId = serverId ?? stored.serverId
         if !keepSyncState {
             stored.syncState = syncState
@@ -283,7 +283,7 @@ final class LocalStore {
         if let localPath {
             stored.localPath = localPath.path
         }
-        stored.isDeleted = false
+        stored.softDeleted = false
         if !keepSyncState {
             stored.syncState = syncState
             stored.lastSyncedAt = syncState == .synced ? resource.updatedAt : stored.lastSyncedAt
@@ -314,7 +314,7 @@ final class LocalStore {
             guard resource.remoteId != nil else { continue }
             let stored = upsertResource(resource, memo: memo, syncState: .synced, keepSyncState: true)
             stored.memo = memo
-            stored.isDeleted = false
+            stored.softDeleted = false
         }
     }
 
@@ -324,7 +324,7 @@ final class LocalStore {
 
     private func fetchMemos(rowStatus: RowStatus, limit: Int? = nil, offset: Int? = nil, pendingOnly: Bool) -> [StoredMemo] {
         let predicate = #Predicate<StoredMemo> { memo in
-            memo.accountKey == accountKey && memo.isDeleted == false
+            memo.accountKey == accountKey && memo.softDeleted == false
         }
         let descriptor = FetchDescriptor<StoredMemo>(predicate: predicate)
         var memos = (try? context.fetch(descriptor)) ?? []
@@ -353,7 +353,7 @@ final class LocalStore {
         let descriptor = FetchDescriptor<StoredResource>(predicate: predicate)
         var resources = (try? context.fetch(descriptor)) ?? []
         resources = resources.filter { resource in
-            if !includeDeleted && resource.isDeleted {
+            if !includeDeleted && resource.softDeleted {
                 return false
             }
             if pendingOnly && resource.syncState == .synced {

@@ -61,8 +61,8 @@ enum ResourceFileStore {
         let fileManager = FileManager.default
         let descriptor = FetchDescriptor<StoredResource>()
         let resources = try context.fetch(descriptor)
-        let keepPaths = Set(resources.filter { !$0.isDeleted }.compactMap(\.localPath))
-        let deletePaths = Set(resources.filter { $0.isDeleted }.compactMap(\.localPath))
+        let keepPaths = Set(resources.filter { !$0.softDeleted }.compactMap(\.localPath))
+        let deletePaths = Set(resources.filter { $0.softDeleted }.compactMap(\.localPath))
 
         for path in deletePaths {
             deleteFile(atPath: path)
