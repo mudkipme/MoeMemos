@@ -66,12 +66,12 @@
 "explore" = "Esplora";
 
 // Account
-"account.local-user" = "Local user";
-"account.add-local-account" = "Add a Local Account";
-"account.local-account-description" = "On this device";
-"account.add-account" = "Add Account";
-"account.accounts" = "Accounts";
-"account.add-memos-account" = "Add a Memos Account";
-"account.memos-account-description" = "Sync with Your Memos Server";
-"account.account-detail" = "Account Detail";
-"account.switch-account" = "Switch Account";
+"account.local-user" = "Utente locale";
+"account.add-local-account" = "Aggiungi un account locale";
+"account.local-account-description" = "Su questo dispositivo";
+"account.add-account" = "Aggiungi account";
+"account.accounts" = "Account";
+"account.add-memos-account" = "Aggiungi un account Memos";
+"account.memos-account-description" = "Sincronizza con il tuo server Memos";
+"account.account-detail" = "Dettagli account";
+"account.switch-account" = "Cambia account";

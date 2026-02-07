@@ -40,13 +40,13 @@
 "input.save" = "Speichern";
 "input.visibility" = "Memo Sichtbarkeit";
 
-"login.host" = "Host";
-"login.access-token" = "Access Token";
-"login.access-token.hint" = "Create an Access Token from Setting in ✍️memos.";
+"login.host" = "Server";
+"login.access-token" = "Zugriffstoken";
+"login.access-token.hint" = "Erstelle in den Einstellungen von ✍️memos ein Zugriffstoken.";
 "login.hint" = "Bitte geben Sie die Anmeldeinformationen für Ihren ✍️memos Server ein (https://github.com/usememos/memos) ein.";
 "login.sign-in" = "Anmelden";
 
-"stats.day" = "Tag";
+"stats.day" = "Day";
 "stats.memo" = "Memo";
 "stats.tag" = "Tag";
 
@@ -64,12 +64,12 @@
 "explore" = "Durchsuchen";
 
 // Account
-"account.local-user" = "Local user";
-"account.add-local-account" = "Add a Local Account";
-"account.local-account-description" = "On this device";
-"account.add-account" = "Add Account";
-"account.accounts" = "Accounts";
-"account.add-memos-account" = "Add a Memos Account";
-"account.memos-account-description" = "Sync with Your Memos Server";
-"account.account-detail" = "Account Detail";
-"account.switch-account" = "Switch Account";
+"account.local-user" = "Lokaler Benutzer";
+"account.add-local-account" = "Lokales Konto hinzufügen";
+"account.local-account-description" = "Auf diesem Gerät";
+"account.add-account" = "Konto hinzufügen";
+"account.accounts" = "Konten";
+"account.add-memos-account" = "Memos-Konto hinzufügen";
+"account.memos-account-description" = "Mit deinem Memos-Server synchronisieren";
+"account.account-detail" = "Kontodetails";
+"account.switch-account" = "Konto wechseln";
