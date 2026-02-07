@@ -7,10 +7,10 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
-import MarkdownUI
 import Models
 import Env
 import SwiftData
+import Markdown
 
 @MainActor
 struct MemoCard: View {
@@ -59,7 +59,7 @@ struct MemoCard: View {
                 }
             }
             
-            MemoCardContent(memo: memo, toggleTaskItem: toggleTaskItem(_:))
+            MemoCardContent(memo: memo, toggleTaskItem: toggleTaskItem)
         }
         .padding([.top, .bottom], 5)
         .contextMenu {
@@ -122,10 +122,10 @@ struct MemoCard: View {
         })
     }
     
-    private func toggleTaskItem(_ configuration: TaskListMarkerConfiguration) async {
+    private func toggleTaskItem(_ listItem: ListItem) async {
         do {
-            guard var node = configuration.node else { return }
-            node.checkbox = configuration.isCompleted ? .unchecked : .checked
+            var node = listItem
+            node.checkbox = listItem.checkbox == .checked ? .unchecked : .checked
             let resourceIds = memo.resources.filter { !$0.softDeleted }.map(\.id)
             try await memosViewModel.editMemo(id: memo.id, content: node.root.format(), visibility: memo.visibility, resources: resourceIds, tags: nil)
         } catch {

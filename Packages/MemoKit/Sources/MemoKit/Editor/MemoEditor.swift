@@ -85,9 +85,11 @@ public struct MemoEditor: View {
         .onAppear {
             if let memo = memo {
                 text = memo.content
+                selection = .init(insertionPoint: text.endIndex)
                 viewModel.visibility = memo.visibility
             } else {
                 text = draft
+                selection = .init(insertionPoint: text.endIndex)
                 viewModel.visibility = userState.currentUser?.defaultVisibility ?? .private
             }
             if let memo {

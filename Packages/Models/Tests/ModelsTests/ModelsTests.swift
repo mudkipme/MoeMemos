@@ -2,11 +2,18 @@ import XCTest
 @testable import Models
 
 final class ModelsTests: XCTestCase {
-    func testExample() throws {
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
+    func testExtractsRegularTags() throws {
+        let tags = MemoTagExtractor.extract(from: "hello #swift and #ios_dev")
+        XCTAssertEqual(tags, ["swift", "ios_dev"])
+    }
 
-        // Defining Test Cases and Test Methods
-        // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
+    func testDoesNotExtractURLFragmentAsTag() throws {
+        let tags = MemoTagExtractor.extract(from: "hello http://example.com/#heading")
+        XCTAssertTrue(tags.isEmpty)
+    }
+
+    func testExtractsTagAndIgnoresURLFragmentInSameLine() throws {
+        let tags = MemoTagExtractor.extract(from: "see http://example.com/#heading and #realTag")
+        XCTAssertEqual(tags, ["realTag"])
     }
 }

@@ -83,6 +83,7 @@ import SwiftData
         memoList = memoList.filter({ memo in
             memo.id != id
         })
+        try await loadTags()
     }
 
     @MainActor

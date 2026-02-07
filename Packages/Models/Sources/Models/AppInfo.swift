@@ -22,13 +22,6 @@ import Factory
         let groupURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: AppInfo.groupContainerIdentifier)!
         let storeURL = groupURL.appendingPathComponent("MoeMemos_20260207.store", isDirectory: false)
 
-        #if DEBUG
-        let env = ProcessInfo.processInfo.environment
-        if env["MOEMEMOS_WIPE_STORE"] == "1" || ProcessInfo.processInfo.arguments.contains("--wipe-store") {
-            try? fileManager.removeItem(at: storeURL)
-        }
-        #endif
-
         let configuration = ModelConfiguration(url: storeURL)
         let container = try! ModelContainer(for: User.self, StoredMemo.self, StoredResource.self, configurations: configuration)
         modelContext = ModelContext(container)
