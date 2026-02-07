@@ -26,7 +26,7 @@ public final class StoredMemo {
     public var visibility: MemoVisibility
     public var createdAt: Date
     public var updatedAt: Date
-    public var isDeleted: Bool
+    public var softDeleted: Bool
     public var syncState: SyncState
     public var lastSyncedAt: Date?
     /// Resources attached to this memo.
@@ -43,7 +43,7 @@ public final class StoredMemo {
         visibility: MemoVisibility,
         createdAt: Date,
         updatedAt: Date,
-        isDeleted: Bool = false,
+        softDeleted: Bool = false,
         syncState: SyncState = .synced,
         lastSyncedAt: Date? = nil,
         resources: [StoredResource] = []
@@ -56,7 +56,7 @@ public final class StoredMemo {
         self.visibility = visibility
         self.createdAt = createdAt
         self.updatedAt = updatedAt
-        self.isDeleted = isDeleted
+        self.softDeleted = softDeleted
         self.syncState = syncState
         self.lastSyncedAt = lastSyncedAt
         self.resources = resources
@@ -76,7 +76,7 @@ public final class StoredResource {
     public var urlString: String
     public var localPath: String?
     public var memo: StoredMemo?
-    public var isDeleted: Bool
+    public var softDeleted: Bool
     public var syncState: SyncState
     public var lastSyncedAt: Date?
 
@@ -91,7 +91,7 @@ public final class StoredResource {
         urlString: String,
         localPath: String? = nil,
         memo: StoredMemo? = nil,
-        isDeleted: Bool = false,
+        softDeleted: Bool = false,
         syncState: SyncState = .synced,
         lastSyncedAt: Date? = nil
     ) {
@@ -105,7 +105,7 @@ public final class StoredResource {
         self.urlString = urlString
         self.localPath = localPath
         self.memo = memo
-        self.isDeleted = isDeleted
+        self.softDeleted = softDeleted
         self.syncState = syncState
         self.lastSyncedAt = lastSyncedAt
     }

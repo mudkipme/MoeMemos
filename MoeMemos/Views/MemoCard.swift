@@ -126,7 +126,7 @@ struct MemoCard: View {
         do {
             guard var node = configuration.node else { return }
             node.checkbox = configuration.isCompleted ? .unchecked : .checked
-            let resourceIds = memo.resources.filter { !$0.isDeleted }.map(\.id)
+            let resourceIds = memo.resources.filter { !$0.softDeleted }.map(\.id)
             try await memosViewModel.editMemo(id: memo.id, content: node.root.format(), visibility: memo.visibility, resources: resourceIds, tags: nil)
         } catch {
             print(error)

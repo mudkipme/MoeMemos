@@ -60,7 +60,7 @@ extension StoredMemo: MemoPresentable {
     public var remoteId: String? { serverId }
     public var attachments: [any ResourcePresentable] {
         resources
-            .filter { !$0.isDeleted }
+            .filter { !$0.softDeleted }
             .sorted { $0.createdAt > $1.createdAt }
     }
 }
