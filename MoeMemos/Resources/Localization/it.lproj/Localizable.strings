@@ -18,6 +18,7 @@
 "memo.pin" = "Fissa";
 "memo.restore" = "Ripristina";
 "memo.share" = "Condividi";
+"memo.view-more" = "Mostra altro";
 "memo.unpin" = "Sblocca";
 "memo.action.ok" = "Si";
 "memo.visibility.public" = "Pubblico";

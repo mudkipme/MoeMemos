@@ -41,6 +41,21 @@ struct MoeMemosApp: App {
                 .onOpenURL { url in
                     if url.host() == "new-memo" {
                         appPath.presentedSheet = .newMemo
+                        return
+                    }
+
+                    if url.host() == "memos" {
+                        appPath.pendingMemoPersistentIdentifier = nil
+                        return
+                    }
+
+                    if url.host() == "memo" {
+                        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                        let persistentIdentifier = components?.queryItems?.first(where: { $0.name == "persistent_id" })?.value
+                        guard let persistentIdentifier, !persistentIdentifier.isEmpty else {
+                            return
+                        }
+                        appPath.pendingMemoPersistentIdentifier = persistentIdentifier
                     }
                 }
         }

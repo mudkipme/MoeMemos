@@ -18,6 +18,7 @@
 "memo.pin" = "ピン留め";
 "memo.restore" = "復元";
 "memo.share" = "共有";
+"memo.view-more" = "もっと見る";
 "memo.unpin" = "ピン留め解除";
 "memo.action.ok" = "はい";
 "memo.visibility.public" = "ゲストに表示";

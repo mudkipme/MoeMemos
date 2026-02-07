@@ -40,6 +40,8 @@ public enum SheetDestination: Identifiable, Hashable {
 @Observable public final class AppPath: Sendable {
     @MainActor
     public var presentedSheet: SheetDestination?
+    @MainActor
+    public var pendingMemoPersistentIdentifier: String?
     
     public init() {}
 }

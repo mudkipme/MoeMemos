@@ -42,6 +42,11 @@ struct ContentView: View {
                 try? await memosViewModel.loadMemos()
                 try? await memosViewModel.loadTags()
             }
+            .onChange(of: appPath.pendingMemoPersistentIdentifier) { _, newValue in
+                if newValue != nil {
+                    selection = .memos
+                }
+            }
             .modelContext(appInfo.modelContext)
             .withSheetDestinations(sheetDestinations: $appPath.presentedSheet)
     }

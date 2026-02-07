@@ -43,29 +43,36 @@ struct MemoCardContent: View {
 
     let memo: any MemoPresentable
     let toggleTaskItem: ((ListItem) async -> Void)?
+    let truncate: Bool
+    
     @Environment(\.colorScheme) var colorScheme
     @State private var cachedRawMarkdown: String
     @State private var cachedPreprocessedMarkdown: String
+    @State private var truncated: Bool
 
-    init(memo: any MemoPresentable, toggleTaskItem: ((ListItem) async -> Void)? = nil) {
+    init(memo: any MemoPresentable, toggleTaskItem: ((ListItem) async -> Void)? = nil, truncate: Bool = false) {
         self.memo = memo
         self.toggleTaskItem = toggleTaskItem
+        self.truncate = truncate
         let content = memo.content
         _cachedRawMarkdown = State(initialValue: content)
-        _cachedPreprocessedMarkdown = State(initialValue: MemoMarkdownPreprocessor.preprocess(content))
+        let preprocessResult = MemoMarkdownPreprocessor.preprocess(content, truncate: truncate)
+        _cachedPreprocessedMarkdown = State(initialValue: preprocessResult.0)
+        _truncated = State(initialValue: preprocessResult.1)
     }
     
     var body: some View {
-        
-        
         VStack(alignment: .leading) {
-            
             MarkdownView(cachedPreprocessedMarkdown)
+                .allowsHitTesting(!truncated)
                 .taskListMarker { listItem in
                     Image(systemName: listItem.checkbox == .checked ? "checkmark.square.fill" : "square")
                         .symbolRenderingMode(.hierarchical)
                         .imageScale(.medium)
                         .onTapGesture {
+                            if truncated {
+                                return
+                            }
                             Task {
                                 await toggleTaskItem?(listItem)
                             }
@@ -86,7 +93,9 @@ struct MemoCardContent: View {
                 return
             }
             cachedRawMarkdown = newContent
-            cachedPreprocessedMarkdown = MemoMarkdownPreprocessor.preprocess(newContent)
+            let preprocessResult = MemoMarkdownPreprocessor.preprocess(newContent, truncate: self.truncate)
+            cachedPreprocessedMarkdown = preprocessResult.0
+            truncated = preprocessResult.1
         }
     }
     
@@ -107,5 +116,4 @@ struct MemoCardContent: View {
         attachments += otherResources.map { .attachment($0) }
         return attachments
     }
-
 }

@@ -18,6 +18,7 @@
 "memo.pin" = "Épingler";
 "memo.restore" = "Restaurer";
 "memo.share" = "Partager";
+"memo.view-more" = "Voir plus";
 "memo.unpin" = "Désépingler";
 "memo.action.ok" = "Oui";
 "memo.visibility.public" = "Public";

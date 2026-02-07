@@ -10,11 +10,17 @@ import Account
 import Models
 import Env
 import DesignSystem
+import SwiftData
 
 struct MemosList: View {
+    private struct SelectedMemo: Identifiable, Hashable {
+        let id: PersistentIdentifier
+    }
+
     let tag: Tag?
 
     @State private var searchString = ""
+    @State private var selectedMemo: SelectedMemo?
     @Environment(AppPath.self) private var appPath
     @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
@@ -31,6 +37,10 @@ struct MemosList: View {
             List(filteredMemoList, id: \.id) { item in
                 Section {
                     MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedMemo = .init(id: item.id)
+                        }
                 }
             }
             .listStyle(InsetGroupedListStyle())
@@ -80,6 +90,14 @@ struct MemosList: View {
         }
         .searchable(text: $searchString)
         .navigationTitle(tag?.name ?? NSLocalizedString("memo.memos", comment: "Memos"))
+        .navigationDestination(item: $selectedMemo) { selectedMemo in
+            if let memo = (try? memosViewModel.service)?.memo(id: selectedMemo.id) {
+                MemoView(memo: memo, defaultMemoVisibility: defaultMemoVisibility)
+            }
+        }
+        .task(id: appPath.pendingMemoPersistentIdentifier) {
+            await openPendingMemoFromWidgetIfNeeded()
+        }
         .toast(isPresenting: $showingSyncErrorToast, alertType: .systemImage("xmark.circle", manualSyncError?.localizedDescription))
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             Task {
@@ -108,6 +126,37 @@ struct MemosList: View {
         }
         
         return fullList
+    }
+
+    @MainActor
+    private func openPendingMemoFromWidgetIfNeeded() async {
+        guard let encodedIdentifier = appPath.pendingMemoPersistentIdentifier else {
+            return
+        }
+
+        guard let persistentIdentifier = decodePersistentIdentifier(from: encodedIdentifier) else {
+            appPath.pendingMemoPersistentIdentifier = nil
+            return
+        }
+
+        if memosViewModel.memoList.contains(where: { $0.id == persistentIdentifier }) {
+            selectedMemo = .init(id: persistentIdentifier)
+            appPath.pendingMemoPersistentIdentifier = nil
+            return
+        }
+
+        try? await memosViewModel.loadMemos()
+        if memosViewModel.memoList.contains(where: { $0.id == persistentIdentifier }) {
+            selectedMemo = .init(id: persistentIdentifier)
+        }
+        appPath.pendingMemoPersistentIdentifier = nil
+    }
+
+    private func decodePersistentIdentifier(from encodedIdentifier: String) -> PersistentIdentifier? {
+        guard let data = Data(base64Encoded: encodedIdentifier) else {
+            return nil
+        }
+        return try? JSONDecoder().decode(PersistentIdentifier.self, from: data)
     }
 }
 
