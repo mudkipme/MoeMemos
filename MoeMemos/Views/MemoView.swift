@@ -1,67 +1,69 @@
 //
-//  MemoCard.swift
+//  MemoView.swift
 //  MoeMemos
 //
-//  Created by Mudkip on 2022/9/4.
+//  Created by Mudkip on 2026/2/8.
 //
 
 import SwiftUI
 import UniformTypeIdentifiers
 import Models
 import Env
-import SwiftData
 import Markdown
 
 @MainActor
-struct MemoCard: View {
+struct MemoView: View {
     let memo: StoredMemo
-    let defaultMemoVisilibity: MemoVisibility?
-    
+    let defaultMemoVisibility: MemoVisibility?
+
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @Environment(AppPath.self) private var appPath
+    @Environment(\.dismiss) private var dismiss
+
     @State private var showingDeleteConfirmation = false
-    
-    init(_ memo: StoredMemo, defaultMemoVisibility: MemoVisibility) {
-        self.memo = memo
-        self.defaultMemoVisilibity = defaultMemoVisibility
-    }
-    
+
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Text(memo.renderTime())
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                
-                if memo.visibility != defaultMemoVisilibity {
-                    Image(systemName: memo.visibility.iconName)
+        ScrollView {
+            VStack(alignment: .leading) {
+                HStack {
+                    Text(memo.renderTime())
+                        .font(.footnote)
                         .foregroundColor(.secondary)
-                }
-                
-                if memo.pinned == true {
-                    Image(systemName: "flag.fill")
-                        .renderingMode(.original)
+
+                    if memo.visibility != defaultMemoVisibility {
+                        Image(systemName: memo.visibility.iconName)
+                            .foregroundColor(.secondary)
+                    }
+
+                    if memo.pinned == true {
+                        Image(systemName: "flag.fill")
+                            .renderingMode(.original)
+                    }
+
+                    if memo.syncState != .synced {
+                        Image(systemName: syncIconName(for: memo.syncState))
+                            .imageScale(.small)
+                            .foregroundStyle(.orange)
+                    }
+
+                    Spacer()
                 }
 
-                if memo.syncState != .synced {
-                    Image(systemName: syncIconName(for: memo.syncState))
-                        .imageScale(.small)
-                        .foregroundStyle(.orange)
-                }
-
-                Spacer()
-
+                MemoCardContent(memo: memo, toggleTaskItem: toggleTaskItem)
+            }
+            .padding()
+        }
+        .navigationTitle(memo.renderTime())
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     normalMenu()
                 } label: {
                     Image(systemName: "ellipsis")
-                        .padding([.leading, .top, .bottom], 10)
                 }
             }
-            
-            MemoCardContent(memo: memo, toggleTaskItem: toggleTaskItem)
         }
-        .padding([.top, .bottom], 5)
         .contextMenu {
             Button {
                 UIPasteboard.general.setValue(memo.content, forPasteboardType: UTType.plainText.identifier)
@@ -73,6 +75,7 @@ struct MemoCard: View {
             Button("memo.action.ok", role: .destructive) {
                 Task {
                     try await memosViewModel.deleteMemo(id: memo.id)
+                    dismiss()
                 }
             }
             Button("memo.action.cancel", role: .cancel) {}
@@ -108,6 +111,7 @@ struct MemoCard: View {
             Task {
                 do {
                     try await memosViewModel.archiveMemo(id: memo.id)
+                    dismiss()
                 } catch {
                     print(error)
                 }
@@ -121,7 +125,7 @@ struct MemoCard: View {
             Label("memo.delete", systemImage: "trash")
         })
     }
-    
+
     private func toggleTaskItem(_ listItem: ListItem) async {
         do {
             var node = listItem
