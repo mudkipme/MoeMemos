@@ -1,5 +1,5 @@
 {
-  "originHash" : "a606423822c273765ce7a6e9522274224a39eaa3caf1e0b76175548caa655ca0",
+  "originHash" : "dbdec0d16ade03e0574008a8420df52d9d794e7d6af70c9bfcf2831f9cb96de1",
   "pins" : [
     {
       "identity" : "data-uri",
@@ -52,7 +52,7 @@
       "location" : "https://github.com/mudkipme/MarkdownView",
       "state" : {
         "branch" : "main",
-        "revision" : "46472bb47d12ad2ad4d09527be5073795d154661"
+        "revision" : "139aef4f6ac295caf27d3728dec107720f5d1768"
       }
     },
     {

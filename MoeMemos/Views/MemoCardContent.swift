@@ -42,13 +42,14 @@ struct MemoCardContent: View {
     }
 
     let memo: any MemoPresentable
-//    let toggleTaskItem: ((TaskListMarkerConfiguration) async -> Void)?
+    let toggleTaskItem: ((ListItem) async -> Void)?
     @Environment(\.colorScheme) var colorScheme
     @State private var cachedRawMarkdown: String
     @State private var cachedPreprocessedMarkdown: String
 
-    init(memo: any MemoPresentable) {
+    init(memo: any MemoPresentable, toggleTaskItem: ((ListItem) async -> Void)? = nil) {
         self.memo = memo
+        self.toggleTaskItem = toggleTaskItem
         let content = memo.content
         _cachedRawMarkdown = State(initialValue: content)
         _cachedPreprocessedMarkdown = State(initialValue: MemoMarkdownPreprocessor.preprocess(content))
@@ -60,17 +61,16 @@ struct MemoCardContent: View {
         VStack(alignment: .leading) {
             
             MarkdownView(cachedPreprocessedMarkdown)
-//                .markdownTaskListMarker(BlockStyle { configuration in
-//                    Image(systemName: configuration.isCompleted ? "checkmark.square.fill" : "square")
-//                        .symbolRenderingMode(.hierarchical)
-//                        .imageScale(.medium)
-//                        .relativeFrame(minWidth: .em(1), alignment: .leading)
-//                        .onTapGesture {
-//                            Task {
-//                                await toggleTaskItem?(configuration)
-//                            }
-//                        }
-//                })
+                .taskListMarker { listItem in
+                    Image(systemName: listItem.checkbox == .checked ? "checkmark.square.fill" : "square")
+                        .symbolRenderingMode(.hierarchical)
+                        .imageScale(.medium)
+                        .onTapGesture {
+                            Task {
+                                await toggleTaskItem?(listItem)
+                            }
+                        }
+                }
             
             ForEach(resources()) { content in
                 if case let .images(urls) = content {
