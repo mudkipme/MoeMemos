@@ -1,5 +1,5 @@
 {
-  "originHash" : "3c7bd6bacf47a5bd5da7e5d1add20932f3a3c378c542a51e98ef34fcb12775ff",
+  "originHash" : "a606423822c273765ce7a6e9522274224a39eaa3caf1e0b76175548caa655ca0",
   "pins" : [
     {
       "identity" : "data-uri",
@@ -22,7 +22,7 @@
     {
       "identity" : "highlightr",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/raspu/Highlightr",
+      "location" : "https://github.com/raspu/Highlightr.git",
       "state" : {
         "revision" : "05e7fcc63b33925cd0c1faaa205cdd5681e7bbef",
         "version" : "2.3.0"
@@ -35,6 +35,33 @@
       "state" : {
         "revision" : "265806607b45687a3d646e4c9837c31c90f202e8",
         "version" : "21.0.0"
+      }
+    },
+    {
+      "identity" : "latexswiftui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/colinc86/LaTeXSwiftUI.git",
+      "state" : {
+        "revision" : "c45e0fd45f64923c49c5904a9f9626bc8939f05f",
+        "version" : "1.5.0"
+      }
+    },
+    {
+      "identity" : "markdownview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mudkipme/MarkdownView",
+      "state" : {
+        "branch" : "main",
+        "revision" : "46472bb47d12ad2ad4d09527be5073795d154661"
+      }
+    },
+    {
+      "identity" : "mathjaxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/colinc86/MathJaxSwift",
+      "state" : {
+        "revision" : "e23d6eab941da699ac4a60fb0e60f3ba5c937459",
+        "version" : "3.4.0"
       }
     },
     {
@@ -83,6 +110,15 @@
       }
     },
     {
+      "identity" : "swift-html-entities",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Kitura/swift-html-entities",
+      "state" : {
+        "revision" : "d8ca73197f59ce260c71bd6d7f6eb8bbdccf508b",
+        "version" : "4.0.1"
+      }
+    },
+    {
       "identity" : "swift-http-types",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-http-types",
@@ -97,16 +133,7 @@
       "location" : "https://github.com/mudkipme/swift-markdown",
       "state" : {
         "branch" : "main",
-        "revision" : "ec4316c34cd07bbc7bb9e173004692ca5ff1d1f2"
-      }
-    },
-    {
-      "identity" : "swift-markdown-ui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mudkipme/swift-markdown-ui",
-      "state" : {
-        "branch" : "main",
-        "revision" : "546a16ded56b83bb2ea48ec177f60a236931099f"
+        "revision" : "df3e151e5679210b723e44d3a6c7168522a54545"
       }
     },
     {
@@ -123,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-openapi-generator",
       "state" : {
-        "revision" : "d74223cc5595a8165181c4d9579243c932e5cd07",
-        "version" : "1.10.3"
+        "revision" : "ecf21fdf08d4cf30ca506bb822f5fe580e090efb",
+        "version" : "1.10.4"
       }
     },
     {
@@ -146,12 +173,21 @@
       }
     },
     {
+      "identity" : "swiftdraw",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swhitty/SwiftDraw",
+      "state" : {
+        "revision" : "9b15cec6c2c5dc7ee32321a7a51883cb179a9da0",
+        "version" : "0.26.0"
+      }
+    },
+    {
       "identity" : "yams",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jpsim/Yams",
       "state" : {
-        "revision" : "51b5127c7fb6ffac106ad6d199aaa33c5024895f",
-        "version" : "6.2.0"
+        "revision" : "deaf82e867fa2cbd3cd865978b079bfcf384ac28",
+        "version" : "6.2.1"
       }
     }
   ],

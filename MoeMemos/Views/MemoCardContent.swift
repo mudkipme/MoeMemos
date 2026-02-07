@@ -6,7 +6,8 @@
 //
 
 import SwiftUI
-@preconcurrency import MarkdownUI
+import MarkdownView
+import Markdown
 import Models
 import MemoKit
 
@@ -41,25 +42,35 @@ struct MemoCardContent: View {
     }
 
     let memo: any MemoPresentable
-    let toggleTaskItem: ((TaskListMarkerConfiguration) async -> Void)?
+//    let toggleTaskItem: ((TaskListMarkerConfiguration) async -> Void)?
     @Environment(\.colorScheme) var colorScheme
+    @State private var cachedRawMarkdown: String
+    @State private var cachedPreprocessedMarkdown: String
+
+    init(memo: any MemoPresentable) {
+        self.memo = memo
+        let content = memo.content
+        _cachedRawMarkdown = State(initialValue: content)
+        _cachedPreprocessedMarkdown = State(initialValue: MemoMarkdownPreprocessor.preprocess(content))
+    }
     
     var body: some View {
+        
+        
         VStack(alignment: .leading) {
-            MarkdownView(memo.content)
-                .markdownImageProvider(.lazyImage(aspectRatio: 4 / 3))
-                .markdownCodeSyntaxHighlighter(colorScheme == .dark ? .dark() : .light())
-                .markdownTaskListMarker(BlockStyle { configuration in
-                    Image(systemName: configuration.isCompleted ? "checkmark.square.fill" : "square")
-                        .symbolRenderingMode(.hierarchical)
-                        .imageScale(.medium)
-                        .relativeFrame(minWidth: .em(1), alignment: .leading)
-                        .onTapGesture {
-                            Task {
-                                await toggleTaskItem?(configuration)
-                            }
-                        }
-                })
+            
+            MarkdownView(cachedPreprocessedMarkdown)
+//                .markdownTaskListMarker(BlockStyle { configuration in
+//                    Image(systemName: configuration.isCompleted ? "checkmark.square.fill" : "square")
+//                        .symbolRenderingMode(.hierarchical)
+//                        .imageScale(.medium)
+//                        .relativeFrame(minWidth: .em(1), alignment: .leading)
+//                        .onTapGesture {
+//                            Task {
+//                                await toggleTaskItem?(configuration)
+//                            }
+//                        }
+//                })
             
             ForEach(resources()) { content in
                 if case let .images(urls) = content {
@@ -69,6 +80,13 @@ struct MemoCardContent: View {
                     Attachment(resource: resource)
                 }
             }
+        }
+        .onChange(of: memo.content) { _, newContent in
+            guard newContent != cachedRawMarkdown else {
+                return
+            }
+            cachedRawMarkdown = newContent
+            cachedPreprocessedMarkdown = MemoMarkdownPreprocessor.preprocess(newContent)
         }
     }
     
@@ -89,4 +107,5 @@ struct MemoCardContent: View {
         attachments += otherResources.map { .attachment($0) }
         return attachments
     }
+
 }

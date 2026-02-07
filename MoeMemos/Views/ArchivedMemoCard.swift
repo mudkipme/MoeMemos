@@ -40,7 +40,7 @@ struct ArchivedMemoCard: View {
                 }
             }
             
-            MemoCardContent(memo: memo, toggleTaskItem: nil)
+            MemoCardContent(memo: memo)
         }
         .padding([.top, .bottom], 5)
         .contextMenu {
