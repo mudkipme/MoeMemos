@@ -74,3 +74,13 @@
 "account.account-detail" = "Account Detail";
 "account.switch-account" = "Switch Account";
 "account.local-account-cannot-be-removed" = "Local account cannot be removed.";
+"account.local-export" = "Export";
+"account.local-export-button" = "Export local memos";
+"account.local-export-share-zip" = "Share exported ZIP";
+"account.local-export-error-not-available" = "Export is only available for local account.";
+"account.local-export-error-empty" = "No memos to export.";
+"account.local-export-error-missing-resource" = "Attachment file not found: %@";
+"account.local-export-progress-preparing" = "Preparing export";
+"account.local-export-progress-exporting" = "Exporting memos and resources";
+"account.local-export-progress-zipping" = "Creating zip archive";
+"account.local-export-progress-complete" = "Export complete";

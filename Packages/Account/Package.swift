@@ -22,7 +22,8 @@ let package = Package(
         .package(name: "DesignSystem", path: "../DesignSystem"),
         .package(name: "Env", path: "../Env"),
         .package(url: "https://github.com/evgenyneu/keychain-swift", from: "21.0.0"),
-        .package(url: "https://github.com/hmlongco/Factory", from: "2.5.3")
+        .package(url: "https://github.com/hmlongco/Factory", from: "2.5.3"),
+        .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -36,7 +37,8 @@ let package = Package(
                 .product(name: "DesignSystem", package: "DesignSystem"),
                 .product(name: "Env", package: "Env"),
                 .product(name: "KeychainSwift", package: "keychain-swift"),
-                .product(name: "Factory", package: "Factory")
+                .product(name: "Factory", package: "Factory"),
+                .product(name: "ZIPFoundation", package: "ZIPFoundation")
             ],
             swiftSettings: [
               .enableExperimentalFeature("StrictConcurrency"),

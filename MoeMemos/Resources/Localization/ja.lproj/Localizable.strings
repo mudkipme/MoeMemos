@@ -74,3 +74,13 @@
 "account.account-detail" = "アカウントの詳細";
 "account.switch-account" = "アカウントの切替";
 "account.local-account-cannot-be-removed" = "ローカルアカウントは削除できません。";
+"account.local-export" = "エクスポート";
+"account.local-export-button" = "ローカルメモをエクスポート";
+"account.local-export-share-zip" = "エクスポートしたZIPを共有";
+"account.local-export-error-not-available" = "エクスポートはローカルアカウントでのみ利用できます。";
+"account.local-export-error-empty" = "エクスポートするメモがありません。";
+"account.local-export-error-missing-resource" = "添付ファイルが見つかりません: %@";
+"account.local-export-progress-preparing" = "エクスポートを準備中";
+"account.local-export-progress-exporting" = "メモとリソースをエクスポート中";
+"account.local-export-progress-zipping" = "ZIPアーカイブを作成中";
+"account.local-export-progress-complete" = "エクスポート完了";

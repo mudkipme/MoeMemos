@@ -74,3 +74,13 @@
 "account.account-detail" = "帳號詳情";
 "account.switch-account" = "切換帳號";
 "account.local-account-cannot-be-removed" = "本地帳號無法移除。";
+"account.local-export" = "匯出";
+"account.local-export-button" = "匯出本地 MEMO";
+"account.local-export-share-zip" = "分享已匯出的 ZIP";
+"account.local-export-error-not-available" = "僅本地帳號支援匯出。";
+"account.local-export-error-empty" = "沒有可匯出的 MEMO。";
+"account.local-export-error-missing-resource" = "找不到附件檔案：%@";
+"account.local-export-progress-preparing" = "正在準備匯出";
+"account.local-export-progress-exporting" = "正在匯出 MEMO 與資源";
+"account.local-export-progress-zipping" = "正在建立 ZIP 壓縮檔";
+"account.local-export-progress-complete" = "匯出完成";

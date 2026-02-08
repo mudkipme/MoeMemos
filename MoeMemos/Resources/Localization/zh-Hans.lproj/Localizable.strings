@@ -74,3 +74,13 @@
 "account.account-detail" = "账号详情";
 "account.switch-account" = "切换账号";
 "account.local-account-cannot-be-removed" = "本地账号无法删除。";
+"account.local-export" = "导出";
+"account.local-export-button" = "导出本地 MEMO";
+"account.local-export-share-zip" = "分享已导出的 ZIP";
+"account.local-export-error-not-available" = "仅本地账号支持导出。";
+"account.local-export-error-empty" = "没有可导出的 MEMO。";
+"account.local-export-error-missing-resource" = "未找到附件文件：%@";
+"account.local-export-progress-preparing" = "正在准备导出";
+"account.local-export-progress-exporting" = "正在导出 MEMO 和资源";
+"account.local-export-progress-zipping" = "正在创建 ZIP 压缩包";
+"account.local-export-progress-complete" = "导出完成";
