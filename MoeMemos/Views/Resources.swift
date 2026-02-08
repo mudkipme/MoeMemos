@@ -16,6 +16,7 @@ fileprivate enum ResourceSection: String, CaseIterable, Identifiable {
     case other = "resources.section.other"
 
     var id: String { rawValue }
+    var title: LocalizedStringKey { LocalizedStringKey(rawValue) }
 }
 
 struct Resources: View {
@@ -34,7 +35,7 @@ struct Resources: View {
         VStack(spacing: 0) {
             Picker("resources.section", selection: $section) {
                 ForEach(ResourceSection.allCases) { item in
-                    Text(item.rawValue).tag(item)
+                    Text(item.title).tag(item)
                 }
             }
             .pickerStyle(.segmented)
