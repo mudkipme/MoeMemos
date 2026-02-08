@@ -34,16 +34,20 @@ struct MemosList: View {
         let canSync = ((try? memosViewModel.service) as? SyncableService) != nil
         
         ZStack(alignment: .bottomTrailing) {
-            List(filteredMemoList, id: \.id) { item in
-                Section {
-                    MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            selectedMemo = .init(id: item.id)
-                        }
+            if filteredMemoList.isEmpty {
+                ContentUnavailableView("memo.memos.empty", systemImage: "note.text")
+            } else {
+                List(filteredMemoList, id: \.id) { item in
+                    Section {
+                        MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                selectedMemo = .init(id: item.id)
+                            }
+                    }
                 }
+                .listStyle(InsetGroupedListStyle())
             }
-            .listStyle(InsetGroupedListStyle())
             
             if #unavailable(iOS 26.0) {
                 Button {
@@ -157,28 +161,5 @@ struct MemosList: View {
             return nil
         }
         return try? JSONDecoder().decode(PersistentIdentifier.self, from: data)
-    }
-}
-
-private struct SyncStatusBadge: View {
-    let syncing: Bool
-    let unsyncedCount: Int
-    let syncAction: () -> Void
-
-    var body: some View {
-        if syncing {
-            HStack(spacing: 5) {
-                ProgressView()
-                    .controlSize(.mini)
-            }
-        } else {
-            Button(action: syncAction) {
-                if unsyncedCount > 0 {
-                    Image(systemName: "icloud.slash")
-                } else {
-                    Image(systemName: "arrow.clockwise")
-                }
-            }
-        }
     }
 }

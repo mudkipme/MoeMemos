@@ -6,21 +6,52 @@
 //
 
 import SwiftUI
+import Account
 import Models
+import DesignSystem
 
 struct ArchivedMemosList: View {
     @State private var viewModel = ArchivedMemoListViewModel()
     @State private var searchString = ""
+    @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
+    @State private var manualSyncError: Error?
+    @State private var showingSyncErrorToast = false
 
     var body: some View {
         let filteredMemoList = filterMemoList(viewModel.archivedMemoList)
-        List(filteredMemoList, id: \.id) { memo in
-            Section {
-                ArchivedMemoCard(memo, archivedViewModel: viewModel)
+        let unsyncedCount = memosViewModel.memoList.filter { $0.syncState != .synced }.count
+        let canSync = ((try? memosViewModel.service) as? SyncableService) != nil
+
+        Group {
+            if filteredMemoList.isEmpty {
+                ContentUnavailableView("memo.archived.empty", systemImage: "archivebox")
+            } else {
+                List(filteredMemoList, id: \.id) { memo in
+                    Section {
+                        ArchivedMemoCard(memo, archivedViewModel: viewModel)
+                    }
+                }
+                .listStyle(InsetGroupedListStyle())
             }
         }
-        .listStyle(InsetGroupedListStyle())
         .navigationTitle("memo.archived")
+        .toolbar {
+            if canSync {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SyncStatusBadge(syncing: memosViewModel.syncing, unsyncedCount: unsyncedCount) {
+                        Task {
+                            do {
+                                try await memosViewModel.syncNow()
+                                try await viewModel.reloadArchivedMemos()
+                            } catch {
+                                manualSyncError = error
+                                showingSyncErrorToast = true
+                            }
+                        }
+                    }
+                }
+            }
+        }
         .task {
             do {
                 try await viewModel.loadArchivedMemos()
@@ -28,14 +59,8 @@ struct ArchivedMemosList: View {
                 print(error)
             }
         }
-        .refreshable {
-            do {
-                try await viewModel.loadArchivedMemos()
-            } catch {
-                print(error)
-            }
-        }
         .searchable(text: $searchString)
+        .toast(isPresenting: $showingSyncErrorToast, alertType: .systemImage("xmark.circle", manualSyncError?.localizedDescription))
     }
     
     private func filterMemoList(_ memoList: [StoredMemo]) -> [StoredMemo] {
@@ -47,11 +72,5 @@ struct ArchivedMemosList: View {
         }
         
         return memoList
-    }
-}
-
-struct ArchivedMemosList_Previews: PreviewProvider {
-    static var previews: some View {
-        ArchivedMemosList()
     }
 }

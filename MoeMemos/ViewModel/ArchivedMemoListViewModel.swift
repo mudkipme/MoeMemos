@@ -24,16 +24,17 @@ import SwiftData
     
     @MainActor
     func loadArchivedMemos() async throws {
+        try await reloadArchivedMemos()
+        let service = try self.service
+        if service is SyncableService {
+            startBackgroundSync()
+        }
+    }
+
+    @MainActor
+    func reloadArchivedMemos() async throws {
         let service = try self.service
         archivedMemoList = try await service.listArchivedMemos()
-        if service is SyncableService {
-            do {
-                try await memosViewModel.syncNow()
-                archivedMemoList = try await service.listArchivedMemos()
-            } catch {
-                return
-            }
-        }
     }
     
     @MainActor
@@ -52,5 +53,20 @@ import SwiftData
         archivedMemoList = archivedMemoList.filter({ memo in
             memo.id != id
         })
+    }
+    
+    @MainActor
+    private func startBackgroundSync() {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                try await self.memosViewModel.syncNow()
+                let service = try self.service
+                self.archivedMemoList = try await service.listArchivedMemos()
+            } catch {
+                // Keep the current list when background sync fails.
+                return
+            }
+        }
     }
 }

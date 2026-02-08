@@ -11,19 +11,25 @@ struct Explore: View {
     @State private var viewModel = ExploreViewModel()
 
     var body: some View {
-        List(viewModel.memoList, id: \.remoteId) { memo in
-            Section {
-                ExploreMemoCard(memo: memo)
-                    .onAppear {
-                        Task {
-                            if viewModel.memoList.firstIndex(where: { $0.remoteId == memo.remoteId }) == viewModel.memoList.count - 2 {
-                                try await viewModel.loadMoreMemos()
+        Group {
+            if viewModel.memoList.isEmpty {
+                ContentUnavailableView("explore.empty", systemImage: "globe")
+            } else {
+                List(viewModel.memoList, id: \.remoteId) { memo in
+                    Section {
+                        ExploreMemoCard(memo: memo)
+                            .onAppear {
+                                Task {
+                                    if viewModel.memoList.firstIndex(where: { $0.remoteId == memo.remoteId }) == viewModel.memoList.count - 2 {
+                                        try await viewModel.loadMoreMemos()
+                                    }
+                                }
                             }
-                        }
                     }
+                }
+                .listStyle(InsetGroupedListStyle())
             }
         }
-        .listStyle(InsetGroupedListStyle())
         .navigationTitle("explore")
         .task {
             do {

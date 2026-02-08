@@ -51,6 +51,11 @@
 "stats.tag" = "タグ";
 
 "resources" = "リソース";
+"resources.section" = "リソースセクション";
+"resources.section.image" = "画像";
+"resources.section.other" = "その他";
+"resources.empty.images" = "画像がありません";
+"resources.empty.attachments" = "添付ファイルがありません";
 
 "tags" = "タグ";
 
@@ -61,7 +66,11 @@
 
 "share.memo-saved" = "保存したメモ。";
 
-"explore" = "深堀り";
+"explore" = "共有メモ";
+"explore.empty" = "公開メモはありません";
+
+"memo.memos.empty" = "メモはありません";
+"memo.archived.empty" = "アーカイブ済みメモはありません";
 
 // Account
 "account.local-user" = "ローカルユーザー";

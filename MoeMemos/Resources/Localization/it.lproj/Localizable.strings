@@ -53,6 +53,11 @@
 "stats.tag" = "Etichetta";
  
 "resources" = "Risorse";
+"resources.section" = "Sezione risorse";
+"resources.section.image" = "Immagini";
+"resources.section.other" = "Altro";
+"resources.empty.images" = "Nessuna immagine";
+"resources.empty.attachments" = "Nessun allegato";
  
 "tags" = "Etichetta";
  
@@ -64,6 +69,10 @@
 "share.memo-saved" = "Promemoria salvato.";
  
 "explore" = "Esplora";
+"explore.empty" = "Nessun memo pubblico";
+
+"memo.memos.empty" = "Nessun memo";
+"memo.archived.empty" = "Nessun memo archiviato";
 
 // Account
 "account.local-user" = "Utente locale";

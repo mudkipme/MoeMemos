@@ -91,6 +91,7 @@
 		20B1A2C3D4E5F60718293A4E /* MemoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 20B1A2C3D4E5F60718293A4C /* MemoKit */; };
 		2A9F4C1F2D9B100100A1B2C3 /* MemoMarkdownPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9F4C1E2D9B100100A1B2C3 /* MemoMarkdownPreprocessor.swift */; };
 		2AA1B2C32F5A6B7C00D1E2F3 /* MemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA1B2C42F5A6B7C00D1E2F3 /* MemoView.swift */; };
+		2B7D9E3C2F4A110000ABC001 /* SyncStatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7D9E3C2F4A110000ABC002 /* SyncStatusBadge.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -203,6 +204,7 @@
 		20B1A2C3D4E5F60718293A4D /* MemoKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = MemoKit; path = Packages/MemoKit; sourceTree = "<group>"; };
 		2A9F4C1E2D9B100100A1B2C3 /* MemoMarkdownPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoMarkdownPreprocessor.swift; sourceTree = "<group>"; };
 		2AA1B2C42F5A6B7C00D1E2F3 /* MemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoView.swift; sourceTree = "<group>"; };
+		2B7D9E3C2F4A110000ABC002 /* SyncStatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStatusBadge.swift; sourceTree = "<group>"; };
 		EE17AC762D8E12E500C01504 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainInterface.strings; sourceTree = "<group>"; };
 		EE17AC772D8E12E500C01504 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -420,6 +422,7 @@
 				193DE92228C5E267002651E0 /* Settings.swift */,
 				199A657E28C47D7C00C39994 /* Sidebar.swift */,
 				19E1C5BD28C4F6410072CEEF /* Stats.swift */,
+				2B7D9E3C2F4A110000ABC002 /* SyncStatusBadge.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -656,6 +659,7 @@
 				2A9F4C1F2D9B100100A1B2C3 /* MemoMarkdownPreprocessor.swift in Sources */,
 				19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */,
 				1951055E2C287A0F009EA669 /* NestedTag.swift in Sources */,
+				2B7D9E3C2F4A110000ABC001 /* SyncStatusBadge.swift in Sources */,
 				1919FBE529CF738300FEF570 /* ExploreViewModel.swift in Sources */,
 				197123DF2CEBC21900CEEECC /* AccountEntity.swift in Sources */,
 				194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */,
