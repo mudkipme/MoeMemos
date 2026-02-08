@@ -24,11 +24,17 @@ import SwiftData
     
     @MainActor
     func loadArchivedMemos() async throws {
+        try await reloadArchivedMemos()
         let service = try self.service
-        archivedMemoList = try await service.listArchivedMemos()
         if service is SyncableService {
             startBackgroundSync()
         }
+    }
+
+    @MainActor
+    func reloadArchivedMemos() async throws {
+        let service = try self.service
+        archivedMemoList = try await service.listArchivedMemos()
     }
     
     @MainActor
