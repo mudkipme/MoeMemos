@@ -13,7 +13,7 @@ struct Explore: View {
     var body: some View {
         Group {
             if viewModel.memoList.isEmpty {
-                ContentUnavailableView("No public memos", systemImage: "globe")
+                ContentUnavailableView("explore.empty", systemImage: "globe")
             } else {
                 List(viewModel.memoList, id: \.remoteId) { memo in
                     Section {

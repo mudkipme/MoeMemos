@@ -12,8 +12,8 @@ import Models
 fileprivate let columns = [GridItem(.adaptive(minimum: 125, maximum: 200), spacing: 10), GridItem(.adaptive(minimum: 125, maximum: 200), spacing: 10)]
 
 fileprivate enum ResourceSection: String, CaseIterable, Identifiable {
-    case image = "Image"
-    case other = "Other"
+    case image = "resources.section.image"
+    case other = "resources.section.other"
 
     var id: String { rawValue }
 }
@@ -32,7 +32,7 @@ struct Resources: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Picker("Resource Section", selection: $section) {
+            Picker("resources.section", selection: $section) {
                 ForEach(ResourceSection.allCases) { item in
                     Text(item.rawValue).tag(item)
                 }
@@ -42,7 +42,7 @@ struct Resources: View {
 
             if section == .image {
                 if imageResources.isEmpty {
-                    ContentUnavailableView("No images", systemImage: "photo.on.rectangle")
+                    ContentUnavailableView("resources.empty.images", systemImage: "photo.on.rectangle")
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns) {
@@ -55,7 +55,7 @@ struct Resources: View {
                 }
             } else {
                 if otherResources.isEmpty {
-                    ContentUnavailableView("No attachments", systemImage: "paperclip")
+                    ContentUnavailableView("resources.empty.attachments", systemImage: "paperclip")
                 } else {
                     List(otherResources) { item in
                         Attachment(resource: item)

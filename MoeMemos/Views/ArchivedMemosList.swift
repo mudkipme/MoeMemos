@@ -24,7 +24,7 @@ struct ArchivedMemosList: View {
 
         Group {
             if filteredMemoList.isEmpty {
-                ContentUnavailableView("No archived memos", systemImage: "archivebox")
+                ContentUnavailableView("memo.archived.empty", systemImage: "archivebox")
             } else {
                 List(filteredMemoList, id: \.id) { memo in
                     Section {

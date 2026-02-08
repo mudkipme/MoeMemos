@@ -51,6 +51,11 @@
 "stats.tag" = "Tag";
 
 "resources" = "Resources";
+"resources.section" = "Resource Section";
+"resources.section.image" = "Image";
+"resources.section.other" = "Other";
+"resources.empty.images" = "No images";
+"resources.empty.attachments" = "No attachments";
 
 "tags" = "Tags";
 
@@ -62,6 +67,10 @@
 "share.memo-saved" = "Memo saved.";
 
 "explore" = "Explore";
+"explore.empty" = "No public memos";
+
+"memo.memos.empty" = "No memos";
+"memo.archived.empty" = "No archived memos";
 
 // Account
 "account.local-user" = "Local user";

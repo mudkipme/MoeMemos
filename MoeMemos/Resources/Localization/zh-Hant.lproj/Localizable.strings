@@ -51,6 +51,11 @@
 "stats.tag" = "標籤";
 
 "resources" = "資源";
+"resources.section" = "資源分類";
+"resources.section.image" = "圖片";
+"resources.section.other" = "其他";
+"resources.empty.images" = "暫無圖片";
+"resources.empty.attachments" = "暫無附件";
 
 "tags" = "標籤";
 
@@ -62,6 +67,10 @@
 "share.memo-saved" = "已儲存 MEMO";
 
 "explore" = "探索";
+"explore.empty" = "暫無公開 MEMO";
+
+"memo.memos.empty" = "暫無 MEMO";
+"memo.archived.empty" = "暫無歸檔 MEMO";
 
 // Account
 "account.local-user" = "本地使用者";

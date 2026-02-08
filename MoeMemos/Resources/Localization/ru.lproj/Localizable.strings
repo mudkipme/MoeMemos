@@ -51,6 +51,11 @@
 "stats.tag" = "Тег";
 
 "resources" = "Ресурсы";
+"resources.section" = "Раздел ресурсов";
+"resources.section.image" = "Изображения";
+"resources.section.other" = "Другое";
+"resources.empty.images" = "Нет изображений";
+"resources.empty.attachments" = "Нет вложений";
 
 "tags" = "Теги";
 
@@ -62,6 +67,10 @@
 "share.memo-saved" = "Memo сохранена.";
 
 "explore" = "Обзор";
+"explore.empty" = "Нет публичных заметок";
+
+"memo.memos.empty" = "Нет заметок";
+"memo.archived.empty" = "Нет архивированных заметок";
 
 // Account
 "account.local-user" = "Локальный пользователь";

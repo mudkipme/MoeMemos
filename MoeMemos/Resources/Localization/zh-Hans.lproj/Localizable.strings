@@ -51,6 +51,11 @@
 "stats.tag" = "标签";
 
 "resources" = "资源";
+"resources.section" = "资源分组";
+"resources.section.image" = "图片";
+"resources.section.other" = "其他";
+"resources.empty.images" = "暂无图片";
+"resources.empty.attachments" = "暂无附件";
 
 "tags" = "标签";
 
@@ -61,7 +66,11 @@
 
 "share.memo-saved" = "已保存 MEMO";
 
-"explore" = "探索";
+"explore" = "发现";
+"explore.empty" = "暂无公开 MEMO";
+
+"memo.memos.empty" = "暂无 MEMO";
+"memo.archived.empty" = "暂无归档 MEMO";
 
 // Account
 "account.local-user" = "本地用户";

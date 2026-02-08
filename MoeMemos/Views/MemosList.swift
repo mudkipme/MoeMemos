@@ -35,7 +35,7 @@ struct MemosList: View {
         
         ZStack(alignment: .bottomTrailing) {
             if filteredMemoList.isEmpty {
-                ContentUnavailableView("No memos", systemImage: "note.text")
+                ContentUnavailableView("memo.memos.empty", systemImage: "note.text")
             } else {
                 List(filteredMemoList, id: \.id) { item in
                     Section {
