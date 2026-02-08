@@ -73,3 +73,4 @@
 "account.memos-account-description" = "與您的 Memos 伺服器同步";
 "account.account-detail" = "帳號詳情";
 "account.switch-account" = "切換帳號";
+"account.local-account-cannot-be-removed" = "本地帳號無法移除。";

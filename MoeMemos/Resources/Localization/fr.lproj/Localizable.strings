@@ -75,3 +75,4 @@
 "account.memos-account-description" = "Synchroniser avec votre serveur Memos";
 "account.account-detail" = "Détails du compte";
 "account.switch-account" = "Changer de compte";
+"account.local-account-cannot-be-removed" = "Le compte local ne peut pas être supprimé.";

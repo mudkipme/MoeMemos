@@ -49,6 +49,15 @@ public struct MemosAccountView: View {
                 }
                 .padding([.top, .bottom], 10)
             }
+
+            if let memosHost {
+                Label {
+                    Text(memosHost)
+                        .foregroundStyle(.secondary)
+                } icon: {
+                    Image(systemName: "network")
+                }
+            }
             
             if let version = version?.version {
                 Label(title: { Text("memos v\(version)").foregroundStyle(.secondary) }) {
@@ -75,23 +84,15 @@ public struct MemosAccountView: View {
                     }
                 }
             }
-            
-            if isLocalAccount {
-                Section {
-                    Text("Local account cannot be removed.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-            } else {
-                Section {
-                    Button(role: .destructive) {
-                        requestDeleteAccount()
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("settings.sign-out")
-                            Spacer()
-                        }
+
+            Section {
+                Button(role: .destructive) {
+                    requestDeleteAccount()
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("settings.sign-out")
+                        Spacer()
                     }
                 }
             }
@@ -133,12 +134,25 @@ public struct MemosAccountView: View {
         }
     }
 
-    private var isLocalAccount: Bool {
-        guard let account else { return false }
-        if case .local = account {
-            return true
+    private var memosHost: String? {
+        guard let account else { return nil }
+        let host: String
+        switch account {
+        case let .memosV0(host: value, id: _, accessToken: _):
+            host = value
+        case let .memosV1(host: value, id: _, accessToken: _):
+            host = value
+        case .local:
+            return nil
         }
-        return false
+
+        if let url = URL(string: host), let host = url.host() {
+            return host
+        }
+        if let url = URL(string: "https://\(host)"), let host = url.host() {
+            return host
+        }
+        return host
     }
 
     private func requestDeleteAccount() {
