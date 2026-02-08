@@ -20,7 +20,6 @@ public struct MemoEditor: View {
     @State private var text = ""
     @State private var selection: TextSelection?
     @State private var isApplyingAutoContinuation = false
-    @AppStorage("draft") private var draft = ""
 
     @FocusState private var focused: Bool
     @Environment(\.dismiss) private var dismiss
@@ -35,6 +34,23 @@ public struct MemoEditor: View {
     public init(memo: StoredMemo?, actions: MemoEditorActions) {
         self.memo = memo
         self.actions = actions
+    }
+
+    private var draftUserDefaults: UserDefaults {
+        UserDefaults(suiteName: AppInfo.groupContainerIdentifier) ?? .standard
+    }
+
+    private var draftStorageKey: String {
+        "draft.\(accountManager.currentAccount?.key ?? "default")"
+    }
+
+    private var draft: String {
+        get {
+            draftUserDefaults.string(forKey: draftStorageKey) ?? ""
+        }
+        nonmutating set {
+            draftUserDefaults.set(newValue, forKey: draftStorageKey)
+        }
     }
 
     @ViewBuilder
