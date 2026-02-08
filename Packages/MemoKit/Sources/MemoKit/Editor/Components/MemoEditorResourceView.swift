@@ -26,7 +26,7 @@ struct MemoEditorResourceView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack {
                             ForEach(attachmentResources, id: \.id) { item in
-                                Attachment(resource: item)
+                                Attachment(resource: item, resourceManager: viewModel)
                                     .frame(maxWidth: 200, alignment: .leading)
                             }
                         }

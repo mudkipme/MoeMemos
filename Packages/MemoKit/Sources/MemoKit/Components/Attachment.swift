@@ -5,6 +5,7 @@ import DesignSystem
 
 public struct Attachment: View {
     public let resource: any ResourcePresentable
+    private let resourceManager: (any ResourceManager)?
     @Environment(AccountManager.self) private var memosManager: AccountManager
     @Environment(\.openURL) private var openURL
     @State private var downloadedURL: URL?
@@ -12,8 +13,9 @@ public struct Attachment: View {
     @State private var showingErrorToast = false
     @State private var downloading = false
 
-    public init(resource: any ResourcePresentable) {
+    public init(resource: any ResourcePresentable, resourceManager: (any ResourceManager)? = nil) {
         self.resource = resource
+        self.resourceManager = resourceManager
     }
 
     public var body: some View {
@@ -53,10 +55,26 @@ public struct Attachment: View {
         .padding([.top, .bottom], 5)
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", downloadError?.localizedDescription))
         .toast(isPresenting: $downloading, alertType: .loading)
+        .contextMenu {
+            menu()
+        }
         .fullScreenCover(item: $downloadedURL) { url in
             QuickLookPreview(selectedURL: url, urls: [url])
                 .edgesIgnoringSafeArea(.bottom)
                 .background(TransparentBackground())
+        }
+    }
+
+    @ViewBuilder
+    func menu() -> some View {
+        if let resourceManager, let storedResource = resource as? StoredResource {
+            Button(role: .destructive, action: {
+                Task {
+                    try await resourceManager.deleteResource(id: storedResource.id)
+                }
+            }, label: {
+                Label("Delete", systemImage: "trash")
+            })
         }
     }
 }
