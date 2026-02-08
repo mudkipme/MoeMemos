@@ -73,3 +73,4 @@
 "account.memos-account-description" = "Memosサーバーと同期する";
 "account.account-detail" = "アカウントの詳細";
 "account.switch-account" = "アカウントの切替";
+"account.local-account-cannot-be-removed" = "ローカルアカウントは削除できません。";

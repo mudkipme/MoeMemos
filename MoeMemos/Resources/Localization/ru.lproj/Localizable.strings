@@ -73,3 +73,4 @@
 "account.memos-account-description" = "Синхронизация с вашим сервером Memos";
 "account.account-detail" = "Детали аккаунта";
 "account.switch-account" = "Переключить аккаунт";
+"account.local-account-cannot-be-removed" = "Локальную учетную запись нельзя удалить.";

@@ -33,10 +33,16 @@ public struct AccountSectionView: View {
                                 .scaledToFit()
                                 .clipShape(Circle())
                         } else {
-                            Image(.memos)
-                                .resizable()
-                                .scaledToFit()
-                                .clipShape(Circle())
+                            if user.accountKey == "local" {
+                                Image(systemName: "person.crop.circle")
+                                    .resizable()
+                                    .scaledToFit()
+                            } else {
+                                Image(.memos)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .clipShape(Circle())
+                            }
                         }
                     }
                 }

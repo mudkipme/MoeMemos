@@ -394,6 +394,8 @@ final class SyncingRemoteService: Service, SyncableService {
 
     func sync() async throws {
         try await runSerialized { [self] in
+            await self.syncCurrentUserBestEffort()
+
             let remoteNormal = try await self.remote.listMemos()
             let remoteArchived = try await self.remote.listArchivedMemos()
             let remoteMemos = remoteNormal + remoteArchived
@@ -476,6 +478,16 @@ final class SyncingRemoteService: Service, SyncableService {
     }
 
     // MARK: - Sync Helpers
+
+    /// User refresh must never block memo sync.
+    /// Any remote/API incompatibility or persistence failure is ignored on purpose.
+    private func syncCurrentUserBestEffort() async {
+        guard let user = try? await remote.getCurrentUser() else {
+            return
+        }
+        store.upsertUser(user)
+        try? store.save()
+    }
 
     private func resolveLocalDeleted(local: StoredMemo, remote: Memo, syncedAt: Date) async throws {
         guard local.syncState == .pendingDelete else {
