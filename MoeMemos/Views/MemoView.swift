@@ -64,6 +64,23 @@ struct MemoView: View {
                 }
             }
         }
+        .onChange(of: appPath.pendingMemoPersistentIdentifier) { _, newValue in
+            guard let newValue else {
+                return
+            }
+
+            guard let currentMemoToken = encodeMemoIdentifier(memo.id) else {
+                dismiss()
+                return
+            }
+
+            if newValue == currentMemoToken {
+                appPath.pendingMemoPersistentIdentifier = nil
+                return
+            }
+
+            dismiss()
+        }
         .confirmationDialog("memo.delete.confirm", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("memo.action.ok", role: .destructive) {
                 Task {
@@ -146,5 +163,12 @@ struct MemoView: View {
         case .pendingDelete:
             return "trash"
         }
+    }
+
+    private func encodeMemoIdentifier(_ identifier: some Encodable) -> String? {
+        guard let encoded = try? JSONEncoder().encode(identifier) else {
+            return nil
+        }
+        return encoded.base64EncodedString()
     }
 }
