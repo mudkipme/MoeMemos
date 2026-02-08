@@ -51,6 +51,9 @@ struct ArchivedMemosList: View {
                     }
                 }
             }
+            if #available(iOS 26.0, *) {
+                DefaultToolbarItem(kind: .search, placement: .bottomBar)
+            }
         }
         .task {
             do {
