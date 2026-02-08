@@ -36,6 +36,7 @@ import SwiftData
             }
         }
         resourceList = resourceList.filter { $0.mimeType.hasPrefix("image/") }
+            .filter { $0.memo != nil }
     }
     
     @MainActor

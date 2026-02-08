@@ -18,7 +18,7 @@ public struct ResourceCard: View {
     @State private var downloadedURL: URL?
 
     public var body: some View {
-        Color.clear
+        Color(white: 1, opacity: 0.00001)
             .aspectRatio(1, contentMode: .fit)
             .overlay {
                 if let downloadedURL = downloadedURL {
@@ -29,12 +29,12 @@ public struct ResourceCard: View {
                     } placeholder: {
                         ProgressView()
                     }
-                    .onTapGesture {
-                        imagePreviewURL = downloadedURL
-                    }
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 8))
+            .onTapGesture {
+                imagePreviewURL = downloadedURL
+            }
             .contextMenu {
                 menu()
             }
