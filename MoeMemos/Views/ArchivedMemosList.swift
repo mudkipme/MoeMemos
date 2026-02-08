@@ -14,12 +14,18 @@ struct ArchivedMemosList: View {
 
     var body: some View {
         let filteredMemoList = filterMemoList(viewModel.archivedMemoList)
-        List(filteredMemoList, id: \.id) { memo in
-            Section {
-                ArchivedMemoCard(memo, archivedViewModel: viewModel)
+        Group {
+            if filteredMemoList.isEmpty {
+                ContentUnavailableView("No archived memos", systemImage: "archivebox")
+            } else {
+                List(filteredMemoList, id: \.id) { memo in
+                    Section {
+                        ArchivedMemoCard(memo, archivedViewModel: viewModel)
+                    }
+                }
+                .listStyle(InsetGroupedListStyle())
             }
         }
-        .listStyle(InsetGroupedListStyle())
         .navigationTitle("memo.archived")
         .task {
             do {
@@ -47,11 +53,5 @@ struct ArchivedMemosList: View {
         }
         
         return memoList
-    }
-}
-
-struct ArchivedMemosList_Previews: PreviewProvider {
-    static var previews: some View {
-        ArchivedMemosList()
     }
 }

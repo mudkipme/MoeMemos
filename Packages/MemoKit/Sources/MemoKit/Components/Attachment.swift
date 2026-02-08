@@ -19,7 +19,7 @@ public struct Attachment: View {
     }
 
     public var body: some View {
-        Button {
+        let button = Button {
             Task {
                 do {
                     guard let stored = resource as? StoredResource else {
@@ -55,13 +55,18 @@ public struct Attachment: View {
         .padding([.top, .bottom], 5)
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", downloadError?.localizedDescription))
         .toast(isPresenting: $downloading, alertType: .loading)
-        .contextMenu {
-            menu()
-        }
         .fullScreenCover(item: $downloadedURL) { url in
             QuickLookPreview(selectedURL: url, urls: [url])
                 .edgesIgnoringSafeArea(.bottom)
                 .background(TransparentBackground())
+        }
+
+        if resourceManager != nil, resource is StoredResource {
+            button.contextMenu {
+                menu()
+            }
+        } else {
+            button
         }
     }
 

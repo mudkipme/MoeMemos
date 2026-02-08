@@ -34,16 +34,20 @@ struct MemosList: View {
         let canSync = ((try? memosViewModel.service) as? SyncableService) != nil
         
         ZStack(alignment: .bottomTrailing) {
-            List(filteredMemoList, id: \.id) { item in
-                Section {
-                    MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            selectedMemo = .init(id: item.id)
-                        }
+            if filteredMemoList.isEmpty {
+                ContentUnavailableView("No memos", systemImage: "note.text")
+            } else {
+                List(filteredMemoList, id: \.id) { item in
+                    Section {
+                        MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                selectedMemo = .init(id: item.id)
+                            }
+                    }
                 }
+                .listStyle(InsetGroupedListStyle())
             }
-            .listStyle(InsetGroupedListStyle())
             
             if #unavailable(iOS 26.0) {
                 Button {
