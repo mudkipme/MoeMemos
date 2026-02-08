@@ -74,3 +74,13 @@
 "account.account-detail" = "Kontodetails";
 "account.switch-account" = "Konto wechseln";
 "account.local-account-cannot-be-removed" = "Lokales Konto kann nicht entfernt werden.";
+"account.local-export" = "Exportieren";
+"account.local-export-button" = "Lokale Memos exportieren";
+"account.local-export-share-zip" = "Exportierte ZIP teilen";
+"account.local-export-error-not-available" = "Der Export ist nur für das lokale Konto verfügbar.";
+"account.local-export-error-empty" = "Keine Memos zum Exportieren.";
+"account.local-export-error-missing-resource" = "Anhangsdatei nicht gefunden: %@";
+"account.local-export-progress-preparing" = "Export wird vorbereitet";
+"account.local-export-progress-exporting" = "Memos und Ressourcen werden exportiert";
+"account.local-export-progress-zipping" = "ZIP-Archiv wird erstellt";
+"account.local-export-progress-complete" = "Export abgeschlossen";

@@ -184,6 +184,28 @@ final class LocalService: Service {
         throw MoeMemosError.invalidParams
     }
 
+    @MainActor
+    func exportSnapshots() -> [LocalMemoExportSnapshot] {
+        let memos = store.allMemos(includeDeleted: false)
+        return memos.map { memo in
+            let resources = memo.resources
+                .filter { !$0.softDeleted }
+                .map { resource in
+                    LocalMemoExportSnapshot.Resource(
+                        filename: resource.filename,
+                        mimeType: resource.mimeType,
+                        localPath: resource.localPath,
+                        urlString: resource.urlString
+                    )
+                }
+            return LocalMemoExportSnapshot(
+                createdAt: memo.createdAt,
+                content: memo.content,
+                resources: resources
+            )
+        }
+    }
+
     // MARK: - Unsupported (Remote Only)
 
     // Local account never talks to a server.

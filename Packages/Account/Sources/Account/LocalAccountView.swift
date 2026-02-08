@@ -10,6 +10,10 @@ import Models
 
 public struct LocalAccountView: View {
     @State private var user: User? = nil
+    @State private var isExporting = false
+    @State private var exportProgress: LocalMemoExportProgress?
+    @State private var exportErrorMessage: String?
+    @State private var exportedZipURL: URL?
     private let accountKey: String
     @Environment(AccountManager.self) private var accountManager
     @Environment(AccountViewModel.self) private var accountViewModel
@@ -56,6 +60,50 @@ public struct LocalAccountView: View {
                 }
             }
 
+            if accountKey == accountManager.currentAccount?.key {
+                Section {
+                    Button {
+                        startExport()
+                    } label: {
+                        HStack {
+                            if isExporting {
+                                ProgressView()
+                                    .controlSize(.small)
+                            }
+                            Text("account.local-export-button")
+                        }
+                    }
+                    .disabled(isExporting)
+
+                    if let progress = exportProgress {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ProgressView(value: progress.fractionCompleted)
+                            Text(progress.message)
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 4)
+                    }
+
+                    if let exportedZipURL {
+                        ShareLink(item: exportedZipURL) {
+                            Label("account.local-export-share-zip", systemImage: "square.and.arrow.up")
+                        }
+                        Text(exportedZipURL.lastPathComponent)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if let exportErrorMessage {
+                        Text(exportErrorMessage)
+                            .font(.footnote)
+                            .foregroundStyle(.red)
+                    }
+                } header: {
+                    Text("account.local-export")
+                }
+            }
+
             Section {
                 Text("account.local-account-cannot-be-removed")
                     .font(.footnote)
@@ -69,6 +117,47 @@ public struct LocalAccountView: View {
                 user = cached
             } else {
                 user = try? await account.toUser()
+            }
+        }
+    }
+
+    private func startExport() {
+        guard !isExporting else { return }
+        guard let localService = accountManager.service(for: accountKey) as? LocalService else {
+            exportErrorMessage = NSLocalizedString("account.local-export-error-not-available", comment: "Local export unavailable for non-local account")
+            exportProgress = nil
+            return
+        }
+
+        let snapshots = localService.exportSnapshots()
+        guard !snapshots.isEmpty else {
+            exportErrorMessage = NSLocalizedString("account.local-export-error-empty", comment: "No local memos to export")
+            exportProgress = nil
+            exportedZipURL = nil
+            return
+        }
+
+        isExporting = true
+        exportErrorMessage = nil
+        exportedZipURL = nil
+        exportProgress = .init(
+            completed: 0,
+            total: 1,
+            message: NSLocalizedString("account.local-export-progress-preparing", comment: "Preparing local export")
+        )
+
+        Task { @MainActor in
+            defer { isExporting = false }
+            do {
+                let zipURL = try await LocalMemoExporter.export(snapshots: snapshots) { progress in
+                    await MainActor.run {
+                        exportProgress = progress
+                    }
+                }
+                exportedZipURL = zipURL
+            } catch {
+                exportProgress = nil
+                exportErrorMessage = error.localizedDescription
             }
         }
     }

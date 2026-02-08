@@ -76,3 +76,13 @@
 "account.account-detail" = "Détails du compte";
 "account.switch-account" = "Changer de compte";
 "account.local-account-cannot-be-removed" = "Le compte local ne peut pas être supprimé.";
+"account.local-export" = "Exporter";
+"account.local-export-button" = "Exporter les memos locaux";
+"account.local-export-share-zip" = "Partager le ZIP exporté";
+"account.local-export-error-not-available" = "L'exportation est disponible uniquement pour le compte local.";
+"account.local-export-error-empty" = "Aucun memo à exporter.";
+"account.local-export-error-missing-resource" = "Fichier joint introuvable : %@";
+"account.local-export-progress-preparing" = "Préparation de l'exportation";
+"account.local-export-progress-exporting" = "Exportation des memos et des ressources";
+"account.local-export-progress-zipping" = "Création de l'archive ZIP";
+"account.local-export-progress-complete" = "Exportation terminée";
