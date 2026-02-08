@@ -27,7 +27,7 @@ import SwiftData
     func loadResources() async throws {
         let service = try self.service
         resourceList = try await service.listResources()
-        resourceList = resourceList.filter { $0.memo != nil }
+        resourceList = resourceList.filter { $0.memo != nil && $0.memo?.softDeleted == false }
         if service is SyncableService {
             startBackgroundSync()
         }
@@ -48,7 +48,7 @@ import SwiftData
                 try await self.memosViewModel.syncNow()
                 let service = try self.service
                 self.resourceList = try await service.listResources()
-                self.resourceList = self.resourceList.filter { $0.memo != nil }
+                self.resourceList = self.resourceList.filter { $0.memo != nil && $0.memo?.softDeleted == false }
             } catch {
                 // Keep the current list when background sync fails.
                 return
