@@ -12,7 +12,7 @@ import Env
 import DesignSystem
 
 public struct MemosAccountView: View {
-    @State var user: User? = nil
+    @State private var userProfile: UserProfile? = nil
     @State var version: MemosVersion? = nil
     @State private var pendingUnsyncedMemoCount = 0
     @State private var showingUnsyncedDeleteConfirmation = false
@@ -31,17 +31,17 @@ public struct MemosAccountView: View {
     
     public var body: some View {
         List {
-            if let user = user {
+            if let userProfile {
                 VStack(alignment: .leading) {
-                    if let avatarData = user.avatarData, let uiImage = UIImage(data: avatarData) {
+                    if let avatarData = userProfile.avatarData, let uiImage = UIImage(data: avatarData) {
                         Image(uiImage: uiImage)
                             .resizable()
                             .frame(width: 50, height: 50)
                             .clipShape(Circle())
                     }
-                    Text(user.nickname)
+                    Text(userProfile.nickname)
                         .font(.title3)
-                    if let email = user.email, email != user.nickname && !email.isEmpty {
+                    if let email = userProfile.email, email != userProfile.nickname && !email.isEmpty {
                         Text(email)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -112,9 +112,11 @@ public struct MemosAccountView: View {
         .task {
             guard let account = account else { return }
             if let cached = accountViewModel.users.first(where: { $0.accountKey == accountKey }) {
-                user = cached
-            } else {
-                user = try? await account.toUser()
+                userProfile = UserProfile(cached)
+                return
+            }
+            if let fetched = try? await account.toUser() {
+                userProfile = UserProfile(fetched)
             }
         }
         .task {
@@ -131,6 +133,18 @@ public struct MemosAccountView: View {
             }
             guard let hostURL = hostURL else { return }
             version = try? await detectMemosVersion(hostURL: hostURL)
+        }
+    }
+
+    private struct UserProfile: Equatable {
+        let nickname: String
+        let email: String?
+        let avatarData: Data?
+
+        init(_ user: User) {
+            nickname = user.nickname
+            email = user.email
+            avatarData = user.avatarData
         }
     }
 
