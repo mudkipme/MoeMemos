@@ -11,6 +11,7 @@ import Models
 import Factory
 import AppIntents
 import Env
+import SwiftData
 
 @main
 @MainActor
@@ -45,19 +46,30 @@ struct MoeMemosApp: App {
                     }
 
                     if url.host() == "memos" {
-                        appPath.pendingMemoPersistentIdentifier = nil
+                        appPath.navigationRequest = NavigationRequest(root: .memos)
                         return
                     }
 
                     if url.host() == "memo" {
                         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-                        let persistentIdentifier = components?.queryItems?.first(where: { $0.name == "persistent_id" })?.value
-                        guard let persistentIdentifier, !persistentIdentifier.isEmpty else {
+                        let encodedIdentifier = components?.queryItems?.first(where: { $0.name == "persistent_id" })?.value
+                        guard
+                            let encodedIdentifier,
+                            !encodedIdentifier.isEmpty,
+                            let persistentIdentifier = decodePersistentIdentifier(from: encodedIdentifier)
+                        else {
                             return
                         }
-                        appPath.pendingMemoPersistentIdentifier = persistentIdentifier
+                        appPath.navigationRequest = NavigationRequest(root: .memos, path: [.memo(persistentIdentifier)])
                     }
                 }
         }
+    }
+
+    private func decodePersistentIdentifier(from encodedIdentifier: String) -> PersistentIdentifier? {
+        guard let data = Data(base64Encoded: encodedIdentifier) else {
+            return nil
+        }
+        return try? JSONDecoder().decode(PersistentIdentifier.self, from: data)
     }
 }

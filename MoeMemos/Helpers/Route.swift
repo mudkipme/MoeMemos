@@ -32,6 +32,8 @@ extension Route {
             Explore()
         case .memosAccount(let accountKey):
             AccountDetailView(accountKey: accountKey)
+        case .memo(let memoId):
+            MemoView(memoId: memoId)
         }
     }
 }
