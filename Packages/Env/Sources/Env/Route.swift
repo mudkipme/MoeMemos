@@ -18,6 +18,7 @@ public enum Route: Hashable {
     case settings
     case explore
     case memosAccount(String)
+    case memo(PersistentIdentifier)
 }
 
 public enum SheetDestination: Identifiable, Hashable {
@@ -41,9 +42,19 @@ public enum SheetDestination: Identifiable, Hashable {
     @MainActor
     public var presentedSheet: SheetDestination?
     @MainActor
-    public var pendingMemoPersistentIdentifier: String?
+    public var navigationRequest: NavigationRequest?
     
     public init() {}
+}
+
+public struct NavigationRequest: Hashable {
+    public let root: Route
+    public let path: [Route]
+
+    public init(root: Route, path: [Route] = []) {
+        self.root = root
+        self.path = path
+    }
 }
 
 public extension Container {

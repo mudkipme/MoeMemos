@@ -10,80 +10,81 @@ import UniformTypeIdentifiers
 import Models
 import Env
 import Markdown
+import SwiftData
+import Account
 
 @MainActor
 struct MemoView: View {
-    let memo: StoredMemo
-    let defaultMemoVisibility: MemoVisibility?
+    let memoId: PersistentIdentifier
 
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
+    @Environment(AccountViewModel.self) private var accountViewModel: AccountViewModel
     @Environment(AppPath.self) private var appPath
     @Environment(\.dismiss) private var dismiss
 
     @State private var showingDeleteConfirmation = false
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading) {
-                HStack {
-                    Text(memo.renderTime())
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
+        Group {
+            if let memo {
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text(memo.renderTime())
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
 
-                    if memo.visibility != defaultMemoVisibility {
-                        Image(systemName: memo.visibility.iconName)
-                            .foregroundColor(.secondary)
+                            if memo.visibility != accountViewModel.currentUser?.defaultVisibility {
+                                Image(systemName: memo.visibility.iconName)
+                                    .foregroundColor(.secondary)
+                            }
+
+                            if memo.pinned == true {
+                                Image(systemName: "flag.fill")
+                                    .renderingMode(.original)
+                            }
+
+                            if memo.syncState != .synced {
+                                Image(systemName: syncIconName(for: memo.syncState))
+                                    .imageScale(.small)
+                                    .foregroundStyle(.orange)
+                            }
+
+                            Spacer()
+                        }
+
+                        MemoCardContent(memo: memo) { listItem in
+                            await toggleTaskItem(listItem, for: memo)
+                        }
                     }
-
-                    if memo.pinned == true {
-                        Image(systemName: "flag.fill")
-                            .renderingMode(.original)
-                    }
-
-                    if memo.syncState != .synced {
-                        Image(systemName: syncIconName(for: memo.syncState))
-                            .imageScale(.small)
-                            .foregroundStyle(.orange)
-                    }
-
-                    Spacer()
+                    .padding()
                 }
-
-                MemoCardContent(memo: memo, toggleTaskItem: toggleTaskItem)
+            } else {
+                ContentUnavailableView("Memo not found", systemImage: "note.text")
+                    .task(id: memoId) {
+                        try? await memosViewModel.loadMemos()
+                    }
             }
-            .padding()
         }
-        .navigationTitle(memo.renderTime())
+        .navigationTitle(memo?.renderTime() ?? "Memo")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    normalMenu()
-                } label: {
-                    Image(systemName: "ellipsis")
+            if let memo {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        normalMenu(memo)
+                    } label: {
+                        Image(systemName: "ellipsis")
+                    }
                 }
             }
-        }
-        .onChange(of: appPath.pendingMemoPersistentIdentifier) { _, newValue in
-            guard let newValue else {
-                return
-            }
-
-            guard let currentMemoToken = encodeMemoIdentifier(memo.id) else {
-                dismiss()
-                return
-            }
-
-            if newValue == currentMemoToken {
-                appPath.pendingMemoPersistentIdentifier = nil
-                return
-            }
-
-            dismiss()
         }
         .confirmationDialog("memo.delete.confirm", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
             Button("memo.action.ok", role: .destructive) {
                 Task {
+                    guard let memo else {
+                        return
+                    }
                     try await memosViewModel.deleteMemo(id: memo.id)
                     dismiss()
                 }
@@ -93,7 +94,7 @@ struct MemoView: View {
     }
 
     @ViewBuilder
-    private func normalMenu() -> some View {
+    private func normalMenu(_ memo: StoredMemo) -> some View {
         Button {
             Task {
                 do {
@@ -141,7 +142,7 @@ struct MemoView: View {
         })
     }
 
-    private func toggleTaskItem(_ listItem: ListItem) async {
+    private func toggleTaskItem(_ listItem: ListItem, for memo: StoredMemo) async {
         do {
             var node = listItem
             node.checkbox = listItem.checkbox == .checked ? .unchecked : .checked
@@ -165,10 +166,10 @@ struct MemoView: View {
         }
     }
 
-    private func encodeMemoIdentifier(_ identifier: some Encodable) -> String? {
-        guard let encoded = try? JSONEncoder().encode(identifier) else {
-            return nil
+    private var memo: StoredMemo? {
+        if let memo = memosViewModel.memoList.first(where: { $0.id == memoId }) {
+            return memo
         }
-        return encoded.base64EncodedString()
+        return (try? memosViewModel.service)?.memo(id: memoId)
     }
 }
