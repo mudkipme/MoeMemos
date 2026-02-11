@@ -41,7 +41,7 @@ struct MoeMemosApp: App {
                 .withEnvironments()
                 .onOpenURL { url in
                     if let tagName = MemoTagMarkdownPreprocessor.tagName(from: url) {
-                        appPath.navigationRequest = NavigationRequest(root: .memos, path: [.tag(Tag(name: tagName))])
+                        appPath.navigationRequest = NavigationRequest(push: .tag(Tag(name: tagName)))
                         return
                     }
 

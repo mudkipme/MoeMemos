@@ -70,17 +70,36 @@ struct Navigation: View {
 
     private func applyNavigationRequest(_ request: NavigationRequest, appPath: AppPath) {
         pathUpdateTask?.cancel()
-        selection = request.root
-        currentRoute = request.root
-        appPath.navigationRequest = nil
+        defer {
+            appPath.navigationRequest = nil
+        }
 
-        let requestedPath = request.path
+        switch request {
+        case .replace(let root, let path):
+            selection = root
+            currentRoute = root
+            schedulePathUpdate(path)
+        case .push(let route):
+            if currentDestinationRoute == route {
+                return
+            }
+            var requestedPath = navigationPath
+            requestedPath.append(route)
+            schedulePathUpdate(requestedPath)
+        }
+    }
+
+    private var currentDestinationRoute: Route {
+        navigationPath.last ?? currentRoute
+    }
+
+    private func schedulePathUpdate(_ path: [Route]) {
         pathUpdateTask = Task { @MainActor in
             await Task.yield()
             guard !Task.isCancelled else {
                 return
             }
-            navigationPath = requestedPath
+            navigationPath = path
         }
     }
 }
