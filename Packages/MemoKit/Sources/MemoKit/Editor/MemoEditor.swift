@@ -6,7 +6,7 @@ import Account
 import DesignSystem
 import SwiftData
 #if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
-import JournalingSuggestions
+@preconcurrency import JournalingSuggestions
 #endif
 
 private let listItemSymbolList = ["- [ ] ", "- [x] ", "- [X] ", "* ", "- "]
@@ -513,18 +513,10 @@ public struct MemoEditor: View {
             urls.append(photo.photo)
         }
 
-        let videos = await suggestion.content(forType: JournalingSuggestion.Video.self)
-        for video in videos where !urls.contains(video.url) {
-            urls.append(video.url)
-        }
-
         let livePhotos = await suggestion.content(forType: JournalingSuggestion.LivePhoto.self)
         for livePhoto in livePhotos {
             if !urls.contains(livePhoto.image) {
                 urls.append(livePhoto.image)
-            }
-            if !urls.contains(livePhoto.video) {
-                urls.append(livePhoto.video)
             }
         }
 
@@ -552,7 +544,7 @@ public struct MemoEditor: View {
 
     private func formattedSuggestionDateInterval(_ interval: DateInterval) -> String {
         let formatter = Date.IntervalFormatStyle(date: .abbreviated, time: .shortened)
-        return interval.formatted(formatter)
+        return (interval.start..<interval.end).formatted(formatter)
     }
 #endif
 }
