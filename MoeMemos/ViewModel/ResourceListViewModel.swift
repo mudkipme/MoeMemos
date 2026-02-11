@@ -45,7 +45,7 @@ import SwiftData
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
-                try await self.memosViewModel.syncNow()
+                try await self.memosViewModel.syncNow(trigger: .automatic)
                 let service = try self.service
                 self.resourceList = try await service.listResources()
                 self.resourceList = self.resourceList.filter { $0.memo != nil && $0.memo?.softDeleted == false }

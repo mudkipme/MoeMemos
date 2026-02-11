@@ -14,6 +14,7 @@ public enum MoeMemosError: LocalizedError {
     case invalidParams
     case fileTooLarge(Int64)
     case unsupportedVersion
+    case accessTokenExpired
     
     public var errorDescription: String? {
         switch self {
@@ -31,7 +32,9 @@ public enum MoeMemosError: LocalizedError {
         case .fileTooLarge(let maxBytes):
             return "File is too large. Max size is \(formatByteCount(maxBytes))."
         case .unsupportedVersion:
-            return "Your Server version is not supported."
+            return SupportedMemosVersion.localizedSupportedVersionsMessage()
+        case .accessTokenExpired:
+            return NSLocalizedString("error.access-token-invalid", comment: "Access token invalid message")
         }
     }
 

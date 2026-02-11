@@ -60,7 +60,7 @@ import SwiftData
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
-                try await self.memosViewModel.syncNow()
+                try await self.memosViewModel.syncNow(trigger: .automatic)
                 let service = try self.service
                 self.archivedMemoList = try await service.listArchivedMemos()
             } catch {

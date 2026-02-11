@@ -93,3 +93,17 @@
 "account.local-export-progress-exporting" = "メモとリソースをエクスポート中";
 "account.local-export-progress-zipping" = "ZIPアーカイブを作成中";
 "account.local-export-progress-complete" = "エクスポート完了";
+
+// Sync Compatibility
+"common.ok" = "OK";
+"common.cancel" = "キャンセル";
+"sync.failed.title" = "同期に失敗しました";
+"compat.unsupported-version.title" = "サポート対象外のMemosバージョン";
+"compat.continue-login.title" = "ログインを続行しますか？";
+"compat.continue-sync.title" = "同期を続行しますか？";
+"compat.action.still-login" = "このままログイン";
+"compat.action.still-sync" = "このまま同期";
+"compat.supported-versions" = "Moe Memos は %1$@ 互換 API の Memos インスタンスと、%2$@ から %3$@ までの Memos のみをサポートしています。";
+"compat.higher-version.login-warning" = "お使いの Memos バージョンは、Moe Memos で検証済みのバージョンより新しいです。互換性の問題が発生する可能性があります。続行する前に Moe Memos のWebサイトを確認してください。";
+"compat.higher-version.sync-warning" = "お使いの Memos バージョンは、Moe Memos で検証済みのバージョンより新しいです。同期を強制すると未同期データが破損する可能性があります。続行する前に Moe Memos のWebサイトを確認してください。";
+"error.access-token-invalid" = "アクセストークンが無効です。期限なしのアクセストークンを作成して、再度ログインしてください。";

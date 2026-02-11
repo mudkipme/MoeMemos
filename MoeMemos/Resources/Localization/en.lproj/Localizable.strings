@@ -93,3 +93,17 @@
 "account.local-export-progress-exporting" = "Exporting memos and resources";
 "account.local-export-progress-zipping" = "Creating zip archive";
 "account.local-export-progress-complete" = "Export complete";
+
+// Sync Compatibility
+"common.ok" = "OK";
+"common.cancel" = "Cancel";
+"sync.failed.title" = "Sync failed";
+"compat.unsupported-version.title" = "Unsupported Memos version";
+"compat.continue-login.title" = "Continue login?";
+"compat.continue-sync.title" = "Continue syncing?";
+"compat.action.still-login" = "Still login";
+"compat.action.still-sync" = "Still Sync";
+"compat.supported-versions" = "Moe Memos only supports Memos instances compatible with the %1$@ API, and Memos %2$@ to %3$@.";
+"compat.higher-version.login-warning" = "Your Memos version is newer than the version tested by Moe Memos. There might be compatibility issues. Please check the Moe Memos website before continuing.";
+"compat.higher-version.sync-warning" = "Your Memos version is newer than the version tested by Moe Memos. Forcing sync may corrupt unsynced data. Please check the Moe Memos website before continuing.";
+"error.access-token-invalid" = "Your access token is invalid. Please create a non-expiring access token and log in again.";

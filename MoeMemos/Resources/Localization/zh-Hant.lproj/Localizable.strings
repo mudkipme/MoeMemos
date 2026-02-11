@@ -93,3 +93,17 @@
 "account.local-export-progress-exporting" = "正在匯出 MEMO 與資源";
 "account.local-export-progress-zipping" = "正在建立 ZIP 壓縮檔";
 "account.local-export-progress-complete" = "匯出完成";
+
+// Sync Compatibility
+"common.ok" = "確定";
+"common.cancel" = "取消";
+"sync.failed.title" = "同步失敗";
+"compat.unsupported-version.title" = "Memos 版本不受支援";
+"compat.continue-login.title" = "繼續登入？";
+"compat.continue-sync.title" = "繼續同步？";
+"compat.action.still-login" = "仍要登入";
+"compat.action.still-sync" = "仍要同步";
+"compat.supported-versions" = "Moe Memos 僅支援與 %1$@ API 相容的 Memos 實例，以及 %2$@ 到 %3$@ 的 Memos。";
+"compat.higher-version.login-warning" = "您的 Memos 版本高於 Moe Memos 已驗證的版本，可能存在相容性問題。繼續前請先查看 Moe Memos 官網確認是否支援。";
+"compat.higher-version.sync-warning" = "您的 Memos 版本高於 Moe Memos 已驗證的版本，強制同步可能損壞未同步資料。繼續前請先查看 Moe Memos 官網確認是否支援。";
+"error.access-token-invalid" = "您的存取權杖無效，請建立一個永不過期的存取權杖後重新登入。";

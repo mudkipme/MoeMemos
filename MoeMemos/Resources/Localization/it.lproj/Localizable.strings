@@ -95,3 +95,17 @@
 "account.local-export-progress-exporting" = "Esportazione memo e risorse";
 "account.local-export-progress-zipping" = "Creazione archivio ZIP";
 "account.local-export-progress-complete" = "Esportazione completata";
+
+// Sync Compatibility
+"common.ok" = "OK";
+"common.cancel" = "Annulla";
+"sync.failed.title" = "Sincronizzazione non riuscita";
+"compat.unsupported-version.title" = "Versione di Memos non supportata";
+"compat.continue-login.title" = "Continuare l'accesso?";
+"compat.continue-sync.title" = "Continuare la sincronizzazione?";
+"compat.action.still-login" = "Accedi comunque";
+"compat.action.still-sync" = "Sincronizza comunque";
+"compat.supported-versions" = "Moe Memos supporta solo istanze Memos compatibili con l'API %1$@, e Memos da %2$@ a %3$@.";
+"compat.higher-version.login-warning" = "La tua versione di Memos e piu recente della versione testata da Moe Memos. Potrebbero esserci problemi di compatibilita. Controlla il sito web di Moe Memos prima di continuare.";
+"compat.higher-version.sync-warning" = "La tua versione di Memos e piu recente della versione testata da Moe Memos. Forzare la sincronizzazione potrebbe corrompere i dati non sincronizzati. Controlla il sito web di Moe Memos prima di continuare.";
+"error.access-token-invalid" = "Il tuo token di accesso non e valido. Crea un token di accesso senza scadenza e accedi di nuovo.";

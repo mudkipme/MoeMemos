@@ -93,3 +93,17 @@
 "account.local-export-progress-exporting" = "Экспорт заметок и ресурсов";
 "account.local-export-progress-zipping" = "Создание ZIP-архива";
 "account.local-export-progress-complete" = "Экспорт завершен";
+
+// Sync Compatibility
+"common.ok" = "OK";
+"common.cancel" = "Отмена";
+"sync.failed.title" = "Синхронизация не удалась";
+"compat.unsupported-version.title" = "Неподдерживаемая версия Memos";
+"compat.continue-login.title" = "Продолжить вход?";
+"compat.continue-sync.title" = "Продолжить синхронизацию?";
+"compat.action.still-login" = "Все равно войти";
+"compat.action.still-sync" = "Все равно синхронизировать";
+"compat.supported-versions" = "Moe Memos поддерживает только экземпляры Memos с API, совместимым с %1$@, а также Memos от %2$@ до %3$@.";
+"compat.higher-version.login-warning" = "Ваша версия Memos новее версии, протестированной в Moe Memos. Возможны проблемы совместимости. Перед продолжением проверьте сайт Moe Memos.";
+"compat.higher-version.sync-warning" = "Ваша версия Memos новее версии, протестированной в Moe Memos. Принудительная синхронизация может повредить несинхронизированные данные. Перед продолжением проверьте сайт Moe Memos.";
+"error.access-token-invalid" = "Ваш токен доступа недействителен. Создайте токен доступа без срока действия и войдите снова.";

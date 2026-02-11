@@ -189,10 +189,21 @@ public final class MemosV1Service: RemoteService {
     
     public func getCurrentUser() async throws -> User {
         let resp = try await client.AuthService_GetCurrentUser()
-        
-        let json = try resp.ok.body.json
-        guard let user = json.user?.value1 else {
-            throw MoeMemosError.notLogin
+
+        let user: MemosV1User
+        switch resp {
+        case .ok(let ok):
+            let json = try ok.body.json
+            guard let fetchedUser = json.user?.value1 else {
+                throw MoeMemosError.notLogin
+            }
+            user = fetchedUser
+        case .default(statusCode: let statusCode, let defaultResponse):
+            if statusCode == 401 || statusCode == 403 {
+                throw MoeMemosError.accessTokenExpired
+            }
+            let message = (try? defaultResponse.body.json.message)
+            throw MoeMemosError.invalidStatusCode(statusCode, message)
         }
         
         guard let name = user.name else { throw MoeMemosError.unsupportedVersion }
