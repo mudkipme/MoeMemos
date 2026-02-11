@@ -90,6 +90,7 @@
 		20B1A2C3D4E5F60718293A4B /* MemoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 20B1A2C3D4E5F60718293A4C /* MemoKit */; };
 		20B1A2C3D4E5F60718293A4E /* MemoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 20B1A2C3D4E5F60718293A4C /* MemoKit */; };
 		2A9F4C1F2D9B100100A1B2C3 /* MemoMarkdownPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9F4C1E2D9B100100A1B2C3 /* MemoMarkdownPreprocessor.swift */; };
+		2AC7F0B72F6D1E9A00ABCD01 /* MemoTagMarkdownPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC7F0B62F6D1E9A00ABCD01 /* MemoTagMarkdownPreprocessor.swift */; };
 		2AA1B2C32F5A6B7C00D1E2F3 /* MemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA1B2C42F5A6B7C00D1E2F3 /* MemoView.swift */; };
 		2B7D9E3C2F4A110000ABC001 /* SyncStatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7D9E3C2F4A110000ABC002 /* SyncStatusBadge.swift */; };
 /* End PBXBuildFile section */
@@ -203,6 +204,7 @@
 		19FC1C7D290DA6E90078A7F2 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		20B1A2C3D4E5F60718293A4D /* MemoKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = MemoKit; path = Packages/MemoKit; sourceTree = "<group>"; };
 		2A9F4C1E2D9B100100A1B2C3 /* MemoMarkdownPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoMarkdownPreprocessor.swift; sourceTree = "<group>"; };
+		2AC7F0B62F6D1E9A00ABCD01 /* MemoTagMarkdownPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoTagMarkdownPreprocessor.swift; sourceTree = "<group>"; };
 		2AA1B2C42F5A6B7C00D1E2F3 /* MemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoView.swift; sourceTree = "<group>"; };
 		2B7D9E3C2F4A110000ABC002 /* SyncStatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStatusBadge.swift; sourceTree = "<group>"; };
 		EE17AC762D8E12E500C01504 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainInterface.strings; sourceTree = "<group>"; };
@@ -284,6 +286,7 @@
 			children = (
 				195E5D6A28C704AC00784EF5 /* Date.swift */,
 				2A9F4C1E2D9B100100A1B2C3 /* MemoMarkdownPreprocessor.swift */,
+				2AC7F0B62F6D1E9A00ABCD01 /* MemoTagMarkdownPreprocessor.swift */,
 				19FC1C7B290DA47C0078A7F2 /* Route.swift */,
 			);
 			path = Helpers;
@@ -657,6 +660,7 @@
 				194B273328C3973400A48675 /* ContentView.swift in Sources */,
 				19FC1C7C290DA47C0078A7F2 /* Route.swift in Sources */,
 				2A9F4C1F2D9B100100A1B2C3 /* MemoMarkdownPreprocessor.swift in Sources */,
+				2AC7F0B72F6D1E9A00ABCD01 /* MemoTagMarkdownPreprocessor.swift in Sources */,
 				19FC1C7E290DA6E90078A7F2 /* Navigation.swift in Sources */,
 				1951055E2C287A0F009EA669 /* NestedTag.swift in Sources */,
 				2B7D9E3C2F4A110000ABC001 /* SyncStatusBadge.swift in Sources */,

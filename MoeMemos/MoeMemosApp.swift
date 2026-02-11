@@ -40,6 +40,11 @@ struct MoeMemosApp: App {
                 .tint(.green)
                 .withEnvironments()
                 .onOpenURL { url in
+                    if let tagName = MemoTagMarkdownPreprocessor.tagName(from: url) {
+                        appPath.navigationRequest = NavigationRequest(root: .memos, path: [.tag(Tag(name: tagName))])
+                        return
+                    }
+
                     if url.host() == "new-memo" {
                         appPath.presentedSheet = .newMemo
                         return

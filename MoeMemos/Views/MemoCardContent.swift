@@ -57,7 +57,7 @@ struct MemoCardContent: View {
         let content = memo.content
         _cachedRawMarkdown = State(initialValue: content)
         let preprocessResult = MemoMarkdownPreprocessor.preprocess(content, truncate: truncate)
-        _cachedPreprocessedMarkdown = State(initialValue: preprocessResult.0)
+        _cachedPreprocessedMarkdown = State(initialValue: MemoTagMarkdownPreprocessor.preprocessForDisplay(preprocessResult.0))
         _truncated = State(initialValue: preprocessResult.1)
     }
     
@@ -94,7 +94,7 @@ struct MemoCardContent: View {
             }
             cachedRawMarkdown = newContent
             let preprocessResult = MemoMarkdownPreprocessor.preprocess(newContent, truncate: self.truncate)
-            cachedPreprocessedMarkdown = preprocessResult.0
+            cachedPreprocessedMarkdown = MemoTagMarkdownPreprocessor.preprocessForDisplay(preprocessResult.0)
             truncated = preprocessResult.1
         }
     }

@@ -147,7 +147,8 @@ struct MemoView: View {
             var node = listItem
             node.checkbox = listItem.checkbox == .checked ? .unchecked : .checked
             let resourceIds = memo.resources.filter { !$0.softDeleted }.map(\.id)
-            try await memosViewModel.editMemo(id: memo.id, content: node.root.format(), visibility: memo.visibility, resources: resourceIds, tags: nil)
+            let updatedContent = MemoTagMarkdownPreprocessor.restoreRawMarkdown(node.root.format())
+            try await memosViewModel.editMemo(id: memo.id, content: updatedContent, visibility: memo.visibility, resources: resourceIds, tags: nil)
         } catch {
             print(error)
         }
