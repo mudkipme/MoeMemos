@@ -47,13 +47,16 @@ public enum SheetDestination: Identifiable, Hashable {
     public init() {}
 }
 
-public struct NavigationRequest: Hashable {
-    public let root: Route
-    public let path: [Route]
+public enum NavigationRequest: Hashable {
+    case replace(root: Route, path: [Route])
+    case push(Route)
 
     public init(root: Route, path: [Route] = []) {
-        self.root = root
-        self.path = path
+        self = .replace(root: root, path: path)
+    }
+
+    public init(push route: Route) {
+        self = .push(route)
     }
 }
 
