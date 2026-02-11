@@ -6,7 +6,6 @@ enum MemoMarkdownPreprocessor {
     private static let markdownCache = NSCache<NSString, CacheEntry>()
     private static let truncationLimit = 500
     private static let unbreakableBlockCost = 100
-    private static let viewMoreLinkDestination = "moememos://memo/view-more"
 
     static func preprocess(_ markdown: String, truncate: Bool) -> (String, Bool) {
         guard truncate else {
@@ -24,12 +23,7 @@ enum MemoMarkdownPreprocessor {
             unbreakableCost: unbreakableBlockCost
         )
         let processedDocument = (rewriter.visit(document) as? Document) ?? document
-        var preprocessedMarkdown = processedDocument.format()
-        if rewriter.truncated {
-            let viewMoreText = NSLocalizedString("memo.view-more", comment: "View more link for truncated memo")
-            preprocessedMarkdown += "\n\n[\(viewMoreText)](\(viewMoreLinkDestination))"
-        }
-
+        let preprocessedMarkdown = processedDocument.format()
         let entry = CacheEntry(markdown: preprocessedMarkdown as NSString, truncated: rewriter.truncated)
         markdownCache.setObject(entry, forKey: key)
         return (preprocessedMarkdown, rewriter.truncated)

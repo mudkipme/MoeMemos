@@ -64,7 +64,6 @@ struct MemoCardContent: View {
     var body: some View {
         VStack(alignment: .leading) {
             MarkdownView(cachedPreprocessedMarkdown)
-                .allowsHitTesting(!truncated)
                 .taskListMarker { listItem in
                     Image(systemName: listItem.checkbox == .checked ? "checkmark.square.fill" : "square")
                         .symbolRenderingMode(.hierarchical)
@@ -78,6 +77,11 @@ struct MemoCardContent: View {
                             }
                         }
                 }
+            
+            if truncated {
+                Text("memo.view-more")
+                    .foregroundStyle(.tint)
+            }
             
             ForEach(resources()) { content in
                 if case let .images(urls) = content {
