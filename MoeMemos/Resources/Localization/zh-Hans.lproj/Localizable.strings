@@ -93,3 +93,17 @@
 "account.local-export-progress-exporting" = "正在导出 MEMO 和资源";
 "account.local-export-progress-zipping" = "正在创建 ZIP 压缩包";
 "account.local-export-progress-complete" = "导出完成";
+
+// Sync Compatibility
+"common.ok" = "确定";
+"common.cancel" = "取消";
+"sync.failed.title" = "同步失败";
+"compat.unsupported-version.title" = "Memos 版本不受支持";
+"compat.continue-login.title" = "继续登录？";
+"compat.continue-sync.title" = "继续同步？";
+"compat.action.still-login" = "仍要登录";
+"compat.action.still-sync" = "仍要同步";
+"compat.supported-versions" = "Moe Memos 仅支持与 %1$@ API 兼容的 Memos 实例，以及 %2$@ 到 %3$@ 的 Memos。";
+"compat.higher-version.login-warning" = "您的 Memos 版本高于 Moe Memos 已验证的版本，可能存在兼容性问题。继续前请先查看 Moe Memos 官网确认是否支持。";
+"compat.higher-version.sync-warning" = "您的 Memos 版本高于 Moe Memos 已验证的版本，强制同步可能损坏未同步数据。继续前请先查看 Moe Memos 官网确认是否支持。";
+"error.access-token-invalid" = "您的访问令牌无效，请创建一个永不过期的访问令牌后重新登录。";

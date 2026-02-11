@@ -11,8 +11,40 @@ import Models
 import Factory
 import SwiftData
 
+enum SyncTrigger {
+    case automatic
+    case manual
+}
+
+enum ManualSyncCompatibilityError: LocalizedError {
+    case unsupportedVersion
+    case higherV1VersionNeedsConfirmation(version: String)
+
+    var errorDescription: String? {
+        switch self {
+        case .unsupportedVersion:
+            return moeMemosSupportedMemosVersionsMessage
+        case .higherV1VersionNeedsConfirmation(version: _):
+            return moeMemosHigherMemosVersionSyncWarning
+        }
+    }
+}
+
 @MainActor
 @Observable class MemosViewModel {
+    private struct HigherV1SyncApprovalToPersist {
+        let version: String
+        let accountKey: String
+    }
+
+    private enum SyncGateDecision {
+        case allow(approvalToPersist: HigherV1SyncApprovalToPersist?)
+        case silentlyBlock
+        case manualError(ManualSyncCompatibilityError)
+    }
+
+    private static let higherV1SyncApprovalStorageKeyPrefix = "moememos.v1.sync.approved.versions"
+
     @ObservationIgnored
     @Injected(\.accountManager) private var accountManager
     @ObservationIgnored
@@ -87,10 +119,20 @@ import SwiftData
     }
 
     @MainActor
-    func syncNow() async throws {
+    func syncNow(trigger: SyncTrigger = .manual, forceHigherV1VersionSync: Bool = false) async throws {
         guard !syncing else { return }
         let service = try self.service
         guard let syncService = service as? SyncableService else { return }
+
+        let approvalToPersist: HigherV1SyncApprovalToPersist?
+        switch try await evaluateSyncGate(trigger: trigger, forceHigherV1VersionSync: forceHigherV1VersionSync) {
+        case .allow(let approval):
+            approvalToPersist = approval
+        case .silentlyBlock:
+            return
+        case .manualError(let error):
+            throw error
+        }
 
         syncing = true
         defer {
@@ -100,6 +142,9 @@ import SwiftData
         try await syncService.sync()
         memoList = try await service.listMemos()
         try await loadTags()
+        if let approvalToPersist {
+            rememberApprovedHigherV1SyncVersion(version: approvalToPersist.version, accountKey: approvalToPersist.accountKey)
+        }
     }
 
     @MainActor
@@ -107,11 +152,67 @@ import SwiftData
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
-                try await self.syncNow()
+                try await self.syncNow(trigger: .automatic)
             } catch {
                 return
             }
         }
+    }
+
+    private func evaluateSyncGate(trigger: SyncTrigger, forceHigherV1VersionSync: Bool) async throws -> SyncGateDecision {
+        guard let account = accountManager.currentAccount else {
+            return .allow(approvalToPersist: nil)
+        }
+
+        switch account {
+        case .local:
+            return .allow(approvalToPersist: nil)
+        case .memosV0, .memosV1:
+            let serverVersion: MemosVersion
+            do {
+                serverVersion = try await detectMemosVersion(account: account)
+            } catch {
+                if trigger == .automatic {
+                    return .silentlyBlock
+                }
+                throw error
+            }
+
+            switch evaluateMemosVersionCompatibility(serverVersion) {
+            case .supported:
+                return .allow(approvalToPersist: nil)
+            case .unsupported:
+                return trigger == .automatic ? .silentlyBlock : .manualError(.unsupportedVersion)
+            case .v1HigherThanSupported(version: let version):
+                if hasApprovedHigherV1SyncVersion(version: version, accountKey: account.key) {
+                    return .allow(approvalToPersist: nil)
+                }
+                if trigger == .automatic {
+                    return .silentlyBlock
+                }
+                if forceHigherV1VersionSync {
+                    return .allow(approvalToPersist: .init(version: version, accountKey: account.key))
+                }
+                return .manualError(.higherV1VersionNeedsConfirmation(version: version))
+            }
+        }
+    }
+
+    private func higherV1SyncApprovalStorageKey(accountKey: String) -> String {
+        "\(Self.higherV1SyncApprovalStorageKeyPrefix).\(accountKey)"
+    }
+
+    private func hasApprovedHigherV1SyncVersion(version: String, accountKey: String) -> Bool {
+        let key = higherV1SyncApprovalStorageKey(accountKey: accountKey)
+        let versions = Set(UserDefaults.standard.stringArray(forKey: key) ?? [])
+        return versions.contains(version)
+    }
+
+    private func rememberApprovedHigherV1SyncVersion(version: String, accountKey: String) {
+        let key = higherV1SyncApprovalStorageKey(accountKey: accountKey)
+        var versions = Set(UserDefaults.standard.stringArray(forKey: key) ?? [])
+        versions.insert(version)
+        UserDefaults.standard.set(Array(versions), forKey: key)
     }
 }
 

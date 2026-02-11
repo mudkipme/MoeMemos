@@ -9,7 +9,6 @@ import SwiftUI
 import Account
 import Models
 import Env
-import DesignSystem
 
 struct MemosList: View {
     let tag: Tag?
@@ -18,8 +17,9 @@ struct MemosList: View {
     @Environment(AppPath.self) private var appPath
     @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
-    @State private var manualSyncError: Error?
-    @State private var showingSyncErrorToast = false
+    @State private var manualSyncAlertMessage: String?
+    @State private var showingManualSyncAlert = false
+    @State private var showingHigherV1SyncConfirmation = false
     
     var body: some View {
         let defaultMemoVisibility = userState.currentUser?.defaultVisibility ?? .private
@@ -62,14 +62,7 @@ struct MemosList: View {
             if canSync {
                 ToolbarItem(placement: .topBarTrailing) {
                     SyncStatusBadge(syncing: memosViewModel.syncing, unsyncedCount: unsyncedCount) {
-                        Task {
-                            do {
-                                try await memosViewModel.syncNow()
-                            } catch {
-                                manualSyncError = error
-                                showingSyncErrorToast = true
-                            }
-                        }
+                        triggerManualSync()
                     }
                 }
             }
@@ -87,12 +80,44 @@ struct MemosList: View {
         }
         .searchable(text: $searchString)
         .navigationTitle(tag?.name ?? NSLocalizedString("memo.memos", comment: "Memos"))
-        .toast(isPresenting: $showingSyncErrorToast, alertType: .systemImage("xmark.circle", manualSyncError?.localizedDescription))
+        .alert(NSLocalizedString("sync.failed.title", comment: "Manual sync failed alert title"), isPresented: $showingManualSyncAlert) {
+            Button(NSLocalizedString("common.ok", comment: "OK button label"), role: .cancel) {}
+        } message: {
+            Text(manualSyncAlertMessage ?? NSLocalizedString("Unknown error.", comment: ""))
+        }
+        .confirmationDialog(NSLocalizedString("compat.continue-sync.title", comment: "Higher version sync confirmation title"), isPresented: $showingHigherV1SyncConfirmation, titleVisibility: .visible) {
+            Button(NSLocalizedString("common.cancel", comment: "Cancel button label"), role: .cancel) {}
+            Button(NSLocalizedString("compat.action.still-sync", comment: "Force sync button label")) {
+                triggerManualSync(forceHigherV1VersionSync: true)
+            }
+        } message: {
+            Text(manualSyncAlertMessage ?? moeMemosHigherMemosVersionSyncWarning)
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             Task {
                 if memosViewModel.inited {
                     try await memosViewModel.loadMemos()
                 }
+            }
+        }
+    }
+
+    private func triggerManualSync(forceHigherV1VersionSync: Bool = false) {
+        Task {
+            do {
+                try await memosViewModel.syncNow(trigger: .manual, forceHigherV1VersionSync: forceHigherV1VersionSync)
+            } catch let error as ManualSyncCompatibilityError {
+                switch error {
+                case .unsupportedVersion:
+                    manualSyncAlertMessage = error.localizedDescription
+                    showingManualSyncAlert = true
+                case .higherV1VersionNeedsConfirmation(version: _):
+                    manualSyncAlertMessage = error.localizedDescription
+                    showingHigherV1SyncConfirmation = true
+                }
+            } catch {
+                manualSyncAlertMessage = error.localizedDescription
+                showingManualSyncAlert = true
             }
         }
     }

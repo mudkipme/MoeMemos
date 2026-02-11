@@ -180,11 +180,20 @@ public final class MemosV0Service: RemoteService {
     
     public func getCurrentUser() async throws -> Models.User {
         let resp = try await client.getCurrentUser()
-        if case .unauthorized(_) = resp {
-            throw MoeMemosError.notLogin
+        switch resp {
+        case .ok(let ok):
+            let memosUser = try ok.body.json
+            return await toUser(memosUser)
+        case .unauthorized(_):
+            throw MoeMemosError.accessTokenExpired
+        case .internalServerError(_):
+            throw MoeMemosError.invalidStatusCode(500, nil)
+        case .undocumented(statusCode: let statusCode, _):
+            if statusCode == 401 || statusCode == 403 {
+                throw MoeMemosError.accessTokenExpired
+            }
+            throw MoeMemosError.invalidStatusCode(statusCode, nil)
         }
-        let memosUser = try resp.ok.body.json
-        return await toUser(memosUser)
     }
     
     public func getStatus() async throws -> MemosV0Status {
