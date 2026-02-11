@@ -5,6 +5,9 @@ import Models
 import Account
 import DesignSystem
 import SwiftData
+#if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
+import JournalingSuggestions
+#endif
 
 private let listItemSymbolList = ["- [ ] ", "- [x] ", "- [X] ", "* ", "- "]
 
@@ -27,6 +30,7 @@ public struct MemoEditor: View {
     @State private var showingPhotoPicker = false
     @State private var showingImagePicker = false
     @State private var showingFilePicker = false
+    @State private var showingJournalingSuggestionsPicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
     @State private var availableTags: [Tag] = []
@@ -63,6 +67,10 @@ public struct MemoEditor: View {
             onToggleTodo: {
                 toggleTodoItem()
             },
+            onPickJournalingSuggestion: {
+                showingJournalingSuggestionsPicker = true
+            },
+            supportsJournalingSuggestions: supportsJournalingSuggestions,
             onPickPhotos: {
                 showingPhotoPicker = true
             },
@@ -171,7 +179,8 @@ public struct MemoEditor: View {
 
     public var body: some View {
         NavigationStack {
-            editor()
+            withJournalingSuggestionsPicker(
+                editor()
                 .photosPicker(isPresented: $showingPhotoPicker, selection: $viewModel.photos)
                 .onChange(of: viewModel.photos) { _, newValue in
                     Task {
@@ -197,6 +206,7 @@ public struct MemoEditor: View {
                         showingErrorToast = true
                     }
                 }
+            )
         }
     }
 
@@ -291,17 +301,19 @@ public struct MemoEditor: View {
         accountManager.currentService?.memoVisibilities() ?? [.private]
     }
 
+    private var supportsJournalingSuggestions: Bool {
+#if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 26
+        }
+        return true
+#endif
+        return false
+    }
+
     private func insert(tag: Tag?) {
         let tagText = "#\(tag?.name ?? "") "
-        guard let selectionRange = currentSelectionRange() else {
-            text += tagText
-            return
-        }
-
-        let lowerOffset = text.distance(from: text.startIndex, to: selectionRange.lowerBound)
-        text = text.replacingCharacters(in: selectionRange, with: tagText)
-        let cursor = text.index(text.startIndex, offsetBy: lowerOffset + tagText.count)
-        self.selection = TextSelection(range: cursor..<cursor)
+        insertAtSelection(tagText)
     }
 
     private func toggleTodoItem() {
@@ -433,4 +445,114 @@ public struct MemoEditor: View {
 
         return (oldStart..<oldEnd, new[newStart..<newEnd])
     }
+
+    private func insertAtSelection(_ insertedText: String) {
+        guard let selectionRange = currentSelectionRange() else {
+            text += insertedText
+            selection = .init(insertionPoint: text.endIndex)
+            return
+        }
+
+        let lowerOffset = text.distance(from: text.startIndex, to: selectionRange.lowerBound)
+        text = text.replacingCharacters(in: selectionRange, with: insertedText)
+        let cursor = text.index(text.startIndex, offsetBy: lowerOffset + insertedText.count)
+        selection = TextSelection(range: cursor..<cursor)
+    }
+
+    @ViewBuilder
+    private func withJournalingSuggestionsPicker<Content: View>(_ content: Content) -> some View {
+#if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
+        if supportsJournalingSuggestions {
+            content
+                .journalingSuggestionsPicker(isPresented: $showingJournalingSuggestionsPicker) { suggestion in
+                    await insertJournalingSuggestion(suggestion)
+                }
+        } else {
+            content
+        }
+#else
+        content
+#endif
+    }
+
+#if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
+    private func insertJournalingSuggestion(_ suggestion: JournalingSuggestion) async {
+        await attachJournalingSuggestionAssets(from: suggestion)
+        let snippet = await journalingSuggestionSnippet(from: suggestion)
+        guard !snippet.isEmpty else { return }
+        let content = text.isEmpty ? snippet : "\n\n\(snippet)"
+        insertAtSelection(content)
+    }
+
+    private func attachJournalingSuggestionAssets(from suggestion: JournalingSuggestion) async {
+        let urls = await journalingSuggestionAssetURLs(from: suggestion)
+        guard !urls.isEmpty else { return }
+
+        var firstError: Error?
+        for url in urls {
+            do {
+                try await viewModel.upload(fileURL: url)
+            } catch {
+                if firstError == nil {
+                    firstError = error
+                }
+            }
+        }
+
+        if let firstError {
+            submitError = firstError
+            showingErrorToast = true
+        }
+    }
+
+    private func journalingSuggestionAssetURLs(from suggestion: JournalingSuggestion) async -> [URL] {
+        var urls: [URL] = []
+
+        let photos = await suggestion.content(forType: JournalingSuggestion.Photo.self)
+        for photo in photos where !urls.contains(photo.photo) {
+            urls.append(photo.photo)
+        }
+
+        let videos = await suggestion.content(forType: JournalingSuggestion.Video.self)
+        for video in videos where !urls.contains(video.url) {
+            urls.append(video.url)
+        }
+
+        let livePhotos = await suggestion.content(forType: JournalingSuggestion.LivePhoto.self)
+        for livePhoto in livePhotos {
+            if !urls.contains(livePhoto.image) {
+                urls.append(livePhoto.image)
+            }
+            if !urls.contains(livePhoto.video) {
+                urls.append(livePhoto.video)
+            }
+        }
+
+        return urls
+    }
+
+    private func journalingSuggestionSnippet(from suggestion: JournalingSuggestion) async -> String {
+        var lines: [String] = []
+        let title = suggestion.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !title.isEmpty {
+            lines.append(title)
+        }
+
+        let reflections = await suggestion.content(forType: JournalingSuggestion.Reflection.self)
+        let prompts = reflections.map(\.prompt).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        lines.append(contentsOf: prompts.map { "- \($0)" })
+
+        if let date = suggestion.date {
+            lines.append("")
+            lines.append("_\(formattedSuggestionDateInterval(date))_")
+        }
+
+        return lines.joined(separator: "\n")
+    }
+
+    private func formattedSuggestionDateInterval(_ interval: DateInterval) -> String {
+        let formatter = Date.IntervalFormatStyle(date: .abbreviated, time: .shortened)
+        return interval.formatted(formatter)
+    }
+#endif
 }
