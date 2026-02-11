@@ -5,6 +5,8 @@ struct MemoEditorToolbar: View {
     let tags: [Tag]
     let onInsertTag: (Tag?) -> Void
     let onToggleTodo: () -> Void
+    let onPickJournalingSuggestion: () -> Void
+    let supportsJournalingSuggestions: Bool
     let onPickPhotos: () -> Void
     let onPickCamera: () -> Void
     let onPickFiles: () -> Void
@@ -34,6 +36,14 @@ struct MemoEditorToolbar: View {
                 onToggleTodo()
             } label: {
                 Image(systemName: "checkmark.square")
+            }
+
+            if supportsJournalingSuggestions {
+                Button {
+                    onPickJournalingSuggestion()
+                } label: {
+                    Image(systemName: "book.closed")
+                }
             }
 
             Button {
