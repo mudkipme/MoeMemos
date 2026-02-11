@@ -42,7 +42,7 @@ struct MemoEditorToolbar: View {
                 Button {
                     onPickJournalingSuggestion()
                 } label: {
-                    Image(systemName: "book.closed")
+                    Image(systemName: "wand.and.sparkles")
                 }
             }
 
