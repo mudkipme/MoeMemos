@@ -33,10 +33,17 @@ struct MemosList: View {
             } else {
                 List(filteredMemoList, id: \.id) { item in
                     Section {
-                        NavigationLink(value: Route.memo(item.id)) {
-                            MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
+                        if #available(iOS 26, *) {
+                            NavigationLink(value: Route.memo(item.id)) {
+                                MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
                             }
                             .navigationLinkIndicatorVisibility(.hidden)
+                        } else {
+                            MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
+                                .onTapGesture {
+                                    appPath.navigationRequest = .push(.memo(item.id))
+                                }
+                        }
                     }
                 }
                 .listStyle(InsetGroupedListStyle())
