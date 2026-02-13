@@ -39,15 +39,19 @@ import MemosV0Service
         for account in accountManager.accounts {
             if accountManager.currentAccount == account {
                 guard let currentService = accountManager.currentService else { throw MoeMemosError.notLogin }
-                let user = try await currentService.getCurrentUser()
-                if let existingUser = savedUsers.first(where: { $0.accountKey == account.key }) {
-                    existingUser.avatarData = user.avatarData
-                    existingUser.nickname = user.nickname
-                    existingUser.defaultVisibility = user.defaultVisibility
-                } else {
-                    currentContext.insert(user)
+                do {
+                    let user = try await currentService.getCurrentUser()
+                    if let existingUser = savedUsers.first(where: { $0.accountKey == account.key }) {
+                        existingUser.avatarData = user.avatarData
+                        existingUser.nickname = user.nickname
+                        existingUser.defaultVisibility = user.defaultVisibility
+                    } else {
+                        currentContext.insert(user)
+                    }
+                    allUsers.append(user)
+                } catch {
+                    continue
                 }
-                allUsers.append(user)
             } else if let user = savedUsers.first(where: { $0.accountKey == account.key }) {
                 allUsers.append(user)
             } else if let user = try? await account.toUser() {
