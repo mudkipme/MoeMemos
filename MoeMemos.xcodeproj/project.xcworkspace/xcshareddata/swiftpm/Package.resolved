@@ -1,5 +1,5 @@
 {
-  "originHash" : "356f5e729c1b8c001724f7c160fdfccdf396127d919f3ab00da5ce4d9e63c387",
+  "originHash" : "b490cdac2834235f9b324487073eeb758ab9722a17e6a39a8c205e29efb3a57e",
   "pins" : [
     {
       "identity" : "data-uri",
@@ -179,6 +179,15 @@
       "state" : {
         "revision" : "9b15cec6c2c5dc7ee32321a7a51883cb179a9da0",
         "version" : "0.26.0"
+      }
+    },
+    {
+      "identity" : "whatsnewkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SvenTiigi/WhatsNewKit.git",
+      "state" : {
+        "revision" : "6157c77e8be9b3d2310bc680681b61a8d9e290ac",
+        "version" : "2.2.1"
       }
     },
     {

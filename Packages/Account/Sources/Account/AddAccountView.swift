@@ -62,7 +62,7 @@ public struct AddAccountView: View {
                 }
             }
             .toolbar {
-                if !accountManager.accounts.isEmpty {
+                if !accountManager.accounts.isEmpty && !accountViewModel.users.isEmpty {
                     ToolbarItem(placement: .topBarLeading) {
                         Button("input.close") {
                             dismiss()
@@ -70,7 +70,7 @@ public struct AddAccountView: View {
                     }
                 }
             }
-            .navigationTitle(accountManager.accounts.isEmpty ? NSLocalizedString("moe-memos", comment: "") : NSLocalizedString("account.add-account", comment: ""))
+            .navigationTitle((accountManager.accounts.isEmpty || accountViewModel.users.isEmpty) ? NSLocalizedString("moe-memos", comment: "") : NSLocalizedString("account.add-account", comment: ""))
             .navigationDestination(for: AddAccountRouter.self) { router in
                 switch router {
                 case .addMemosAccount:
