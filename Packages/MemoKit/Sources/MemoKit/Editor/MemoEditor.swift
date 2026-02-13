@@ -6,7 +6,7 @@ import Account
 import DesignSystem
 import SwiftData
 #if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
-@preconcurrency import JournalingSuggestions
+@_weakLinked @preconcurrency import JournalingSuggestions
 #endif
 
 private let listItemSymbolList = ["- [ ] ", "- [x] ", "- [X] ", "* ", "- "]
@@ -303,12 +303,19 @@ public struct MemoEditor: View {
 
     private var supportsJournalingSuggestions: Bool {
 #if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
+        if ProcessInfo.processInfo.isiOSAppOnMac {
+            return false
+        }
+        if UIDevice.current.userInterfaceIdiom == .mac {
+            return false
+        }
         if UIDevice.current.userInterfaceIdiom == .pad {
             return ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 26
         }
         return true
-#endif
+#else
         return false
+#endif
     }
 
     private func insert(tag: Tag?) {
@@ -459,23 +466,27 @@ public struct MemoEditor: View {
         selection = TextSelection(range: cursor..<cursor)
     }
 
-    @ViewBuilder
-    private func withJournalingSuggestionsPicker<Content: View>(_ content: Content) -> some View {
+    @inline(never)
+    private func withJournalingSuggestionsPicker<Content: View>(_ content: Content) -> AnyView {
 #if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
         if supportsJournalingSuggestions {
+            return withNativeJournalingSuggestionsPicker(AnyView(content))
+        }
+#endif
+        return AnyView(content)
+    }
+
+#if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
+    @inline(never)
+    private func withNativeJournalingSuggestionsPicker(_ content: AnyView) -> AnyView {
+        AnyView(
             content
                 .journalingSuggestionsPicker(isPresented: $showingJournalingSuggestionsPicker) { suggestion in
                     await insertJournalingSuggestion(suggestion)
                 }
-        } else {
-            content
-        }
-#else
-        content
-#endif
+        )
     }
 
-#if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
     private func insertJournalingSuggestion(_ suggestion: JournalingSuggestion) async {
         await attachJournalingSuggestionAssets(from: suggestion)
         let snippet = await journalingSuggestionSnippet(from: suggestion)

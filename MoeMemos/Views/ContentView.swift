@@ -54,8 +54,14 @@ struct ContentView: View {
             try await accountViewModel.reloadUsers()
         } catch MoeMemosError.notLogin {
             appPath.presentedSheet = .addAccount
+        } catch MoeMemosError.accessTokenExpired {
+            appPath.presentedSheet = .addAccount
         } catch {
             print(error)
+        }
+        
+        if accountViewModel.users.isEmpty {
+            appPath.presentedSheet = .addAccount
         }
     }
 }
