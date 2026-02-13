@@ -115,3 +115,15 @@
 "compat.higher-version.login-warning" = "您的 Memos 版本高於 Moe Memos 已驗證的版本，可能存在相容性問題。繼續前請先查看 Moe Memos 官網確認是否支援。";
 "compat.higher-version.sync-warning" = "您的 Memos 版本高於 Moe Memos 已驗證的版本，強制同步可能損壞未同步資料。繼續前請先查看 Moe Memos 官網確認是否支援。";
 "error.access-token-invalid" = "您的存取權杖無效，請建立一個永不過期的存取權杖後重新登入。";
+
+// What's New
+"whatsnew.title" = "Moe Memos 新功能";
+"whatsnew.feature.offline.title" = "離線優先同步";
+"whatsnew.feature.offline.subtitle" = "可離線使用 Moe Memos，並在重新連線後同步更改。";
+"whatsnew.feature.local.title" = "支援本地帳號";
+"whatsnew.feature.local.subtitle" = "無需伺服器即可建立 MEMO，並可匯出為 ZIP 檔案。";
+"whatsnew.feature.journaling.title" = "日誌建議";
+"whatsnew.feature.journaling.subtitle" = "可從建議的時刻中選擇並開始撰寫 MEMO。";
+"whatsnew.feature.attachments.title" = "附件功能升級";
+"whatsnew.feature.attachments.subtitle" = "支援儲存圖片以外的檔案附件。";
+"whatsnew.action.continue" = "繼續";

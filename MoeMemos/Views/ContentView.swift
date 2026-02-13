@@ -96,34 +96,38 @@ struct ContentView: View {
     private var whatsNew: WhatsNew {
         WhatsNew(
             version: "2.0.0",
-            title: "What's New",
+            title: .init(text: .init(localized("whatsnew.title"))),
             features: [
                 .init(
                     image: .init(systemName: "arrow.trianglehead.2.clockwise", foregroundColor: .green),
-                    title: "Offline-first sync",
-                    subtitle: "Use Moe Memos offline and sync changes when you're back online."
+                    title: .init(localized("whatsnew.feature.offline.title")),
+                    subtitle: .init(localized("whatsnew.feature.offline.subtitle"))
                 ),
                 .init(
                     image: .init(systemName: "externaldrive.badge.plus", foregroundColor: .green),
-                    title: "Local account support",
-                    subtitle: "Create memos without a server and export to a ZIP file."
+                    title: .init(localized("whatsnew.feature.local.title")),
+                    subtitle: .init(localized("whatsnew.feature.local.subtitle"))
                 ),
                 .init(
                     image: .init(systemName: "wand.and.sparkles", foregroundColor: .green),
-                    title: "Journaling Suggestions",
-                    subtitle: "Choose from suggested moments to start your memo."
+                    title: .init(localized("whatsnew.feature.journaling.title")),
+                    subtitle: .init(localized("whatsnew.feature.journaling.subtitle"))
                 ),
                 .init(
                     image: .init(systemName: "paperclip", foregroundColor: .green),
-                    title: "Attachment upgrades",
-                    subtitle: "Save file attachments beyond images."
+                    title: .init(localized("whatsnew.feature.attachments.title")),
+                    subtitle: .init(localized("whatsnew.feature.attachments.subtitle"))
                 )
             ],
             primaryAction: .init(
-                title: "Continue",
+                title: .init(localized("whatsnew.action.continue")),
                 backgroundColor: .green,
                 foregroundColor: .white
             )
         )
+    }
+
+    private func localized(_ key: String) -> String {
+        NSLocalizedString(key, comment: "")
     }
 }

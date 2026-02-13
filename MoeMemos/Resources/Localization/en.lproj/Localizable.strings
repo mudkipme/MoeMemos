@@ -115,3 +115,15 @@
 "compat.higher-version.login-warning" = "Your Memos version is newer than the version tested by Moe Memos. There might be compatibility issues. Please check the Moe Memos website before continuing.";
 "compat.higher-version.sync-warning" = "Your Memos version is newer than the version tested by Moe Memos. Forcing sync may corrupt unsynced data. Please check the Moe Memos website before continuing.";
 "error.access-token-invalid" = "Your access token is invalid. Please create a non-expiring access token and log in again.";
+
+// What's New
+"whatsnew.title" = "What's New in Moe Memos";
+"whatsnew.feature.offline.title" = "Offline-first sync";
+"whatsnew.feature.offline.subtitle" = "Use Moe Memos offline and sync changes when you're back online.";
+"whatsnew.feature.local.title" = "Local account support";
+"whatsnew.feature.local.subtitle" = "Create memos without a server and export to a ZIP file.";
+"whatsnew.feature.journaling.title" = "Journaling Suggestions";
+"whatsnew.feature.journaling.subtitle" = "Choose from suggested moments to start your memo.";
+"whatsnew.feature.attachments.title" = "Attachment upgrades";
+"whatsnew.feature.attachments.subtitle" = "Save file attachments beyond images.";
+"whatsnew.action.continue" = "Continue";
