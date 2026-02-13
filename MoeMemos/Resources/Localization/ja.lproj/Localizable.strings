@@ -115,3 +115,15 @@
 "compat.higher-version.login-warning" = "お使いの Memos バージョンは、Moe Memos で検証済みのバージョンより新しいです。互換性の問題が発生する可能性があります。続行する前に Moe Memos のWebサイトを確認してください。";
 "compat.higher-version.sync-warning" = "お使いの Memos バージョンは、Moe Memos で検証済みのバージョンより新しいです。同期を強制すると未同期データが破損する可能性があります。続行する前に Moe Memos のWebサイトを確認してください。";
 "error.access-token-invalid" = "アクセストークンが無効です。期限なしのアクセストークンを作成して、再度ログインしてください。";
+
+// What's New
+"whatsnew.title" = "Moe Memosの新機能";
+"whatsnew.feature.offline.title" = "オフライン優先の同期";
+"whatsnew.feature.offline.subtitle" = "Moe Memosをオフラインで使い、オンラインに戻ると変更を同期できます。";
+"whatsnew.feature.local.title" = "ローカルアカウント対応";
+"whatsnew.feature.local.subtitle" = "サーバーなしでメモを作成し、ZIPファイルとして書き出せます。";
+"whatsnew.feature.journaling.title" = "ジャーナル記入の提案";
+"whatsnew.feature.journaling.subtitle" = "提案された出来事から選んで、メモを書き始められます。";
+"whatsnew.feature.attachments.title" = "添付機能の強化";
+"whatsnew.feature.attachments.subtitle" = "画像以外のファイル添付も保存できます。";
+"whatsnew.action.continue" = "続ける";

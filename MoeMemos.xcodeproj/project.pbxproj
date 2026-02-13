@@ -94,6 +94,7 @@
 		2AC7F0B72F6D1E9A00ABCD01 /* MemoTagMarkdownPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC7F0B62F6D1E9A00ABCD01 /* MemoTagMarkdownPreprocessor.swift */; };
 		2B7D9E3C2F4A110000ABC001 /* SyncStatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7D9E3C2F4A110000ABC002 /* SyncStatusBadge.swift */; };
 		2C6B0A852F8112F000A1C0DE /* SupportPurchaseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6B0A842F8112F000A1C0DE /* SupportPurchaseStore.swift */; };
+		2D41F7A82F95C10000A6B8C1 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2D41F7A72F95C10000A6B8C1 /* WhatsNewKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -233,6 +234,7 @@
 				20B1A2C3D4E5F60718293A4B /* MemoKit in Frameworks */,
 				197BEF472B00998F0025C17B /* Models in Frameworks */,
 				194ED5632F37184A0062EB1B /* MarkdownView in Frameworks */,
+				2D41F7A82F95C10000A6B8C1 /* WhatsNewKit in Frameworks */,
 				191489F02B00832C00577BD1 /* Account in Frameworks */,
 				191C67DE2F37155B00B8FD51 /* Markdown in Frameworks */,
 				19E866612AB84EBA00E33521 /* KeychainSwift in Frameworks */,
@@ -495,6 +497,7 @@
 				19113B8C2C1D97A200365C05 /* Env */,
 				191C67DD2F37155B00B8FD51 /* Markdown */,
 				194ED5622F37184A0062EB1B /* MarkdownView */,
+				2D41F7A72F95C10000A6B8C1 /* WhatsNewKit */,
 			);
 			productName = MoeMemos;
 			productReference = 194B272D28C3973400A48675 /* MoeMemos.app */;
@@ -565,6 +568,7 @@
 				1990357C2C14A55B0011B985 /* XCRemoteSwiftPackageReference "Factory" */,
 				191C67DC2F37155B00B8FD51 /* XCRemoteSwiftPackageReference "swift-markdown" */,
 				194ED5612F37184A0062EB1B /* XCRemoteSwiftPackageReference "MarkdownView" */,
+				2D41F7A62F95C10000A6B8C1 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
 			);
 			productRefGroup = 194B272E28C3973400A48675 /* Products */;
 			projectDirPath = "";
@@ -1154,6 +1158,14 @@
 				minimumVersion = 21.0.0;
 			};
 		};
+		2D41F7A62F95C10000A6B8C1 /* XCRemoteSwiftPackageReference "WhatsNewKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SvenTiigi/WhatsNewKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1228,6 +1240,11 @@
 		20B1A2C3D4E5F60718293A4C /* MemoKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MemoKit;
+		};
+		2D41F7A72F95C10000A6B8C1 /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2D41F7A62F95C10000A6B8C1 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

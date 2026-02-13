@@ -115,3 +115,15 @@
 "compat.higher-version.login-warning" = "Ваша версия Memos новее версии, протестированной в Moe Memos. Возможны проблемы совместимости. Перед продолжением проверьте сайт Moe Memos.";
 "compat.higher-version.sync-warning" = "Ваша версия Memos новее версии, протестированной в Moe Memos. Принудительная синхронизация может повредить несинхронизированные данные. Перед продолжением проверьте сайт Moe Memos.";
 "error.access-token-invalid" = "Ваш токен доступа недействителен. Создайте токен доступа без срока действия и войдите снова.";
+
+// What's New
+"whatsnew.title" = "Что нового в Moe Memos";
+"whatsnew.feature.offline.title" = "Синхронизация с приоритетом офлайн";
+"whatsnew.feature.offline.subtitle" = "Используйте Moe Memos офлайн и синхронизируйте изменения, когда снова будете онлайн.";
+"whatsnew.feature.local.title" = "Поддержка локального аккаунта";
+"whatsnew.feature.local.subtitle" = "Создавайте заметки без сервера и экспортируйте их в ZIP-файл.";
+"whatsnew.feature.journaling.title" = "Предложения дневника";
+"whatsnew.feature.journaling.subtitle" = "Выбирайте предложенные моменты, чтобы начать заметку.";
+"whatsnew.feature.attachments.title" = "Улучшенные вложения";
+"whatsnew.feature.attachments.subtitle" = "Сохраняйте вложения файлов, а не только изображения.";
+"whatsnew.action.continue" = "Продолжить";

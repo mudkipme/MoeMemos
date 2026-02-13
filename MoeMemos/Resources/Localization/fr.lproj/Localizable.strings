@@ -117,3 +117,15 @@
 "compat.higher-version.login-warning" = "Votre version de Memos est plus récente que celle testée par Moe Memos. Il peut y avoir des problèmes de compatibilité. Veuillez consulter le site de Moe Memos avant de continuer.";
 "compat.higher-version.sync-warning" = "Votre version de Memos est plus récente que celle testée par Moe Memos. Forcer la synchronisation peut corrompre les données non synchronisées. Veuillez consulter le site de Moe Memos avant de continuer.";
 "error.access-token-invalid" = "Votre jeton d'accès est invalide. Veuillez créer un jeton d'accès sans expiration et vous reconnecter.";
+
+// What's New
+"whatsnew.title" = "Nouveautés de Moe Memos";
+"whatsnew.feature.offline.title" = "Synchronisation hors ligne d'abord";
+"whatsnew.feature.offline.subtitle" = "Utilisez Moe Memos hors ligne et synchronisez les modifications lorsque vous êtes de nouveau en ligne.";
+"whatsnew.feature.local.title" = "Prise en charge des comptes locaux";
+"whatsnew.feature.local.subtitle" = "Créez des memos sans serveur et exportez-les au format ZIP.";
+"whatsnew.feature.journaling.title" = "Suggestions pour le journal";
+"whatsnew.feature.journaling.subtitle" = "Choisissez parmi des moments suggérés pour commencer votre memo.";
+"whatsnew.feature.attachments.title" = "Améliorations des pièces jointes";
+"whatsnew.feature.attachments.subtitle" = "Enregistrez des pièces jointes au-delà des images.";
+"whatsnew.action.continue" = "Continuer";
