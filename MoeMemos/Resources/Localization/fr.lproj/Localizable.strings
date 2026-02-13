@@ -32,6 +32,14 @@
 "settings.sign-out" = "Se déconnecter";
 "settings.website" = "Website";
 "settings.acknowledgements" = "Remerciements";
+"settings.support" = "Support";
+"settings.support.buy" = "Offrez-moi un café";
+"settings.support.thanks" = "Merci pour votre soutien";
+"settings.support.restore" = "Restaurer";
+"settings.support.error.title" = "Erreur d'achat";
+"settings.support.error.pending" = "Votre achat est en attente d'approbation.";
+"settings.support.error.unverified" = "Nous n'avons pas pu vérifier votre achat.";
+"settings.support.error.unavailable" = "Cette option d'achat est indisponible.";
 
 "input.placeholder" = "Une idée…";
 "input.close" = "Fermer";

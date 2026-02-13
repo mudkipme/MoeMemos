@@ -32,6 +32,14 @@
 "settings.sign-out" = "Sign out";
 "settings.website" = "Website";
 "settings.acknowledgements" = "Acknowledgements";
+"settings.support" = "Support";
+"settings.support.buy" = "Buy me a coffee";
+"settings.support.thanks" = "Thanks for your support";
+"settings.support.restore" = "Restore";
+"settings.support.error.title" = "Purchase Error";
+"settings.support.error.pending" = "Your purchase is pending approval.";
+"settings.support.error.unverified" = "We couldn't verify your purchase.";
+"settings.support.error.unavailable" = "Purchase option is currently unavailable.";
 
 "input.placeholder" = "Any thoughts…";
 "input.close" = "Close";
