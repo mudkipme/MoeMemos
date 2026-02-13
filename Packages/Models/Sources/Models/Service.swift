@@ -71,3 +71,8 @@ public protocol Service: Sendable {
 public protocol SyncableService: Sendable {
     func sync() async throws
 }
+
+@MainActor
+public protocol PendingOperationsService: Sendable {
+    func waitForPendingOperations() async
+}

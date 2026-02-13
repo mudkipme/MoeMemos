@@ -12,7 +12,7 @@ import Models
 /// - UI talks to this via `Service` using SwiftData `PersistentIdentifier`s.
 /// - Sync engine talks to the server via `RemoteService` using server ids (Memo.remoteId / Resource.remoteId).
 @MainActor
-final class SyncingRemoteService: Service, SyncableService {
+final class SyncingRemoteService: Service, SyncableService, PendingOperationsService {
     private let remote: RemoteService
     private let store: LocalStore
     private let accountKey: String
@@ -391,6 +391,11 @@ final class SyncingRemoteService: Service, SyncableService {
     }
 
     // MARK: - SyncableService
+
+    func waitForPendingOperations() async {
+        let pending = operationChain
+        _ = await pending?.value
+    }
 
     func sync() async throws {
         try await runSerialized { [self] in
