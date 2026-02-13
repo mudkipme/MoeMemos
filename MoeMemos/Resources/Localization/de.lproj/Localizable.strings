@@ -32,6 +32,14 @@
 "settings.sign-out" = "Abmelden";
 "settings.website" = "Webseite";
 "settings.acknowledgements" = "Danksagung";
+"settings.support" = "Support";
+"settings.support.buy" = "Spendiere mir einen Kaffee";
+"settings.support.thanks" = "Danke für deine Unterstützung";
+"settings.support.restore" = "Wiederherstellen";
+"settings.support.error.title" = "Kauffehler";
+"settings.support.error.pending" = "Dein Kauf wartet auf Bestätigung.";
+"settings.support.error.unverified" = "Dein Kauf konnte nicht verifiziert werden.";
+"settings.support.error.unavailable" = "Kaufoption ist derzeit nicht verfügbar.";
 
 "input.placeholder" = "Ein Gedanke...";
 "input.close" = "Schließen";

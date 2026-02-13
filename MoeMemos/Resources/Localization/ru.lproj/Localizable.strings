@@ -32,6 +32,14 @@
 "settings.sign-out" = "Выйти";
 "settings.website" = "Вебсайт";
 "settings.acknowledgements" = "Благодарности";
+"settings.support" = "Поддержка";
+"settings.support.buy" = "Угостить меня кофе";
+"settings.support.thanks" = "Спасибо за вашу поддержку";
+"settings.support.restore" = "Восстановить";
+"settings.support.error.title" = "Ошибка покупки";
+"settings.support.error.pending" = "Ваша покупка ожидает подтверждения.";
+"settings.support.error.unverified" = "Не удалось проверить покупку.";
+"settings.support.error.unavailable" = "Покупка сейчас недоступна.";
 
 "input.placeholder" = "Ваши мысли...";
 "input.close" = "Закрыть";

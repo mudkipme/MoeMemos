@@ -32,8 +32,16 @@
 "settings.sign-out" = "サインアウト";
 "settings.website" = "ウェブサイト";
 "settings.acknowledgements" = "謝辞";
+"settings.support" = "サポート";
+"settings.support.buy" = "タピオカティーをおごる";
+"settings.support.thanks" = "サポートありがとうございます";
+"settings.support.restore" = "復元";
+"settings.support.error.title" = "購入エラー";
+"settings.support.error.pending" = "購入は現在承認待ちです。";
+"settings.support.error.unverified" = "購入を検証できませんでした。";
+"settings.support.error.unavailable" = "現在この購入は利用できません。";
 
-"input.placeholder" = "ご意見は…";
+"input.placeholder" = "今考えていることは…";
 "input.close" = "閉じる";
 "input.compose" = "作成";
 "input.edit" = "メモの編集";

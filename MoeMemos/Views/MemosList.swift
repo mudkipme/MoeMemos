@@ -26,9 +26,12 @@ struct MemosList: View {
         let filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: searchString)
         let unsyncedCount = memosViewModel.memoList.filter { $0.syncState != .synced }.count
         let canSync = ((try? memosViewModel.service) as? SyncableService) != nil
+        let isFirstLoad = !memosViewModel.inited && memosViewModel.memoList.isEmpty
         
         ZStack(alignment: .bottomTrailing) {
-            if filteredMemoList.isEmpty {
+            if isFirstLoad {
+                Color.clear
+            } else if filteredMemoList.isEmpty {
                 ContentUnavailableView("memo.memos.empty", systemImage: "note.text")
             } else {
                 List(filteredMemoList, id: \.id) { item in

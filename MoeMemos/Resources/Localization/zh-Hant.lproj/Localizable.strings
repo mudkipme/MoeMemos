@@ -32,6 +32,14 @@
 "settings.sign-out" = "退出登入";
 "settings.website" = "官網";
 "settings.acknowledgements" = "致謝";
+"settings.support" = "支援開發者";
+"settings.support.buy" = "請我喝杯奶茶";
+"settings.support.thanks" = "感謝你的支持";
+"settings.support.restore" = "恢復";
+"settings.support.error.title" = "購買錯誤";
+"settings.support.error.pending" = "購買正在等待處理。";
+"settings.support.error.unverified" = "無法驗證此次購買。";
+"settings.support.error.unavailable" = "目前無法購買。";
 
 "input.placeholder" = "現在的想法是…";
 "input.close" = "關閉";
