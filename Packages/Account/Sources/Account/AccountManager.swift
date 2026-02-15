@@ -15,6 +15,7 @@ import Factory
 @Observable public final class AccountManager: @unchecked Sendable {
     @ObservationIgnored @AppStorage("currentAccountKey", store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier))
     private var currentAccountKey: String = ""
+    @ObservationIgnored private var shouldPersistCurrentAccountKey = false
     @ObservationIgnored public private(set) var currentService: Service?
     @ObservationIgnored public private(set) var currentRemoteService: RemoteService?
     @ObservationIgnored private let modelContext: ModelContext
@@ -36,7 +37,9 @@ import Factory
     public private(set) var accounts: [Account]
     public internal(set) var currentAccount: Account? {
         didSet {
-            currentAccountKey = currentAccount?.key ?? ""
+            if shouldPersistCurrentAccountKey {
+                currentAccountKey = currentAccount?.key ?? ""
+            }
             currentService = makeService(for: currentAccount)
             currentRemoteService = makeRemoteService(for: currentAccount)
         }
@@ -50,8 +53,7 @@ import Factory
         } else {
             self.currentAccount = accounts.last
         }
-        currentService = makeService(for: currentAccount)
-        currentRemoteService = makeRemoteService(for: currentAccount)
+        shouldPersistCurrentAccountKey = true
 
         try? ResourceFileStore.cleanupOrphanedFiles(context: modelContext)
     }
