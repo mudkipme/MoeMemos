@@ -42,6 +42,8 @@ import SwiftData
     
     @MainActor
     private func startBackgroundSync() {
+        guard BackgroundSyncThrottle.canStartSync() else { return }
+
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
