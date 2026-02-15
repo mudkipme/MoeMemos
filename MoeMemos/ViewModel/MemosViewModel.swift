@@ -31,6 +31,21 @@ enum ManualSyncCompatibilityError: LocalizedError {
 }
 
 @MainActor
+enum BackgroundSyncThrottle {
+    private static let minimumInterval: TimeInterval = 10
+    private static var lastTriggerDate: Date?
+
+    static func canStartSync(now: Date = Date()) -> Bool {
+        if let lastTriggerDate, now.timeIntervalSince(lastTriggerDate) < minimumInterval {
+            return false
+        }
+
+        self.lastTriggerDate = now
+        return true
+    }
+}
+
+@MainActor
 @Observable class MemosViewModel {
     private struct HigherV1SyncApprovalToPersist {
         let version: String
@@ -149,6 +164,8 @@ enum ManualSyncCompatibilityError: LocalizedError {
 
     @MainActor
     private func startBackgroundSync() {
+        guard BackgroundSyncThrottle.canStartSync() else { return }
+
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
