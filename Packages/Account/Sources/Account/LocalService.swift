@@ -166,7 +166,7 @@ final class LocalService: Service {
         if let cached = store.fetchUser() {
             return cached
         }
-        return User(accountKey: accountKey, nickname: NSLocalizedString("account.local-user", comment: "account.local-user"))
+        return UserSnapshot.local(accountKey: accountKey).toUserModel()
     }
 
     func ensureLocalResourceFile(id: PersistentIdentifier) async throws -> URL {

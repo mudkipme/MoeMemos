@@ -15,6 +15,7 @@ public enum MoeMemosError: LocalizedError {
     case fileTooLarge(Int64)
     case unsupportedVersion
     case accessTokenExpired
+    case accountCredentialSaveFailed(accountKey: String)
     
     public var errorDescription: String? {
         switch self {
@@ -35,6 +36,8 @@ public enum MoeMemosError: LocalizedError {
             return SupportedMemosVersion.localizedSupportedVersionsMessage()
         case .accessTokenExpired:
             return NSLocalizedString("error.access-token-invalid", comment: "Access token invalid message")
+        case .accountCredentialSaveFailed(let accountKey):
+            return "Failed to save credentials for account: \(accountKey)"
         }
     }
 

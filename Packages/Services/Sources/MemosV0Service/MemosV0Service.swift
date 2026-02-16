@@ -178,12 +178,12 @@ public final class MemosV0Service: RemoteService {
         _ = try resp.ok
     }
     
-    public func getCurrentUser() async throws -> Models.User {
+    public func getCurrentUser() async throws -> Models.UserSnapshot {
         let resp = try await client.getCurrentUser()
         switch resp {
         case .ok(let ok):
             let memosUser = try ok.body.json
-            return await toUser(memosUser)
+            return await toUserSnapshot(memosUser)
         case .unauthorized(_):
             throw MoeMemosError.accessTokenExpired
         case .internalServerError(_):
@@ -209,7 +209,7 @@ public final class MemosV0Service: RemoteService {
         return try await ServiceUtils.downloadData(urlSession: urlSession, url: url, middleware: rawAccessTokenMiddlware(hostURL: hostURL, accessToken: accessToken))
     }
     
-    func toUser(_ memosUser: MemosV0User) async -> User {
+    func toUserSnapshot(_ memosUser: MemosV0User) async -> UserSnapshot {
         let key = "memos:\(hostURL.absoluteString):\(memosUser.id)"
         let createdAt: Date
         if let createdTs = memosUser.createdTs {
@@ -217,14 +217,22 @@ public final class MemosV0Service: RemoteService {
         } else {
             createdAt = .now
         }
-        let user = User(accountKey: key, nickname: memosUser.nickname ?? memosUser.username ?? "", defaultVisibility: .private, creationDate: createdAt, email: memosUser.email, remoteId: String(memosUser.id))
+        var snapshot = UserSnapshot(
+            accountKey: key,
+            nickname: memosUser.nickname ?? memosUser.username ?? "",
+            avatarData: nil,
+            defaultVisibility: .private,
+            creationDate: createdAt,
+            email: memosUser.email,
+            remoteId: String(memosUser.id)
+        )
         if let avatarUrl = memosUser.avatarUrl, let url = URL(string: avatarUrl) {
             var url = url
             if url.host() == nil {
                 url = hostURL.appending(path: avatarUrl)
             }
-            user.avatarData = try? await downloadData(url: url)
+            snapshot.avatarData = try? await downloadData(url: url)
         }
-        return user
+        return snapshot
     }
 }

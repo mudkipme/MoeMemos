@@ -16,12 +16,12 @@ import MemosV0Service
 @Observable public final class AccountViewModel: @unchecked Sendable {
     @ObservationIgnored private var currentContext: ModelContext
     private var accountManager: AccountManager
-    @ObservationIgnored private let userActor = UserModelActor()
 
     public init(currentContext: ModelContext, accountManager: AccountManager) {
         self.currentContext = currentContext
         self.accountManager = accountManager
-        users = (try? currentContext.fetch(FetchDescriptor<User>())) ?? []
+        users = []
+        refreshUsers()
     }
     
     public private(set) var users: [User]
@@ -32,53 +32,29 @@ import MemosV0Service
         return nil
     }
     
-    @MainActor
-    public func reloadUsers() async throws {
-        let savedUsers = try currentContext.fetch(FetchDescriptor<User>())
-        var allUsers = [User]()
-        for account in accountManager.accounts {
-            if accountManager.currentAccount == account {
-                guard let currentService = accountManager.currentService else { throw MoeMemosError.notLogin }
-                do {
-                    let user = try await currentService.getCurrentUser()
-                    if let existingUser = savedUsers.first(where: { $0.accountKey == account.key }) {
-                        existingUser.avatarData = user.avatarData
-                        existingUser.nickname = user.nickname
-                        existingUser.defaultVisibility = user.defaultVisibility
-                    } else {
-                        currentContext.insert(user)
-                    }
-                    allUsers.append(user)
-                } catch {
-                    continue
-                }
-            } else if let user = savedUsers.first(where: { $0.accountKey == account.key }) {
-                allUsers.append(user)
-            } else if let user = try? await account.toUser() {
-                allUsers.append(user)
-                currentContext.insert(user)
-            }
-        }
-
-        // Remove removed users
-        savedUsers.filter { user in !accountManager.accounts.contains { $0.key == user.accountKey } }.forEach { user in
-            currentContext.delete(user)
-        }
-        try currentContext.save()
-        users = allUsers
+    public func refreshUsers() {
+        let descriptor = FetchDescriptor<User>(sortBy: [SortDescriptor(\.creationDate)])
+        users = (try? currentContext.fetch(descriptor)) ?? []
     }
     
     @MainActor
     func logout(account: Account) async throws {
         try accountManager.delete(account: account)
-        try await reloadUsers()
+        refreshUsers()
     }
     
     @MainActor
     func switchTo(accountKey: String) async throws {
-        guard let account = accountManager.accounts.first(where: { $0.key == accountKey }) else { return }
+        guard let account = accountManager.account(for: accountKey) else { throw MoeMemosError.notLogin }
         accountManager.currentAccount = account
-        try await reloadUsers()
+        refreshUsers()
+    }
+
+    @MainActor
+    func loginLocal() async throws {
+        let account = Account.local
+        let user = UserSnapshot.local(accountKey: account.key)
+        try persistLoggedInAccount(account: account, user: user)
     }
     
     @MainActor
@@ -87,9 +63,7 @@ import MemosV0Service
         let user = try await client.getCurrentUser()
         guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
         let account = Account.memosV0(host: hostURL.absoluteString, id: id, accessToken: accessToken)
-        try userActor.deleteUser(currentContext, accountKey: account.key)
-        try accountManager.add(account: account)
-        try await reloadUsers()
+        try persistLoggedInAccount(account: account, user: user)
     }
     
     @MainActor
@@ -98,9 +72,50 @@ import MemosV0Service
         let user = try await client.getCurrentUser()
         guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
         let account = Account.memosV1(host: hostURL.absoluteString, id: id, accessToken: accessToken)
-        try userActor.deleteUser(currentContext, accountKey: account.key)
-        try accountManager.add(account: account)
-        try await reloadUsers()
+        try persistLoggedInAccount(account: account, user: user)
+    }
+    
+    private func persistLoggedInAccount(account: Account, user: UserSnapshot) throws {
+        let descriptor = FetchDescriptor<User>(
+            predicate: #Predicate<User> { storedUser in
+                storedUser.accountKey == account.key
+            }
+        )
+        let existingUser = try currentContext.fetch(descriptor).first
+        let existingSnapshot = existingUser.map(UserSnapshot.init(user:))
+        let previousAccount = Account.retrieve(accountKey: account.key)
+        let insertedUser: User?
+
+        if let existingUser {
+            user.apply(to: existingUser)
+            insertedUser = nil
+        } else {
+            let newUser = user.toUserModel()
+            currentContext.insert(newUser)
+            insertedUser = newUser
+        }
+
+        do {
+            try account.save()
+            try currentContext.save()
+        } catch {
+            if let existingUser, let existingSnapshot {
+                existingSnapshot.apply(to: existingUser)
+            } else if let insertedUser {
+                currentContext.delete(insertedUser)
+            }
+            _ = try? currentContext.save()
+
+            if let previousAccount {
+                try? previousAccount.save()
+            } else {
+                account.delete()
+            }
+            throw error
+        }
+
+        accountManager.currentAccount = account
+        refreshUsers()
     }
 }
 

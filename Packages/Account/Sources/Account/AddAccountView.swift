@@ -6,30 +6,25 @@
 //
 
 import SwiftUI
+import Models
 
 public struct AddAccountView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(AccountManager.self) private var accountManager: AccountManager
     @Environment(AccountViewModel.self) private var accountViewModel: AccountViewModel
     @State private var path: [AddAccountRouter] = []
     
     public init() {}
     
     public var body: some View {
-        let hasLocalAccount = accountManager.accounts.contains { account in
-            if case .local = account {
-                return true
-            }
-            return false
-        }
+        let hasLocalAccount = accountViewModel.users.contains { $0.accountKey == Account.local.key }
+        let hasAnyAccount = !accountViewModel.users.isEmpty
 
         NavigationStack(path: $path) {
             List {
                 if !hasLocalAccount {
                     Button {
                         Task {
-                            try? accountManager.add(account: .local)
-                            try? await accountViewModel.reloadUsers()
+                            try? await accountViewModel.loginLocal()
                             dismiss()
                         }
                     } label: {
@@ -62,7 +57,7 @@ public struct AddAccountView: View {
                 }
             }
             .toolbar {
-                if !accountManager.accounts.isEmpty && !accountViewModel.users.isEmpty {
+                if hasAnyAccount {
                     ToolbarItem(placement: .topBarLeading) {
                         Button("input.close") {
                             dismiss()
@@ -70,7 +65,7 @@ public struct AddAccountView: View {
                     }
                 }
             }
-            .navigationTitle((accountManager.accounts.isEmpty || accountViewModel.users.isEmpty) ? NSLocalizedString("moe-memos", comment: "") : NSLocalizedString("account.add-account", comment: ""))
+            .navigationTitle(hasAnyAccount ? NSLocalizedString("account.add-account", comment: "") : NSLocalizedString("moe-memos", comment: ""))
             .navigationDestination(for: AddAccountRouter.self) { router in
                 switch router {
                 case .addMemosAccount:

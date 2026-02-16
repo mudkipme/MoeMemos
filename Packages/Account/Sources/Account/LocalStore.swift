@@ -131,26 +131,13 @@ final class LocalStore {
         return try? context.fetch(descriptor).first
     }
 
-    func upsertUser(_ user: User) {
+    func upsertUser(_ user: UserSnapshot) {
         if let existing = fetchUser() {
-            existing.nickname = user.nickname
-            existing.avatarData = user.avatarData
-            existing.defaultVisibility = user.defaultVisibility
-            existing.creationDate = user.creationDate
-            existing.email = user.email
-            existing.remoteId = user.remoteId
+            user.apply(to: existing)
             return
         }
 
-        let stored = User(
-            accountKey: accountKey,
-            nickname: user.nickname,
-            avatarData: user.avatarData,
-            defaultVisibility: user.defaultVisibility,
-            creationDate: user.creationDate,
-            email: user.email,
-            remoteId: user.remoteId
-        )
+        let stored = user.toUserModel()
         context.insert(stored)
     }
 

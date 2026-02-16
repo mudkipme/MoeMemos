@@ -20,25 +20,24 @@ public extension Account {
     
     func save() throws {
         let data = try JSONEncoder().encode(self)
-        Self.keychain.set(data, forKey: key, withAccess: .accessibleAfterFirstUnlock)
+        let didSave = Self.keychain.set(data, forKey: key, withAccess: .accessibleAfterFirstUnlock)
+        if !didSave {
+            throw MoeMemosError.accountCredentialSaveFailed(accountKey: key)
+        }
     }
     
     func delete() {
         Self.keychain.delete(key)
     }
     
-    static func retriveAll() -> [Account] {
-        let keychain = Self.keychain
-        let decoder = JSONDecoder()
-        let keys = keychain.allKeys
-        var accounts = [Account]()
-        
-        for key in keys {
-            if let data = keychain.getData(key), let account = try? decoder.decode(Account.self, from: data) {
-                accounts.append(account)
-            }
+    static func retrieve(accountKey: String) -> Account? {
+        if accountKey == Account.local.key {
+            return .local
         }
-        return accounts
+        guard let data = Self.keychain.getData(accountKey) else {
+            return nil
+        }
+        return try? JSONDecoder().decode(Account.self, from: data)
     }
     
     func remoteService() -> RemoteService? {
@@ -54,10 +53,11 @@ public extension Account {
     @MainActor
     func toUser() async throws -> User {
         if case .local = self {
-            return User(accountKey: key, nickname: NSLocalizedString("account.local-user", comment: ""))
+            return UserSnapshot.local(accountKey: key).toUserModel()
         }
         if let remoteService = remoteService() {
-            return try await remoteService.getCurrentUser()
+            let snapshot = try await remoteService.getCurrentUser()
+            return snapshot.toUserModel()
         }
         throw MoeMemosError.notLogin
     }

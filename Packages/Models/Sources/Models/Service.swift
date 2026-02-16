@@ -38,7 +38,7 @@ public protocol RemoteService: Sendable {
     func listResources() async throws -> [Resource]
     func createResource(filename: String, data: Data, type: String, memoRemoteId: String?) async throws -> Resource
     func deleteResource(remoteId: String) async throws
-    func getCurrentUser() async throws -> User
+    func getCurrentUser() async throws -> UserSnapshot
     func download(url: URL, mimeType: String?) async throws -> URL
 }
 

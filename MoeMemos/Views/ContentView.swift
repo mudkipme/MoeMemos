@@ -62,7 +62,7 @@ struct ContentView: View {
             if accountManager.currentAccount == nil {
                 throw MoeMemosError.notLogin
             }
-            try await accountViewModel.reloadUsers()
+            accountViewModel.refreshUsers()
             presentWhatsNewIfNeeded()
         } catch MoeMemosError.notLogin {
             appPath.presentedSheet = .addAccount

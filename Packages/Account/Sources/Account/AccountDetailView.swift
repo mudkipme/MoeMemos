@@ -10,7 +10,6 @@ import Models
 
 public struct AccountDetailView: View {
     private let accountKey: String
-    @Environment(AccountManager.self) private var accountManager
 
     public init(accountKey: String) {
         self.accountKey = accountKey
@@ -25,12 +24,6 @@ public struct AccountDetailView: View {
     }
 
     private var isLocalAccount: Bool {
-        guard let account = accountManager.accounts.first(where: { $0.key == accountKey }) else {
-            return accountKey == "local"
-        }
-        if case .local = account {
-            return true
-        }
-        return false
+        accountKey == Account.local.key
     }
 }

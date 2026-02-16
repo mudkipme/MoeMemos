@@ -18,7 +18,7 @@ public struct LocalAccountView: View {
     @Environment(AccountManager.self) private var accountManager
     @Environment(AccountViewModel.self) private var accountViewModel
     @Environment(\.presentationMode) var presentationMode
-    private var account: Account? { accountManager.accounts.first { $0.key == accountKey } }
+    private var account: Account? { accountManager.account(for: accountKey) }
 
     public init(accountKey: String) {
         self.accountKey = accountKey

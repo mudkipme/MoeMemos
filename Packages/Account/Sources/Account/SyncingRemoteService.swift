@@ -338,10 +338,13 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         if let cached = store.fetchUser() {
             return cached
         }
-        let user = try await remote.getCurrentUser()
-        store.upsertUser(user)
+        let snapshot = try await remote.getCurrentUser()
+        store.upsertUser(snapshot)
         try? store.save()
-        return user
+        if let cached = store.fetchUser() {
+            return cached
+        }
+        return snapshot.toUserModel()
     }
 
     func ensureLocalResourceFile(id: PersistentIdentifier) async throws -> URL {
@@ -485,8 +488,8 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
     // MARK: - Sync Helpers
 
     private func syncCurrentUserStrict() async throws {
-        let user = try await remote.getCurrentUser()
-        store.upsertUser(user)
+        let snapshot = try await remote.getCurrentUser()
+        store.upsertUser(snapshot)
         try store.save()
     }
 

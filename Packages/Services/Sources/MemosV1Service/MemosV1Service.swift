@@ -187,7 +187,7 @@ public final class MemosV1Service: RemoteService {
         _ = try resp.ok
     }
     
-    public func getCurrentUser() async throws -> User {
+    public func getCurrentUser() async throws -> UserSnapshot {
         let resp = try await client.AuthService_GetCurrentUser()
 
         let user: MemosV1User
@@ -210,7 +210,7 @@ public final class MemosV1Service: RemoteService {
         let userSettingResp = try await client.UserService_GetUserSetting(path: .init(user: getId(remoteId: name), setting: "GENERAL"))
         
         let setting = try userSettingResp.ok.body.json
-        return await toUser(user, setting: setting)
+        return await toUserSnapshot(user, setting: setting)
     }
     
     public func getWorkspaceProfile() async throws -> MemosV1Profile {
@@ -234,12 +234,14 @@ public final class MemosV1Service: RemoteService {
         return remoteId.split(separator: "|").first?.split(separator: "/").last.map(String.init) ?? ""
     }
     
-    func toUser(_ memosUser: MemosV1User, setting: Components.Schemas.UserSetting? = nil) async -> User {
+    func toUserSnapshot(_ memosUser: MemosV1User, setting: Components.Schemas.UserSetting? = nil) async -> UserSnapshot {
         let remoteId = getId(remoteId: memosUser.name ?? "0")
         let key = "memos:\(hostURL.absoluteString):\(remoteId)"
-        let user = User(
+        var snapshot = UserSnapshot(
             accountKey: key,
             nickname: memosUser.displayName ?? memosUser.username,
+            avatarData: nil,
+            defaultVisibility: .private,
             creationDate: memosUser.createTime ?? .now,
             email: memosUser.email,
             remoteId: remoteId
@@ -249,11 +251,11 @@ public final class MemosV1Service: RemoteService {
             if url.host() == nil {
                 url = hostURL.appending(path: avatarUrl)
             }
-            user.avatarData = try? await downloadData(url: url)
+            snapshot.avatarData = try? await downloadData(url: url)
         }
         if let visibilityString = setting?.generalSetting?.memoVisibility, let visibility = MemosV1Visibility(rawValue: visibilityString) {
-            user.defaultVisibility = visibility.toMemoVisibility()
+            snapshot.defaultVisibility = visibility.toMemoVisibility()
         }
-        return user
+        return snapshot
     }
 }

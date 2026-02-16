@@ -22,7 +22,7 @@ public struct MemosAccountView: View {
     @Environment(AccountManager.self) private var accountManager
     @Environment(AccountViewModel.self) private var accountViewModel
     @Environment(AppPath.self) private var appPath
-    private var account: Account? { accountManager.accounts.first { $0.key == accountKey } }
+    private var account: Account? { accountManager.account(for: accountKey) }
     @Environment(\.presentationMode) var presentationMode
     
     public init(accountKey: String) {

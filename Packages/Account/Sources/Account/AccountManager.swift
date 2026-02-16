@@ -34,7 +34,6 @@ import Factory
         }
     }
     
-    public private(set) var accounts: [Account]
     public internal(set) var currentAccount: Account? {
         didSet {
             if shouldPersistCurrentAccountKey {
@@ -47,21 +46,14 @@ import Factory
     
     public init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        accounts = Account.retriveAll()
-        if !currentAccountKey.isEmpty, let currentAccount = accounts.first(where: { $0.key == currentAccountKey }) {
-            self.currentAccount = currentAccount
+        if currentAccountKey.isEmpty {
+            currentAccount = nil
         } else {
-            self.currentAccount = accounts.last
+            currentAccount = Account.retrieve(accountKey: currentAccountKey)
         }
         shouldPersistCurrentAccountKey = true
 
         try? ResourceFileStore.cleanupOrphanedFiles(context: modelContext)
-    }
-    
-    internal func add(account: Account) throws {
-        try account.save()
-        accounts = Account.retriveAll()
-        currentAccount = account
     }
     
     internal func unsyncedMemoCount(for accountKey: String) -> Int {
@@ -78,11 +70,14 @@ import Factory
         if case .local = account {
             return
         }
+        let deletedAccountKey = account.key
+        let deletingCurrentAccount = currentAccount?.key == deletedAccountKey
+
         try deleteLocalData(accountKey: account.key)
-        accounts.removeAll { $0.key == account.key }
         account.delete()
-        if currentAccount?.key == account.key {
-            currentAccount = accounts.last
+
+        if deletingCurrentAccount {
+            currentAccount = fallbackAccount(excluding: deletedAccountKey)
         }
     }
 
@@ -125,8 +120,23 @@ import Factory
     }
 
     public func service(for accountKey: String) -> Service? {
-        guard let account = accounts.first(where: { $0.key == accountKey }) else { return nil }
+        guard let account = account(for: accountKey) else { return nil }
         return makeService(for: account)
+    }
+
+    public func account(for accountKey: String) -> Account? {
+        return Account.retrieve(accountKey: accountKey)
+    }
+
+    private func fallbackAccount(excluding accountKey: String) -> Account? {
+        let descriptor = FetchDescriptor<User>(sortBy: [SortDescriptor(\.creationDate)])
+        let users = (try? modelContext.fetch(descriptor)) ?? []
+        for user in users.reversed() where user.accountKey != accountKey {
+            if let account = account(for: user.accountKey) {
+                return account
+            }
+        }
+        return nil
     }
 
     private func makeService(for account: Account?) -> Service? {
