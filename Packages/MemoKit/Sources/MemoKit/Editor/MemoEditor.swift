@@ -264,6 +264,7 @@ public struct MemoEditor: View {
                 draft = ""
             }
             text = ""
+            selection = nil
             dismiss()
             submitError = nil
         } catch {
