@@ -146,7 +146,7 @@ public final class MemosV0Service: RemoteService {
     public func restoreMemo(remoteId: String) async throws {
         guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
         let resp = try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
-            rowStatus: .ARCHIVED
+            rowStatus: .NORMAL
         )))
         _ = try resp.ok
     }

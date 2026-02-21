@@ -16,7 +16,7 @@ import UniformTypeIdentifiers
 import MemoKit
 
 class ShareViewController: SLComposeServiceViewController {
-    
+    private static let maxUploadSizeBytes: Int64 = 1_073_741_824
     let shareViewHostingController = UIHostingController(rootView: MoeMemosShareView())
     
     override func isContentValid() -> Bool {
@@ -193,9 +193,13 @@ class ShareViewController: SLComposeServiceViewController {
             }
         }
 
-        let values = try? fileURL.resourceValues(forKeys: [.nameKey, .contentTypeKey])
+        let values = try? fileURL.resourceValues(forKeys: [.nameKey, .contentTypeKey, .fileSizeKey])
+        if let fileSize = values?.fileSize {
+            try validateUploadSize(Int64(fileSize))
+        }
         let contentType = values?.contentType ?? typeIdentifier.flatMap(UTType.init)
         let data = try Data(contentsOf: fileURL)
+        try validateUploadSize(Int64(data.count))
         let filename = resolveFilename(baseName: values?.name ?? fileURL.lastPathComponent, fallbackName: suggestedName, contentType: contentType)
         let mimeType = contentType?.preferredMIMEType ?? "application/octet-stream"
         let response = try await memos.createResource(filename: filename, data: data, type: mimeType, memoId: nil)
@@ -203,6 +207,7 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
     private func uploadData(_ data: Data, typeIdentifier: String?, suggestedName: String?, memos: Service) async throws -> PersistentIdentifier {
+        try validateUploadSize(Int64(data.count))
         let contentType = typeIdentifier.flatMap(UTType.init)
         let filename = resolveFilename(baseName: suggestedName, fallbackName: nil, contentType: contentType)
         let mimeType = contentType?.preferredMIMEType ?? "application/octet-stream"
@@ -221,6 +226,12 @@ class ShareViewController: SLComposeServiceViewController {
             return "\(raw).\(preferredExt)"
         }
         return raw
+    }
+
+    private func validateUploadSize(_ size: Int64) throws {
+        if size > Self.maxUploadSizeBytes {
+            throw MoeMemosError.fileTooLarge(Self.maxUploadSizeBytes)
+        }
     }
 }
 
