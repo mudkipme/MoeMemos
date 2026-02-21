@@ -28,8 +28,6 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Capture photos and attach to memos</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>MemoryWidgetConfigurationIntent</string>

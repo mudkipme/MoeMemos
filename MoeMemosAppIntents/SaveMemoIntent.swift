@@ -12,6 +12,7 @@ import Models
 import SwiftData
 
 struct SaveMemoIntent: AppIntent {
+    private static let maxUploadSizeBytes: Int64 = 1_073_741_824
     static let title: LocalizedStringResource = "Save Memo"
     static let description = "Save a memo"
     static let openAppWhenRun: Bool = false
@@ -38,9 +39,11 @@ struct SaveMemoIntent: AppIntent {
         var resourceIds: [PersistentIdentifier] = []
         if let attachments = attachments {
             for attachment in attachments {
+                let data = attachment.data
+                try validateUploadSize(Int64(data.count))
                 let created = try await service.createResource(
                     filename: attachment.filename,
-                    data: attachment.data,
+                    data: data,
                     type: attachment.type?.preferredMIMEType ?? "application/octet-stream",
                     memoId: nil
                 )
@@ -49,5 +52,11 @@ struct SaveMemoIntent: AppIntent {
         }
         _ = try await service.createMemo(content: content, visibility: nil, resources: resourceIds, tags: nil)
         return .result(dialog: "Memo saved.")
+    }
+
+    private func validateUploadSize(_ size: Int64) throws {
+        if size > Self.maxUploadSizeBytes {
+            throw MoeMemosError.fileTooLarge(Self.maxUploadSizeBytes)
+        }
     }
 }
