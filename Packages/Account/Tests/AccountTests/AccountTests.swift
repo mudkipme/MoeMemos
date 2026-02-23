@@ -26,9 +26,9 @@ final class AccountTests: XCTestCase {
         XCTAssertEqual(result, .unsupported)
     }
 
-    func testV1CompatibilityRequiresWarningForHigherThan0261() {
-        let result = evaluateMemosVersionCompatibility(.v1(version: "0.26.2"))
-        XCTAssertEqual(result, .v1HigherThanSupported(version: "0.26.2"))
+    func testV1CompatibilityRequiresWarningForHigherThan0262() {
+        let result = evaluateMemosVersionCompatibility(.v1(version: "0.27.0"))
+        XCTAssertEqual(result, .v1HigherThanSupported(version: "0.27.0"))
     }
 
     func testVersionParserHandlesPrefixAndSuffix() {
