@@ -688,6 +688,44 @@ paths:
                         application/json:
                             schema:
                                 "$ref": "#/components/schemas/Status"
+    "/api/v1/users/{user}":
+        get:
+            tags:
+            - UserService
+            description: |-
+                GetUser gets a user by ID or username.
+                 Supports both numeric IDs and username strings:
+                   - users/{id}       (e.g., users/101)
+                   - users/{username} (e.g., users/steven)
+            operationId: UserService_GetUser
+            parameters:
+            -   name: user
+                in: path
+                description: The user id.
+                required: true
+                schema:
+                    type: string
+            -   name: readMask
+                in: query
+                description: |-
+                    Optional. The fields to return in the response.
+                     If not specified, all fields are returned.
+                schema:
+                    type: string
+                    format: field-mask
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/User"
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                "$ref": "#/components/schemas/Status"
     "/api/v1/users/{user}/settings":
         get:
             tags:

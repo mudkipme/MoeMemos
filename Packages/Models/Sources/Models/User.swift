@@ -28,6 +28,14 @@ public struct RemoteUser: UserData, Sendable, Hashable {
     public var avatarUrl: URL?
     
     public var avatar: UserAvatar? { avatarUrl.map { .url($0) } }
+
+    public init(nickname: String, defaultVisibility: MemoVisibility = .private, creationDate: Date = .now, remoteId: String? = nil, avatarUrl: URL? = nil) {
+        self.nickname = nickname
+        self.defaultVisibility = defaultVisibility
+        self.creationDate = creationDate
+        self.remoteId = remoteId
+        self.avatarUrl = avatarUrl
+    }
 }
 
 public struct UserSnapshot: Equatable, Sendable {
