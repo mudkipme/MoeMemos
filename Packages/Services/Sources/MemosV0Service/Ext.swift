@@ -28,7 +28,7 @@ extension MemosV0Memo {
         }
         var user: RemoteUser?
         if let creatorName = creatorName, !creatorName.isEmpty {
-            user = RemoteUser(nickname: creatorName)
+            user = RemoteUser(nickname: creatorName, remoteId: creatorID.map(String.init))
         }
 
         return Memo(

@@ -73,7 +73,33 @@ public final class MemosV1Service: RemoteService {
     public func listWorkspaceMemos(pageSize: Int, pageToken: String?) async throws -> (list: [Memo], nextPageToken: String?) {
         let resp = try await client.MemoService_ListMemos(query: .init(pageSize: Int32(pageSize), pageToken: pageToken, filter: "visibility in [\"PUBLIC\", \"PROTECTED\"]"))
         let data = try resp.ok.body.json
-        return (data.memos?.map { $0.toMemo(host: hostURL) } ?? [], data.nextPageToken)
+        let memos = data.memos ?? []
+
+        let creators = Set(memos.compactMap(\.creator))
+        var userMap = [String: MemosV1User]()
+        for creator in creators {
+            let userId = getId(remoteId: creator)
+            guard !userId.isEmpty else { continue }
+            guard let userResp = try? await client.UserService_GetUser(path: .init(user: userId), query: .init(readMask: nil)) else { continue }
+            guard let user = try? userResp.ok.body.json else { continue }
+            guard let name = user.name else { continue }
+            userMap[name] = user
+        }
+
+        let result = memos.map { rawMemo in
+            var memo = rawMemo.toMemo(host: hostURL)
+            if let creator = rawMemo.creator, let user = userMap[creator] {
+                memo.user = RemoteUser(
+                    nickname: user.displayName ?? user.username,
+                    creationDate: user.createTime ?? .now,
+                    remoteId: user.name.map { getId(remoteId: $0) }
+                )
+            }
+            return memo
+        }
+
+        let nextPageToken = data.nextPageToken?.isEmpty == true ? nil : data.nextPageToken
+        return (result, nextPageToken)
     }
     
     public func createMemo(
