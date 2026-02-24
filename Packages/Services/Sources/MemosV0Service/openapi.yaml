@@ -833,6 +833,8 @@ components:
           type: integer
         creatorID:
           type: integer
+        creatorName:
+          type: string
         id:
           type: integer
         parentID:

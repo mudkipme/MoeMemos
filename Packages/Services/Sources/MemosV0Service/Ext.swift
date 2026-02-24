@@ -26,7 +26,13 @@ extension MemosV0Memo {
         } else {
             updatedAt = .now
         }
+        var user: RemoteUser?
+        if let creatorName = creatorName, !creatorName.isEmpty {
+            user = RemoteUser(nickname: creatorName)
+        }
+
         return Memo(
+            user: user,
             content: content,
             pinned: pinned ?? false,
             rowStatus: rowStatus == .ARCHIVED ? .archived : .normal,
