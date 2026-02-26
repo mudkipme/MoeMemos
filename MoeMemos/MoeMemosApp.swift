@@ -61,7 +61,7 @@ struct MoeMemosApp: App {
                         guard
                             let encodedIdentifier,
                             !encodedIdentifier.isEmpty,
-                            let persistentIdentifier = decodePersistentIdentifier(from: encodedIdentifier)
+                            let persistentIdentifier = PersistentIdentifierTokenCoder.decode(encodedIdentifier)
                         else {
                             return
                         }
@@ -69,12 +69,5 @@ struct MoeMemosApp: App {
                     }
                 }
         }
-    }
-
-    private func decodePersistentIdentifier(from encodedIdentifier: String) -> PersistentIdentifier? {
-        guard let data = Data(base64Encoded: encodedIdentifier) else {
-            return nil
-        }
-        return try? JSONDecoder().decode(PersistentIdentifier.self, from: data)
     }
 }

@@ -71,6 +71,8 @@
 "widget.memories.description" = "Erinnere dich an deine früheren Memos";
 "widget.memo-graph" = "Memos Diagramm";
 "widget.memo-graph.description" = "Das Diagramm, das anzeigt, wie viele Memos du in den letzten Wochen täglich verfasst hasts.";
+"widget.pinned-memory" = "Angeheftete Erinnerung";
+"widget.pinned-memory.description" = "Zeigt ein ausgewähltes Memo im Widget an.";
 
 "share.memo-saved" = "Memo gespeichert.";
 

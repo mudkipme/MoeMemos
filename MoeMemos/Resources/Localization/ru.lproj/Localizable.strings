@@ -71,6 +71,8 @@
 "widget.memories.description" = "Вспомните ваши прошлые заметки.";
 "widget.memo-graph" = "График Memos";
 "widget.memo-graph.description" = "График, показывающий количество созданных Memos за последние недели.";
+"widget.pinned-memory" = "Закреплённая заметка";
+"widget.pinned-memory.description" = "Показывает выбранную заметку в виджете.";
 
 "share.memo-saved" = "Memo сохранена.";
 

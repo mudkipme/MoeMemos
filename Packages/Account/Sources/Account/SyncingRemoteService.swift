@@ -61,7 +61,10 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
     }
 
     func memo(id: PersistentIdentifier) -> StoredMemo? {
-        store.fetchMemo(id: id)
+        guard let memo = store.fetchMemo(id: id), !memo.softDeleted else {
+            return nil
+        }
+        return memo
     }
 
     func createMemo(content: String, visibility: MemoVisibility?, resources: [PersistentIdentifier], tags: [String]?) async throws -> StoredMemo {

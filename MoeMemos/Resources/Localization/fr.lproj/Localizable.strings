@@ -73,6 +73,8 @@
 "widget.memories.description" = "Souvenez-vous de vos anciens memos.";
 "widget.memo-graph" = "Graphique des memos";
 "widget.memo-graph.description" = "Le graphique affiche le nombre de memos que vous avez rédigés chaque jour au cours des dernières semaines.";
+"widget.pinned-memory" = "Memo épinglé";
+"widget.pinned-memory.description" = "Affiche un memo sélectionné dans le widget.";
 
 "share.memo-saved" = "Memo sauvegardé.";
 

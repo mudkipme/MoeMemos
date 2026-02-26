@@ -13,6 +13,7 @@ struct MoeMemosWidgetsBundle: WidgetBundle {
     var body: some Widget {
         MemosGraphWidget()
         MemoryWidget()
+        PinnedMemoryWidget()
         if #available(iOS 18.0, *) {
             QuickMemoWidget()
         }

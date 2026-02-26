@@ -168,7 +168,7 @@ struct MemoView: View {
     }
 
     private var memo: StoredMemo? {
-        if let memo = memosViewModel.memoList.first(where: { $0.id == memoId }) {
+        if let memo = memosViewModel.memoList.first(where: { $0.id == memoId && !$0.softDeleted }) {
             return memo
         }
         return (try? memosViewModel.service)?.memo(id: memoId)

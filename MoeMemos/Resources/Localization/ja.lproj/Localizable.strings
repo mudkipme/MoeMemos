@@ -71,6 +71,8 @@
 "widget.memories.description" = "過去のメモを記憶します。";
 "widget.memo-graph" = "メモグラフ";
 "widget.memo-graph.description" = "最近数週間に毎日作成したメモの量を表示するグラフ。";
+"widget.pinned-memory" = "固定メモ";
+"widget.pinned-memory.description" = "選択した1件のメモをウィジェットに表示します。";
 
 "share.memo-saved" = "保存したメモ。";
 
