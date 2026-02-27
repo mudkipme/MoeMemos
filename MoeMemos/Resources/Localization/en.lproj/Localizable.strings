@@ -71,6 +71,8 @@
 "widget.memories.description" = "Remember your past memos.";
 "widget.memo-graph" = "Memos Graph";
 "widget.memo-graph.description" = "The graph to display how much memos you composed every day in recent weeks.";
+"widget.pinned-memory" = "Pinned Memory";
+"widget.pinned-memory.description" = "Display one selected memo in the widget.";
 
 "share.memo-saved" = "Memo saved.";
 

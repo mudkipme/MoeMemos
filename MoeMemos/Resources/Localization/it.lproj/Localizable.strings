@@ -73,6 +73,8 @@
 "widget.memories.description" = "Ricorda i tuoi vecchi memos.";
 "widget.memo-graph" = "Grafico promemoria";
 "widget.memo-graph.description" = "Il grafico mostra il numero di promemoria scritti ogni giorno nelle ultime settimane.";
+"widget.pinned-memory" = "Memo fissato";
+"widget.pinned-memory.description" = "Mostra un memo selezionato nel widget.";
  
 "share.memo-saved" = "Promemoria salvato.";
  

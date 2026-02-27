@@ -71,6 +71,8 @@
 "widget.memories.description" = "回憶過去的 MEMO。";
 "widget.memo-graph" = "日記方格";
 "widget.memo-graph.description" = "用方格顯示每天寫下的 MEMO 數量。";
+"widget.pinned-memory" = "置頂回憶";
+"widget.pinned-memory.description" = "在小工具中顯示你選擇的一則 MEMO。";
 
 "share.memo-saved" = "已儲存 MEMO";
 

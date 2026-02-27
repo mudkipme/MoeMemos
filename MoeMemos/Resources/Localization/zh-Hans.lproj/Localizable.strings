@@ -71,6 +71,8 @@
 "widget.memories.description" = "回忆过去的 MEMO。";
 "widget.memo-graph" = "日记方格";
 "widget.memo-graph.description" = "用方格显示每天写下的 MEMO 数量。";
+"widget.pinned-memory" = "置顶回忆";
+"widget.pinned-memory.description" = "在小组件中显示你选择的一条 MEMO。";
 
 "share.memo-saved" = "已保存 MEMO";
 

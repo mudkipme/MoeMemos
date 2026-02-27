@@ -24,13 +24,6 @@ private let sampleMemo = MemorySnapshot(
     persistentIdentifierToken: nil
 )
 
-private func encodePersistentIdentifier(_ identifier: some Encodable) -> String? {
-    guard let encoded = try? JSONEncoder().encode(identifier) else {
-        return nil
-    }
-    return encoded.base64EncodedString()
-}
-
 extension MemoryUpdatePeriodAppEnum {
     var memosPerDay: Int {
         switch self {
@@ -89,7 +82,7 @@ struct MemoryProvider: AppIntentTimelineProvider {
                 MemorySnapshot(
                     content: storedMemo.content,
                     createdAt: storedMemo.createdAt,
-                    persistentIdentifierToken: encodePersistentIdentifier(storedMemo.id)
+                    persistentIdentifierToken: PersistentIdentifierTokenCoder.encode(storedMemo.id)
                 )
             }
     }
@@ -103,6 +96,15 @@ struct MemoryEntry: TimelineEntry {
 
 struct MemoryEntryView : View {
     var entry: MemoryProvider.Entry
+    @Environment(\.widgetFamily) var family
+
+    var body: some View {
+        MemoryCardView(memo: entry.memo)
+    }
+}
+
+struct MemoryCardView: View {
+    let memo: MemorySnapshot
     @Environment(\.widgetFamily) var family
 
     var body: some View {
@@ -125,19 +127,19 @@ struct MemoryEntryView : View {
     var dateString: String {
         let formatter = RelativeDateTimeFormatter()
         formatter.dateTimeStyle = .named
-        return formatter.localizedString(for: entry.memo.createdAt, relativeTo: .now)
+        return formatter.localizedString(for: memo.createdAt, relativeTo: .now)
     }
     
     var attributedString: AttributedString {
-        let attributedString = try? AttributedString(markdown: entry.memo.content, options: AttributedString.MarkdownParsingOptions(
+        let attributedString = try? AttributedString(markdown: memo.content, options: AttributedString.MarkdownParsingOptions(
                 allowsExtendedAttributes: true,
                 interpretedSyntax: .inlineOnlyPreservingWhitespace))
         
-        return attributedString ?? AttributedString(entry.memo.content)
+        return attributedString ?? AttributedString(memo.content)
     }
 
     private var memoURL: URL? {
-        guard let persistentId = entry.memo.persistentIdentifierToken else {
+        guard let persistentId = memo.persistentIdentifierToken else {
             return URL(string: "moememos://memos")
         }
 
@@ -146,6 +148,69 @@ struct MemoryEntryView : View {
         components.host = "memo"
         components.queryItems = [URLQueryItem(name: "persistent_id", value: persistentId)]
         return components.url
+    }
+}
+
+struct PinnedMemoryEntry: TimelineEntry {
+    let date: Date
+    let configuration: PinnedMemoryWidgetConfiguration
+    let memo: MemorySnapshot
+}
+
+struct PinnedMemoryProvider: AppIntentTimelineProvider {
+    func snapshot(for configuration: PinnedMemoryWidgetConfiguration, in context: Context) async -> PinnedMemoryEntry {
+        let memo = (try? await getMemo(for: configuration.memo)) ?? sampleMemo
+        return PinnedMemoryEntry(date: Date(), configuration: configuration, memo: memo)
+    }
+
+    func timeline(for configuration: PinnedMemoryWidgetConfiguration, in context: Context) async -> Timeline<PinnedMemoryEntry> {
+        let memo = (try? await getMemo(for: configuration.memo)) ?? sampleMemo
+        let frequency = configuration.frequency ?? .daily
+        var entries: [PinnedMemoryEntry] = []
+
+        for i in 0..<frequency.memosPerDay {
+            let entryDate = Calendar.current.date(byAdding: .hour, value: i * frequency.interval, to: Date())!
+            entries.append(PinnedMemoryEntry(date: entryDate, configuration: configuration, memo: memo))
+        }
+
+        return Timeline(entries: entries, policy: .atEnd)
+    }
+
+    func placeholder(in context: Context) -> PinnedMemoryEntry {
+        PinnedMemoryEntry(date: Date(), configuration: PinnedMemoryWidgetConfiguration(), memo: sampleMemo)
+    }
+
+    @MainActor
+    private func getMemo(for entity: MemoryWidgetMemoEntity?) async throws -> MemorySnapshot? {
+        guard
+            let entity,
+            let memoId = PersistentIdentifierTokenCoder.decode(entity.id)
+        else {
+            return nil
+        }
+
+        let accountManager = AccountManager(modelContext: AppInfo().modelContext)
+        guard let service = accountManager.currentService else {
+            return nil
+        }
+
+        guard let memo = service.memo(id: memoId) else {
+            return nil
+        }
+
+        return MemorySnapshot(
+            content: memo.content,
+            createdAt: memo.createdAt,
+            persistentIdentifierToken: PersistentIdentifierTokenCoder.encode(memo.id)
+        )
+    }
+}
+
+struct PinnedMemoryEntryView: View {
+    var entry: PinnedMemoryProvider.Entry
+
+    var body: some View {
+        MemoryCardView(memo: entry.memo)
     }
 }
 
@@ -159,6 +224,20 @@ struct MemoryWidget: Widget {
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .configurationDisplayName("widget.memories")
         .description("widget.memories.description")
+        .contentMarginsDisabled()
+    }
+}
+
+struct PinnedMemoryWidget: Widget {
+    let kind: String = "PinnedMemoryWidget"
+
+    var body: some WidgetConfiguration {
+        AppIntentConfiguration(kind: kind, intent: PinnedMemoryWidgetConfiguration.self, provider: PinnedMemoryProvider()) { entry in
+            PinnedMemoryEntryView(entry: entry)
+        }
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .configurationDisplayName("widget.pinned-memory")
+        .description("widget.pinned-memory.description")
         .contentMarginsDisabled()
     }
 }
