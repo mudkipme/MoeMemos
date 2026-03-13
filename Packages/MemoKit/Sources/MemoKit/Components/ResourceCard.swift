@@ -22,13 +22,7 @@ public struct ResourceCard: View {
             .aspectRatio(1, contentMode: .fit)
             .overlay {
                 if let downloadedURL = downloadedURL {
-                    AsyncImage(url: downloadedURL) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } placeholder: {
-                        ProgressView()
-                    }
+                    getAsyncImage(downloadedURL)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -57,6 +51,31 @@ public struct ResourceCard: View {
                     .edgesIgnoringSafeArea(.bottom)
                     .background(TransparentBackground())
             }
+    }
+    
+    @ViewBuilder
+    private func getAsyncImage(_ downloadedURL: URL) -> some View {
+        if resource.mimeType.hasPrefix("video/") {
+            asyncVideoThumbnailImage(downloadedURL)
+        } else if resource.mimeType.hasPrefix("image/") {
+            asyncImage(downloadedURL)
+        } else {
+            EmptyView()
+        }
+    }
+    
+    private func asyncImage(_ downloadedURL: URL) -> some View {
+        AsyncImage(url: downloadedURL) { image in
+            image
+                .resizable()
+                .scaledToFill()
+        } placeholder: {
+            ProgressView()
+        }
+    }
+    
+    private func asyncVideoThumbnailImage(_ downloadedURL: URL) -> some View {
+        AsyncThumbnailImage(videoURL: downloadedURL)
     }
 
     @ViewBuilder

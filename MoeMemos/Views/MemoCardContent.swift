@@ -84,12 +84,7 @@ struct MemoCardContent: View {
             }
             
             ForEach(resources()) { content in
-                if case let .images(urls) = content {
-                    MemoCardImageView(images: urls)
-                }
-                if case let .attachment(resource) = content {
-                    Attachment(resource: resource)
-                }
+                resourceView(for: content)
             }
         }
         .onChange(of: memo.content) { _, newContent in
@@ -103,14 +98,24 @@ struct MemoCardContent: View {
         }
     }
     
+    @ViewBuilder
+    private func resourceView(for content: MemoResource) -> some View {
+        switch content {
+        case .images(let urls):
+            MemoCardImageView(media: urls)
+        case .attachment(let resource):
+            Attachment(resource: resource)
+        }
+    }
+
     private func resources() -> [MemoResource] {
         var attachments = [MemoResource]()
         let resourceList = memo.attachments
         let imageResources = resourceList.filter { resource in
-            resource.mimeType.hasPrefix("image/") == true
+            resource.mimeType.hasPrefix("image/") == true || resource.mimeType.hasPrefix("video/") == true
         }
         let otherResources = resourceList.filter { resource in
-            !(resource.mimeType.hasPrefix("image/") == true)
+            !(resource.mimeType.hasPrefix("image/") == true) && !(resource.mimeType.hasPrefix("video/") == true)
         }
         
         if !imageResources.isEmpty {

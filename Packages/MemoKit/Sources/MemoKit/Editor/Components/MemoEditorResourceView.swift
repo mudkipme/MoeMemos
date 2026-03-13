@@ -5,15 +5,19 @@ struct MemoEditorResourceView: View {
     var viewModel: MemoEditorViewModel
 
     var body: some View {
-        let imageResources = viewModel.resourceList.filter { $0.mimeType.hasPrefix("image/") == true }
-        let attachmentResources = viewModel.resourceList.filter { $0.mimeType.hasPrefix("image/") == false }
+        let mediaResources = viewModel.resourceList.filter {
+            $0.mimeType.hasPrefix("image/") == true || $0.mimeType.hasPrefix("video/") == true
+        }
+        let attachmentResources = viewModel.resourceList.filter {
+            $0.mimeType.hasPrefix("image/") == false && $0.mimeType.hasPrefix("video/") == false
+        }
 
         if !viewModel.resourceList.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                if !imageResources.isEmpty {
+                if !mediaResources.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack {
-                            ForEach(imageResources, id: \.id) { item in
+                            ForEach(mediaResources, id: \.id) { item in
                                 ResourceCard(resource: item, resourceManager: viewModel)
                             }
                         }
