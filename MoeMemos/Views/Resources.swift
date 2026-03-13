@@ -23,12 +23,12 @@ struct Resources: View {
     @State private var viewModel = ResourceListViewModel()
     @State private var section: ResourceSection = .image
 
-    private var imageResources: [StoredResource] {
-        viewModel.resourceList.filter { $0.mimeType.hasPrefix("image/") }
+    private var mediaResources: [StoredResource] {
+        viewModel.resourceList.filter { $0.mimeType.hasPrefix("image/") || $0.mimeType.hasPrefix("video/") }
     }
 
     private var otherResources: [StoredResource] {
-        viewModel.resourceList.filter { !$0.mimeType.hasPrefix("image/") }
+        viewModel.resourceList.filter { !$0.mimeType.hasPrefix("image/") && !$0.mimeType.hasPrefix("video/") }
     }
 
     var body: some View {
@@ -42,12 +42,12 @@ struct Resources: View {
             .padding()
 
             if section == .image {
-                if imageResources.isEmpty {
+                if mediaResources.isEmpty {
                     ContentUnavailableView("resources.empty.images", systemImage: "photo.on.rectangle")
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns) {
-                            ForEach(imageResources) { item in
+                            ForEach(mediaResources) { item in
                                 ResourceCard(resource: item, resourceManager: viewModel)
                             }
                         }

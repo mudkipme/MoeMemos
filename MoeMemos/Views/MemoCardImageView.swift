@@ -12,7 +12,7 @@ import MemoKit
 import DesignSystem
 
 struct MemoCardImageView: View {
-    let images: [any ResourcePresentable]
+    let media: [any ResourcePresentable]
 
     @State private var imagePreviewURL: URL?
     @Environment(AccountManager.self) private var memosManager: AccountManager
@@ -72,6 +72,16 @@ struct MemoCardImageView: View {
     }
 
     @ViewBuilder
+    private func getAsyncImage(resource: any ResourcePresentable, key: String) -> some View {
+        if resource.mimeType.hasPrefix("video/") {
+            asyncVideoThumbnailImage(resource: resource, key: key)
+        } else if resource.mimeType.hasPrefix("image/") {
+            asyncImage(resource: resource, key: key)
+        } else {
+            EmptyView()
+        }
+    }
+    
     private func asyncImage(resource: any ResourcePresentable, key: String) -> some View {
         AsyncImage(url: displayURL(for: resource, key: key)) { image in
             image
@@ -86,7 +96,14 @@ struct MemoCardImageView: View {
             await resolveLocalFileIfNeeded(for: resource, key: key)
         }
     }
-
+    
+    private func asyncVideoThumbnailImage(resource: any ResourcePresentable, key: String) -> some View {
+        AsyncThumbnailImage(videoURL: displayURL(for: resource, key: key))
+            .task {
+                await resolveLocalFileIfNeeded(for: resource, key: key)
+            }
+    }
+    
     private func handleTap(resource: any ResourcePresentable, key: String) {
         if let local = localURL(for: resource, key: key) {
             imagePreviewURL = local
@@ -123,7 +140,7 @@ struct MemoCardImageView: View {
         //
         // Please submit a pull request if you have a better solution
         Color(white: 1, opacity: 0.00001).overlay {
-            asyncImage(resource: resource, key: key)
+            getAsyncImage(resource: resource, key: key)
         }
         .aspectRatio(aspectRatio, contentMode: contentMode)
         .frame(maxWidth: .infinity)
@@ -138,25 +155,25 @@ struct MemoCardImageView: View {
     private var content: some View {
         if horizontalSizeClass == .regular {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 200), spacing: 5)], spacing: 5) {
-                ForEach(Array(images.enumerated()), id: \.offset) { index, resource in
+                ForEach(Array(media.enumerated()), id: \.offset) { index, resource in
                     imageItem(resource: resource, key: key(for: resource, index: index), aspectRatio: 1.0, contentMode: .fill)
                 }
             }
         } else {
-            switch images.count {
+            switch media.count {
             case 1:
-                imageItem(resource: images[0], key: key(for: images[0], index: 0), aspectRatio: 16.0 / 9.0, contentMode: .fit)
+                imageItem(resource: media[0], key: key(for: media[0], index: 0), aspectRatio: 16.0 / 9.0, contentMode: .fit)
             case 2...3:
                 HStack(spacing: 5) {
-                    ForEach(Array(images.enumerated()), id: \.offset) { index, resource in
+                    ForEach(Array(media.enumerated()), id: \.offset) { index, resource in
                         imageItem(resource: resource, key: key(for: resource, index: index), aspectRatio: 1.0, contentMode: .fill)
                     }
                 }
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: .infinity)
             default:
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: images.count == 4 ? 120 : 90, maximum: 150), spacing: 5)], spacing: 5) {
-                    ForEach(Array(images.enumerated()), id: \.offset) { index, resource in
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: media.count == 4 ? 120 : 90, maximum: 150), spacing: 5)], spacing: 5) {
+                    ForEach(Array(media.enumerated()), id: \.offset) { index, resource in
                         imageItem(resource: resource, key: key(for: resource, index: index), aspectRatio: 1.0, contentMode: .fill)
                     }
                 }
