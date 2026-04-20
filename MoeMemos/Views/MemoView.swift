@@ -9,7 +9,6 @@ import SwiftUI
 import UniformTypeIdentifiers
 import Models
 import Env
-import Markdown
 import SwiftData
 import Account
 
@@ -53,8 +52,8 @@ struct MemoView: View {
                             Spacer()
                         }
 
-                        MemoCardContent(memo: memo) { listItem in
-                            await toggleTaskItem(listItem, for: memo)
+                        MemoCardContent(memo: memo) { updatedContent in
+                            toggleTaskItem(updatedContent, for: memo)
                         }
                     }
                     .padding()
@@ -142,15 +141,17 @@ struct MemoView: View {
         })
     }
 
-    private func toggleTaskItem(_ listItem: ListItem, for memo: StoredMemo) async {
-        do {
-            var node = listItem
-            node.checkbox = listItem.checkbox == .checked ? .unchecked : .checked
-            let resourceIds = memo.resources.filter { !$0.softDeleted }.map(\.id)
-            let updatedContent = MemoTagMarkdownPreprocessor.restoreRawMarkdown(node.root.format())
-            try await memosViewModel.editMemo(id: memo.id, content: updatedContent, visibility: memo.visibility, resources: resourceIds, tags: nil)
-        } catch {
-            print(error)
+    private func toggleTaskItem(_ updatedContent: String, for memo: StoredMemo) {
+        let memoID = memo.id
+        let visibility = memo.visibility
+        let resourceIds = memo.resources.filter { !$0.softDeleted }.map(\.id)
+
+        Task {
+            do {
+                try await memosViewModel.editMemo(id: memoID, content: updatedContent, visibility: visibility, resources: resourceIds, tags: nil)
+            } catch {
+                print(error)
+            }
         }
     }
 

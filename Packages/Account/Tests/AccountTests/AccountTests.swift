@@ -15,8 +15,8 @@ final class AccountTests: XCTestCase {
     }
 
     func testV1CompatibilitySupports0260And0261OnlyWithoutWarning() {
-        let v0260 = evaluateMemosVersionCompatibility(.v1(version: "0.26.0"))
-        let v0261 = evaluateMemosVersionCompatibility(.v1(version: "0.26.1"))
+        let v0260 = evaluateMemosVersionCompatibility(.v1(version: "0.27.0"))
+        let v0261 = evaluateMemosVersionCompatibility(.v1(version: "0.27.1"))
         XCTAssertEqual(v0260, .supported)
         XCTAssertEqual(v0261, .supported)
     }
@@ -27,12 +27,12 @@ final class AccountTests: XCTestCase {
     }
 
     func testV1CompatibilityRequiresWarningForHigherThan0262() {
-        let result = evaluateMemosVersionCompatibility(.v1(version: "0.27.0"))
-        XCTAssertEqual(result, .v1HigherThanSupported(version: "0.27.0"))
+        let result = evaluateMemosVersionCompatibility(.v1(version: "0.28.0"))
+        XCTAssertEqual(result, .v1HigherThanSupported(version: "0.28.0"))
     }
 
     func testVersionParserHandlesPrefixAndSuffix() {
-        let result = evaluateMemosVersionCompatibility(.v1(version: "v0.26.1-beta.3"))
+        let result = evaluateMemosVersionCompatibility(.v1(version: "v0.27.1-beta.3"))
         XCTAssertEqual(result, .supported)
     }
 }

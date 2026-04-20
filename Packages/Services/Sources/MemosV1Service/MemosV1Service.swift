@@ -46,7 +46,7 @@ public final class MemosV1Service: RemoteService {
         var nextPageToken: String? = nil
         
         repeat {
-            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .NORMAL, filter: "creator_id == \(userId)"))
+            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .NORMAL, filter: "creator == \"users/\(userId)\""))
             let data = try resp.ok.body.json
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
@@ -61,7 +61,7 @@ public final class MemosV1Service: RemoteService {
         var nextPageToken: String? = nil
         
         repeat {
-            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .ARCHIVED, filter: "creator_id == \(userId)"))
+            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .ARCHIVED, filter: "creator == \"users/\(userId)\""))
             let data = try resp.ok.body.json
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
