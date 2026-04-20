@@ -42,7 +42,7 @@ struct MemoCardContent: View {
     }
 
     let memo: any MemoPresentable
-    let toggleTaskItem: ((ListItem) async -> Void)?
+    let toggleTaskItem: ((String) -> Void)?
     let truncate: Bool
     
     @Environment(\.colorScheme) var colorScheme
@@ -50,7 +50,7 @@ struct MemoCardContent: View {
     @State private var cachedPreprocessedMarkdown: String
     @State private var truncated: Bool
 
-    init(memo: any MemoPresentable, toggleTaskItem: ((ListItem) async -> Void)? = nil, truncate: Bool = false) {
+    init(memo: any MemoPresentable, toggleTaskItem: ((String) -> Void)? = nil, truncate: Bool = false) {
         self.memo = memo
         self.toggleTaskItem = toggleTaskItem
         self.truncate = truncate
@@ -72,9 +72,7 @@ struct MemoCardContent: View {
                             if truncated {
                                 return
                             }
-                            Task {
-                                await toggleTaskItem?(listItem)
-                            }
+                            toggleTaskItem?(toggledMarkdown(for: listItem))
                         }
                 }
             
@@ -124,5 +122,11 @@ struct MemoCardContent: View {
         
         attachments += otherResources.map { .attachment($0) }
         return attachments
+    }
+
+    private func toggledMarkdown(for listItem: ListItem) -> String {
+        var node = listItem
+        node.checkbox = listItem.checkbox == .checked ? .unchecked : .checked
+        return MemoTagMarkdownPreprocessor.restoreRawMarkdown(node.root.format())
     }
 }
