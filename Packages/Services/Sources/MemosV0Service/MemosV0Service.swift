@@ -233,6 +233,7 @@ public final class MemosV0Service: RemoteService {
             }
             snapshot.avatarData = try? await downloadData(url: url)
         }
+        snapshot.isAdmin = memosUser.role == .HOST || memosUser.role == .ADMIN
         return snapshot
     }
 }

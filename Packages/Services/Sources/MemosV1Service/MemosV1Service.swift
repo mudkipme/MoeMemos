@@ -282,6 +282,7 @@ public final class MemosV1Service: RemoteService {
         if let visibilityString = setting?.generalSetting?.memoVisibility, let visibility = MemosV1Visibility(rawValue: visibilityString) {
             snapshot.defaultVisibility = visibility.toMemoVisibility()
         }
+        snapshot.isAdmin = memosUser.role == .ADMIN
         return snapshot
     }
 }
