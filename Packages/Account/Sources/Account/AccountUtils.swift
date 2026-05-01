@@ -93,13 +93,19 @@ public func evaluateMemosVersionCompatibility(_ version: MemosVersion) -> MemosV
 
     switch version {
     case .v0(version: let raw):
-        guard let semver = SemanticVersion(raw) else {
+        guard !raw.isEmpty else {
             return .unsupported
+        }
+        guard let semver = SemanticVersion(raw) else {
+            return .supported
         }
         return semver < minimumV0 ? .unsupported : .supported
     case .v1(version: let raw):
-        guard let semver = SemanticVersion(raw) else {
+        guard !raw.isEmpty else {
             return .unsupported
+        }
+        guard let semver = SemanticVersion(raw) else {
+            return .v1HigherThanSupported(version: raw)
         }
         if semver < minimumV1 {
             return .unsupported
