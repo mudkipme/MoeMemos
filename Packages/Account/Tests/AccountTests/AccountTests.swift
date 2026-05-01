@@ -7,6 +7,16 @@ final class AccountTests: XCTestCase {
         XCTAssertEqual(result, .unsupported)
     }
 
+    func testV0CompatibilityTreatsCanaryAsSupported() {
+        let result = evaluateMemosVersionCompatibility(.v0(version: "canary"))
+        XCTAssertEqual(result, .supported)
+    }
+
+    func testV0CompatibilityRejectsEmptyVersion() {
+        let result = evaluateMemosVersionCompatibility(.v0(version: ""))
+        XCTAssertEqual(result, .unsupported)
+    }
+
     func testV0CompatibilityAccepts0210AndHigher() {
         let exact = evaluateMemosVersionCompatibility(.v0(version: "0.21.0"))
         let higher = evaluateMemosVersionCompatibility(.v0(version: "0.30.2"))
@@ -14,7 +24,7 @@ final class AccountTests: XCTestCase {
         XCTAssertEqual(higher, .supported)
     }
 
-    func testV1CompatibilitySupports0260And0261OnlyWithoutWarning() {
+    func testV1CompatibilitySupports0270To0280() {
         let v0260 = evaluateMemosVersionCompatibility(.v1(version: "0.27.0"))
         let v0261 = evaluateMemosVersionCompatibility(.v1(version: "0.27.1"))
         XCTAssertEqual(v0260, .supported)
@@ -26,9 +36,24 @@ final class AccountTests: XCTestCase {
         XCTAssertEqual(result, .unsupported)
     }
 
-    func testV1CompatibilityRequiresWarningForHigherThan0262() {
+    func testV1CompatibilitySupports0280() {
         let result = evaluateMemosVersionCompatibility(.v1(version: "0.28.0"))
-        XCTAssertEqual(result, .v1HigherThanSupported(version: "0.28.0"))
+        XCTAssertEqual(result, .supported)
+    }
+
+    func testV1CompatibilityRequiresWarningForHigherThan0280() {
+        let result = evaluateMemosVersionCompatibility(.v1(version: "0.28.1"))
+        XCTAssertEqual(result, .v1HigherThanSupported(version: "0.28.1"))
+    }
+
+    func testV1CompatibilityRejectsEmptyVersion() {
+        let result = evaluateMemosVersionCompatibility(.v1(version: ""))
+        XCTAssertEqual(result, .unsupported)
+    }
+
+    func testV1CompatibilityTreatsCanaryAsHigherThanSupported() {
+        let result = evaluateMemosVersionCompatibility(.v1(version: "canary"))
+        XCTAssertEqual(result, .v1HigherThanSupported(version: "canary"))
     }
 
     func testVersionParserHandlesPrefixAndSuffix() {
