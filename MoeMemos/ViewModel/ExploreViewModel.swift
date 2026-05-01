@@ -52,4 +52,13 @@ import Factory
             throw error
         }
     }
+
+    @MainActor
+    func editMemo(remoteId: String, content: String, visibility: MemoVisibility) async throws {
+        var updated = try await service.updateMemo(remoteId: remoteId, content: content, resources: nil, visibility: visibility, tags: nil, pinned: nil, updatedAt: nil)
+        if let index = memoList.firstIndex(where: { $0.remoteId == remoteId }) {
+            updated.user = memoList[index].user
+            memoList[index] = updated
+        }
+    }
 }

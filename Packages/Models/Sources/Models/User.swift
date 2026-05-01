@@ -46,6 +46,7 @@ public struct UserSnapshot: Equatable, Sendable {
     public var creationDate: Date
     public var email: String?
     public var remoteId: String?
+    public var isAdmin: Bool
 
     public init(
         accountKey: String,
@@ -54,7 +55,8 @@ public struct UserSnapshot: Equatable, Sendable {
         defaultVisibility: MemoVisibility = .private,
         creationDate: Date = .now,
         email: String? = nil,
-        remoteId: String? = nil
+        remoteId: String? = nil,
+        isAdmin: Bool = false
     ) {
         self.accountKey = accountKey
         self.nickname = nickname
@@ -63,6 +65,7 @@ public struct UserSnapshot: Equatable, Sendable {
         self.creationDate = creationDate
         self.email = email
         self.remoteId = remoteId
+        self.isAdmin = isAdmin
     }
 
     public init(user: User) {
@@ -73,7 +76,8 @@ public struct UserSnapshot: Equatable, Sendable {
             defaultVisibility: user.defaultVisibility,
             creationDate: user.creationDate,
             email: user.email,
-            remoteId: user.remoteId
+            remoteId: user.remoteId,
+            isAdmin: user.isAdmin
         )
     }
 
@@ -92,7 +96,8 @@ public struct UserSnapshot: Equatable, Sendable {
             defaultVisibility: defaultVisibility,
             creationDate: creationDate,
             email: email,
-            remoteId: remoteId
+            remoteId: remoteId,
+            isAdmin: isAdmin
         )
     }
 
@@ -104,6 +109,7 @@ public struct UserSnapshot: Equatable, Sendable {
         user.creationDate = creationDate
         user.email = email
         user.remoteId = remoteId
+        user.isAdmin = isAdmin
     }
 }
 
@@ -118,8 +124,9 @@ public final class User: UserData {
     public var creationDate: Date
     public var email: String?
     public var remoteId: String?
-    
-    public init(accountKey: String, nickname: String, avatarData: Data? = nil, defaultVisibility: MemoVisibility = .private, creationDate: Date = .now, email: String? = nil, remoteId: String? = nil) {
+    public var isAdmin: Bool
+
+    public init(accountKey: String, nickname: String, avatarData: Data? = nil, defaultVisibility: MemoVisibility = .private, creationDate: Date = .now, email: String? = nil, remoteId: String? = nil, isAdmin: Bool = false) {
         self.accountKey = accountKey
         self.nickname = nickname
         self.avatarData = avatarData
@@ -127,6 +134,7 @@ public final class User: UserData {
         self.creationDate = creationDate
         self.email = email
         self.remoteId = remoteId
+        self.isAdmin = isAdmin
     }
     
     public var avatar: UserAvatar? { avatarData.map { .data($0) } }
