@@ -29,6 +29,7 @@ public struct MemoEditor: View {
 
     @State private var showingPhotoPicker = false
     @State private var showingImagePicker = false
+    @State private var showingDocumentScanner = false
     @State private var showingFilePicker = false
     @State private var showingJournalingSuggestionsPicker = false
     @State private var submitError: Error?
@@ -76,6 +77,10 @@ public struct MemoEditor: View {
             },
             onPickCamera: {
                 showingImagePicker = true
+            },
+            supportsDocumentScanning: supportsDocumentScanning,
+            onScanDocument: {
+                showingDocumentScanner = true
             },
             onPickFiles: {
                 showingFilePicker = true
@@ -174,6 +179,16 @@ public struct MemoEditor: View {
             }
             .edgesIgnoringSafeArea(.all)
         })
+#if canImport(VisionKit) && os(iOS) && !targetEnvironment(macCatalyst)
+        .fullScreenCover(isPresented: $showingDocumentScanner) {
+            DocumentScanner { result in
+                Task {
+                    await handleDocumentScan(result)
+                }
+            }
+            .edgesIgnoringSafeArea(.all)
+        }
+#endif
         .interactiveDismissDisabled()
     }
 
@@ -250,6 +265,44 @@ public struct MemoEditor: View {
             submitError = error
             showingErrorToast = true
         }
+    }
+
+#if canImport(VisionKit) && os(iOS) && !targetEnvironment(macCatalyst)
+    private func handleDocumentScan(_ result: DocumentScanner.Result) async {
+        showingDocumentScanner = false
+
+        switch result {
+        case .success(let images):
+            do {
+                let data = try ScannedDocumentPDFBuilder.makePDFData(from: images)
+                try await viewModel.upload(data: data, filename: scannedDocumentFilename(), mimeType: "application/pdf")
+                submitError = nil
+            } catch {
+                submitError = error
+                showingErrorToast = true
+            }
+        case .cancelled:
+            break
+        case .failure(let error):
+            submitError = error
+            showingErrorToast = true
+        }
+    }
+#endif
+
+    private var supportsDocumentScanning: Bool {
+#if canImport(VisionKit) && os(iOS) && !targetEnvironment(macCatalyst)
+        DocumentScanner.isSupported
+#else
+        false
+#endif
+    }
+
+    private func scannedDocumentFilename(date: Date = Date()) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        return "scan-\(formatter.string(from: date)).pdf"
     }
 
     private func saveMemo() async throws {

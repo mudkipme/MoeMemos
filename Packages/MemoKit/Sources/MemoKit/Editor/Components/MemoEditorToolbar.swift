@@ -9,6 +9,8 @@ struct MemoEditorToolbar: View {
     let supportsJournalingSuggestions: Bool
     let onPickPhotos: () -> Void
     let onPickCamera: () -> Void
+    let supportsDocumentScanning: Bool
+    let onScanDocument: () -> Void
     let onPickFiles: () -> Void
     
     @ViewBuilder
@@ -56,6 +58,14 @@ struct MemoEditorToolbar: View {
                 onPickCamera()
             } label: {
                 Image(systemName: "camera")
+            }
+
+            if supportsDocumentScanning {
+                Button {
+                    onScanDocument()
+                } label: {
+                    Image(systemName: "doc.viewfinder")
+                }
             }
 
             Button {
