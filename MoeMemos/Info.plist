@@ -33,5 +33,16 @@
 		<string>MemoryWidgetConfigurationIntent</string>
 		<string>MemosGraphWidgetConfigurationIntent</string>
 	</array>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeCompose</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Compose</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>me.mudkip.MoeMemos.new-memo</string>
+		</dict>
+	</array>
 </dict>
 </plist>
