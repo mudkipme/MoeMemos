@@ -21,6 +21,7 @@ private enum AppShortcutAction {
         "\(Bundle.main.bundleIdentifier ?? "me.mudkip.MoeMemos")\(newMemoSuffix)"
     }
 
+    @MainActor
     static func configureShortcutItems() {
         UIApplication.shared.shortcutItems = [
             UIApplicationShortcutItem(
