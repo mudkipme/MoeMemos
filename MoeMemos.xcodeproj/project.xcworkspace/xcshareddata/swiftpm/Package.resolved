@@ -52,7 +52,7 @@
       "location" : "https://github.com/mudkipme/MarkdownView",
       "state" : {
         "branch" : "main",
-        "revision" : "139aef4f6ac295caf27d3728dec107720f5d1768"
+        "revision" : "67ebe199d422502feb3d677f310e30f7ff722a10"
       }
     },
     {
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/colinc86/MathJaxSwift",
       "state" : {
-        "revision" : "e23d6eab941da699ac4a60fb0e60f3ba5c937459",
-        "version" : "3.4.0"
+        "revision" : "00e9c3df6b1c82031c7fe3785028f3d21c0d73ba",
+        "version" : "3.5.0"
       }
     },
     {
@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
       "state" : {
-        "revision" : "c5d11a805e765f52ba34ec7284bd4fcd6ba68615",
-        "version" : "1.7.0"
+        "revision" : "6a52f3251125d74daf04fcbd5e6f08a75d074382",
+        "version" : "1.8.2"
       }
     },
     {
@@ -97,7 +97,7 @@
       "location" : "https://github.com/swiftlang/swift-cmark.git",
       "state" : {
         "branch" : "gfm",
-        "revision" : "924936d0427cb25a61169739a7660230bffa6ea6"
+        "revision" : "0101bf2c6ff6a218f93150f340fe5ccf76d9f3aa"
       }
     },
     {
@@ -105,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "7b847a3b7008b2dc2f47ca3110d8c782fb2e5c7e",
-        "version" : "1.3.0"
+        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
+        "version" : "1.6.0"
       }
     },
     {
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-http-types",
       "state" : {
-        "revision" : "45eb0224913ea070ec4fba17291b9e7ecf4749ca",
-        "version" : "1.5.1"
+        "revision" : "db774a277f60063a32d854f2980299caf06da041",
+        "version" : "1.6.0"
       }
     },
     {
@@ -133,7 +133,7 @@
       "location" : "https://github.com/mudkipme/swift-markdown",
       "state" : {
         "branch" : "main",
-        "revision" : "df3e151e5679210b723e44d3a6c7168522a54545"
+        "revision" : "d2dbe47a7efdc0552caffaf1ac13cdd2241b48ad"
       }
     },
     {
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swhitty/SwiftDraw",
       "state" : {
-        "revision" : "9b15cec6c2c5dc7ee32321a7a51883cb179a9da0",
-        "version" : "0.26.0"
+        "revision" : "776456051ea2b099343e18ed8a53fca9dd2e9807",
+        "version" : "0.27.0"
       }
     },
     {
@@ -195,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jpsim/Yams",
       "state" : {
-        "revision" : "deaf82e867fa2cbd3cd865978b079bfcf384ac28",
-        "version" : "6.2.1"
+        "revision" : "a27b21e0c81c5bf42049b897a62aaf387e80f279",
+        "version" : "6.2.2"
       }
     },
     {
