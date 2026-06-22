@@ -30,7 +30,8 @@ struct DocumentScanner: UIViewControllerRepresentable {
         Coordinator(parent: self)
     }
 
-    final class Coordinator: NSObject, VNDocumentCameraViewControllerDelegate {
+    @MainActor
+    final class Coordinator: NSObject, @preconcurrency VNDocumentCameraViewControllerDelegate {
         private let parent: DocumentScanner
 
         init(parent: DocumentScanner) {
