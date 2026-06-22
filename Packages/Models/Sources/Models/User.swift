@@ -124,7 +124,7 @@ public final class User: UserData {
     public var creationDate: Date
     public var email: String?
     public var remoteId: String?
-    public var isAdmin: Bool
+    public var isAdmin: Bool = false
 
     public init(accountKey: String, nickname: String, avatarData: Data? = nil, defaultVisibility: MemoVisibility = .private, creationDate: Date = .now, email: String? = nil, remoteId: String? = nil, isAdmin: Bool = false) {
         self.accountKey = accountKey
