@@ -44,16 +44,23 @@ struct MemoCardContent: View {
     let memo: any MemoPresentable
     let toggleTaskItem: ((String) -> Void)?
     let truncate: Bool
+    let textSelectionEnabled: Bool
     
     @Environment(\.colorScheme) var colorScheme
     @State private var cachedRawMarkdown: String
     @State private var cachedPreprocessedMarkdown: String
     @State private var truncated: Bool
 
-    init(memo: any MemoPresentable, toggleTaskItem: ((String) -> Void)? = nil, truncate: Bool = false) {
+    init(
+        memo: any MemoPresentable,
+        toggleTaskItem: ((String) -> Void)? = nil,
+        truncate: Bool = false,
+        textSelectionEnabled: Bool = false
+    ) {
         self.memo = memo
         self.toggleTaskItem = toggleTaskItem
         self.truncate = truncate
+        self.textSelectionEnabled = textSelectionEnabled
         let content = memo.content
         _cachedRawMarkdown = State(initialValue: content)
         let preprocessResult = MemoMarkdownPreprocessor.preprocess(content, truncate: truncate)
@@ -63,18 +70,7 @@ struct MemoCardContent: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            MarkdownView(cachedPreprocessedMarkdown)
-                .taskListMarker { listItem in
-                    Image(systemName: listItem.checkbox == .checked ? "checkmark.square.fill" : "square")
-                        .symbolRenderingMode(.hierarchical)
-                        .imageScale(.medium)
-                        .onTapGesture {
-                            if truncated {
-                                return
-                            }
-                            toggleTaskItem?(toggledMarkdown(for: listItem))
-                        }
-                }
+            markdownContent
             
             if truncated {
                 Text("memo.view-more")
@@ -94,6 +90,33 @@ struct MemoCardContent: View {
             cachedPreprocessedMarkdown = MemoTagMarkdownPreprocessor.preprocessForDisplay(preprocessResult.0)
             truncated = preprocessResult.1
         }
+    }
+
+    @ViewBuilder
+    private var markdownContent: some View {
+        if textSelectionEnabled {
+            MarkdownText(cachedPreprocessedMarkdown)
+                .markdownTaskListMarker { listItem in
+                    taskListMarker(for: listItem)
+                }
+        } else {
+            MarkdownView(cachedPreprocessedMarkdown)
+                .markdownTaskListMarker { listItem in
+                    taskListMarker(for: listItem)
+                }
+        }
+    }
+
+    private func taskListMarker(for listItem: ListItem) -> some View {
+        Image(systemName: listItem.checkbox == .checked ? "checkmark.square.fill" : "square")
+            .symbolRenderingMode(.hierarchical)
+            .imageScale(.medium)
+            .onTapGesture {
+                if truncated {
+                    return
+                }
+                toggleTaskItem?(toggledMarkdown(for: listItem))
+            }
     }
     
     @ViewBuilder
