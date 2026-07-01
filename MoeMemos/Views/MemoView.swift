@@ -52,9 +52,13 @@ struct MemoView: View {
                             Spacer()
                         }
 
-                        MemoCardContent(memo: memo) { updatedContent in
-                            toggleTaskItem(updatedContent, for: memo)
-                        }
+                        MemoCardContent(
+                            memo: memo,
+                            toggleTaskItem: { updatedContent in
+                                toggleTaskItem(updatedContent, for: memo)
+                            },
+                            textSelectionEnabled: true
+                        )
                     }
                     .padding()
                 }
