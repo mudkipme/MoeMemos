@@ -34,14 +34,13 @@ private enum AppShortcutAction {
         ]
     }
 
+    @MainActor
     static func handle(_ shortcutItem: UIApplicationShortcutItem) -> Bool {
         guard shortcutItem.type.hasSuffix(newMemoSuffix) else {
             return false
         }
 
-        Task { @MainActor in
-            Container.shared.appPath().presentedSheet = .newMemo
-        }
+        Container.shared.appPath().presentedSheet = .newMemo
         return true
     }
 }
@@ -52,19 +51,37 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         AppShortcutAction.configureShortcutItems()
-
-        guard
-            let shortcutItem = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
-            AppShortcutAction.handle(shortcutItem)
-        else {
-            return true
-        }
-
-        return false
+        return true
     }
 
     func application(
         _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        let configuration = UISceneConfiguration(
+            name: "Default Configuration",
+            sessionRole: connectingSceneSession.role
+        )
+        configuration.delegateClass = SceneDelegate.self
+        return configuration
+    }
+}
+
+final class SceneDelegate: NSObject, UIWindowSceneDelegate {
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        guard let shortcutItem = connectionOptions.shortcutItem else {
+            return
+        }
+        _ = AppShortcutAction.handle(shortcutItem)
+    }
+
+    func windowScene(
+        _ windowScene: UIWindowScene,
         performActionFor shortcutItem: UIApplicationShortcutItem,
         completionHandler: @escaping (Bool) -> Void
     ) {
