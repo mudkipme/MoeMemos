@@ -9,6 +9,11 @@
  
 "memo.archive" = "Archivia";
 "memo.archived" = "Archiviate";
+"memo.comments" = "Commenti";
+"memo.comment.delete.confirm" = "Eliminare questo commento?";
+"memo.comment.empty" = "Nessun commento";
+"memo.comment.placeholder" = "Aggiungi un commento…";
+"memo.comment.send" = "Invia";
 "memo.copy" = "Copia";
 "memo.delete" = "Elimina";
 "memo.delete.confirm" = "Elimina questo memo?";

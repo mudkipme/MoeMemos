@@ -9,6 +9,11 @@
 
 "memo.archive" = "アーカイブ";
 "memo.archived" = "アーカイブ済み";
+"memo.comments" = "コメント";
+"memo.comment.delete.confirm" = "このコメントを削除しますか？";
+"memo.comment.empty" = "コメントはまだありません";
+"memo.comment.placeholder" = "コメントを追加…";
+"memo.comment.send" = "送信";
 "memo.copy" = "コピー";
 "memo.delete" = "削除";
 "memo.delete.confirm" = "このメモを削除しますか？";
