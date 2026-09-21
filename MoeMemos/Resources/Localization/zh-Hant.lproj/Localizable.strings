@@ -9,6 +9,11 @@
 
 "memo.archive" = "歸檔";
 "memo.archived" = "歸檔";
+"memo.comments" = "評論";
+"memo.comment.delete.confirm" = "確認刪除這則評論嗎？";
+"memo.comment.empty" = "尚無評論";
+"memo.comment.placeholder" = "新增評論…";
+"memo.comment.send" = "傳送";
 "memo.copy" = "複製";
 "memo.delete" = "刪除";
 "memo.delete.confirm" = "確認刪除這條 MEMO 嗎？";

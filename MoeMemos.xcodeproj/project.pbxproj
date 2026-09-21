@@ -95,6 +95,8 @@
 		2B7D9E3C2F4A110000ABC001 /* SyncStatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7D9E3C2F4A110000ABC002 /* SyncStatusBadge.swift */; };
 		2C6B0A852F8112F000A1C0DE /* SupportPurchaseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6B0A842F8112F000A1C0DE /* SupportPurchaseStore.swift */; };
 		2D41F7A82F95C10000A6B8C1 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2D41F7A72F95C10000A6B8C1 /* WhatsNewKit */; };
+		AA1000000000000000000002 /* MemoCommentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000001 /* MemoCommentsViewModel.swift */; };
+		AA1000000000000000000004 /* MemoComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000003 /* MemoComments.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -212,6 +214,8 @@
 		2C6B0A842F8112F000A1C0DE /* SupportPurchaseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportPurchaseStore.swift; sourceTree = "<group>"; };
 		EE17AC762D8E12E500C01504 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainInterface.strings; sourceTree = "<group>"; };
 		EE17AC772D8E12E500C01504 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AA1000000000000000000001 /* MemoCommentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCommentsViewModel.swift; sourceTree = "<group>"; };
+		AA1000000000000000000003 /* MemoComments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoComments.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -301,6 +305,7 @@
 			children = (
 				19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */,
 				1919FBE429CF738300FEF570 /* ExploreViewModel.swift */,
+				AA1000000000000000000001 /* MemoCommentsViewModel.swift */,
 				193DE92F28C65104002651E0 /* MemosViewModel.swift */,
 				19C569AB29125C0700745F9D /* ResourceListViewModel.swift */,
 				2C6B0A842F8112F000A1C0DE /* SupportPurchaseStore.swift */,
@@ -424,6 +429,7 @@
 				193938DB29CF682D0027939F /* MemoCardContent.swift */,
 				197A4D3229599C300027427E /* MemoCardImageView.swift */,
 				2AA1B2C42F5A6B7C00D1E2F3 /* MemoView.swift */,
+				AA1000000000000000000003 /* MemoComments.swift */,
 				19F31BF628C3E26D000C5207 /* MemosList.swift */,
 				19FC1C7D290DA6E90078A7F2 /* Navigation.swift */,
 				193AA89A28CCD34A00FF7EB6 /* Resources.swift */,
@@ -682,6 +688,8 @@
 				193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */,
 				1919FBE929CF78BE00FEF570 /* Explore.swift in Sources */,
 				2AA1B2C32F5A6B7C00D1E2F3 /* MemoView.swift in Sources */,
+				AA1000000000000000000002 /* MemoCommentsViewModel.swift in Sources */,
+				AA1000000000000000000004 /* MemoComments.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

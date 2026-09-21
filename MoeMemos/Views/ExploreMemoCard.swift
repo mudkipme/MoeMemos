@@ -8,13 +8,20 @@
 import SwiftUI
 import Models
 import MemoKit
+import Account
 
 struct ExploreMemoCard: View {
     let memo: Memo
     let isAdmin: Bool
     let onEdit: (_ remoteId: String, _ content: String, _ visibility: MemoVisibility) async throws -> Void
 
+    @Environment(AccountManager.self) private var accountManager
     @State private var isEditingMemo = false
+    @State private var isShowingComments = false
+
+    private var commentsEnabled: Bool {
+        accountManager.currentRemoteService is MemoCommentService && memo.remoteId != nil
+    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -29,8 +36,20 @@ struct ExploreMemoCard: View {
                         .foregroundColor(.secondary)
                 }
 
+                Spacer()
+
+                if commentsEnabled {
+                    Button {
+                        isShowingComments = true
+                    } label: {
+                        Image(systemName: "bubble.right")
+                            .foregroundColor(.secondary)
+                            .padding([.top, .bottom], 10)
+                    }
+                    .buttonStyle(.plain)
+                }
+
                 if isAdmin {
-                    Spacer()
                     Menu {
                         Button {
                             isEditingMemo = true
@@ -58,6 +77,11 @@ struct ExploreMemoCard: View {
         .padding([.top, .bottom], 5)
         .sheet(isPresented: $isEditingMemo) {
             ExploreEditMemoSheet(memo: memo, onSave: onEdit)
+        }
+        .sheet(isPresented: $isShowingComments) {
+            if let memoRemoteId = memo.remoteId {
+                MemoCommentsSheet(memoRemoteId: memoRemoteId)
+            }
         }
     }
 }

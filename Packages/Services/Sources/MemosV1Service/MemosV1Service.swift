@@ -13,7 +13,7 @@ import Models
 import ServiceUtils
 
 @MainActor
-public final class MemosV1Service: RemoteService {
+public final class MemosV1Service: RemoteService, MemoCommentService {
     private let hostURL: URL
     private let urlSession: URLSession
     private let client: Client
@@ -74,29 +74,7 @@ public final class MemosV1Service: RemoteService {
         let resp = try await client.MemoService_ListMemos(query: .init(pageSize: Int32(pageSize), pageToken: pageToken, filter: "visibility in [\"PUBLIC\", \"PROTECTED\"]"))
         let data = try resp.ok.body.json
         let memos = data.memos ?? []
-
-        let creators = Set(memos.compactMap(\.creator))
-        var userMap = [String: MemosV1User]()
-        for creator in creators {
-            let userId = getId(remoteId: creator)
-            guard !userId.isEmpty else { continue }
-            guard let userResp = try? await client.UserService_GetUser(path: .init(user: userId), query: .init(readMask: nil)) else { continue }
-            guard let user = try? userResp.ok.body.json else { continue }
-            guard let name = user.name else { continue }
-            userMap[name] = user
-        }
-
-        let result = memos.map { rawMemo in
-            var memo = rawMemo.toMemo(host: hostURL)
-            if let creator = rawMemo.creator, let user = userMap[creator] {
-                memo.user = RemoteUser(
-                    nickname: user.displayName ?? user.username,
-                    creationDate: user.createTime ?? .now,
-                    remoteId: user.name.map { getId(remoteId: $0) }
-                )
-            }
-            return memo
-        }
+        let result = await memosWithUsers(memos)
 
         let nextPageToken = data.nextPageToken?.isEmpty == true ? nil : data.nextPageToken
         return (result, nextPageToken)
@@ -165,6 +143,26 @@ public final class MemosV1Service: RemoteService {
     public func deleteMemo(remoteId: String) async throws {
         let resp = try await client.MemoService_DeleteMemo(path: .init(memo: getId(remoteId: remoteId)))
         _ = try resp.ok
+    }
+
+    public func listMemoComments(memoRemoteId: String) async throws -> [Memo] {
+        var comments = [MemosV1Memo]()
+        var nextPageToken: String? = nil
+
+        repeat {
+            let resp = try await client.MemoService_ListMemoComments(path: .init(memo: getId(remoteId: memoRemoteId)), query: .init(pageSize: 200, pageToken: nextPageToken, orderBy: nil))
+            let data = try resp.ok.body.json
+            comments += data.memos ?? []
+            nextPageToken = data.nextPageToken
+        } while (nextPageToken?.isEmpty == false)
+
+        return await memosWithUsers(comments)
+    }
+
+    public func createMemoComment(memoRemoteId: String, content: String) async throws -> Memo {
+        let resp = try await client.MemoService_CreateMemoComment(path: .init(memo: getId(remoteId: memoRemoteId)), query: .init(commentId: nil), body: .json(.init(content: content)))
+        let comment = try resp.ok.body.json
+        return await memosWithUsers([comment]).first ?? comment.toMemo(host: hostURL)
     }
     
     public func archiveMemo(remoteId: String) async throws {
@@ -258,6 +256,32 @@ public final class MemosV1Service: RemoteService {
     
     private func getId(remoteId: String) -> String {
         return remoteId.split(separator: "|").first?.split(separator: "/").last.map(String.init) ?? ""
+    }
+
+    /// Converts raw memos to `Memo` models and fills in `user` from the creators' profiles.
+    func memosWithUsers(_ memos: [MemosV1Memo]) async -> [Memo] {
+        let creators = Set(memos.compactMap(\.creator))
+        var userMap = [String: MemosV1User]()
+        for creator in creators {
+            let userId = getId(remoteId: creator)
+            guard !userId.isEmpty else { continue }
+            guard let userResp = try? await client.UserService_GetUser(path: .init(user: userId), query: .init(readMask: nil)) else { continue }
+            guard let user = try? userResp.ok.body.json else { continue }
+            guard let name = user.name else { continue }
+            userMap[name] = user
+        }
+
+        return memos.map { rawMemo in
+            var memo = rawMemo.toMemo(host: hostURL)
+            if let creator = rawMemo.creator, let user = userMap[creator] {
+                memo.user = RemoteUser(
+                    nickname: user.displayName ?? user.username,
+                    creationDate: user.createTime ?? .now,
+                    remoteId: user.name.map { getId(remoteId: $0) }
+                )
+            }
+            return memo
+        }
     }
     
     func toUserSnapshot(_ memosUser: MemosV1User, setting: Components.Schemas.UserSetting? = nil) async -> UserSnapshot {
