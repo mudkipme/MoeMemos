@@ -24,6 +24,7 @@
 "memo.visibility.public" = "Видно гостям";
 "memo.visibility.protected" = "Видно локальным пользователям";
 "memo.visibility.private" = "Видно только вам";
+"memo.visibility.space" = "Видно участникам пространства";
 
 "settings" = "Настройки";
 "settings.about" = "О Moe Memos";

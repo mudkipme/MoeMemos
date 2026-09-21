@@ -1104,6 +1104,7 @@ components:
                     - PRIVATE
                     - PROTECTED
                     - PUBLIC
+                    - SPACE
                     type: string
                     description: The visibility of the memo.
                     format: enum
@@ -1204,7 +1205,6 @@ components:
             description: Computed properties of a memo.
         Reaction:
             required:
-            - contentId
             - reactionType
             type: object
             properties:

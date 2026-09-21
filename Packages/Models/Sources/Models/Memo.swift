@@ -16,6 +16,7 @@ public enum MemoVisibility: Codable, Sendable {
     case `private`
     case local
     case `public`
+    case space
     case unlisted
     case direct
 }

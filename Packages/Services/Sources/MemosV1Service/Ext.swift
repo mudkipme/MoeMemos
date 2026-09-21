@@ -66,6 +66,8 @@ extension MemosV1Visibility {
             self = .PRIVATE
         case .public:
             self = .PUBLIC
+        case .space:
+            self = .SPACE
         case .unlisted:
             self = .PUBLIC
         }
@@ -81,6 +83,8 @@ extension MemosV1Visibility {
             return .local
         case .PRIVATE:
             return .private
+        case .SPACE:
+            return .space
         default:
             return .private
         }

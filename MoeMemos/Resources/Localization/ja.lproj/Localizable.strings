@@ -24,6 +24,7 @@
 "memo.visibility.public" = "ゲストに表示";
 "memo.visibility.protected" = "ローカルメンバーに表示";
 "memo.visibility.private" = "あなただけに表示";
+"memo.visibility.space" = "スペースのメンバーに表示";
 
 "settings" = "設定";
 "settings.about" = "Moe Memos について";

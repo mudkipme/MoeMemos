@@ -24,6 +24,7 @@
 "memo.visibility.public" = "Public";
 "memo.visibility.protected" = "Visible aux membres";
 "memo.visibility.private" = "Privé";
+"memo.visibility.space" = "Visible par les membres de l’espace";
 
 "settings" = "Paramètres";
 "settings.about" = "À propos de Moe Memos";
