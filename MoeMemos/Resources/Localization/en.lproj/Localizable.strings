@@ -29,6 +29,7 @@
 "memo.visibility.public" = "Visible to guests";
 "memo.visibility.protected" = "Visible to local members";
 "memo.visibility.private" = "Only visible to you";
+"memo.visibility.space" = "Visible to space members";
 
 "settings" = "Settings";
 "settings.about" = "About Moe Memos";

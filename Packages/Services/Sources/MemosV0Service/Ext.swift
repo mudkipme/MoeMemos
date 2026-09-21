@@ -97,6 +97,8 @@ extension MemosV0Visibility {
             self = .PRIVATE
         case .public:
             self = .PUBLIC
+        case .space:
+            self = .PRIVATE
         case .unlisted:
             self = .PUBLIC
         }

@@ -10,6 +10,8 @@ extension MemoVisibility {
             return "memo.visibility.protected"
         case .private:
             return "memo.visibility.private"
+        case .space:
+            return "memo.visibility.space"
         case .direct:
             return "memo.visibility.direct"
         case .unlisted:
@@ -25,6 +27,8 @@ extension MemoVisibility {
             return "house"
         case .private:
             return "lock"
+        case .space:
+            return "person.2"
         case .direct:
             return "envelope"
         case .unlisted:
