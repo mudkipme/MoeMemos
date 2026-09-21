@@ -24,6 +24,7 @@
 "memo.visibility.public" = "訪客可見";
 "memo.visibility.protected" = "本地使用者可見";
 "memo.visibility.private" = "僅自己可見";
+"memo.visibility.space" = "僅空間成員可見";
 
 "settings" = "設定";
 "settings.about" = "關於 Moe Memos";
