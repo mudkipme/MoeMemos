@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct TextView: UIViewRepresentable {
+    @Environment(\.isEnabled) private var isEnabled
     @Binding var text: String
     @Binding var selection: TextSelection?
     let isFocused: Bool
@@ -17,6 +18,7 @@ struct TextView: UIViewRepresentable {
     }
 
     func updateUIView(_ textView: UITextView, context: Context) {
+        textView.isEditable = isEnabled
         if textView.text != text {
             textView.text = text
         }
@@ -25,8 +27,10 @@ struct TextView: UIViewRepresentable {
             textView.selectedRange = selectionRange
         }
 
-        if isFocused, !textView.isFirstResponder {
+        if isEnabled, isFocused, !textView.isFirstResponder {
             textView.becomeFirstResponder()
+        } else if !isEnabled, textView.isFirstResponder {
+            textView.resignFirstResponder()
         }
     }
 

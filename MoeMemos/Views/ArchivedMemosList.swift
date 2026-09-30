@@ -12,6 +12,8 @@ import Models
 struct ArchivedMemosList: View {
     @State private var viewModel = ArchivedMemoListViewModel()
     @State private var searchString = ""
+    @State private var loading = true
+    @State private var loadError: String?
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @State private var manualSyncAlertMessage: String?
     @State private var showingManualSyncAlert = false
@@ -23,8 +25,28 @@ struct ArchivedMemosList: View {
         let canSync = ((try? memosViewModel.service) as? SyncableService) != nil
 
         Group {
-            if filteredMemoList.isEmpty {
-                ContentUnavailableView("memo.archived.empty", systemImage: "archivebox")
+            if loading && viewModel.archivedMemoList.isEmpty {
+                ProgressView("common.loading")
+            } else if let loadError, viewModel.archivedMemoList.isEmpty {
+                ContentUnavailableView {
+                    Label("common.load-failed", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text(loadError)
+                } actions: {
+                    Button("common.retry") { Task { await loadMemos() } }
+                }
+            } else if filteredMemoList.isEmpty {
+                if !searchString.isEmpty {
+                    ContentUnavailableView {
+                        Label("search.no-results", systemImage: "magnifyingglass")
+                    } description: {
+                        Text(searchString)
+                    } actions: {
+                        Button("search.clear") { searchString = "" }
+                    }
+                } else {
+                    ContentUnavailableView("memo.archived.empty", systemImage: "archivebox")
+                }
             } else {
                 List(filteredMemoList, id: \.id) { memo in
                     Section {
@@ -48,11 +70,7 @@ struct ArchivedMemosList: View {
             }
         }
         .task {
-            do {
-                try await viewModel.loadArchivedMemos()
-            } catch {
-                print(error)
-            }
+            await loadMemos()
         }
         .searchable(text: $searchString)
         .alert(NSLocalizedString("sync.failed.title", comment: "Manual sync failed alert title"), isPresented: $showingManualSyncAlert) {
@@ -67,6 +85,17 @@ struct ArchivedMemosList: View {
             }
         } message: {
             Text(manualSyncAlertMessage ?? moeMemosHigherMemosVersionSyncWarning)
+        }
+    }
+
+    private func loadMemos() async {
+        loading = true
+        loadError = nil
+        defer { loading = false }
+        do {
+            try await viewModel.loadArchivedMemos()
+        } catch {
+            loadError = error.localizedDescription
         }
     }
 

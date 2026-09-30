@@ -115,7 +115,8 @@ struct MemoView: View {
                     Menu {
                         normalMenu(memo)
                     } label: {
-                        Image(systemName: "ellipsis")
+                        Label("memo.actions", systemImage: "ellipsis")
+                            .labelStyle(.iconOnly)
                     }
                 }
             }

@@ -137,3 +137,33 @@
 "whatsnew.feature.attachments.title" = "Miglioramenti agli allegati";
 "whatsnew.feature.attachments.subtitle" = "Salva allegati di file oltre alle immagini.";
 "whatsnew.action.continue" = "Continua";
+
+/* Capture and accessibility polish */
+"input.unsaved.title" = "Salvare le modifiche?";
+"input.discard" = "Scarta modifiche";
+"input.keep-editing" = "Continua a modificare";
+"input.saving" = "Salvataggio…";
+"input.importing" = "Importazione allegati…";
+"input.memo-content" = "Contenuto del memo";
+"common.load-failed" = "Impossibile caricare";
+"common.retry" = "Riprova";
+"common.loading" = "Caricamento…";
+"search.no-results" = "Nessun risultato";
+"search.clear" = "Cancella ricerca";
+"memo.tag.empty" = "Nessun memo con questo tag";
+"memo.empty.description" = "Annota un pensiero, un’idea o un momento.";
+"memo.tag.empty.description" = "Aggiungi questo tag a un memo per vederlo qui.";
+"input.insert-tag" = "Inserisci tag";
+"input.toggle-checklist" = "Attiva o disattiva elenco di attività";
+"input.journaling" = "Suggerimenti per il diario";
+"input.photos" = "Scegli foto o video";
+"input.camera" = "Scatta una foto";
+"input.scan" = "Scansiona un documento";
+"input.files" = "Allega un file";
+"memo.checklist-item" = "Voce elenco di attività";
+"memo.checked" = "Selezionato";
+"memo.unchecked" = "Non selezionato";
+"memo.actions" = "Azioni del memo";
+"sync.in-progress" = "Sincronizzazione…";
+"sync.action" = "Sincronizza ora";
+"input.remove-attachment" = "Rimuovi allegato";

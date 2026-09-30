@@ -135,3 +135,33 @@
 "whatsnew.feature.attachments.title" = "附件功能升级";
 "whatsnew.feature.attachments.subtitle" = "支持保存图片以外的文件附件。";
 "whatsnew.action.continue" = "继续";
+
+/* Capture and accessibility polish */
+"input.unsaved.title" = "保存更改？";
+"input.discard" = "放弃更改";
+"input.keep-editing" = "继续编辑";
+"input.saving" = "正在保存…";
+"input.importing" = "正在导入附件…";
+"input.memo-content" = "笔记内容";
+"common.load-failed" = "无法加载";
+"common.retry" = "重试";
+"common.loading" = "正在加载…";
+"search.no-results" = "无搜索结果";
+"search.clear" = "清除搜索";
+"memo.tag.empty" = "此标签下暂无笔记";
+"memo.empty.description" = "记下想法、灵感或此刻。";
+"memo.tag.empty.description" = "为笔记添加此标签，即可在这里查看。";
+"input.insert-tag" = "插入标签";
+"input.toggle-checklist" = "切换待办事项";
+"input.journaling" = "日记建议";
+"input.photos" = "选择照片或视频";
+"input.camera" = "拍照";
+"input.scan" = "扫描文档";
+"input.files" = "添加文件";
+"memo.checklist-item" = "待办事项";
+"memo.checked" = "已勾选";
+"memo.unchecked" = "未勾选";
+"memo.actions" = "笔记操作";
+"sync.in-progress" = "正在同步";
+"sync.action" = "立即同步";
+"input.remove-attachment" = "移除附件";

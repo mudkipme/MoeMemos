@@ -22,6 +22,10 @@ import SwiftData
 
     public init() {}
 
+    public var removalLabel: String {
+        NSLocalizedString("input.remove-attachment", comment: "Remove attachment from draft")
+    }
+
     public func upload(data: Data, filename: String, mimeType: String) async throws {
         try validateUploadSize(Int64(data.count))
         let safeFilename = filename.isEmpty ? "\(UUID().uuidString).dat" : filename
@@ -49,8 +53,8 @@ import SwiftData
     }
 
     public func deleteResource(id: PersistentIdentifier) async throws {
-        let service = try self.service
-        try await service.deleteResource(id: id)
+        // Stage removal in the editor. Saving the memo commits its attachment list;
+        // closing or discarding an edit must not delete the underlying resource.
         resourceList.removeAll { $0.id == id }
     }
 

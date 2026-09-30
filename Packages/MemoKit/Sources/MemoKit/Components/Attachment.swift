@@ -78,7 +78,7 @@ public struct Attachment: View {
                     try await resourceManager.deleteResource(id: storedResource.id)
                 }
             }, label: {
-                Label("Delete", systemImage: "trash")
+                Label(resourceManager.removalLabel, systemImage: "trash")
             })
         }
     }

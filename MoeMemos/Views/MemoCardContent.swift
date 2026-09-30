@@ -108,15 +108,18 @@ struct MemoCardContent: View {
     }
 
     private func taskListMarker(for listItem: ListItem) -> some View {
-        Image(systemName: listItem.checkbox == .checked ? "checkmark.square.fill" : "square")
-            .symbolRenderingMode(.hierarchical)
-            .imageScale(.medium)
-            .onTapGesture {
-                if truncated {
-                    return
-                }
-                toggleTaskItem?(toggledMarkdown(for: listItem))
-            }
+        Button {
+            toggleTaskItem?(toggledMarkdown(for: listItem))
+        } label: {
+            Image(systemName: listItem.checkbox == .checked ? "checkmark.square.fill" : "square")
+                .symbolRenderingMode(.hierarchical)
+                .imageScale(.medium)
+        }
+        .buttonStyle(.borderless)
+        .disabled(truncated || toggleTaskItem == nil)
+        .accessibilityLabel(Text("memo.checklist-item"))
+        .accessibilityValue(Text(LocalizedStringKey(listItem.checkbox == .checked ? "memo.checked" : "memo.unchecked")))
+
     }
     
     @ViewBuilder
