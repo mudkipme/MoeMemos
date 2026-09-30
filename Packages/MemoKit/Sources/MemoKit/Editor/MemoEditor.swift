@@ -24,7 +24,7 @@ public struct MemoEditor: View {
     @State private var selection: TextSelection?
     @State private var isApplyingAutoContinuation = false
 
-    @FocusState private var focused: Bool
+    @State private var focused = false
     @Environment(\.dismiss) private var dismiss
 
     @State private var showingPhotoPicker = false
@@ -141,8 +141,7 @@ public struct MemoEditor: View {
                 privacyMenu
                     .disabled(isSaving)
                     .padding(.horizontal)
-                TextEditor(text: $text, selection: $selection)
-                    .focused($focused)
+                TextView(text: $text, selection: $selection, isFocused: focused)
                     .disabled(isSaving)
                     .accessibilityLabel(Text("input.memo-content"))
                     .overlay(alignment: .topLeading) {
@@ -511,45 +510,39 @@ public struct MemoEditor: View {
         }
     }
 
-    private func applyAutoListContinuationIfNeeded(oldValue: String, newValue: String) {
+    private func applyAutoListContinuationIfNeeded(oldValue _: String, newValue: String) {
         guard !isApplyingAutoContinuation else {
             isApplyingAutoContinuation = false
             return
         }
 
         guard
-            let edit = detectSingleEdit(old: oldValue, new: newValue),
-            edit.replacedRange.lowerBound == edit.replacedRange.upperBound,
-            edit.insertedText == "\n"
+            let selectionRange = currentSelectionRange(),
+            selectionRange.lowerBound == selectionRange.upperBound,
+            selectionRange.lowerBound > newValue.startIndex,
+            newValue[newValue.index(before: selectionRange.lowerBound)] == "\n"
         else {
             return
         }
 
-        let insertionPoint = edit.replacedRange.lowerBound
-
-        let currentText = oldValue
-        let contentBefore = currentText[currentText.startIndex..<insertionPoint]
+        let insertionPoint = selectionRange.lowerBound
+        let newlineIndex = newValue.index(before: insertionPoint)
+        let contentBefore = newValue[newValue.startIndex..<newlineIndex]
         let lastLineBreak = contentBefore.lastIndex(of: "\n")
-        let nextLineBreak = currentText[insertionPoint...].firstIndex(of: "\n") ?? currentText.endIndex
-        let currentLine: Substring
-        if let lastLineBreak = lastLineBreak {
-            currentLine = currentText[currentText.index(after: lastLineBreak)..<nextLineBreak]
-        } else {
-            currentLine = currentText[currentText.startIndex..<nextLineBreak]
-        }
+        let currentLineStart = lastLineBreak.map { newValue.index(after: $0) } ?? newValue.startIndex
+        let currentLine = newValue[currentLineStart..<newlineIndex]
 
         for prefixStr in listItemSymbolList {
             if (!currentLine.hasPrefix(prefixStr)) {
                 continue
             }
 
-            if currentLine.count <= prefixStr.count || currentText.index(currentLine.startIndex, offsetBy: prefixStr.count) >= insertionPoint {
+            if currentLine.count <= prefixStr.count {
                 break
             }
 
-            let insertionOffset = currentText.distance(from: currentText.startIndex, to: insertionPoint)
-            let updatedText = currentText[currentText.startIndex..<insertionPoint] + "\n" + prefixStr + currentText[insertionPoint..<currentText.endIndex]
-            let cursorOffset = insertionOffset + prefixStr.count + 1
+            let updatedText = newValue[..<insertionPoint] + prefixStr + newValue[insertionPoint...]
+            let cursorOffset = newValue.distance(from: newValue.startIndex, to: insertionPoint) + prefixStr.count
             let cursor = updatedText.index(updatedText.startIndex, offsetBy: cursorOffset)
 
             isApplyingAutoContinuation = true
@@ -557,33 +550,6 @@ public struct MemoEditor: View {
             selection = TextSelection(range: cursor..<cursor)
             return
         }
-    }
-
-    private func detectSingleEdit(old: String, new: String) -> (replacedRange: Range<String.Index>, insertedText: Substring)? {
-        var oldStart = old.startIndex
-        var newStart = new.startIndex
-        while oldStart < old.endIndex, newStart < new.endIndex, old[oldStart] == new[newStart] {
-            old.formIndex(after: &oldStart)
-            new.formIndex(after: &newStart)
-        }
-
-        if oldStart == old.endIndex, newStart == new.endIndex {
-            return nil
-        }
-
-        var oldEnd = old.endIndex
-        var newEnd = new.endIndex
-        while oldEnd > oldStart, newEnd > newStart {
-            let oldPrev = old.index(before: oldEnd)
-            let newPrev = new.index(before: newEnd)
-            if old[oldPrev] != new[newPrev] {
-                break
-            }
-            oldEnd = oldPrev
-            newEnd = newPrev
-        }
-
-        return (oldStart..<oldEnd, new[newStart..<newEnd])
     }
 
     private func insertAtSelection(_ insertedText: String) {

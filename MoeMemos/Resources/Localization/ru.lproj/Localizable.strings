@@ -9,6 +9,11 @@
 
 "memo.archive" = "Архив";
 "memo.archived" = "Архивировано";
+"memo.comments" = "Комментарии";
+"memo.comment.delete.confirm" = "Удалить этот комментарий?";
+"memo.comment.empty" = "Комментариев пока нет";
+"memo.comment.placeholder" = "Добавить комментарий…";
+"memo.comment.send" = "Отправить";
 "memo.copy" = "Копировать";
 "memo.delete" = "Удалить";
 "memo.delete.confirm" = "Удалить эту memo?";

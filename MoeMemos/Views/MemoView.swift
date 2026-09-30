@@ -18,10 +18,16 @@ struct MemoView: View {
 
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @Environment(AccountViewModel.self) private var accountViewModel: AccountViewModel
+    @Environment(AccountManager.self) private var accountManager
     @Environment(AppPath.self) private var appPath
     @Environment(\.dismiss) private var dismiss
 
     @State private var showingDeleteConfirmation = false
+    @State private var commentsViewModel: MemoCommentsViewModel?
+
+    private var commentsEnabled: Bool {
+        accountManager.currentRemoteService is MemoCommentService && memo?.serverId != nil
+    }
 
     var body: some View {
         Group {
@@ -59,14 +65,46 @@ struct MemoView: View {
                             },
                             textSelectionEnabled: true
                         )
+
+                        if commentsEnabled, let commentsViewModel {
+                            Divider()
+
+                            Text("memo.comments")
+                                .font(.headline)
+
+                            if commentsViewModel.comments.isEmpty && !commentsViewModel.loading {
+                                Text("memo.comment.empty")
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+                            } else {
+                                MemoCommentsList(viewModel: commentsViewModel)
+                            }
+                        }
                     }
                     .padding()
+                }
+                .safeAreaInset(edge: .bottom) {
+                    if commentsEnabled, let commentsViewModel {
+                        MemoCommentComposer(sending: commentsViewModel.sending) { content in
+                            try await commentsViewModel.sendComment(content: content)
+                        }
+                    }
                 }
             } else {
                 ContentUnavailableView("Memo not found", systemImage: "note.text")
                     .task(id: memoId) {
                         try? await memosViewModel.loadMemos()
                     }
+            }
+        }
+        .task(id: memo?.serverId) {
+            guard commentsEnabled, commentsViewModel == nil, let serverId = memo?.serverId else { return }
+            let viewModel = MemoCommentsViewModel(memoRemoteId: serverId)
+            commentsViewModel = viewModel
+            do {
+                try await viewModel.loadComments()
+            } catch {
+                print(error)
             }
         }
         .navigationTitle(memo?.renderTime() ?? "Memo")

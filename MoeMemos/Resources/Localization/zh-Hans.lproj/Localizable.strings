@@ -9,6 +9,11 @@
 
 "memo.archive" = "归档";
 "memo.archived" = "归档";
+"memo.comments" = "评论";
+"memo.comment.delete.confirm" = "确认删除这条评论吗？";
+"memo.comment.empty" = "暂无评论";
+"memo.comment.placeholder" = "添加评论…";
+"memo.comment.send" = "发送";
 "memo.copy" = "拷贝";
 "memo.delete" = "删除";
 "memo.delete.confirm" = "确认删除这条 MEMO 吗？";

@@ -42,6 +42,13 @@ public protocol RemoteService: Sendable {
     func download(url: URL, mimeType: String?) async throws -> URL
 }
 
+/// Remote services that support memo comments (Memos v1 API).
+@MainActor
+public protocol MemoCommentService: RemoteService {
+    func listMemoComments(memoRemoteId: String) async throws -> [Memo]
+    func createMemoComment(memoRemoteId: String, content: String) async throws -> Memo
+}
+
 /// Local-first service used by the app UI for both Local and Remote accounts.
 /// Identifiers are SwiftData `PersistentIdentifier`s, not server ids.
 @MainActor
