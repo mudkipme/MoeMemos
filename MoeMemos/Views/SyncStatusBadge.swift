@@ -10,6 +10,7 @@ struct SyncStatusBadge: View {
             HStack(spacing: 5) {
                 ProgressView()
                     .controlSize(.mini)
+                    .accessibilityLabel(Text("sync.in-progress"))
             }
         } else {
             Button(action: syncAction) {
@@ -19,6 +20,7 @@ struct SyncStatusBadge: View {
                     Image(systemName: "arrow.clockwise")
                 }
             }
+            .accessibilityLabel(Text("sync.action"))
         }
     }
 }

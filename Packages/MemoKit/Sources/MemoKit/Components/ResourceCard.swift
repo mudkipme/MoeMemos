@@ -85,7 +85,7 @@ public struct ResourceCard: View {
                 try await resourceManager.deleteResource(id: resource.id)
             }
         }, label: {
-            Label("Delete", systemImage: "trash")
+            Label(resourceManager.removalLabel, systemImage: "trash")
         })
     }
 }

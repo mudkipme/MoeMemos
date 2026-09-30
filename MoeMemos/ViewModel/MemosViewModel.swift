@@ -73,16 +73,23 @@ enum BackgroundSyncThrottle {
     private(set) var tags: [Tag] = []
     private(set) var nestedTags: [NestedTag] = []
     private(set) var matrix: [DailyUsageStat] = DailyUsageStat.initialMatrix
+    private(set) var loadError: String?
     private(set) var inited = false
     private(set) var syncing = false
     
     @MainActor
     func loadMemos() async throws {
-        let service = try self.service
-        memoList = try await service.listMemos()
-        inited = true
-        if service is SyncableService {
-            startBackgroundSync()
+        loadError = nil
+        do {
+            let service = try self.service
+            memoList = try await service.listMemos()
+            inited = true
+            if service is SyncableService {
+                startBackgroundSync()
+            }
+        } catch {
+            loadError = error.localizedDescription
+            throw error
         }
     }
     

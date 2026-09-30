@@ -35,26 +35,72 @@ public struct MemoEditor: View {
     @State private var submitError: Error?
     @State private var showingErrorToast = false
     @State private var availableTags: [Tag] = []
+    @State private var initialDraft: MemoDraft?
+    @State private var draftStore: MemoDraftStore?
+    @State private var finished = false
+    @State private var isSaving = false
+    @State private var importingCount = 0
+    @State private var showingCloseConfirmation = false
 
     public init(memo: StoredMemo?, actions: MemoEditorActions) {
         self.memo = memo
         self.actions = actions
     }
 
-    private var draftUserDefaults: UserDefaults {
-        UserDefaults(suiteName: AppInfo.groupContainerIdentifier) ?? .standard
+    private var currentDraft: MemoDraft {
+        MemoDraft(text: text, visibility: viewModel.visibility, resourceIDs: viewModel.resourceList.map(\.id))
     }
 
-    private var draftStorageKey: String {
-        "draft.\(accountManager.currentAccount?.key ?? "default")"
-    }
+    private var isBusy: Bool { isSaving || importingCount > 0 }
+    private var canSave: Bool { !isBusy && (!text.isEmpty || !viewModel.resourceList.isEmpty) }
 
-    private var draft: String {
-        get {
-            draftUserDefaults.string(forKey: draftStorageKey) ?? ""
+    private func restoreDraft() {
+        guard draftStore == nil, let accountKey = accountManager.currentAccount?.key else { return }
+        let store = MemoDraftStore(
+            defaults: UserDefaults(suiteName: AppInfo.groupContainerIdentifier) ?? .standard,
+            accountKey: accountKey,
+            memoID: memo?.id
+        )
+        let resources = memo?.resources.filter { !$0.softDeleted }.sorted { $0.createdAt > $1.createdAt } ?? []
+        let original = MemoDraft(
+            text: memo?.content ?? "",
+            visibility: memo?.visibility ?? userState.currentUser?.defaultVisibility ?? .private,
+            resourceIDs: resources.map(\.id)
+        )
+        let restored = store.load(defaultVisibility: original.visibility) ?? original
+        text = restored.text
+        viewModel.visibility = restored.visibility
+        viewModel.resourceList = restored.resourceIDs.compactMap { id in
+            guard let resource = accountManager.currentService?.resource(id: id),
+                  resource.accountKey == accountKey, !resource.softDeleted else { return nil }
+            return resource
         }
-        nonmutating set {
-            draftUserDefaults.set(newValue, forKey: draftStorageKey)
+        selection = .init(insertionPoint: text.endIndex)
+        initialDraft = original
+        draftStore = store
+    }
+
+    private func persistDraft() {
+        guard !finished, let draftStore else { return }
+        if memo != nil && currentDraft == initialDraft {
+            draftStore.clear()
+            return
+        }
+        do {
+            try draftStore.save(currentDraft)
+        } catch {
+            submitError = error
+            showingErrorToast = true
+        }
+    }
+
+    private func closeEditor() {
+        guard !isBusy else { return }
+        if memo != nil && currentDraft != initialDraft {
+            showingCloseConfirmation = true
+        } else {
+            persistDraft()
+            dismiss()
         }
     }
 
@@ -93,9 +139,12 @@ public struct MemoEditor: View {
         ZStack(alignment: .bottom) {
             VStack(alignment: .leading) {
                 privacyMenu
+                    .disabled(isSaving)
                     .padding(.horizontal)
                 TextEditor(text: $text, selection: $selection)
                     .focused($focused)
+                    .disabled(isSaving)
+                    .accessibilityLabel(Text("input.memo-content"))
                     .overlay(alignment: .topLeading) {
                         if text.isEmpty {
                             Text("input.placeholder")
@@ -104,29 +153,28 @@ public struct MemoEditor: View {
                         }
                     }
                     .padding(.horizontal)
+                if isBusy {
+                    ProgressView(LocalizedStringKey(isSaving ? "input.saving" : "input.importing"))
+                        .font(.footnote)
+                        .padding(.horizontal)
+                }
                 MemoEditorResourceView(viewModel: viewModel)
+                    .disabled(isBusy)
             }
             .safeAreaInset(edge: .bottom) {
                 toolbar()
+                    .disabled(isBusy)
             }
         }
 
         .onAppear {
-            if let memo = memo {
-                text = memo.content
-                selection = .init(insertionPoint: text.endIndex)
-                viewModel.visibility = memo.visibility
-            } else {
-                text = draft
-                selection = .init(insertionPoint: text.endIndex)
-                viewModel.visibility = userState.currentUser?.defaultVisibility ?? .private
-            }
-            if let memo {
-                viewModel.resourceList = memo.resources.filter { !$0.softDeleted }.sorted { $0.createdAt > $1.createdAt }
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                focused = true
-            }
+            restoreDraft()
+        }
+        .task {
+            focused = true
+        }
+        .onChange(of: currentDraft) { _, _ in
+            persistDraft()
         }
         .onChange(of: text) { oldValue, newValue in
             applyAutoListContinuationIfNeeded(oldValue: oldValue, newValue: newValue)
@@ -139,14 +187,20 @@ public struct MemoEditor: View {
             }
         }
         .onDisappear {
-            if memo == nil {
-                draft = text
-            }
+            persistDraft()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-            if memo == nil {
-                draft = text
+            persistDraft()
+        }
+        .confirmationDialog("input.unsaved.title", isPresented: $showingCloseConfirmation, titleVisibility: .visible) {
+            Button("input.save") { Task { try await saveMemo() } }
+                .disabled(!canSave)
+            Button("input.discard", role: .destructive) {
+                finished = true
+                draftStore?.clear()
+                dismiss()
             }
+            Button("input.keep-editing", role: .cancel) {}
         }
         .toast(isPresenting: $showingErrorToast, alertType: .systemImage("xmark.circle", submitError?.localizedDescription))
         .navigationBarTitleDisplayMode(.inline)
@@ -154,10 +208,11 @@ public struct MemoEditor: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
-                    dismiss()
+                    closeEditor()
                 } label: {
                     Text("input.close")
                 }
+                .disabled(isBusy)
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -168,7 +223,7 @@ public struct MemoEditor: View {
                 } label: {
                     Label("input.save", systemImage: "paperplane")
                 }
-                .disabled((text.isEmpty && viewModel.resourceList.isEmpty))
+                .disabled(!canSave)
             }
         }
         .fullScreenCover(isPresented: $showingImagePicker, content: {
@@ -226,6 +281,11 @@ public struct MemoEditor: View {
     }
 
     private func upload(images: [PhotosPickerItem]) async throws {
+        importingCount += 1
+        defer {
+            importingCount -= 1
+            persistDraft()
+        }
         do {
             for item in images {
                 let contentType = item.supportedContentTypes.first
@@ -245,6 +305,11 @@ public struct MemoEditor: View {
     }
 
     private func upload(images: [UIImage]) async throws {
+        importingCount += 1
+        defer {
+            importingCount -= 1
+            persistDraft()
+        }
         do {
             for image in images {
                 guard let data = image.jpegData(compressionQuality: 1.0) else { continue }
@@ -258,6 +323,11 @@ public struct MemoEditor: View {
     }
 
     private func upload(fileURL: URL) async throws {
+        importingCount += 1
+        defer {
+            importingCount -= 1
+            persistDraft()
+        }
         do {
             try await viewModel.upload(fileURL: fileURL)
             submitError = nil
@@ -269,6 +339,11 @@ public struct MemoEditor: View {
 
 #if canImport(VisionKit) && os(iOS) && !targetEnvironment(macCatalyst)
     private func handleDocumentScan(_ result: DocumentScanner.Result) async {
+        importingCount += 1
+        defer {
+            importingCount -= 1
+            persistDraft()
+        }
         showingDocumentScanner = false
 
         switch result {
@@ -306,6 +381,9 @@ public struct MemoEditor: View {
     }
 
     private func saveMemo() async throws {
+        guard canSave else { return }
+        isSaving = true
+        defer { isSaving = false }
         let tags = viewModel.extractCustomTags(from: text)
 
         do {
@@ -314,8 +392,9 @@ public struct MemoEditor: View {
                 try await actions.editMemo(memo.id, text, viewModel.visibility, resourceIds, tags)
             } else {
                 try await actions.createMemo(text, viewModel.visibility, resourceIds, tags)
-                draft = ""
             }
+            finished = true
+            draftStore?.clear()
             text = ""
             selection = nil
             dismiss()
@@ -542,6 +621,11 @@ public struct MemoEditor: View {
     }
 
     private func insertJournalingSuggestion(_ suggestion: JournalingSuggestion) async {
+        importingCount += 1
+        defer {
+            importingCount -= 1
+            persistDraft()
+        }
         await attachJournalingSuggestionAssets(from: suggestion)
         let snippet = await journalingSuggestionSnippet(from: suggestion)
         guard !snippet.isEmpty else { return }

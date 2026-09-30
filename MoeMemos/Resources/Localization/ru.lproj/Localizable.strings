@@ -130,3 +130,33 @@
 "whatsnew.feature.attachments.title" = "Улучшенные вложения";
 "whatsnew.feature.attachments.subtitle" = "Сохраняйте вложения файлов, а не только изображения.";
 "whatsnew.action.continue" = "Продолжить";
+
+/* Capture and accessibility polish */
+"input.unsaved.title" = "Сохранить изменения?";
+"input.discard" = "Отменить изменения";
+"input.keep-editing" = "Продолжить редактирование";
+"input.saving" = "Сохранение…";
+"input.importing" = "Импорт вложений…";
+"input.memo-content" = "Текст заметки";
+"common.load-failed" = "Не удалось загрузить";
+"common.retry" = "Повторить";
+"common.loading" = "Загрузка…";
+"search.no-results" = "Ничего не найдено";
+"search.clear" = "Очистить поиск";
+"memo.tag.empty" = "Нет заметок с этим тегом";
+"memo.empty.description" = "Запишите мысль, идею или момент.";
+"memo.tag.empty.description" = "Добавьте этот тег к заметке, чтобы увидеть её здесь.";
+"input.insert-tag" = "Вставить тег";
+"input.toggle-checklist" = "Переключить список задач";
+"input.journaling" = "Предложения для дневника";
+"input.photos" = "Выбрать фото или видео";
+"input.camera" = "Сделать фото";
+"input.scan" = "Сканировать документ";
+"input.files" = "Прикрепить файл";
+"memo.checklist-item" = "Пункт списка задач";
+"memo.checked" = "Отмечено";
+"memo.unchecked" = "Не отмечено";
+"memo.actions" = "Действия с заметкой";
+"sync.in-progress" = "Синхронизация";
+"sync.action" = "Синхронизировать сейчас";
+"input.remove-attachment" = "Убрать вложение";

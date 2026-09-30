@@ -132,3 +132,33 @@
 "whatsnew.feature.attachments.title" = "Améliorations des pièces jointes";
 "whatsnew.feature.attachments.subtitle" = "Enregistrez des pièces jointes au-delà des images.";
 "whatsnew.action.continue" = "Continuer";
+
+/* Capture and accessibility polish */
+"input.unsaved.title" = "Enregistrer les modifications ?";
+"input.discard" = "Ignorer les modifications";
+"input.keep-editing" = "Continuer la modification";
+"input.saving" = "Enregistrement…";
+"input.importing" = "Importation des pièces jointes…";
+"input.memo-content" = "Contenu du mémo";
+"common.load-failed" = "Chargement impossible";
+"common.retry" = "Réessayer";
+"common.loading" = "Chargement…";
+"search.no-results" = "Aucun résultat";
+"search.clear" = "Effacer la recherche";
+"memo.tag.empty" = "Aucun mémo avec ce tag";
+"memo.empty.description" = "Notez une pensée, une idée ou un moment.";
+"memo.tag.empty.description" = "Ajoutez ce tag à un mémo pour le retrouver ici.";
+"input.insert-tag" = "Insérer un tag";
+"input.toggle-checklist" = "Basculer la liste de tâches";
+"input.journaling" = "Suggestions de journal";
+"input.photos" = "Choisir des photos ou vidéos";
+"input.camera" = "Prendre une photo";
+"input.scan" = "Scanner un document";
+"input.files" = "Joindre un fichier";
+"memo.checklist-item" = "Élément de liste";
+"memo.checked" = "Coché";
+"memo.unchecked" = "Non coché";
+"memo.actions" = "Actions du mémo";
+"sync.in-progress" = "Synchronisation en cours";
+"sync.action" = "Synchroniser maintenant";
+"input.remove-attachment" = "Retirer la pièce jointe";

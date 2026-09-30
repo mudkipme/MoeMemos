@@ -130,3 +130,33 @@
 "whatsnew.feature.attachments.title" = "添付機能の強化";
 "whatsnew.feature.attachments.subtitle" = "画像以外のファイル添付も保存できます。";
 "whatsnew.action.continue" = "続ける";
+
+/* Capture and accessibility polish */
+"input.unsaved.title" = "変更を保存しますか？";
+"input.discard" = "変更を破棄";
+"input.keep-editing" = "編集を続ける";
+"input.saving" = "保存中…";
+"input.importing" = "添付ファイルを読み込み中…";
+"input.memo-content" = "メモの内容";
+"common.load-failed" = "読み込めませんでした";
+"common.retry" = "再試行";
+"common.loading" = "読み込み中…";
+"search.no-results" = "検索結果なし";
+"search.clear" = "検索をクリア";
+"memo.tag.empty" = "このタグのメモはありません";
+"memo.empty.description" = "思いついたことや今の気持ちを書き留めましょう。";
+"memo.tag.empty.description" = "メモにこのタグを付けると、ここに表示されます。";
+"input.insert-tag" = "タグを挿入";
+"input.toggle-checklist" = "チェックリストを切り替え";
+"input.journaling" = "ジャーナルの提案";
+"input.photos" = "写真やビデオを選択";
+"input.camera" = "写真を撮影";
+"input.scan" = "書類をスキャン";
+"input.files" = "ファイルを添付";
+"memo.checklist-item" = "チェックリスト項目";
+"memo.checked" = "チェック済み";
+"memo.unchecked" = "未チェック";
+"memo.actions" = "メモの操作";
+"sync.in-progress" = "同期中";
+"sync.action" = "今すぐ同期";
+"input.remove-attachment" = "添付ファイルを外す";

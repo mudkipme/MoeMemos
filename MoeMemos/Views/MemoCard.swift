@@ -53,7 +53,8 @@ struct MemoCard: View {
                 Menu {
                     normalMenu()
                 } label: {
-                    Image(systemName: "ellipsis")
+                    Label("memo.actions", systemImage: "ellipsis")
+                        .labelStyle(.iconOnly)
                         .padding([.leading, .top, .bottom], 10)
                 }
             }

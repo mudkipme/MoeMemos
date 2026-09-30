@@ -130,3 +130,33 @@
 "whatsnew.feature.attachments.title" = "附件功能升級";
 "whatsnew.feature.attachments.subtitle" = "支援儲存圖片以外的檔案附件。";
 "whatsnew.action.continue" = "繼續";
+
+/* Capture and accessibility polish */
+"input.unsaved.title" = "儲存變更？";
+"input.discard" = "捨棄變更";
+"input.keep-editing" = "繼續編輯";
+"input.saving" = "正在儲存…";
+"input.importing" = "正在匯入附件…";
+"input.memo-content" = "筆記內容";
+"common.load-failed" = "無法載入";
+"common.retry" = "重試";
+"common.loading" = "正在載入…";
+"search.no-results" = "沒有搜尋結果";
+"search.clear" = "清除搜尋";
+"memo.tag.empty" = "此標籤下暫無筆記";
+"memo.empty.description" = "記下想法、靈感或此刻。";
+"memo.tag.empty.description" = "為筆記加入此標籤，即可在這裡查看。";
+"input.insert-tag" = "插入標籤";
+"input.toggle-checklist" = "切換待辦事項";
+"input.journaling" = "日誌建議";
+"input.photos" = "選擇照片或影片";
+"input.camera" = "拍照";
+"input.scan" = "掃描文件";
+"input.files" = "附加檔案";
+"memo.checklist-item" = "待辦事項";
+"memo.checked" = "已勾選";
+"memo.unchecked" = "未勾選";
+"memo.actions" = "筆記操作";
+"sync.in-progress" = "正在同步";
+"sync.action" = "立即同步";
+"input.remove-attachment" = "移除附件";
