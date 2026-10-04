@@ -25,6 +25,7 @@ public struct MemoEditor: View {
     @State private var isApplyingAutoContinuation = false
 
     @State private var focused = false
+    @State private var requestedInitialFocus = false
     @Environment(\.dismiss) private var dismiss
 
     @State private var showingPhotoPicker = false
@@ -37,6 +38,9 @@ public struct MemoEditor: View {
     @State private var availableTags: [Tag] = []
     @State private var initialDraft: MemoDraft?
     @State private var draftStore: MemoDraftStore?
+    @State private var lastPersistedDraft: MemoDraft?
+    @State private var draftFeedback: String?
+    @State private var draftSaveFailed = false
     @State private var finished = false
     @State private var isSaving = false
     @State private var importingCount = 0
@@ -52,7 +56,7 @@ public struct MemoEditor: View {
     }
 
     private var isBusy: Bool { isSaving || importingCount > 0 }
-    private var canSave: Bool { !isBusy && (!text.isEmpty || !viewModel.resourceList.isEmpty) }
+    private var canSave: Bool { !isBusy && currentDraft.hasContent }
 
     private func restoreDraft() {
         guard draftStore == nil, let accountKey = accountManager.currentAccount?.key else { return }
@@ -67,7 +71,8 @@ public struct MemoEditor: View {
             visibility: memo?.visibility ?? userState.currentUser?.defaultVisibility ?? .private,
             resourceIDs: resources.map(\.id)
         )
-        let restored = store.load(defaultVisibility: original.visibility) ?? original
+        let savedDraft = store.load(defaultVisibility: original.visibility)
+        let restored = savedDraft ?? original
         text = restored.text
         viewModel.visibility = restored.visibility
         viewModel.resourceList = restored.resourceIDs.compactMap { id in
@@ -78,19 +83,36 @@ public struct MemoEditor: View {
         selection = .init(insertionPoint: text.endIndex)
         initialDraft = original
         draftStore = store
+        if savedDraft == currentDraft, (memo == nil ? currentDraft.hasContent : currentDraft != original) {
+            lastPersistedDraft = currentDraft
+            draftFeedback = memo == nil ? "input.draft-restored" : "input.unsaved-changes-restored"
+        }
     }
 
-    private func persistDraft() {
-        guard !finished, let draftStore else { return }
-        if memo != nil && currentDraft == initialDraft {
+    @discardableResult
+    private func persistDraft() -> Bool {
+        guard !finished else { return true }
+        guard let draftStore else { return !currentDraft.hasContent }
+        if (memo != nil && currentDraft == initialDraft) || (memo == nil && !currentDraft.hasContent) {
             draftStore.clear()
-            return
+            lastPersistedDraft = currentDraft
+            draftFeedback = nil
+            draftSaveFailed = false
+            return true
         }
+        guard currentDraft != lastPersistedDraft || draftSaveFailed else { return true }
         do {
             try draftStore.save(currentDraft)
+            lastPersistedDraft = currentDraft
+            draftFeedback = memo == nil ? "input.draft-saved" : nil
+            draftSaveFailed = false
+            return true
         } catch {
+            draftFeedback = "input.draft-save-failed"
+            draftSaveFailed = true
             submitError = error
             showingErrorToast = true
+            return false
         }
     }
 
@@ -99,8 +121,10 @@ public struct MemoEditor: View {
         if memo != nil && currentDraft != initialDraft {
             showingCloseConfirmation = true
         } else {
-            persistDraft()
-            dismiss()
+            if persistDraft() {
+                focused = false
+                dismiss()
+            }
         }
     }
 
@@ -110,27 +134,35 @@ public struct MemoEditor: View {
             tags: availableTags,
             onInsertTag: { tag in
                 insert(tag: tag)
+                focused = true
             },
             onToggleTodo: {
                 toggleTodoItem()
+                focused = true
             },
             onPickJournalingSuggestion: {
+                focused = false
                 showingJournalingSuggestionsPicker = true
             },
             supportsJournalingSuggestions: supportsJournalingSuggestions,
             onPickPhotos: {
+                focused = false
                 showingPhotoPicker = true
             },
             onPickCamera: {
+                focused = false
                 showingImagePicker = true
             },
             supportsDocumentScanning: supportsDocumentScanning,
             onScanDocument: {
+                focused = false
                 showingDocumentScanner = true
             },
             onPickFiles: {
+                focused = false
                 showingFilePicker = true
-            }
+            },
+            isFocused: $focused
         )
     }
 
@@ -141,7 +173,7 @@ public struct MemoEditor: View {
                 privacyMenu
                     .disabled(isSaving)
                     .padding(.horizontal)
-                TextView(text: $text, selection: $selection, isFocused: focused)
+                TextView(text: $text, selection: $selection, isFocused: $focused)
                     .disabled(isSaving)
                     .accessibilityLabel(Text("input.memo-content"))
                     .overlay(alignment: .topLeading) {
@@ -152,6 +184,15 @@ public struct MemoEditor: View {
                         }
                     }
                     .padding(.horizontal)
+                if let draftFeedback, !isBusy {
+                    Label(
+                        LocalizedStringKey(draftFeedback),
+                        systemImage: draftSaveFailed ? "exclamationmark.triangle" : "checkmark.circle"
+                    )
+                    .font(.footnote)
+                    .foregroundStyle(draftSaveFailed ? Color.red : Color.secondary)
+                    .padding(.horizontal)
+                }
                 if isBusy {
                     ProgressView(LocalizedStringKey(isSaving ? "input.saving" : "input.importing"))
                         .font(.footnote)
@@ -170,6 +211,8 @@ public struct MemoEditor: View {
             restoreDraft()
         }
         .task {
+            guard !requestedInitialFocus else { return }
+            requestedInitialFocus = true
             focused = true
         }
         .onChange(of: currentDraft) { _, _ in
@@ -205,7 +248,7 @@ public struct MemoEditor: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(memo == nil ? NSLocalizedString("input.compose", comment: "Compose") : NSLocalizedString("input.edit", comment: "Edit"))
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .cancellationAction) {
                 Button {
                     closeEditor()
                 } label: {
@@ -214,15 +257,12 @@ public struct MemoEditor: View {
                 .disabled(isBusy)
             }
 
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    Task {
-                        try await saveMemo()
-                    }
-                } label: {
-                    Label("input.save", systemImage: "paperplane")
+            ToolbarItem(placement: .confirmationAction) {
+                if #available(iOS 26, *) {
+                    saveButton.buttonStyle(.glassProminent)
+                } else {
+                    saveButton.fontWeight(.semibold)
                 }
-                .disabled(!canSave)
             }
         }
         .fullScreenCover(isPresented: $showingImagePicker, content: {
@@ -243,7 +283,15 @@ public struct MemoEditor: View {
             .edgesIgnoringSafeArea(.all)
         }
 #endif
-        .interactiveDismissDisabled()
+        .interactiveDismissDisabled(isBusy || draftSaveFailed || (memo != nil && currentDraft != initialDraft))
+    }
+
+    private var saveButton: some View {
+        Button("input.save") {
+            Task { try await saveMemo() }
+        }
+        .keyboardShortcut(.return, modifiers: .command)
+        .disabled(!canSave)
     }
 
     public var body: some View {
@@ -381,6 +429,8 @@ public struct MemoEditor: View {
 
     private func saveMemo() async throws {
         guard canSave else { return }
+        let wasFocused = focused
+        focused = false
         isSaving = true
         defer { isSaving = false }
         let tags = viewModel.extractCustomTags(from: text)
@@ -399,6 +449,7 @@ public struct MemoEditor: View {
             dismiss()
             submitError = nil
         } catch {
+            focused = wasFocused
             submitError = error
             showingErrorToast = true
         }
@@ -451,7 +502,7 @@ public struct MemoEditor: View {
     }
 
     private func insert(tag: Tag?) {
-        let tagText = "#\(tag?.name ?? "") "
+        let tagText = tag.map { "#\($0.name) " } ?? "#"
         insertAtSelection(tagText)
     }
 

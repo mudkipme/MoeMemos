@@ -165,3 +165,14 @@
 "sync.in-progress" = "正在同步";
 "sync.action" = "立即同步";
 "input.remove-attachment" = "移除附件";
+
+// Editor tools and draft feedback
+"input.attach" = "添加附件";
+"input.new-tag" = "新标签";
+"input.hide-keyboard" = "收起键盘";
+"input.show-keyboard" = "显示键盘";
+"input.draft-saved" = "草稿已保存在此设备上";
+"input.draft-restored" = "已恢复草稿";
+"input.unsaved-changes-restored" = "已恢复未保存的更改";
+"input.draft-save-failed" = "无法保存草稿";
+"input.continue-draft" = "继续编辑草稿";

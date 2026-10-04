@@ -165,3 +165,14 @@
 "sync.in-progress" = "同期中";
 "sync.action" = "今すぐ同期";
 "input.remove-attachment" = "添付ファイルを外す";
+
+// Editor tools and draft feedback
+"input.attach" = "添付ファイルを追加";
+"input.new-tag" = "新しいタグ";
+"input.hide-keyboard" = "キーボードを隠す";
+"input.show-keyboard" = "キーボードを表示";
+"input.draft-saved" = "下書きをこのデバイスに保存しました";
+"input.draft-restored" = "下書きを復元しました";
+"input.unsaved-changes-restored" = "未保存の変更を復元しました";
+"input.draft-save-failed" = "下書きを保存できませんでした";
+"input.continue-draft" = "下書きを続ける";

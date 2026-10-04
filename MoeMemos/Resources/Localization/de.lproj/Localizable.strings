@@ -165,3 +165,14 @@
 "sync.in-progress" = "Synchronisierung läuft";
 "sync.action" = "Jetzt synchronisieren";
 "input.remove-attachment" = "Anhang entfernen";
+
+// Editor tools and draft feedback
+"input.attach" = "Anhang hinzufügen";
+"input.new-tag" = "Neues Tag";
+"input.hide-keyboard" = "Tastatur ausblenden";
+"input.show-keyboard" = "Tastatur einblenden";
+"input.draft-saved" = "Entwurf auf diesem Gerät gespeichert";
+"input.draft-restored" = "Entwurf wiederhergestellt";
+"input.unsaved-changes-restored" = "Nicht gespeicherte Änderungen wiederhergestellt";
+"input.draft-save-failed" = "Entwurf konnte nicht gespeichert werden";
+"input.continue-draft" = "Entwurf fortsetzen";

@@ -165,3 +165,14 @@
 "sync.in-progress" = "Синхронизация";
 "sync.action" = "Синхронизировать сейчас";
 "input.remove-attachment" = "Убрать вложение";
+
+// Editor tools and draft feedback
+"input.attach" = "Добавить вложение";
+"input.new-tag" = "Новый тег";
+"input.hide-keyboard" = "Скрыть клавиатуру";
+"input.show-keyboard" = "Показать клавиатуру";
+"input.draft-saved" = "Черновик сохранён на этом устройстве";
+"input.draft-restored" = "Черновик восстановлен";
+"input.unsaved-changes-restored" = "Несохранённые изменения восстановлены";
+"input.draft-save-failed" = "Не удалось сохранить черновик";
+"input.continue-draft" = "Продолжить черновик";
