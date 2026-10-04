@@ -28,14 +28,14 @@ struct MemoEditorResourceView: View {
 
                 if !attachmentResources.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack {
+                        HStack {
                             ForEach(attachmentResources, id: \.id) { item in
                                 Attachment(resource: item, resourceManager: viewModel)
                                     .frame(maxWidth: 200, alignment: .leading)
                             }
                         }
                     }
-                    .frame(height: 32)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding([.leading, .trailing, .bottom])
                 }
             }

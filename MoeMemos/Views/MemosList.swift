@@ -10,6 +10,7 @@ import Account
 import Models
 import Env
 import MemoKit
+import DesignSystem
 
 struct MemosList: View {
     let tag: Tag?
@@ -129,6 +130,7 @@ struct MemosList: View {
             }
             if #available(iOS 26.0, *) {
                 DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                    .prioritizeVisibility()
                 ToolbarSpacer(.flexible, placement: .bottomBar)
                 ToolbarItem(placement: .bottomBar) {
                     Button {
@@ -137,6 +139,7 @@ struct MemosList: View {
                         Label(LocalizedStringKey(hasDraft ? "input.continue-draft" : "input.compose"), systemImage: "square.and.pencil")
                     }
                 }
+                .prioritizeVisibility()
             }
         }
         .searchable(text: $searchString)
