@@ -176,3 +176,17 @@
 "input.unsaved-changes-restored" = "Unsaved changes restored";
 "input.draft-save-failed" = "Couldn’t save draft";
 "input.continue-draft" = "Continue draft";
+
+// Local backup and restore
+"account.local-backup" = "Backup & Restore";
+"account.local-import-button" = "Import local backup";
+"account.local-restore-button" = "Restore";
+"account.local-backup-description" = "Back up local memos and attachments in a ZIP compatible with Moe Memos for iOS and Android.";
+"account.local-import-preparing" = "Preparing backup preview…";
+"account.local-import-restoring" = "Restoring backup…";
+"account.local-import-preview" = "This backup contains %d memo(s) and %d attachment(s).";
+"account.local-import-additive" = "Restore adds data to the local account. Existing memos are kept and matching IDs are skipped.";
+"account.local-import-existing" = "%d memo(s) already exist and will be skipped.";
+"account.local-import-legacy" = "This is a legacy export. Dates are inferred using the current time zone. Original IDs, attachment names, visibility, pinned and archived state may be unavailable. Reimporting a legacy export can duplicate memos created before backup IDs were available.";
+"account.local-import-ignored" = "%d unrelated file(s) will be ignored.";
+"account.local-import-result" = "Restored %d memo(s) and %d attachment(s). Skipped %d existing memo(s) and %d attachment(s).";

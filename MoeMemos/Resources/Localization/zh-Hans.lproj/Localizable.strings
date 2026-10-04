@@ -176,3 +176,17 @@
 "input.unsaved-changes-restored" = "已恢复未保存的更改";
 "input.draft-save-failed" = "无法保存草稿";
 "input.continue-draft" = "继续编辑草稿";
+
+// Local backup and restore
+"account.local-backup" = "备份与恢复";
+"account.local-import-button" = "导入本地备份";
+"account.local-restore-button" = "恢复";
+"account.local-backup-description" = "将本地 MEMO 和附件备份为与 Moe Memos iOS 版和 Android 版兼容的 ZIP 文件。";
+"account.local-import-preparing" = "正在准备备份预览…";
+"account.local-import-restoring" = "正在恢复备份…";
+"account.local-import-preview" = "此备份包含 %d 条 MEMO 和 %d 个附件。";
+"account.local-import-additive" = "恢复会向本地账号添加数据。现有 MEMO 将保留，标识相同的项目将跳过。";
+"account.local-import-existing" = "已有 %d 条 MEMO，将跳过。";
+"account.local-import-legacy" = "这是旧版导出文件。日期将根据当前时区推断，可能无法恢复原始标识、附件名称、可见性、置顶和归档状态。再次导入旧版文件可能会重复添加尚无备份标识的 MEMO。";
+"account.local-import-ignored" = "将忽略 %d 个无关文件。";
+"account.local-import-result" = "已恢复 %d 条 MEMO 和 %d 个附件。已跳过 %d 条现有 MEMO 和 %d 个附件。";

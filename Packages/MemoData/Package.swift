@@ -21,6 +21,6 @@ let package = Package(
                 .product(name: "KeychainSwift", package: "keychain-swift"),
                 .product(name: "ZIPFoundation", package: "ZIPFoundation")
         ]),
-        .testTarget(name: "MemoDataTests", dependencies: ["MemoData"])
+        .testTarget(name: "MemoDataTests", dependencies: ["MemoData"], resources: [.copy("Fixtures")])
     ]
 )

@@ -101,7 +101,7 @@ enum ResourceFileStore {
         return root.appendingPathComponent(safeAccount, isDirectory: true)
     }
 
-    private static func resourceFileURL(filename: String, mimeType: String, accountKey: String, resourceId: String) throws -> URL {
+    static func resourceFileURL(filename: String, mimeType: String, accountKey: String, resourceId: String) throws -> URL {
         let directory = try resourcesDirectory(accountKey: accountKey)
         let pathExtension = resolveExtension(filename: filename, mimeType: mimeType)
         let fileName = pathExtension.isEmpty ? resourceId : "\(resourceId).\(pathExtension)"

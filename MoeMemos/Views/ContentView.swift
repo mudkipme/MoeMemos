@@ -13,6 +13,7 @@ import Account
 import Factory
 import Env
 import WhatsNewKit
+import WidgetKit
 
 @MainActor
 struct ContentView: View {
@@ -46,6 +47,14 @@ struct ContentView: View {
                 try? await memosViewModel.loadMemos()
                 try? await memosViewModel.loadTags()
                 presentWhatsNewIfNeeded()
+            }
+            .onChange(of: accountManager.localRestoreRevision) {
+                WidgetCenter.shared.reloadAllTimelines()
+                guard accountManager.currentAccount == .local else { return }
+                Task {
+                    try? await memosViewModel.loadMemos()
+                    try? await memosViewModel.loadTags()
+                }
             }
             .modelContext(appInfo.modelContext)
             .withSheetDestinations(sheetDestinations: $appPath.presentedSheet)
