@@ -29,10 +29,35 @@ struct MemosList: View {
         let isFirstLoad = !memosViewModel.inited && memosViewModel.memoList.isEmpty
         
         ZStack(alignment: .bottomTrailing) {
-            if isFirstLoad {
-                Color.clear
+            if let error = memosViewModel.loadError, memosViewModel.memoList.isEmpty {
+                ContentUnavailableView {
+                    Label("common.load-failed", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text(error)
+                } actions: {
+                    Button("common.retry") { Task { try? await memosViewModel.loadMemos() } }
+                }
+            } else if isFirstLoad {
+                ProgressView("common.loading")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if filteredMemoList.isEmpty {
-                ContentUnavailableView("memo.memos.empty", systemImage: "note.text")
+                if !searchString.isEmpty {
+                    ContentUnavailableView {
+                        Label("search.no-results", systemImage: "magnifyingglass")
+                    } description: {
+                        Text(searchString)
+                    } actions: {
+                        Button("search.clear") { searchString = "" }
+                    }
+                } else {
+                    ContentUnavailableView {
+                        Label(LocalizedStringKey(tag == nil ? "memo.memos.empty" : "memo.tag.empty"), systemImage: "note.text")
+                    } description: {
+                        Text(LocalizedStringKey(tag == nil ? "memo.empty.description" : "memo.tag.empty.description"))
+                    } actions: {
+                        Button("input.compose") { appPath.presentedSheet = .newMemo }
+                    }
+                }
             } else {
                 List(filteredMemoList, id: \.id) { item in
                     Section {
@@ -65,6 +90,7 @@ struct MemosList: View {
                     .shadow(radius: 1)
                     .frame(width: 60, height: 60)
                 }
+                .accessibilityLabel(Text("input.compose"))
                 .padding(20)
             }
         }
@@ -83,7 +109,7 @@ struct MemosList: View {
                     Button {
                         appPath.presentedSheet = .newMemo
                     } label: {
-                        Label("input.save", systemImage: "plus")
+                        Label("input.compose", systemImage: "plus")
                     }
                 }
             }

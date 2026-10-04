@@ -24,54 +24,62 @@ struct MemoEditorToolbar: View {
                         }
                     }
                 } label: {
-                    Image(systemName: "number")
+                    Label("input.insert-tag", systemImage: "number")
+                        .labelStyle(.iconOnly)
                 }
             } else {
                 Button {
                     onInsertTag(nil)
                 } label: {
-                    Image(systemName: "number")
+                    Label("input.insert-tag", systemImage: "number")
+                        .labelStyle(.iconOnly)
                 }
             }
 
             Button {
                 onToggleTodo()
             } label: {
-                Image(systemName: "checkmark.square")
+                Label("input.toggle-checklist", systemImage: "checkmark.square")
+                        .labelStyle(.iconOnly)
             }
 
             if supportsJournalingSuggestions {
                 Button {
                     onPickJournalingSuggestion()
                 } label: {
-                    Image(systemName: "wand.and.sparkles")
+                    Label("input.journaling", systemImage: "wand.and.sparkles")
+                        .labelStyle(.iconOnly)
                 }
             }
 
             Button {
                 onPickPhotos()
             } label: {
-                Image(systemName: "photo.on.rectangle")
+                Label("input.photos", systemImage: "photo.on.rectangle")
+                        .labelStyle(.iconOnly)
             }
 
             Button {
                 onPickCamera()
             } label: {
-                Image(systemName: "camera")
+                Label("input.camera", systemImage: "camera")
+                        .labelStyle(.iconOnly)
             }
 
             if supportsDocumentScanning {
                 Button {
                     onScanDocument()
                 } label: {
-                    Image(systemName: "doc.viewfinder")
+                    Label("input.scan", systemImage: "doc.viewfinder")
+                        .labelStyle(.iconOnly)
                 }
             }
 
             Button {
                 onPickFiles()
             } label: {
-                Image(systemName: "doc")
+                Label("input.files", systemImage: "doc")
+                        .labelStyle(.iconOnly)
             }
             
             Spacer()

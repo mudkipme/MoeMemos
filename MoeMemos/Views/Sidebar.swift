@@ -64,7 +64,8 @@ struct Sidebar: View {
             Button(action: {
                 selection = .settings
             }) {
-                Image(systemName: "ellipsis")
+                Label("settings", systemImage: "ellipsis")
+                    .labelStyle(.iconOnly)
             }
         }
         .navigationTitle(userState.currentUser?.nickname ?? NSLocalizedString("memo.memos", comment: "Memos"))

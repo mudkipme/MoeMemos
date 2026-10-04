@@ -21,6 +21,8 @@ fileprivate enum ResourceSection: String, CaseIterable, Identifiable {
 
 struct Resources: View {
     @State private var viewModel = ResourceListViewModel()
+    @State private var loading = true
+    @State private var loadError: String?
     @State private var section: ResourceSection = .image
 
     private var mediaResources: [StoredResource] {
@@ -41,7 +43,18 @@ struct Resources: View {
             .pickerStyle(.segmented)
             .padding()
 
-            if section == .image {
+            if loading && viewModel.resourceList.isEmpty {
+                ProgressView("common.loading")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let loadError, viewModel.resourceList.isEmpty {
+                ContentUnavailableView {
+                    Label("common.load-failed", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text(loadError)
+                } actions: {
+                    Button("common.retry") { Task { await loadContent() } }
+                }
+            } else if section == .image {
                 if mediaResources.isEmpty {
                     ContentUnavailableView("resources.empty.images", systemImage: "photo.on.rectangle")
                 } else {
@@ -76,11 +89,19 @@ struct Resources: View {
         }
         .navigationTitle("resources")
         .task {
-            do {
-                try await viewModel.loadResources()
-            } catch {
-                print(error)
-            }
+            await loadContent()
         }
     }
+
+    private func loadContent() async {
+        loading = true
+        loadError = nil
+        defer { loading = false }
+        do {
+            try await viewModel.loadResources()
+        } catch {
+            loadError = error.localizedDescription
+        }
+    }
+
 }
