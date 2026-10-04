@@ -34,7 +34,7 @@
 		193AA89B28CCD34A00FF7EB6 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193AA89A28CCD34A00FF7EB6 /* Resources.swift */; };
 		193DE92328C5E267002651E0 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92228C5E267002651E0 /* Settings.swift */; };
 		193DE93028C65104002651E0 /* MemosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92F28C65104002651E0 /* MemosViewModel.swift */; };
-		1948CCAD2996B3FA00AB1986 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.strings */; };
+		1948CCAD2996B3FA00AB1986 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.xcstrings */; };
 		194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B273028C3973400A48675 /* MoeMemosApp.swift */; };
 		194B273328C3973400A48675 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B273228C3973400A48675 /* ContentView.swift */; };
 		194B273528C3973600A48675 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 194B273428C3973600A48675 /* Assets.xcassets */; };
@@ -58,8 +58,8 @@
 		199A657F28C47D7C00C39994 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199A657E28C47D7C00C39994 /* Sidebar.swift */; };
 		199C6CC62B009F19005C6921 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 199C6CC52B009F19005C6921 /* Models */; };
 		199C6CC82B009F2F005C6921 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 199C6CC72B009F2F005C6921 /* Models */; };
-		19B3B79529CEB9C5007E2997 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.strings */; };
-		19B3B79629CEBCC0007E2997 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.strings */; };
+		19B3B79529CEB9C5007E2997 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.xcstrings */; };
+		19B3B79629CEBCC0007E2997 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.xcstrings */; };
 		19B5CFFF2939BC2F00140294 /* Memo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F31BFA28C3E9B2000C5207 /* Memo.swift */; };
 		19C569A42912493A00745F9D /* ArchivedMemoListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */; };
 		19C569AC29125C0700745F9D /* ResourceListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19C569AB29125C0700745F9D /* ResourceListViewModel.swift */; };
@@ -137,9 +137,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		190322DC2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MainInterface.strings; sourceTree = "<group>"; };
-		190322DE2A82929300CAA50D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
-		19113B8B2C1D95B700365C05 /* Env */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Env; path = Packages/Env; sourceTree = "<group>"; };
 		191339AC291D7288001F2B2E /* MoeMemosWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MoeMemosWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		191339AE291D7288001F2B2E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		191339B0291D7288001F2B2E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -149,14 +146,10 @@
 		191339BA291D7289001F2B2E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		191339D3291D7F13001F2B2E /* MoeMemosWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MoeMemosWidgetsExtension.entitlements; sourceTree = "<group>"; };
 		191339DB291D8F15001F2B2E /* MemoryWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemoryWidget.swift; sourceTree = "<group>"; };
-		191489EC2B0082C700577BD1 /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Models; path = Packages/Models; sourceTree = "<group>"; };
-		191489F22B00837D00577BD1 /* Account */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Account; path = Packages/Account; sourceTree = "<group>"; };
 		1919FBE229CF6BDD00FEF570 /* ArchivedMemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemoCard.swift; sourceTree = "<group>"; };
 		1919FBE429CF738300FEF570 /* ExploreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewModel.swift; sourceTree = "<group>"; };
 		1919FBE629CF77C900FEF570 /* ExploreMemoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreMemoCard.swift; sourceTree = "<group>"; };
 		1919FBE829CF78BE00FEF570 /* Explore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Explore.swift; sourceTree = "<group>"; };
-		191C49ED2B2D79A40097B98E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
-		191C49EE2B2D7DAB0097B98E /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
 		192A65A82CF4C45100CEDB6B /* QuickMemoLockWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoLockWidget.swift; sourceTree = "<group>"; };
 		192A65AA2CF4C47300CEDB6B /* QuickMemoLockWidgetIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoLockWidgetIntent.swift; sourceTree = "<group>"; };
 		192DF0F228C78BAD0077E785 /* ArchivedMemosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemosList.swift; sourceTree = "<group>"; };
@@ -165,11 +158,7 @@
 		193DE92228C5E267002651E0 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		193DE92F28C65104002651E0 /* MemosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosViewModel.swift; sourceTree = "<group>"; };
 		193F04E129CCBA320010E3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		1948CCAE2996B3FA00AB1986 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		1948CCB12996BB6C00AB1986 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		1948CCB32996BEEA00AB1986 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		1948CCB92996BFDF00AB1986 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MainInterface.strings"; sourceTree = "<group>"; };
-		1948CCBA2996BFE200AB1986 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/MainInterface.strings"; sourceTree = "<group>"; };
+		1948CCAF2996B3FA00AB1986 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		194B272D28C3973400A48675 /* MoeMemos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoeMemos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		194B273028C3973400A48675 /* MoeMemosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosApp.swift; sourceTree = "<group>"; };
 		194B273228C3973400A48675 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -189,15 +178,11 @@
 		199A657A28C474BA00C39994 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		199A657C28C4761100C39994 /* Usage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Usage.swift; sourceTree = "<group>"; };
 		199A657E28C47D7C00C39994 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
-		199C6CC92B00A7DB005C6921 /* Services */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Services; path = Packages/Services; sourceTree = "<group>"; };
-		19BB8C702B83207B007BFEBF /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = DesignSystem; path = Packages/DesignSystem; sourceTree = "<group>"; };
 		19C569A32912493A00745F9D /* ArchivedMemoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedMemoListViewModel.swift; sourceTree = "<group>"; };
 		19C569AB29125C0700745F9D /* ResourceListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceListViewModel.swift; sourceTree = "<group>"; };
 		19C9975F2CF35D49009763C5 /* MemoryUpdatePeriodAppEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryUpdatePeriodAppEnum.swift; sourceTree = "<group>"; };
 		19C997602CF35D49009763C5 /* MemoryWidgetConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryWidgetConfiguration.swift; sourceTree = "<group>"; };
 		19C997612CF35D49009763C5 /* MemosGraphWidgetConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosGraphWidgetConfiguration.swift; sourceTree = "<group>"; };
-		19D0C59F2D4E0CC400E026CF /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/MainInterface.strings; sourceTree = "<group>"; };
-		19D0C5A02D4E0CC400E026CF /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		19E1C5BD28C4F6410072CEEF /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		19E29A682938FBCD00BE9C32 /* MoeMemosShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MoeMemosShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		19E29A6A2938FBCD00BE9C32 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
@@ -211,7 +196,6 @@
 		19F81CDF2CEDAE2300728439 /* QuickMemoWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMemoWidget.swift; sourceTree = "<group>"; };
 		19FC1C7B290DA47C0078A7F2 /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		19FC1C7D290DA6E90078A7F2 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
-		20B1A2C3D4E5F60718293A4D /* MemoKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = MemoKit; path = Packages/MemoKit; sourceTree = "<group>"; };
 		2A9F4C1E2D9B100100A1B2C3 /* MemoMarkdownPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoMarkdownPreprocessor.swift; sourceTree = "<group>"; };
 		2AA1B2C42F5A6B7C00D1E2F3 /* MemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoView.swift; sourceTree = "<group>"; };
 		2AC7F0B62F6D1E9A00ABCD01 /* MemoTagMarkdownPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoTagMarkdownPreprocessor.swift; sourceTree = "<group>"; };
@@ -219,10 +203,6 @@
 		2C6B0A842F8112F000A1C0DE /* SupportPurchaseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportPurchaseStore.swift; sourceTree = "<group>"; };
 		AA1000000000000000000001 /* MemoCommentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCommentsViewModel.swift; sourceTree = "<group>"; };
 		AA1000000000000000000003 /* MemoComments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoComments.swift; sourceTree = "<group>"; };
-		EE17AC762D8E12E500C01504 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainInterface.strings; sourceTree = "<group>"; };
-		EE17AC772D8E12E500C01504 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
-		AA2700000000000000020000 /* MemoData */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = MemoData; path = Packages/MemoData; sourceTree = "<group>"; };
-		AA2700000000000000020001 /* MemoSystem */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = MemoSystem; path = Packages/MemoSystem; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -336,7 +316,7 @@
 		1948CCAA2996B2B100AB1986 /* Localization */ = {
 			isa = PBXGroup;
 			children = (
-				1948CCAF2996B3FA00AB1986 /* Localizable.strings */,
+				1948CCAF2996B3FA00AB1986 /* Localizable.xcstrings */,
 			);
 			path = Localization;
 			sourceTree = "<group>";
@@ -344,14 +324,6 @@
 		194B272428C3973400A48675 = {
 			isa = PBXGroup;
 			children = (
-				191489F22B00837D00577BD1 /* Account */,
-				19BB8C702B83207B007BFEBF /* DesignSystem */,
-				19113B8B2C1D95B700365C05 /* Env */,
-				191489EC2B0082C700577BD1 /* Models */,
-				199C6CC92B00A7DB005C6921 /* Services */,
-				20B1A2C3D4E5F60718293A4D /* MemoKit */,
-				AA2700000000000000020001 /* MemoSystem */,
-				AA2700000000000000020000 /* MemoData */,
 				194C4C362BC6FCBE00076DEE /* PrivacyInfo.xcprivacy */,
 				191339AD291D7288001F2B2E /* Frameworks */,
 				194B272F28C3973400A48675 /* MoeMemos */,
@@ -589,11 +561,19 @@
 			);
 			mainGroup = 194B272428C3973400A48675;
 			packageReferences = (
+				AA2700000000000000040006 /* XCLocalSwiftPackageReference "Packages/MemoKit" */,
+				AA2700000000000000040005 /* XCLocalSwiftPackageReference "Packages/Services" */,
+				AA2700000000000000040004 /* XCLocalSwiftPackageReference "Packages/Models" */,
+				AA2700000000000000040003 /* XCLocalSwiftPackageReference "Packages/Env" */,
+				AA2700000000000000040002 /* XCLocalSwiftPackageReference "Packages/DesignSystem" */,
+				AA2700000000000000040001 /* XCLocalSwiftPackageReference "Packages/Account" */,
 				19E8665F2AB84ACA00E33521 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				1990357C2C14A55B0011B985 /* XCRemoteSwiftPackageReference "Factory" */,
 				191C67DC2F37155B00B8FD51 /* XCRemoteSwiftPackageReference "swift-markdown" */,
 				194ED5612F37184A0062EB1B /* XCRemoteSwiftPackageReference "MarkdownView" */,
 				2D41F7A62F95C10000A6B8C1 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
+				1944A2993072EA1700D1B801 /* XCLocalSwiftPackageReference "Packages/MemoSystem" */,
+				AA2700000000000000040000 /* XCLocalSwiftPackageReference "Packages/MemoData" */,
 			);
 			productRefGroup = 194B272E28C3973400A48675 /* Products */;
 			projectDirPath = "";
@@ -613,7 +593,7 @@
 			files = (
 				194C4C382BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */,
 				191339B9291D7289001F2B2E /* Assets.xcassets in Resources */,
-				19B3B79529CEB9C5007E2997 /* Localizable.strings in Resources */,
+				19B3B79529CEB9C5007E2997 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -622,7 +602,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				194B273828C3973600A48675 /* Preview Assets.xcassets in Resources */,
-				1948CCAD2996B3FA00AB1986 /* Localizable.strings in Resources */,
+				1948CCAD2996B3FA00AB1986 /* Localizable.xcstrings in Resources */,
 				194C4C372BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */,
 				194B273528C3973600A48675 /* Assets.xcassets in Resources */,
 			);
@@ -634,7 +614,7 @@
 			files = (
 				194C4C392BC6FCBE00076DEE /* PrivacyInfo.xcprivacy in Resources */,
 				19E29A6E2938FBCD00BE9C32 /* MainInterface.storyboard in Resources */,
-				19B3B79629CEBCC0007E2997 /* Localizable.strings in Resources */,
+				19B3B79629CEBCC0007E2997 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -746,30 +726,10 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		1948CCAF2996B3FA00AB1986 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1948CCAE2996B3FA00AB1986 /* en */,
-				1948CCB12996BB6C00AB1986 /* zh-Hans */,
-				1948CCB32996BEEA00AB1986 /* zh-Hant */,
-				190322DE2A82929300CAA50D /* de */,
-				191C49ED2B2D79A40097B98E /* fr */,
-				191C49EE2B2D7DAB0097B98E /* it */,
-				19D0C5A02D4E0CC400E026CF /* ja */,
-				EE17AC772D8E12E500C01504 /* ru */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
 		19E29A6C2938FBCD00BE9C32 /* MainInterface.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1948CCB92996BFDF00AB1986 /* zh-Hans */,
-				1948CCBA2996BFE200AB1986 /* zh-Hant */,
 				193F04E129CCBA320010E3BF /* Base */,
-				190322DC2A82929300CAA50D /* de */,
-				19D0C59F2D4E0CC400E026CF /* ja */,
-				EE17AC762D8E12E500C01504 /* ru */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
@@ -1154,6 +1114,41 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		1944A2993072EA1700D1B801 /* XCLocalSwiftPackageReference "Packages/MemoSystem" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/MemoSystem;
+		};
+		AA2700000000000000040000 /* XCLocalSwiftPackageReference "Packages/MemoData" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/MemoData;
+		};
+		AA2700000000000000040001 /* XCLocalSwiftPackageReference "Packages/Account" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/Account;
+		};
+		AA2700000000000000040002 /* XCLocalSwiftPackageReference "Packages/DesignSystem" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/DesignSystem;
+		};
+		AA2700000000000000040003 /* XCLocalSwiftPackageReference "Packages/Env" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/Env;
+		};
+		AA2700000000000000040004 /* XCLocalSwiftPackageReference "Packages/Models" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/Models;
+		};
+		AA2700000000000000040005 /* XCLocalSwiftPackageReference "Packages/Services" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/Services;
+		};
+		AA2700000000000000040006 /* XCLocalSwiftPackageReference "Packages/MemoKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/MemoKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		191C67DC2F37155B00B8FD51 /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1200,10 +1195,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		19113B8C2C1D97A200365C05 /* Env */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = AA2700000000000000040003 /* XCLocalSwiftPackageReference "Packages/Env" */;
 			productName = Env;
 		};
 		191489EF2B00832C00577BD1 /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = AA2700000000000000040001 /* XCLocalSwiftPackageReference "Packages/Account" */;
 			productName = Account;
 		};
 		191C67DD2F37155B00B8FD51 /* Markdown */ = {
@@ -1228,6 +1225,7 @@
 		};
 		197BEF462B00998F0025C17B /* Models */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = AA2700000000000000040004 /* XCLocalSwiftPackageReference "Packages/Models" */;
 			productName = Models;
 		};
 		1990357D2C14A55B0011B985 /* Factory */ = {
@@ -1237,10 +1235,12 @@
 		};
 		199C6CC52B009F19005C6921 /* Models */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = AA2700000000000000040004 /* XCLocalSwiftPackageReference "Packages/Models" */;
 			productName = Models;
 		};
 		199C6CC72B009F2F005C6921 /* Models */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = AA2700000000000000040004 /* XCLocalSwiftPackageReference "Packages/Models" */;
 			productName = Models;
 		};
 		19E866602AB84EBA00E33521 /* KeychainSwift */ = {
@@ -1260,6 +1260,7 @@
 		};
 		20B1A2C3D4E5F60718293A4C /* MemoKit */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = AA2700000000000000040006 /* XCLocalSwiftPackageReference "Packages/MemoKit" */;
 			productName = MemoKit;
 		};
 		2D41F7A72F95C10000A6B8C1 /* WhatsNewKit */ = {
@@ -1267,12 +1268,36 @@
 			package = 2D41F7A62F95C10000A6B8C1 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
 			productName = WhatsNewKit;
 		};
-		AA2700000000000000000000 /* MemoData */ = {isa = XCSwiftPackageProductDependency; productName = MemoData; };
-		AA2700000000000000000001 /* MemoSystem */ = {isa = XCSwiftPackageProductDependency; productName = MemoSystem; };
-		AA2700000000000000000002 /* MemoData */ = {isa = XCSwiftPackageProductDependency; productName = MemoData; };
-		AA2700000000000000000003 /* MemoSystem */ = {isa = XCSwiftPackageProductDependency; productName = MemoSystem; };
-		AA2700000000000000000004 /* MemoData */ = {isa = XCSwiftPackageProductDependency; productName = MemoData; };
-		AA2700000000000000000005 /* MemoSystem */ = {isa = XCSwiftPackageProductDependency; productName = MemoSystem; };
+		AA2700000000000000000000 /* MemoData */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA2700000000000000040000 /* XCLocalSwiftPackageReference "Packages/MemoData" */;
+			productName = MemoData;
+		};
+		AA2700000000000000000001 /* MemoSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1944A2993072EA1700D1B801 /* XCLocalSwiftPackageReference "Packages/MemoSystem" */;
+			productName = MemoSystem;
+		};
+		AA2700000000000000000002 /* MemoData */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA2700000000000000040000 /* XCLocalSwiftPackageReference "Packages/MemoData" */;
+			productName = MemoData;
+		};
+		AA2700000000000000000003 /* MemoSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1944A2993072EA1700D1B801 /* XCLocalSwiftPackageReference "Packages/MemoSystem" */;
+			productName = MemoSystem;
+		};
+		AA2700000000000000000004 /* MemoData */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA2700000000000000040000 /* XCLocalSwiftPackageReference "Packages/MemoData" */;
+			productName = MemoData;
+		};
+		AA2700000000000000000005 /* MemoSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1944A2993072EA1700D1B801 /* XCLocalSwiftPackageReference "Packages/MemoSystem" */;
+			productName = MemoSystem;
+		};
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 194B272528C3973400A48675 /* Project object */;
