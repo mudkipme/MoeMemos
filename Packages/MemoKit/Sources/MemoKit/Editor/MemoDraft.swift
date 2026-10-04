@@ -6,13 +6,23 @@ struct MemoDraft: Codable, Equatable {
     var text: String
     var visibility: MemoVisibility
     var resourceIDs: [PersistentIdentifier]
+
+    var hasContent: Bool {
+        !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !resourceIDs.isEmpty
+    }
 }
 
 /// Account-scoped drafts. Existing memo edits use a separate key from new memos.
-struct MemoDraftStore {
+public struct MemoDraftStore {
     let defaults: UserDefaults
     let accountKey: String
     var memoID: PersistentIdentifier? = nil
+
+    /// Used by the memo list without exposing draft text or edit drafts.
+    public static func hasNewMemoDraft(defaults: UserDefaults, accountKey: String) -> Bool {
+        MemoDraftStore(defaults: defaults, accountKey: accountKey)
+            .load(defaultVisibility: .private)?.hasContent == true
+    }
 
     private var legacyKey: String { "draft.\(accountKey)" }
 

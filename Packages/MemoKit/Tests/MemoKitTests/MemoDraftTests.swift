@@ -83,6 +83,38 @@ final class MemoDraftTests: XCTestCase {
             XCTAssertNil(editStore.load(defaultVisibility: .private))
             XCTAssertEqual(newStore.load(defaultVisibility: .private), newDraft)
             XCTAssertEqual(memo.content, "Original")
+            XCTAssertTrue(MemoDraftStore.hasNewMemoDraft(defaults: defaults, accountKey: "test"))
+            newStore.clear()
+            try editStore.save(editDraft)
+            XCTAssertFalse(MemoDraftStore.hasNewMemoDraft(defaults: defaults, accountKey: "test"))
+        }
+    }
+
+    func testResumeDraftIgnoresWhitespaceAndClearedDrafts() throws {
+        try withDefaults { defaults in
+            let store = MemoDraftStore(defaults: defaults, accountKey: "test")
+            defaults.set("Legacy draft", forKey: "draft.test")
+            XCTAssertTrue(MemoDraftStore.hasNewMemoDraft(defaults: defaults, accountKey: "test"))
+            try store.save(MemoDraft(text: " \n\t ", visibility: .private, resourceIDs: []))
+            XCTAssertFalse(MemoDraftStore.hasNewMemoDraft(defaults: defaults, accountKey: "test"))
+            try store.save(MemoDraft(text: "A thought", visibility: .private, resourceIDs: []))
+            XCTAssertTrue(MemoDraftStore.hasNewMemoDraft(defaults: defaults, accountKey: "test"))
+            XCTAssertFalse(MemoDraftStore.hasNewMemoDraft(defaults: defaults, accountKey: "other"))
+            store.clear()
+            XCTAssertFalse(MemoDraftStore.hasNewMemoDraft(defaults: defaults, accountKey: "test"))
+        }
+    }
+
+    func testResumeDraftIncludesAttachmentOnlyDrafts() throws {
+        let container = try makeContainer()
+        let resource = makeResource()
+        container.mainContext.insert(resource)
+        try container.mainContext.save()
+
+        try withDefaults { defaults in
+            let store = MemoDraftStore(defaults: defaults, accountKey: "test")
+            try store.save(MemoDraft(text: "", visibility: .private, resourceIDs: [resource.id]))
+            XCTAssertTrue(MemoDraftStore.hasNewMemoDraft(defaults: defaults, accountKey: "test"))
         }
     }
 

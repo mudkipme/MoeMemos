@@ -12,98 +12,91 @@ struct MemoEditorToolbar: View {
     let supportsDocumentScanning: Bool
     let onScanDocument: () -> Void
     let onPickFiles: () -> Void
-    
-    @ViewBuilder
-    private var contentView: some View {
-        HStack(alignment: .center, spacing: 16) {
-            if !tags.isEmpty {
-                Menu {
-                    ForEach(tags) { tag in
-                        Button(tag.name) {
-                            onInsertTag(tag)
+    @Binding var isFocused: Bool
+
+    private func icon(_ title: LocalizedStringKey, systemImage: String) -> some View {
+        Label(title, systemImage: systemImage)
+            .labelStyle(.iconOnly)
+            .font(.system(size: 20))
+            .frame(minWidth: 44, minHeight: 44)
+            .contentShape(Rectangle())
+    }
+
+    private var writingTools: some View {
+        HStack(spacing: 0) {
+            Button(action: onToggleTodo) {
+                icon("input.toggle-checklist", systemImage: "checklist")
+            }
+
+            Menu {
+                Button("input.new-tag", systemImage: "number") {
+                    onInsertTag(nil)
+                }
+                if !tags.isEmpty {
+                    Section {
+                        ForEach(tags) { tag in
+                            Button(tag.name) { onInsertTag(tag) }
                         }
                     }
-                } label: {
-                    Label("input.insert-tag", systemImage: "number")
-                        .labelStyle(.iconOnly)
                 }
-            } else {
-                Button {
-                    onInsertTag(nil)
-                } label: {
-                    Label("input.insert-tag", systemImage: "number")
-                        .labelStyle(.iconOnly)
+            } label: {
+                icon("input.insert-tag", systemImage: "number")
+            }
+
+            Menu {
+                Button("input.photos", systemImage: "photo.on.rectangle", action: onPickPhotos)
+                Button("input.camera", systemImage: "camera", action: onPickCamera)
+                if supportsDocumentScanning {
+                    Button("input.scan", systemImage: "doc.viewfinder", action: onScanDocument)
                 }
-            }
-
-            Button {
-                onToggleTodo()
-            } label: {
-                Label("input.toggle-checklist", systemImage: "checkmark.square")
-                        .labelStyle(.iconOnly)
-            }
-
-            if supportsJournalingSuggestions {
-                Button {
-                    onPickJournalingSuggestion()
-                } label: {
-                    Label("input.journaling", systemImage: "wand.and.sparkles")
-                        .labelStyle(.iconOnly)
+                Button("input.files", systemImage: "doc", action: onPickFiles)
+                if supportsJournalingSuggestions {
+                    Section {
+                        Button("input.journaling", systemImage: "wand.and.sparkles", action: onPickJournalingSuggestion)
+                    }
                 }
-            }
-
-            Button {
-                onPickPhotos()
             } label: {
-                Label("input.photos", systemImage: "photo.on.rectangle")
-                        .labelStyle(.iconOnly)
+                icon("input.attach", systemImage: "paperclip")
             }
-
-            Button {
-                onPickCamera()
-            } label: {
-                Label("input.camera", systemImage: "camera")
-                        .labelStyle(.iconOnly)
-            }
-
-            if supportsDocumentScanning {
-                Button {
-                    onScanDocument()
-                } label: {
-                    Label("input.scan", systemImage: "doc.viewfinder")
-                        .labelStyle(.iconOnly)
-                }
-            }
-
-            Button {
-                onPickFiles()
-            } label: {
-                Label("input.files", systemImage: "doc")
-                        .labelStyle(.iconOnly)
-            }
-            
-            Spacer()
         }
-        .padding(.horizontal, 20)
+        .buttonStyle(.borderless)
+        .padding(4)
+    }
+
+    private var keyboardButton: some View {
+        Button {
+            isFocused.toggle()
+        } label: {
+            icon(
+                isFocused ? "input.hide-keyboard" : "input.show-keyboard",
+                systemImage: isFocused ? "keyboard.chevron.compact.down" : "keyboard"
+            )
+        }
+        .buttonStyle(.borderless)
+        .padding(4)
     }
 
     var body: some View {
         if #available(iOS 26, *) {
-            GlassEffectContainer(spacing: 10) {
-                VStack {
-                    contentView
-                        .padding(.vertical, 16)
-                        .glassEffect(.regular.interactive())
-                        .background(.bar.opacity(0.2))
-                        .padding(.horizontal, 16)
+            GlassEffectContainer(spacing: 12) {
+                HStack(spacing: 12) {
+                    writingTools
+                        .glassEffect(.regular.interactive(), in: .capsule)
+                    Spacer(minLength: 12)
+                    keyboardButton
+                        .glassEffect(.regular.interactive(), in: .circle)
                 }
-                .padding(.bottom)
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
         } else {
-            contentView
-                .frame(height: 20)
-                .padding(.vertical, 12)
-                .background(.ultraThinMaterial)
+            HStack(spacing: 12) {
+                writingTools
+                Spacer(minLength: 12)
+                keyboardButton
+            }
+            .padding(.horizontal, 12)
+            .background(.bar)
         }
     }
 }

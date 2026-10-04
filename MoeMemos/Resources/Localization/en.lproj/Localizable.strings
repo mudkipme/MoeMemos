@@ -165,3 +165,14 @@
 "sync.in-progress" = "Syncing";
 "sync.action" = "Sync now";
 "input.remove-attachment" = "Remove Attachment";
+
+// Editor tools and draft feedback
+"input.attach" = "Add attachment";
+"input.new-tag" = "New tag";
+"input.hide-keyboard" = "Hide keyboard";
+"input.show-keyboard" = "Show keyboard";
+"input.draft-saved" = "Draft saved on this device";
+"input.draft-restored" = "Draft restored";
+"input.unsaved-changes-restored" = "Unsaved changes restored";
+"input.draft-save-failed" = "Couldn’t save draft";
+"input.continue-draft" = "Continue draft";

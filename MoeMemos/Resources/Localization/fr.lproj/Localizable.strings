@@ -167,3 +167,14 @@
 "sync.in-progress" = "Synchronisation en cours";
 "sync.action" = "Synchroniser maintenant";
 "input.remove-attachment" = "Retirer la pièce jointe";
+
+// Editor tools and draft feedback
+"input.attach" = "Ajouter une pièce jointe";
+"input.new-tag" = "Nouvelle étiquette";
+"input.hide-keyboard" = "Masquer le clavier";
+"input.show-keyboard" = "Afficher le clavier";
+"input.draft-saved" = "Brouillon enregistré sur cet appareil";
+"input.draft-restored" = "Brouillon restauré";
+"input.unsaved-changes-restored" = "Modifications non enregistrées restaurées";
+"input.draft-save-failed" = "Impossible d’enregistrer le brouillon";
+"input.continue-draft" = "Reprendre le brouillon";

@@ -9,17 +9,20 @@ import SwiftUI
 import Account
 import Models
 import Env
+import MemoKit
 
 struct MemosList: View {
     let tag: Tag?
 
     @State private var searchString = ""
     @Environment(AppPath.self) private var appPath
+    @Environment(AccountManager.self) private var accountManager
     @Environment(AccountViewModel.self) var userState: AccountViewModel
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
     @State private var manualSyncAlertMessage: String?
     @State private var showingManualSyncAlert = false
     @State private var showingHigherV1SyncConfirmation = false
+    @State private var hasDraft = false
     
     var body: some View {
         let defaultMemoVisibility = userState.currentUser?.defaultVisibility ?? .private
@@ -55,22 +58,38 @@ struct MemosList: View {
                     } description: {
                         Text(LocalizedStringKey(tag == nil ? "memo.empty.description" : "memo.tag.empty.description"))
                     } actions: {
-                        Button("input.compose") { appPath.presentedSheet = .newMemo }
+                        Button(LocalizedStringKey(hasDraft ? "input.continue-draft" : "input.compose")) {
+                            appPath.presentedSheet = .newMemo
+                        }
                     }
                 }
             } else {
-                List(filteredMemoList, id: \.id) { item in
-                    Section {
-                        if #available(iOS 26, *) {
-                            NavigationLink(value: Route.memo(item.id)) {
-                                MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
+                List {
+                    if hasDraft && tag == nil && searchString.isEmpty {
+                        Section {
+                            Button {
+                                appPath.presentedSheet = .newMemo
+                            } label: {
+                                Label("input.continue-draft", systemImage: "square.and.pencil")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .contentShape(Rectangle())
                             }
-                            .navigationLinkIndicatorVisibility(.hidden)
-                        } else {
-                            MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
-                                .onTapGesture {
-                                    appPath.navigationRequest = .push(.memo(item.id))
+                        }
+                    }
+
+                    ForEach(filteredMemoList, id: \.id) { item in
+                        Section {
+                            if #available(iOS 26, *) {
+                                NavigationLink(value: Route.memo(item.id)) {
+                                    MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
                                 }
+                                .navigationLinkIndicatorVisibility(.hidden)
+                            } else {
+                                MemoCard(item, defaultMemoVisibility: defaultMemoVisibility)
+                                    .onTapGesture {
+                                        appPath.navigationRequest = .push(.memo(item.id))
+                                    }
+                            }
                         }
                     }
                 }
@@ -90,9 +109,15 @@ struct MemosList: View {
                     .shadow(radius: 1)
                     .frame(width: 60, height: 60)
                 }
-                .accessibilityLabel(Text("input.compose"))
+                .accessibilityLabel(Text(LocalizedStringKey(hasDraft ? "input.continue-draft" : "input.compose")))
                 .padding(20)
             }
+        }
+        .task(id: accountManager.currentAccount?.key) {
+            refreshDraftAvailability()
+        }
+        .onChange(of: appPath.presentedSheet) { _, sheet in
+            if sheet == nil { refreshDraftAvailability() }
         }
         .toolbar {
             if canSync {
@@ -109,7 +134,7 @@ struct MemosList: View {
                     Button {
                         appPath.presentedSheet = .newMemo
                     } label: {
-                        Label("input.compose", systemImage: "plus")
+                        Label(LocalizedStringKey(hasDraft ? "input.continue-draft" : "input.compose"), systemImage: "square.and.pencil")
                     }
                 }
             }
@@ -130,12 +155,24 @@ struct MemosList: View {
             Text(manualSyncAlertMessage ?? moeMemosHigherMemosVersionSyncWarning)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            refreshDraftAvailability()
             Task {
                 if memosViewModel.inited {
                     try await memosViewModel.loadMemos()
                 }
             }
         }
+    }
+
+    private func refreshDraftAvailability() {
+        guard let accountKey = accountManager.currentAccount?.key else {
+            hasDraft = false
+            return
+        }
+        hasDraft = MemoDraftStore.hasNewMemoDraft(
+            defaults: UserDefaults(suiteName: AppInfo.groupContainerIdentifier) ?? .standard,
+            accountKey: accountKey
+        )
     }
 
     private func triggerManualSync(forceHigherV1VersionSync: Bool = false) {

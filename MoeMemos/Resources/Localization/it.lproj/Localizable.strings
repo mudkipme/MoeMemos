@@ -167,3 +167,14 @@
 "sync.in-progress" = "Sincronizzazione…";
 "sync.action" = "Sincronizza ora";
 "input.remove-attachment" = "Rimuovi allegato";
+
+// Editor tools and draft feedback
+"input.attach" = "Aggiungi allegato";
+"input.new-tag" = "Nuovo tag";
+"input.hide-keyboard" = "Nascondi tastiera";
+"input.show-keyboard" = "Mostra tastiera";
+"input.draft-saved" = "Bozza salvata su questo dispositivo";
+"input.draft-restored" = "Bozza ripristinata";
+"input.unsaved-changes-restored" = "Modifiche non salvate ripristinate";
+"input.draft-save-failed" = "Impossibile salvare la bozza";
+"input.continue-draft" = "Riprendi la bozza";
