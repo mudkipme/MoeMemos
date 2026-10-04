@@ -19,15 +19,11 @@
 	<array>
 		<string>AppOpenIntent</string>
 	</array>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>Capture photos and attach to memos</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>MemoryWidgetConfigurationIntent</string>

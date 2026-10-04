@@ -5,8 +5,8 @@
 //  Created by Mudkip on 2023/3/26.
 //
 
+import MemoData
 import Foundation
-import Account
 import Models
 import Factory
 

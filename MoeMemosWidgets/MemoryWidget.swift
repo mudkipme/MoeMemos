@@ -5,23 +5,24 @@
 //  Created by Mudkip on 2022/11/11.
 //
 
+import MemoSystem
 import WidgetKit
 import SwiftUI
 import Intents
 import KeychainSwift
 import Models
-import Account
+import MemoData
 
 struct MemorySnapshot: Sendable {
     let content: String
     let createdAt: Date
-    let persistentIdentifierToken: String?
+    let entityIdentifierToken: String?
 }
 
 private let sampleMemo = MemorySnapshot(
     content: "Make your wonderful dream a reality, and it will become your truth.",
     createdAt: .now,
-    persistentIdentifierToken: nil
+    entityIdentifierToken: nil
 )
 
 extension MemoryUpdatePeriodAppEnum {
@@ -82,7 +83,7 @@ struct MemoryProvider: AppIntentTimelineProvider {
                 MemorySnapshot(
                     content: storedMemo.content,
                     createdAt: storedMemo.createdAt,
-                    persistentIdentifierToken: PersistentIdentifierTokenCoder.encode(storedMemo.id)
+                    entityIdentifierToken: MemoEntityIdentifier(accountKey: storedMemo.accountKey, persistentID: storedMemo.id).token
                 )
             }
     }
@@ -139,14 +140,14 @@ struct MemoryCardView: View {
     }
 
     private var memoURL: URL? {
-        guard let persistentId = memo.persistentIdentifierToken else {
+        guard let persistentId = memo.entityIdentifierToken else {
             return URL(string: "moememos://memos")
         }
 
         var components = URLComponents()
         components.scheme = "moememos"
         components.host = "memo"
-        components.queryItems = [URLQueryItem(name: "persistent_id", value: persistentId)]
+        components.queryItems = [URLQueryItem(name: "entity_id", value: persistentId)]
         return components.url
     }
 }
@@ -182,27 +183,11 @@ struct PinnedMemoryProvider: AppIntentTimelineProvider {
 
     @MainActor
     private func getMemo(for entity: MemoryWidgetMemoEntity?) async throws -> MemorySnapshot? {
-        guard
-            let entity,
-            let memoId = PersistentIdentifierTokenCoder.decode(entity.id)
-        else {
+        guard let entity,
+              let memo = try MemoEntityStore(context: AppInfo().modelContext).entity(forLegacyIdentifier: entity.id) else {
             return nil
         }
-
-        let accountManager = AccountManager(modelContext: AppInfo().modelContext)
-        guard let service = accountManager.currentService else {
-            return nil
-        }
-
-        guard let memo = service.memo(id: memoId) else {
-            return nil
-        }
-
-        return MemorySnapshot(
-            content: memo.content,
-            createdAt: memo.createdAt,
-            persistentIdentifierToken: PersistentIdentifierTokenCoder.encode(memo.id)
-        )
+        return MemorySnapshot(content: memo.content, createdAt: memo.createdAt, entityIdentifierToken: memo.id)
     }
 }
 

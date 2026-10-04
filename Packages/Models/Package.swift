@@ -17,7 +17,6 @@ let package = Package(
             targets: ["Models"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/hmlongco/Factory", from: "2.3.2"),
         .package(url: "https://github.com/mudkipme/swift-markdown", branch: "main")
     ],
     targets: [
@@ -26,7 +25,6 @@ let package = Package(
         .target(
             name: "Models",
             dependencies: [
-                .product(name: "Factory", package: "Factory"),
                 .product(name: "Markdown", package: "swift-markdown")
             ],
             swiftSettings: [

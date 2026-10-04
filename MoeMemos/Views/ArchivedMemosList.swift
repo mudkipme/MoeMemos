@@ -5,8 +5,8 @@
 //  Created by Mudkip on 2022/9/6.
 //
 
+import MemoData
 import SwiftUI
-import Account
 import Models
 
 struct ArchivedMemosList: View {

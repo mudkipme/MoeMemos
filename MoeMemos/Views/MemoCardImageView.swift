@@ -5,8 +5,8 @@
 //  Created by Mudkip on 2022/12/26.
 //
 
+import MemoData
 import SwiftUI
-import Account
 import Models
 import MemoKit
 import DesignSystem

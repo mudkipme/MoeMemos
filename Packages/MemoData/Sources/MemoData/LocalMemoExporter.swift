@@ -10,18 +10,24 @@ import UniformTypeIdentifiers
 import ZIPFoundation
 import Models
 
-struct LocalMemoExportProgress: Sendable {
-    let completed: Int
-    let total: Int
-    let message: String
+public struct LocalMemoExportProgress: Sendable {
+    public let completed: Int
+    public let total: Int
+    public let message: String
 
-    var fractionCompleted: Double {
+    public init(completed: Int, total: Int, message: String) {
+        self.completed = completed
+        self.total = total
+        self.message = message
+    }
+
+    public var fractionCompleted: Double {
         guard total > 0 else { return 1.0 }
         return Double(completed) / Double(total)
     }
 }
 
-struct LocalMemoExportSnapshot: Sendable {
+public struct LocalMemoExportSnapshot: Sendable {
     let createdAt: Date
     let content: String
     let resources: [Resource]
@@ -34,11 +40,11 @@ struct LocalMemoExportSnapshot: Sendable {
     }
 }
 
-enum LocalMemoExportError: LocalizedError {
+public enum LocalMemoExportError: LocalizedError {
     case empty
     case missingResourceFile(filename: String)
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .empty:
             return NSLocalizedString("account.local-export-error-empty", comment: "No local memos to export")
@@ -54,10 +60,10 @@ enum LocalMemoExportError: LocalizedError {
     }
 }
 
-enum LocalMemoExporter {
-    typealias ProgressHandler = @Sendable (LocalMemoExportProgress) async -> Void
+public enum LocalMemoExporter {
+    public typealias ProgressHandler = @Sendable (LocalMemoExportProgress) async -> Void
 
-    static func export(snapshots: [LocalMemoExportSnapshot], progress: @escaping ProgressHandler) async throws -> URL {
+    public static func export(snapshots: [LocalMemoExportSnapshot], progress: @escaping ProgressHandler) async throws -> URL {
         try await Task.detached(priority: .userInitiated) {
             try await exportDetached(snapshots: snapshots, progress: progress)
         }.value

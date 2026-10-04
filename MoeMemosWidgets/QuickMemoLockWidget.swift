@@ -10,7 +10,7 @@ import SwiftUI
 import Intents
 import KeychainSwift
 import Models
-import Account
+import MemoData
 
 struct QuickMemoLockWidgetProvider: AppIntentTimelineProvider {
     func snapshot(for configuration: QuickMemoLockWidgetIntent, in context: Context) async -> QuickMemoEntry {

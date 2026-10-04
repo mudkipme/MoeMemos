@@ -5,6 +5,8 @@
 //  Created by Mudkip on 2022/9/3.
 //
 
+import MemoSystem
+import MemoData
 import SwiftUI
 import Account
 import Models
@@ -13,6 +15,11 @@ import AppIntents
 import Env
 import SwiftData
 import UIKit
+import CoreSpotlight
+
+struct MoeMemosIntents: AppIntentsPackage {
+    static var includedPackages: [any AppIntentsPackage.Type] { [MemoIntentsPackage.self] }
+}
 
 private enum AppShortcutAction {
     static let newMemoSuffix = ".new-memo"
@@ -98,8 +105,10 @@ struct MoeMemosApp: App {
     @Injected(\.accountManager) private var accountManager
     @Injected(\.appPath) private var appPath
     @State private var memosViewModel = MemosViewModel()
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
+        MemoSpotlightIndex.shared.startObserving()
         let accountManager = Container.shared.accountManager()
         let accountViewModel = Container.shared.accountViewModel()
         let appPath = Container.shared.appPath()
@@ -107,6 +116,10 @@ struct MoeMemosApp: App {
         AppDependencyManager.shared.add(dependency: accountManager)
         AppDependencyManager.shared.add(dependency: accountViewModel)
         AppDependencyManager.shared.add(dependency: appPath)
+        AppDependencyManager.shared.add(dependency: MemoNavigator { identifier in
+            try Self.navigateToMemo(identifier: identifier, accountManager: accountManager, appPath: appPath,
+                                    context: Container.shared.appInfo().modelContext)
+        })
 
         AppShortcuts.updateAppShortcutParameters()
     }
@@ -116,6 +129,14 @@ struct MoeMemosApp: App {
             ContentView()
                 .tint(.green)
                 .withEnvironments()
+                .task(id: scenePhase) {
+                    guard scenePhase == .active else { return }
+                    await MemoSpotlightIndex.shared.rebuild(container: appInfo.modelContext.container)
+                }
+                .onContinueUserActivity(CSSearchableItemActionType) { activity in
+                    guard let identifier = activity.userInfo?[CSSearchableItemActivityIdentifier] as? String else { return }
+                    openMemo(identifier: identifier)
+                }
                 .onOpenURL { url in
                     if let tagName = MemoTagMarkdownPreprocessor.tagName(from: url) {
                         appPath.navigationRequest = NavigationRequest(push: .tag(Tag(name: tagName)))
@@ -134,17 +155,36 @@ struct MoeMemosApp: App {
 
                     if url.host() == "memo" {
                         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                        if let identifier = components?.queryItems?.first(where: { $0.name == "entity_id" })?.value {
+                            openMemo(identifier: identifier)
+                            return
+                        }
                         let encodedIdentifier = components?.queryItems?.first(where: { $0.name == "persistent_id" })?.value
                         guard
                             let encodedIdentifier,
                             !encodedIdentifier.isEmpty,
-                            let persistentIdentifier = PersistentIdentifierTokenCoder.decode(encodedIdentifier)
+                            let entity = try? MemoEntityStore(context: appInfo.modelContext).entity(forLegacyIdentifier: encodedIdentifier)
                         else {
                             return
                         }
-                        appPath.navigationRequest = NavigationRequest(root: .memos, path: [.memo(persistentIdentifier)])
+                        openMemo(identifier: entity.id)
                     }
                 }
         }
+    }
+
+    private func openMemo(identifier: String) {
+        try? Self.navigateToMemo(identifier: identifier, accountManager: accountManager,
+                                appPath: appPath, context: appInfo.modelContext)
+    }
+
+    private static func navigateToMemo(identifier: String, accountManager: AccountManager,
+                                       appPath: AppPath, context: ModelContext) throws {
+        guard let memo = try MemoEntityStore(context: context).memo(for: identifier) else { throw MemoIntentError.notFound }
+        if accountManager.currentAccount?.key != memo.accountKey {
+            try accountManager.selectAccount(key: memo.accountKey)
+        }
+        appPath.presentedSheet = nil
+        appPath.navigationRequest = NavigationRequest(root: .memos, path: [.memo(memo.id)])
     }
 }

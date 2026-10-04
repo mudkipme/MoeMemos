@@ -41,6 +41,24 @@ Moe Memos tends to keep minimal and optimized for best native experience. It use
 
 Any contributions are greatly appreciated.
 
+### Package organization
+
+| Package | Responsibility |
+| --- | --- |
+| `Models` | Shared types, SwiftData model definitions, stable memo identifiers, and service contracts |
+| `Services` | Remote Memos API clients |
+| `MemoData` | Store setup, local services, sync, attachment files, export, credentials, and account sessions |
+| `Account` | Account screens and their presentation state |
+| `MemoKit` | Memo editor, drafts, and reusable attachment UI |
+| `MemoSystem` | App Entities, Siri actions, Spotlight indexing, and onscreen entity annotations |
+| `DesignSystem` / `Env` | Shared UI components / navigation state |
+
+`Account`, `MemoKit`, and `MemoSystem` depend on `MemoData`, which depends on `Models` and `Services`. The data layer has no dependency on UI, navigation, App Intents, or Spotlight. SwiftData model types remain in `Models` so moving implementation code doesn't change the persisted schema.
+
+After a successful save, `MemoData` publishes affected memo identities through `MemoChanges`. Hosts that need indexing register `MemoSpotlightIndex` as its observer before writing data. The main app and share extension register at their entry points; background memo intents register before performing mutations. Widgets can read data without activating indexing. Hosts can await `MemoChanges.flush()` before ending a short-lived operation.
+
+The app registers a `MemoNavigator` dependency to handle opening memos. `MemoSystem` doesn't know about the app's routes or account screens. Intent/entity identifiers and existing widget identifiers must remain stable when reorganizing modules.
+
 ## License
 
 The iOS version of Moe Memos is under [MPLv2](LICENSE).

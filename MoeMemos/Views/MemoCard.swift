@@ -5,11 +5,12 @@
 //  Created by Mudkip on 2022/9/4.
 //
 
+import MemoSystem
+import MemoData
 import SwiftUI
 import UniformTypeIdentifiers
 import Models
 import Env
-import Account
 import SwiftData
 
 @MainActor
@@ -75,6 +76,7 @@ struct MemoCard: View {
             MemoCardContent(memo: memo, toggleTaskItem: toggleTaskItem, truncate: true)
         }
         .padding([.top, .bottom], 5)
+        .memoEntity(memo)
         .contextMenu {
             Button {
                 UIPasteboard.general.setValue(memo.content, forPasteboardType: UTType.plainText.identifier)

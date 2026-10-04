@@ -9,6 +9,7 @@ import Foundation
 import SwiftData
 import Models
 
+@MainActor
 final class LocalStore {
     private let context: ModelContext
     private let accountKey: String
@@ -187,7 +188,7 @@ final class LocalStore {
                 resource.memo = local
             }
             context.delete(duplicate)
-            try? context.save()
+            try? save()
         }
 
         local.serverId = serverId
@@ -306,7 +307,19 @@ final class LocalStore {
     }
 
     func save() throws {
+        let changed = context.insertedModelsArray + context.changedModelsArray + context.deletedModelsArray
+        let memos = (changed.compactMap { $0 as? StoredMemo }
+            + changed.compactMap { ($0 as? StoredResource)?.memo }).filter { !$0.isDeleted }
+        // Capture deleted identifiers before save invalidates deleted models.
+        let removed = context.deletedModelsArray.compactMap { model -> MemoEntityIdentifier? in
+            guard let memo = model as? StoredMemo else { return nil }
+            return MemoEntityIdentifier(accountKey: memo.accountKey, persistentID: memo.id)
+        }
         try context.save()
+        let identifiers = memos.compactMap {
+            MemoEntityIdentifier(accountKey: $0.accountKey, persistentID: $0.id)
+        }
+        MemoChanges.shared.didSave(identifiers: Set(identifiers + removed), container: context.container)
     }
 
     private func fetchMemos(rowStatus: RowStatus, limit: Int? = nil, offset: Int? = nil, pendingOnly: Bool) -> [StoredMemo] {

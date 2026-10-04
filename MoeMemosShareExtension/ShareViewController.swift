@@ -6,12 +6,13 @@
 //
 
 @preconcurrency import UIKit
+import MemoSystem
 import Social
 import SwiftUI
 import KeychainSwift
 import Models
 import SwiftData
-import Account
+import MemoData
 import UniformTypeIdentifiers
 import MemoKit
 
@@ -59,6 +60,7 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
     private func handleShare() async throws {
+        MemoSpotlightIndex.shared.startObserving()
         let accountManager = await MainActor.run { AccountManager(modelContext: AppInfo().modelContext) }
         let memos = await MainActor.run { accountManager.currentService }
         guard let memos else { throw MoeMemosError.notLogin }
@@ -93,6 +95,7 @@ class ShareViewController: SLComposeServiceViewController {
         }
         let tags = extractCustomTags(from: content)
         _ = try await memos.createMemo(content: content, visibility: nil, resources: resourceIds, tags: tags)
+        await MemoSpotlightIndex.shared.flush()
 
         // Share extensions are short-lived. Wait for queued remote operations so
         // this post does not stay local-only until the main app opens.
