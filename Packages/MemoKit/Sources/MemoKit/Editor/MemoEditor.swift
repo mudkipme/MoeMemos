@@ -264,6 +264,7 @@ public struct MemoEditor: View {
                     saveButton.fontWeight(.semibold)
                 }
             }
+            .prioritizeVisibility()
         }
         .fullScreenCover(isPresented: $showingImagePicker, content: {
             ImagePicker { image in

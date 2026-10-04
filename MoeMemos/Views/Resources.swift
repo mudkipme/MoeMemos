@@ -9,7 +9,7 @@ import SwiftUI
 import MemoKit
 import Models
 
-fileprivate let columns = [GridItem(.adaptive(minimum: 125, maximum: 200), spacing: 10), GridItem(.adaptive(minimum: 125, maximum: 200), spacing: 10)]
+fileprivate let columns = [GridItem(.adaptive(minimum: 125, maximum: 200), spacing: 10)]
 
 fileprivate enum ResourceSection: String, CaseIterable, Identifiable {
     case image = "resources.section.image"

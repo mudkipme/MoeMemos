@@ -37,7 +37,7 @@ struct Heatmap: View {
         
     private func count(in size: CGSize) -> Int {
         let cellHeight = (size.height + gridSpacing) / CGFloat(daysInWeek)
-        if cellHeight <= 0 {
+        if cellHeight <= 0 || size.width <= 0 {
             return 0
         }
         let cellWidth = cellHeight
@@ -50,7 +50,7 @@ struct Heatmap: View {
         if lastColumn % daysInWeek == 0 {
             return fullCells
         }
-        return fullCells - daysInWeek + lastColumn
+        return max(0, fullCells - daysInWeek + lastColumn)
     }
 }
 
