@@ -19,6 +19,7 @@ let package = Package(
                 .product(name: "DesignSystem", package: "DesignSystem"),
                 .product(name: "Env", package: "Env"),
                 .product(name: "Factory", package: "Factory")
-        ])
+        ]),
+        .testTarget(name: "AccountTests", dependencies: ["Account"])
     ]
 )

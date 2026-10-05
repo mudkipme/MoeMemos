@@ -169,5 +169,3 @@ public struct MemoEntityStore {
         }.prefix(limit))
     }
 }
-
-public struct MemoIntentsPackage: AppIntentsPackage {}

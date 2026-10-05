@@ -201,6 +201,12 @@ import Factory
         }
 
         currentAccount = account
+        if existingSnapshot?.nickname != user.nickname {
+            let key = account.key
+            let memos = (try? modelContext.fetch(FetchDescriptor<StoredMemo>(predicate: #Predicate { $0.accountKey == key }))) ?? []
+            let identifiers = Set(memos.map { MemoEntityIdentifier(accountKey: key, persistentID: $0.id) })
+            MemoChanges.shared.didSave(identifiers: identifiers, container: modelContext.container)
+        }
     }
 
     public func service(for accountKey: String) -> Service? {

@@ -39,7 +39,8 @@ import Factory
     @MainActor
     func logout(account: Account) async throws {
         try accountManager.delete(account: account)
-        await MemoChanges.shared.flush()
+        // Deletion already queues index cleanup. Let the UI finish logging out
+        // even if Spotlight is still processing earlier work.
         refreshUsers()
     }
     

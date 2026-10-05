@@ -2,16 +2,24 @@ import SwiftUI
 
 public extension ToolbarContent {
     /// Prefer essential actions over overflow when a resizable toolbar runs out of space.
-    @ToolbarContentBuilder
     func prioritizeVisibility() -> some ToolbarContent {
+        PrioritizedToolbarContent(content: self)
+    }
+}
+
+// Keep availability-generated opaque types inside DesignSystem for Release linking.
+private struct PrioritizedToolbarContent<Content: ToolbarContent>: ToolbarContent {
+    let content: Content
+
+    var body: some ToolbarContent {
 #if os(iOS)
         if #available(iOS 27, *) {
-            visibilityPriority(.high)
+            content.visibilityPriority(.high)
         } else {
-            self
+            content
         }
 #else
-        self
+        content
 #endif
     }
 }
