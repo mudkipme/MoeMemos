@@ -85,6 +85,7 @@ struct MemoView: View {
                     }
                     .padding()
                 }
+                .scrollDismissesKeyboard(.interactively)
                 .safeAreaInset(edge: .bottom) {
                     if commentsEnabled, let commentsViewModel {
                         MemoCommentComposer(sending: commentsViewModel.sending) { content in
