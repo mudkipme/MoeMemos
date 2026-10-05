@@ -20,6 +20,8 @@ public final class StoredMemo {
     public var accountKey: String
     /// Server identifier. `nil` until this memo is synced to the server.
     public var serverId: String?
+    /// Stable cross-client backup identity, independent of server and database IDs.
+    public var backupId: String? = nil
     public var content: String
     public var pinned: Bool
     public var rowStatus: RowStatus
@@ -68,6 +70,8 @@ public final class StoredResource {
     public var accountKey: String
     /// Server identifier. `nil` until uploaded.
     public var serverId: String?
+    /// Stable cross-client backup identity, independent of server and database IDs.
+    public var backupId: String? = nil
     public var filename: String
     public var size: Int
     public var mimeType: String

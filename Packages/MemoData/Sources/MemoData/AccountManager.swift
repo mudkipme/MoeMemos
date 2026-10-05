@@ -24,7 +24,16 @@ import Factory
     @ObservationIgnored public private(set) var currentService: Service?
     @ObservationIgnored public private(set) var currentRemoteService: RemoteService?
     @ObservationIgnored private let modelContext: ModelContext
+    @ObservationIgnored public lazy var localBackupService = LocalBackupService(container: modelContext.container)
     
+    public private(set) var localRestoreRevision = 0
+
+    public func restoreLocalBackup(_ prepared: PreparedLocalImport) async throws -> LocalImportResult {
+        let result = try await localBackupService.restore(prepared)
+        localRestoreRevision += 1
+        return result
+    }
+
     public var mustCurrentService: Service {
         get throws {
             guard let service = currentService else { throw MoeMemosError.notLogin }
@@ -192,6 +201,12 @@ import Factory
         }
 
         currentAccount = account
+        if existingSnapshot?.nickname != user.nickname {
+            let key = account.key
+            let memos = (try? modelContext.fetch(FetchDescriptor<StoredMemo>(predicate: #Predicate { $0.accountKey == key }))) ?? []
+            let identifiers = Set(memos.map { MemoEntityIdentifier(accountKey: key, persistentID: $0.id) })
+            MemoChanges.shared.didSave(identifiers: identifiers, container: modelContext.container)
+        }
     }
 
     public func service(for accountKey: String) -> Service? {
@@ -207,10 +222,6 @@ import Factory
     public var currentUser: User? {
         guard let key = currentAccount?.key else { return nil }
         return try? modelContext.fetch(FetchDescriptor<User>(predicate: #Predicate { $0.accountKey == key })).first
-    }
-
-    public func localExportSnapshots(for accountKey: String) -> [LocalMemoExportSnapshot]? {
-        (service(for: accountKey) as? LocalService)?.exportSnapshots()
     }
 
     public func account(for accountKey: String) -> Account? {

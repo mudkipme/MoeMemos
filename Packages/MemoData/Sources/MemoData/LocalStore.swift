@@ -13,6 +13,7 @@ import Models
 final class LocalStore {
     private let context: ModelContext
     private let accountKey: String
+    private var accountNameChanged = false
 
     init(context: ModelContext, accountKey: String) {
         self.context = context
@@ -134,11 +135,13 @@ final class LocalStore {
 
     func upsertUser(_ user: UserSnapshot) {
         if let existing = fetchUser() {
+            accountNameChanged = accountNameChanged || existing.nickname != user.nickname
             user.apply(to: existing)
             return
         }
 
         let stored = user.toUserModel()
+        accountNameChanged = true
         context.insert(stored)
     }
 
@@ -309,13 +312,15 @@ final class LocalStore {
     func save() throws {
         let changed = context.insertedModelsArray + context.changedModelsArray + context.deletedModelsArray
         let memos = (changed.compactMap { $0 as? StoredMemo }
-            + changed.compactMap { ($0 as? StoredResource)?.memo }).filter { !$0.isDeleted }
+            + changed.compactMap { ($0 as? StoredResource)?.memo }
+            + (accountNameChanged ? allMemos(includeDeleted: false) : [])).filter { !$0.isDeleted }
         // Capture deleted identifiers before save invalidates deleted models.
         let removed = context.deletedModelsArray.compactMap { model -> MemoEntityIdentifier? in
             guard let memo = model as? StoredMemo else { return nil }
             return MemoEntityIdentifier(accountKey: memo.accountKey, persistentID: memo.id)
         }
         try context.save()
+        accountNameChanged = false
         let identifiers = memos.compactMap {
             MemoEntityIdentifier(accountKey: $0.accountKey, persistentID: $0.id)
         }

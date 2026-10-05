@@ -17,10 +17,6 @@ import SwiftData
 import UIKit
 import CoreSpotlight
 
-struct MoeMemosIntents: AppIntentsPackage {
-    static var includedPackages: [any AppIntentsPackage.Type] { [MemoIntentsPackage.self] }
-}
-
 private enum AppShortcutAction {
     static let newMemoSuffix = ".new-memo"
 
@@ -131,7 +127,7 @@ struct MoeMemosApp: App {
                 .withEnvironments()
                 .task(id: scenePhase) {
                     guard scenePhase == .active else { return }
-                    await MemoSpotlightIndex.shared.rebuild(container: appInfo.modelContext.container)
+                    await MemoSpotlightIndex.shared.synchronize(container: appInfo.modelContext.container)
                 }
                 .onContinueUserActivity(CSSearchableItemActionType) { activity in
                     guard let identifier = activity.userInfo?[CSSearchableItemActivityIdentifier] as? String else { return }

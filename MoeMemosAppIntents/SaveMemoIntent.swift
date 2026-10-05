@@ -35,6 +35,7 @@ struct SaveMemoIntent: AppIntent {
     
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog & ReturnsValue<MemoEntity> {
+        MemoSpotlightIndex.shared.startObserving()
         guard let service = accountManager.service(for: account.id) else { throw MemoIntentError.notFound }
         guard !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !(attachments ?? []).isEmpty else {
             throw MemoIntentError.emptyContent

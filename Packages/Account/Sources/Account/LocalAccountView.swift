@@ -8,13 +8,18 @@
 import MemoData
 import SwiftUI
 import Models
+import UniformTypeIdentifiers
 
 public struct LocalAccountView: View {
     @State private var user: User? = nil
-    @State private var isExporting = false
-    @State private var exportProgress: LocalMemoExportProgress?
-    @State private var exportErrorMessage: String?
+    @State private var isBusy = false
+    @State private var statusMessage: String?
+    @State private var errorMessage: String?
     @State private var exportedZipURL: URL?
+    @State private var showingImporter = false
+    @State private var showingPreview = false
+    @State private var preparedImport: PreparedLocalImport?
+    @State private var operation: Task<Void, Never>?
     private let accountKey: String
     @Environment(AccountManager.self) private var accountManager
     @Environment(AccountViewModel.self) private var accountViewModel
@@ -61,48 +66,28 @@ public struct LocalAccountView: View {
                 }
             }
 
-            if accountKey == accountManager.currentAccount?.key {
-                Section {
-                    Button {
-                        startExport()
-                    } label: {
-                        HStack {
-                            if isExporting {
-                                ProgressView()
-                                    .controlSize(.small)
-                            }
-                            Text("account.local-export-button")
-                        }
-                    }
-                    .disabled(isExporting)
+            Section {
+                Button("account.local-export-button", action: startExport)
+                    .disabled(isBusy || preparedImport != nil)
+                Button("account.local-import-button") { showingImporter = true }
+                    .disabled(isBusy || preparedImport != nil)
 
-                    if let progress = exportProgress {
-                        VStack(alignment: .leading, spacing: 8) {
-                            ProgressView(value: progress.fractionCompleted)
-                            Text(progress.message)
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding(.vertical, 4)
-                    }
-
-                    if let exportedZipURL {
-                        ShareLink(item: exportedZipURL) {
-                            Label("account.local-export-share-zip", systemImage: "square.and.arrow.up")
-                        }
-                        Text(exportedZipURL.lastPathComponent)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    if let exportErrorMessage {
-                        Text(exportErrorMessage)
-                            .font(.footnote)
-                            .foregroundStyle(.red)
-                    }
-                } header: {
-                    Text("account.local-export")
+                if isBusy { ProgressView() }
+                if let statusMessage {
+                    Text(statusMessage).font(.footnote).foregroundStyle(.secondary)
                 }
+                if let exportedZipURL {
+                    ShareLink(item: exportedZipURL) {
+                        Label("account.local-export-share-zip", systemImage: "square.and.arrow.up")
+                    }
+                }
+                if let errorMessage {
+                    Text(errorMessage).font(.footnote).foregroundStyle(.red)
+                }
+            } header: {
+                Text("account.local-backup")
+            } footer: {
+                Text("account.local-backup-description")
             }
 
             Section {
@@ -112,6 +97,23 @@ public struct LocalAccountView: View {
             }
         }
         .navigationTitle("account.account-detail")
+        .fileImporter(isPresented: $showingImporter, allowedContentTypes: [.zip]) { result in
+            switch result {
+            case .success(let url): prepareImport(url)
+            case .failure(let error): errorMessage = error.localizedDescription
+            }
+        }
+        .alert("account.local-import-button", isPresented: $showingPreview) {
+            Button("common.cancel", role: .cancel) { preparedImport = nil }
+            Button("account.local-restore-button", action: restore)
+        } message: {
+            Text(previewMessage)
+        }
+        .onDisappear {
+            operation?.cancel()
+            preparedImport = nil
+            clearExport()
+        }
         .task {
             guard let account = account else { return }
             if let cached = accountViewModel.users.first(where: { $0.accountKey == accountKey }) {
@@ -122,42 +124,83 @@ public struct LocalAccountView: View {
         }
     }
 
-    private func startExport() {
-        guard !isExporting else { return }
-        guard let snapshots = accountManager.localExportSnapshots(for: accountKey) else {
-            exportErrorMessage = NSLocalizedString("account.local-export-error-not-available", comment: "Local export unavailable for non-local account")
-            exportProgress = nil
-            return
+    private var previewMessage: String {
+        guard let preview = preparedImport?.preview else { return "" }
+        var message = String(format: NSLocalizedString("account.local-import-preview", comment: ""), preview.memos, preview.attachments)
+        message += "\n\n" + NSLocalizedString("account.local-import-additive", comment: "")
+        if preview.existingMemos > 0 {
+            message += "\n\n" + String(format: NSLocalizedString("account.local-import-existing", comment: ""), preview.existingMemos)
         }
-
-        guard !snapshots.isEmpty else {
-            exportErrorMessage = NSLocalizedString("account.local-export-error-empty", comment: "No local memos to export")
-            exportProgress = nil
-            exportedZipURL = nil
-            return
+        if preview.legacy { message += "\n\n" + NSLocalizedString("account.local-import-legacy", comment: "") }
+        if preview.ignoredFiles > 0 {
+            message += "\n\n" + String(format: NSLocalizedString("account.local-import-ignored", comment: ""), preview.ignoredFiles)
         }
+        return message
+    }
 
-        isExporting = true
-        exportErrorMessage = nil
+    private func clearExport() {
+        if let exportedZipURL { try? FileManager.default.removeItem(at: exportedZipURL) }
         exportedZipURL = nil
-        exportProgress = .init(
-            completed: 0,
-            total: 1,
-            message: NSLocalizedString("account.local-export-progress-preparing", comment: "Preparing local export")
-        )
+    }
 
-        Task { @MainActor in
-            defer { isExporting = false }
+    private func startExport() {
+        guard !isBusy else { return }
+        isBusy = true
+        errorMessage = nil
+        statusMessage = NSLocalizedString("account.local-export-progress-exporting", comment: "")
+        clearExport()
+        operation = Task { @MainActor in
+            defer { isBusy = false }
             do {
-                let zipURL = try await LocalMemoExporter.export(snapshots: snapshots) { progress in
-                    await MainActor.run {
-                        exportProgress = progress
-                    }
+                let url = try await accountManager.localBackupService.export()
+                if Task.isCancelled {
+                    try? FileManager.default.removeItem(at: url)
+                    return
                 }
-                exportedZipURL = zipURL
+                exportedZipURL = url
+                statusMessage = NSLocalizedString("account.local-export-progress-complete", comment: "")
             } catch {
-                exportProgress = nil
-                exportErrorMessage = error.localizedDescription
+                statusMessage = nil
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func prepareImport(_ url: URL) {
+        guard !isBusy else { return }
+        isBusy = true
+        errorMessage = nil
+        statusMessage = NSLocalizedString("account.local-import-preparing", comment: "")
+        operation = Task { @MainActor in
+            defer { isBusy = false }
+            do {
+                let prepared = try await accountManager.localBackupService.prepareImport(from: url)
+                guard !Task.isCancelled else { return }
+                preparedImport = prepared
+                statusMessage = nil
+                showingPreview = true
+            } catch {
+                statusMessage = nil
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func restore() {
+        guard let prepared = preparedImport, !isBusy else { return }
+        preparedImport = nil
+        isBusy = true
+        errorMessage = nil
+        statusMessage = NSLocalizedString("account.local-import-restoring", comment: "")
+        operation = Task { @MainActor in
+            defer { isBusy = false }
+            do {
+                let result = try await accountManager.restoreLocalBackup(prepared)
+                statusMessage = String(format: NSLocalizedString("account.local-import-result", comment: ""),
+                    result.importedMemos, result.importedAttachments, result.skippedMemos, result.skippedAttachments)
+            } catch {
+                statusMessage = nil
+                errorMessage = error.localizedDescription
             }
         }
     }
