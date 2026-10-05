@@ -152,36 +152,79 @@ struct MemoCommentComposer: View {
     @State private var text = ""
     @State private var sendError: Error?
     @State private var showingErrorAlert = false
-    @FocusState private var focused: Bool
+    @State private var isSubmitting = false
+
+    private var isSending: Bool { sending || isSubmitting }
+
+    private var canSend: Bool {
+        !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isSending
+    }
 
     var body: some View {
-        HStack(alignment: .bottom) {
+        composer
+            .frame(maxWidth: 680)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .alert(NSLocalizedString("sync.failed.title", comment: "Error alert title"), isPresented: $showingErrorAlert) {
+                Button("memo.action.ok", role: .cancel) {}
+            } message: {
+                Text(sendError?.localizedDescription ?? "")
+            }
+    }
+
+    @ViewBuilder
+    private var composer: some View {
+        if #available(iOS 26.0, *) {
+            composerContent
+                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 28))
+        } else {
+            composerContent
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 28))
+        }
+    }
+
+    private var composerContent: some View {
+        HStack(alignment: .bottom, spacing: 8) {
             TextField("memo.comment.placeholder", text: $text, axis: .vertical)
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
                 .lineLimit(1...5)
-                .focused($focused)
+                .padding(.vertical, 11)
+                .padding(.leading, 14)
+                .frame(minHeight: 44)
+                .disabled(isSending)
 
             Button(action: send) {
-                Image(systemName: "paperplane")
-                    .padding([.top, .bottom], 10)
+                ZStack {
+                    Circle()
+                        .fill(canSend || isSending ? Color.accentColor : Color(uiColor: .tertiarySystemFill))
+
+                    if isSending {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Image(systemName: "arrow.up")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundStyle(canSend ? Color.white : Color.secondary)
+                    }
+                }
+                .frame(width: 36, height: 36)
+                .frame(width: 44, height: 44)
+                .contentShape(Circle())
             }
+            .buttonStyle(.plain)
             .accessibilityLabel(Text("memo.comment.send"))
-            .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || sending)
+            .disabled(!canSend)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(.bar)
-        .alert(NSLocalizedString("sync.failed.title", comment: "Error alert title"), isPresented: $showingErrorAlert) {
-            Button("memo.action.ok", role: .cancel) {}
-        } message: {
-            Text(sendError?.localizedDescription ?? "")
-        }
+        .padding(6)
     }
 
     private func send() {
         let content = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !content.isEmpty, !sending else { return }
+        guard canSend else { return }
+        isSubmitting = true
         Task {
+            defer { isSubmitting = false }
             do {
                 try await onSend(content)
                 text = ""
@@ -215,6 +258,7 @@ struct MemoCommentsSheet: View {
                             MemoCommentsList(viewModel: viewModel)
                                 .padding()
                         }
+                        .scrollDismissesKeyboard(.interactively)
                     }
                 }
             }

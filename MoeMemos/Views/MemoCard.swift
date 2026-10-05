@@ -19,7 +19,6 @@ struct MemoCard: View {
     let defaultMemoVisilibity: MemoVisibility?
 
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
-    @Environment(AccountManager.self) private var accountManager
     @Environment(AppPath.self) private var appPath
     @State private var showingDeleteConfirmation = false
     
@@ -53,17 +52,6 @@ struct MemoCard: View {
 
                 Spacer()
 
-                if commentsEnabled {
-                    Button {
-                        appPath.navigationRequest = .push(.memo(memo.id))
-                    } label: {
-                        Image(systemName: "bubble.right")
-                            .foregroundColor(.secondary)
-                            .padding([.top, .bottom], 10)
-                    }
-                    .buttonStyle(.plain)
-                }
-
                 Menu {
                     normalMenu()
                 } label: {
@@ -92,10 +80,6 @@ struct MemoCard: View {
             }
             Button("memo.action.cancel", role: .cancel) {}
         }
-    }
-
-    private var commentsEnabled: Bool {
-        accountManager.currentRemoteService is MemoCommentService && memo.serverId != nil
     }
 
     @ViewBuilder
