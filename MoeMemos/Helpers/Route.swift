@@ -5,6 +5,7 @@
 //  Created by Mudkip on 2022/10/30.
 //
 
+import MemoData
 import SwiftUI
 import Models
 import Env

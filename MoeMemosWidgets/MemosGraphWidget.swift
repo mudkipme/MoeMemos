@@ -10,7 +10,7 @@ import SwiftUI
 import Intents
 import KeychainSwift
 import Models
-import Account
+import MemoData
 
 struct Provider: AppIntentTimelineProvider {
     func snapshot(for configuration: MemosGraphWidgetConfiguration, in context: Context) async -> MemosGraphEntry {

@@ -2,7 +2,7 @@ import SwiftUI
 import PhotosUI
 import UniformTypeIdentifiers
 import Models
-import Account
+import MemoData
 import DesignSystem
 import SwiftData
 #if canImport(JournalingSuggestions) && os(iOS) && !targetEnvironment(macCatalyst)
@@ -16,7 +16,6 @@ public struct MemoEditor: View {
     public let memo: StoredMemo?
     public let actions: MemoEditorActions
 
-    @Environment(AccountViewModel.self) private var userState
     @Environment(AccountManager.self) private var accountManager
     @State private var viewModel = MemoEditorViewModel()
 
@@ -68,7 +67,7 @@ public struct MemoEditor: View {
         let resources = memo?.resources.filter { !$0.softDeleted }.sorted { $0.createdAt > $1.createdAt } ?? []
         let original = MemoDraft(
             text: memo?.content ?? "",
-            visibility: memo?.visibility ?? userState.currentUser?.defaultVisibility ?? .private,
+            visibility: memo?.visibility ?? accountManager.currentUser?.defaultVisibility ?? .private,
             resourceIDs: resources.map(\.id)
         )
         let savedDraft = store.load(defaultVisibility: original.visibility)

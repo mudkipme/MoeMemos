@@ -5,6 +5,8 @@
 //  Created by Mudkip on 2026/2/8.
 //
 
+import MemoSystem
+import MemoData
 import SwiftUI
 import UniformTypeIdentifiers
 import Models
@@ -108,6 +110,7 @@ struct MemoView: View {
             }
         }
         .navigationTitle(memo?.renderTime() ?? "Memo")
+        .memoEntity(memo)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if let memo {

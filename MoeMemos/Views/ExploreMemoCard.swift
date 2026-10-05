@@ -5,10 +5,10 @@
 //  Created by Mudkip on 2023/3/26.
 //
 
+import MemoData
 import SwiftUI
 import Models
 import MemoKit
-import Account
 
 struct ExploreMemoCard: View {
     let memo: Memo

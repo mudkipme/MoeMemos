@@ -5,10 +5,11 @@
 //  Created by Mudkip on 2024/11/24.
 //
 
+import MemoSystem
 import Foundation
 import AppIntents
 import Models
-import Account
+import MemoData
 
 @available(iOS 17.0, macOS 14.0, watchOS 10.0, *)
 struct MemoryWidgetConfiguration: AppIntent, WidgetConfigurationIntent, CustomIntentMigratedAppIntent {
@@ -70,23 +71,11 @@ struct MemoryWidgetMemoEntity: AppEntity, Identifiable, Sendable {
 @available(iOS 17.0, macOS 14.0, watchOS 10.0, *)
 struct MemoryWidgetMemoEntityQuery: EntityQuery {
     func entities(for identifiers: [MemoryWidgetMemoEntity.ID]) async throws -> [MemoryWidgetMemoEntity] {
-        await MainActor.run {
-            let service = AccountManager(modelContext: AppInfo().modelContext).currentService
-            guard let service else { return [] }
-
-            return identifiers.compactMap { id in
-                guard
-                    let persistentId = PersistentIdentifierTokenCoder.decode(id),
-                    let memo = service.memo(id: persistentId)
-                else {
-                    return nil
-                }
-
-                return MemoryWidgetMemoEntity(
-                    id: id,
-                    content: memo.content,
-                    createdAt: memo.createdAt
-                )
+        try await MainActor.run {
+            let store = MemoEntityStore(context: AppInfo().modelContext)
+            return try identifiers.compactMap { id in
+                guard let entity = try store.entity(forLegacyIdentifier: id) else { return nil }
+                return MemoryWidgetMemoEntity(id: id, content: entity.content, createdAt: entity.createdAt)
             }
         }
     }
@@ -102,21 +91,14 @@ struct MemoryWidgetMemoEntityQuery: EntityQuery {
 
 @MainActor
 private func loadSuggestedEntitiesFromStore() async throws -> [MemoryWidgetMemoEntity] {
-    let service = AccountManager(modelContext: AppInfo().modelContext).currentService
-    guard let service else { return [] }
-
-    let memos = try await service.listMemos()
-    return memos.prefix(100).compactMap { memo in
-        guard let token = PersistentIdentifierTokenCoder.encode(memo.id) else {
-            return nil
+    let context = AppInfo().modelContext
+    let accountKey = AccountManager(modelContext: context).currentAccount?.key
+    return try MemoEntityStore(context: context).allEntities()
+        .filter { $0.accountKey == accountKey }.prefix(100).compactMap { entity in
+            guard let key = MemoEntityIdentifier(token: entity.id),
+                  let token = PersistentIdentifierTokenCoder.encode(key.persistentID) else { return nil }
+            return MemoryWidgetMemoEntity(id: token, content: entity.content, createdAt: entity.createdAt)
         }
-
-        return MemoryWidgetMemoEntity(
-            id: token,
-            content: memo.content,
-            createdAt: memo.createdAt
-        )
-    }
 }
 
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)

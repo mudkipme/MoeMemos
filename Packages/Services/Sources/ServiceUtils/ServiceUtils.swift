@@ -33,7 +33,7 @@ public func downloadData(urlSession: URLSession, url: URL, middleware: (@Sendabl
 }
 
 public func download(urlSession: URLSession, url: URL, mimeType: String? = nil, middleware: (@Sendable (URLRequest) async throws -> URLRequest)? = nil) async throws -> URL {
-    guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppInfo.groupContainerIdentifier) else { throw MoeMemosError.unknown }
+    guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedStorageConfiguration.groupContainerIdentifier) else { throw MoeMemosError.unknown }
     
     let hash = SHA256.hash(data: url.absoluteString.data(using: .utf8)!)
     let hex = hash.map { String(format: "%02X", $0) }[0...10].joined()

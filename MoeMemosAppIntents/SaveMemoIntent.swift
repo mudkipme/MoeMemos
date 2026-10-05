@@ -5,9 +5,10 @@
 //  Created by Mudkip on 2024/11/13.
 //
 
+import MemoSystem
+import MemoData
 import Foundation
 import AppIntents
-import Account
 import Models
 import SwiftData
 
@@ -33,8 +34,14 @@ struct SaveMemoIntent: AppIntent {
     var accountManager: AccountManager
     
     @MainActor
-    func perform() async throws -> some IntentResult & ProvidesDialog {
-        guard let service = accountManager.service(for: account.id) else { return .result(dialog: "Account not found.") }
+    func perform() async throws -> some IntentResult & ProvidesDialog & ReturnsValue<MemoEntity> {
+        guard let service = accountManager.service(for: account.id) else { throw MemoIntentError.notFound }
+        guard !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !(attachments ?? []).isEmpty else {
+            throw MemoIntentError.emptyContent
+        }
+        for attachment in attachments ?? [] {
+            try validateUploadSize(Int64(attachment.data.count))
+        }
         
         var resourceIds: [PersistentIdentifier] = []
         if let attachments = attachments {
@@ -50,8 +57,12 @@ struct SaveMemoIntent: AppIntent {
                 resourceIds.append(created.id)
             }
         }
-        _ = try await service.createMemo(content: content, visibility: nil, resources: resourceIds, tags: nil)
-        return .result(dialog: "Memo saved.")
+        let memo = try await service.createMemo(content: content, visibility: nil, resources: resourceIds, tags: nil)
+        await MemoSpotlightIndex.shared.flush()
+        guard let entity = MemoEntity(memo: memo, accountName: account.nickname) else {
+            throw MemoIntentError.notFound
+        }
+        return .result(value: entity, dialog: "Memo saved.")
     }
 
     private func validateUploadSize(_ size: Int64) throws {

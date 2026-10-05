@@ -1,5 +1,5 @@
 import XCTest
-@testable import Account
+@testable import MemoData
 
 final class AccountTests: XCTestCase {
     func testV0CompatibilityRejectsVersionsLowerThan0210() {

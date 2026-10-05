@@ -5,6 +5,7 @@
 //  Created by Codex on 2026/2/8.
 //
 
+import MemoData
 import SwiftUI
 import Models
 
@@ -123,13 +124,12 @@ public struct LocalAccountView: View {
 
     private func startExport() {
         guard !isExporting else { return }
-        guard let localService = accountManager.service(for: accountKey) as? LocalService else {
+        guard let snapshots = accountManager.localExportSnapshots(for: accountKey) else {
             exportErrorMessage = NSLocalizedString("account.local-export-error-not-available", comment: "Local export unavailable for non-local account")
             exportProgress = nil
             return
         }
 
-        let snapshots = localService.exportSnapshots()
         guard !snapshots.isEmpty else {
             exportErrorMessage = NSLocalizedString("account.local-export-error-empty", comment: "No local memos to export")
             exportProgress = nil

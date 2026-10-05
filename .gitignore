@@ -91,3 +91,4 @@ iOSInjectionProject/
 
 # Others
 .DS_Store
+Packages/**/Package.resolved

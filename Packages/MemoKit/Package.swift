@@ -18,7 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "Models", path: "../Models"),
-        .package(name: "Account", path: "../Account"),
+        .package(name: "MemoData", path: "../MemoData"),
         .package(name: "DesignSystem", path: "../DesignSystem"),
         .package(url: "https://github.com/hmlongco/Factory", from: "2.5.3"),
     ],
@@ -27,7 +27,7 @@ let package = Package(
             name: "MemoKit",
             dependencies: [
                 .product(name: "Models", package: "Models"),
-                .product(name: "Account", package: "Account"),
+                .product(name: "MemoData", package: "MemoData"),
                 .product(name: "DesignSystem", package: "DesignSystem"),
                 .product(name: "Factory", package: "Factory"),
             ],

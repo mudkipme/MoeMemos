@@ -6,15 +6,20 @@
 //
 
 import Foundation
-import SwiftUI
+import Observation
+import MemosV0Service
+import MemosV1Service
 import SwiftData
 import Models
 import Factory
 
 @MainActor
 @Observable public final class AccountManager: @unchecked Sendable {
-    @ObservationIgnored @AppStorage("currentAccountKey", store: UserDefaults(suiteName: AppInfo.groupContainerIdentifier))
-    private var currentAccountKey: String = ""
+    @ObservationIgnored private let preferences: UserDefaults
+    private var currentAccountKey: String {
+        get { preferences.string(forKey: "currentAccountKey") ?? "" }
+        set { preferences.set(newValue, forKey: "currentAccountKey") }
+    }
     @ObservationIgnored private var shouldPersistCurrentAccountKey = false
     @ObservationIgnored public private(set) var currentService: Service?
     @ObservationIgnored public private(set) var currentRemoteService: RemoteService?
@@ -34,7 +39,7 @@ import Factory
         }
     }
     
-    public internal(set) var currentAccount: Account? {
+    public private(set) var currentAccount: Account? {
         didSet {
             if shouldPersistCurrentAccountKey {
                 currentAccountKey = currentAccount?.key ?? ""
@@ -44,8 +49,9 @@ import Factory
         }
     }
     
-    public init(modelContext: ModelContext) {
+    public init(modelContext: ModelContext, preferences: UserDefaults = UserDefaults(suiteName: AppInfo.groupContainerIdentifier)!) {
         self.modelContext = modelContext
+        self.preferences = preferences
         if currentAccountKey.isEmpty {
             currentAccount = nil
         } else {
@@ -56,7 +62,7 @@ import Factory
         try? ResourceFileStore.cleanupOrphanedFiles(context: modelContext)
     }
     
-    internal func unsyncedMemoCount(for accountKey: String) -> Int {
+    public func unsyncedMemoCount(for accountKey: String) -> Int {
         let descriptor = FetchDescriptor<StoredMemo>(
             predicate: #Predicate { memo in
                 memo.accountKey == accountKey
@@ -66,7 +72,7 @@ import Factory
         return memos.filter { $0.syncState != .synced }.count
     }
 
-    internal func delete(account: Account) throws {
+    public func delete(account: Account) throws {
         if case .local = account {
             return
         }
@@ -105,6 +111,7 @@ import Factory
         }
 
         let memos = try modelContext.fetch(memoDescriptor)
+        let identifiers = Set(memos.map { MemoEntityIdentifier(accountKey: $0.accountKey, persistentID: $0.id) })
         for memo in memos {
             modelContext.delete(memo)
         }
@@ -115,13 +122,95 @@ import Factory
         }
 
         try modelContext.save()
+        MemoChanges.shared.didSave(identifiers: identifiers, container: modelContext.container)
         ResourceFileStore.deleteAccountFiles(accountKey: accountKey)
         try? ResourceFileStore.cleanupOrphanedFiles(context: modelContext)
+    }
+
+    @MainActor
+    public func loginLocal() async throws {
+        let account = Account.local
+        let user = UserSnapshot.local(accountKey: account.key)
+        try persistLoggedInAccount(account: account, user: user)
+    }
+    
+    @MainActor
+    public func loginMemosV0(hostURL: URL, accessToken: String) async throws {
+        let client = MemosV0Service(hostURL: hostURL, accessToken: accessToken)
+        let user = try await client.getCurrentUser()
+        guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
+        let account = Account.memosV0(host: hostURL.absoluteString, id: id, accessToken: accessToken)
+        try persistLoggedInAccount(account: account, user: user)
+    }
+    
+    @MainActor
+    public func loginMemosV1(hostURL: URL, accessToken: String) async throws {
+        let client = MemosV1Service(hostURL: hostURL, accessToken: accessToken, userId: nil)
+        let user = try await client.getCurrentUser()
+        guard let id = user.remoteId else { throw MoeMemosError.unsupportedVersion }
+        let account = Account.memosV1(host: hostURL.absoluteString, id: id, accessToken: accessToken)
+        try persistLoggedInAccount(account: account, user: user)
+    }
+    
+    private func persistLoggedInAccount(account: Account, user: UserSnapshot) throws {
+        let descriptor = FetchDescriptor<User>(
+            predicate: #Predicate<User> { storedUser in
+                storedUser.accountKey == account.key
+            }
+        )
+        let existingUser = try modelContext.fetch(descriptor).first
+        let existingSnapshot = existingUser.map(UserSnapshot.init(user:))
+        let previousAccount = Account.retrieve(accountKey: account.key)
+        let insertedUser: User?
+
+        if let existingUser {
+            user.apply(to: existingUser)
+            insertedUser = nil
+        } else {
+            let newUser = user.toUserModel()
+            modelContext.insert(newUser)
+            insertedUser = newUser
+        }
+
+        do {
+            try account.save()
+            try modelContext.save()
+        } catch {
+            if let existingUser, let existingSnapshot {
+                existingSnapshot.apply(to: existingUser)
+            } else if let insertedUser {
+                modelContext.delete(insertedUser)
+            }
+            _ = try? modelContext.save()
+
+            if let previousAccount {
+                try? previousAccount.save()
+            } else {
+                account.delete()
+            }
+            throw error
+        }
+
+        currentAccount = account
     }
 
     public func service(for accountKey: String) -> Service? {
         guard let account = account(for: accountKey) else { return nil }
         return makeService(for: account)
+    }
+
+    public func selectAccount(key: String) throws {
+        guard let account = account(for: key) else { throw MoeMemosError.notLogin }
+        currentAccount = account
+    }
+
+    public var currentUser: User? {
+        guard let key = currentAccount?.key else { return nil }
+        return try? modelContext.fetch(FetchDescriptor<User>(predicate: #Predicate { $0.accountKey == key })).first
+    }
+
+    public func localExportSnapshots(for accountKey: String) -> [LocalMemoExportSnapshot]? {
+        (service(for: accountKey) as? LocalService)?.exportSnapshots()
     }
 
     public func account(for accountKey: String) -> Account? {
