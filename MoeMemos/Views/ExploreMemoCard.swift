@@ -43,7 +43,7 @@ struct ExploreMemoCard: View {
                         isShowingComments = true
                     } label: {
                         Image(systemName: "bubble.right")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.tint)
                             .padding([.top, .bottom], 10)
                     }
                     .buttonStyle(.plain)
