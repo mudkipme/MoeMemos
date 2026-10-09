@@ -5,6 +5,7 @@ struct MemoEditorToolbar: View {
     let tags: [Tag]
     let onInsertTag: (Tag?) -> Void
     let onToggleTodo: () -> Void
+    let onFormat: (MarkdownFormat) -> Void
     let onPickJournalingSuggestion: () -> Void
     let supportsJournalingSuggestions: Bool
     let onPickPhotos: () -> Void
@@ -22,10 +23,33 @@ struct MemoEditorToolbar: View {
             .contentShape(Rectangle())
     }
 
+    private func formatButtons(_ formats: [MarkdownFormat]) -> some View {
+        ForEach(formats, id: \.self) { format in
+            Button(LocalizedStringKey(format.localizationKey), systemImage: format.systemImage) {
+                onFormat(format)
+            }
+        }
+    }
+
     private var writingTools: some View {
         HStack(spacing: 0) {
             Button(action: onToggleTodo) {
                 icon("input.toggle-checklist", systemImage: "checklist")
+            }
+
+            Menu {
+                formatButtons([.bold, .italic, .strikethrough, .code])
+                Section {
+                    formatButtons([.heading3, .heading2, .heading1])
+                }
+                Section {
+                    formatButtons([.bulletList, .numberedList, .quote])
+                }
+                Section {
+                    formatButtons([.link, .codeBlock])
+                }
+            } label: {
+                icon("input.format", systemImage: "textformat")
             }
 
             Menu {
