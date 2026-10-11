@@ -22,6 +22,7 @@ public struct MemoEditor: View {
     @State private var text = ""
     @State private var selection: TextSelection?
     @State private var isApplyingAutoContinuation = false
+    @State private var textController = TextViewController()
 
     @State private var focused = false
     @State private var requestedInitialFocus = false
@@ -139,6 +140,10 @@ public struct MemoEditor: View {
                 toggleTodoItem()
                 focused = true
             },
+            onFormat: { format in
+                apply(format)
+                focused = true
+            },
             onPickJournalingSuggestion: {
                 focused = false
                 showingJournalingSuggestionsPicker = true
@@ -172,7 +177,10 @@ public struct MemoEditor: View {
                 privacyMenu
                     .disabled(isSaving)
                     .padding(.horizontal)
-                TextView(text: $text, selection: $selection, isFocused: $focused)
+                TextView(
+                    text: $text, selection: $selection, isFocused: $focused,
+                    controller: textController, onFormat: { apply($0) }
+                )
                     .disabled(isSaving)
                     .accessibilityLabel(Text("input.memo-content"))
                     .overlay(alignment: .topLeading) {
@@ -507,46 +515,28 @@ public struct MemoEditor: View {
     }
 
     private func toggleTodoItem() {
-        let currentText = text
-        guard let currentSelection = currentSelectionRange() else { return }
-        let lowerOffset = currentText.distance(from: currentText.startIndex, to: currentSelection.lowerBound)
-        let upperOffset = currentText.distance(from: currentText.startIndex, to: currentSelection.upperBound)
+        guard let selection = currentNSSelection() else { return }
+        apply(MarkdownFormatter.toggleTodo(in: text, selection: selection))
+    }
 
-        let contentBefore = currentText[currentText.startIndex..<currentSelection.lowerBound]
-        let lastLineBreak = contentBefore.lastIndex(of: "\n")
-        let nextLineBreak = currentText[currentSelection.lowerBound...].firstIndex(of: "\n") ?? currentText.endIndex
-        let currentLine: Substring
-        if let lastLineBreak = lastLineBreak {
-            currentLine = currentText[currentText.index(after: lastLineBreak)..<nextLineBreak]
-        } else {
-            currentLine = currentText[currentText.startIndex..<nextLineBreak]
+    private func apply(_ format: MarkdownFormat) {
+        let selection = currentNSSelection() ?? NSRange(location: (text as NSString).length, length: 0)
+        apply(MarkdownFormatter.edit(for: format, in: text, selection: selection))
+    }
+
+    /// Prefers editing through the text view so the change can be undone.
+    private func apply(_ edit: MarkdownEdit) {
+        if textController.apply(edit) { return }
+        text = edit.applied(to: text)
+        if let range = Range(edit.selection, in: text) {
+            selection = TextSelection(range: range)
         }
+    }
 
-        let contentBeforeCurrentLine = currentText[currentText.startIndex..<currentLine.startIndex]
-        let contentAfterCurrentLine = currentText[nextLineBreak..<currentText.endIndex]
-
-        for prefixStr in listItemSymbolList {
-            if (!currentLine.hasPrefix(prefixStr)) {
-                continue
-            }
-
-            if prefixStr == "- [ ] " {
-                text = contentBeforeCurrentLine + "- [x] " + currentLine[currentLine.index(currentLine.startIndex, offsetBy: prefixStr.count)..<currentLine.endIndex] + contentAfterCurrentLine
-                return
-            }
-
-            let offset = "- [ ] ".count - prefixStr.count
-            text = contentBeforeCurrentLine + "- [ ] " + currentLine[currentLine.index(currentLine.startIndex, offsetBy: prefixStr.count)..<currentLine.endIndex] + contentAfterCurrentLine
-            let newLower = text.index(text.startIndex, offsetBy: lowerOffset + offset)
-            let newUpper = text.index(text.startIndex, offsetBy: upperOffset + offset)
-            selection = TextSelection(range: newLower..<newUpper)
-            return
-        }
-
-        text = contentBeforeCurrentLine + "- [ ] " + currentLine + contentAfterCurrentLine
-        let newLower = text.index(text.startIndex, offsetBy: lowerOffset + "- [ ] ".count)
-        let newUpper = text.index(text.startIndex, offsetBy: upperOffset + "- [ ] ".count)
-        selection = TextSelection(range: newLower..<newUpper)
+    private func currentNSSelection() -> NSRange? {
+        if let range = textController.selectedRange { return range }
+        guard let range = currentSelectionRange() else { return nil }
+        return NSRange(range, in: text)
     }
 
     private func currentSelectionRange() -> Range<String.Index>? {
@@ -583,37 +573,37 @@ public struct MemoEditor: View {
         let currentLineStart = lastLineBreak.map { newValue.index(after: $0) } ?? newValue.startIndex
         let currentLine = newValue[currentLineStart..<newlineIndex]
 
-        for prefixStr in listItemSymbolList {
-            if (!currentLine.hasPrefix(prefixStr)) {
-                continue
-            }
+        guard let prefixStr = continuationPrefix(for: currentLine) else { return }
+        let location = NSRange(insertionPoint..<insertionPoint, in: newValue).location
+        isApplyingAutoContinuation = true
+        apply(MarkdownEdit(
+            range: NSRange(location: location, length: 0),
+            replacement: prefixStr,
+            selection: NSRange(location: location + (prefixStr as NSString).length, length: 0)
+        ))
+    }
 
-            if currentLine.count <= prefixStr.count {
-                break
-            }
-
-            let updatedText = newValue[..<insertionPoint] + prefixStr + newValue[insertionPoint...]
-            let cursorOffset = newValue.distance(from: newValue.startIndex, to: insertionPoint) + prefixStr.count
-            let cursor = updatedText.index(updatedText.startIndex, offsetBy: cursorOffset)
-
-            isApplyingAutoContinuation = true
-            text = String(updatedText)
-            selection = TextSelection(range: cursor..<cursor)
-            return
+    /// The prefix to start the next line with, or `nil` if the line isn't a non-empty list item or quote.
+    private func continuationPrefix(for line: Substring) -> String? {
+        if let prefixStr = listItemSymbolList.first(where: { line.hasPrefix($0) }) {
+            return line.count > prefixStr.count ? prefixStr : nil
         }
+        if let match = line.prefixMatch(of: #/(\d+)\. /#), line.count > match.output.0.count, let number = Int(match.output.1) {
+            return "\(number + 1). "
+        }
+        if line.hasPrefix("> "), line.count > 2 {
+            return "> "
+        }
+        return nil
     }
 
     private func insertAtSelection(_ insertedText: String) {
-        guard let selectionRange = currentSelectionRange() else {
-            text += insertedText
-            selection = .init(insertionPoint: text.endIndex)
-            return
-        }
-
-        let lowerOffset = text.distance(from: text.startIndex, to: selectionRange.lowerBound)
-        text = text.replacingCharacters(in: selectionRange, with: insertedText)
-        let cursor = text.index(text.startIndex, offsetBy: lowerOffset + insertedText.count)
-        selection = TextSelection(range: cursor..<cursor)
+        let selection = currentNSSelection() ?? NSRange(location: (text as NSString).length, length: 0)
+        apply(MarkdownEdit(
+            range: selection,
+            replacement: insertedText,
+            selection: NSRange(location: selection.location + (insertedText as NSString).length, length: 0)
+        ))
     }
 
     @inline(never)
