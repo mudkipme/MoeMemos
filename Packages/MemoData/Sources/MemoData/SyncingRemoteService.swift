@@ -67,7 +67,11 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         return memo
     }
 
-    func createMemo(content: String, visibility: MemoVisibility?, resources: [PersistentIdentifier], tags: [String]?) async throws -> StoredMemo {
+    var supportsMemoLocations: Bool { remote.supportsMemoLocations }
+
+    func createMemo(content: String, visibility: MemoVisibility?, resources: [PersistentIdentifier], tags: [String]?, location: MemoLocation? = nil) async throws -> StoredMemo {
+        if location != nil && !supportsMemoLocations { throw MoeMemosError.locationUnsupported }
+        if let location, !location.isValid { throw MoeMemosError.invalidParams }
         let now = Date()
         let stored = store.createLocalMemo(
             serverId: nil,
@@ -81,6 +85,8 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             syncState: .pendingCreate,
             lastSyncedAt: nil
         )
+
+        stored.location = location
 
         for resourceId in resources {
             if let resource = store.fetchResource(id: resourceId) {
@@ -109,11 +115,14 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         return stored
     }
 
-    func updateMemo(id: PersistentIdentifier, content: String?, resources: [PersistentIdentifier]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> StoredMemo {
+    func updateMemo(id: PersistentIdentifier, content: String?, resources: [PersistentIdentifier]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?, location: MemoLocationUpdate? = nil) async throws -> StoredMemo {
+        if location != nil && !supportsMemoLocations { throw MoeMemosError.locationUnsupported }
+        if let value = location?.location, !value.isValid { throw MoeMemosError.invalidParams }
         guard let stored = store.fetchMemo(id: id) else { throw MoeMemosError.invalidParams }
 
         if let content { stored.content = content }
         if let visibility { stored.visibility = visibility }
+        if let location { stored.location = location.location }
         if let pinned { stored.pinned = pinned }
 
         if let resources {
@@ -596,11 +605,13 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             resources: resources,
             createdAt: stored.createdAt,
             updatedAt: stored.updatedAt,
-            remoteId: stored.serverId
+            remoteId: stored.serverId,
+            location: stored.location
         )
     }
 
     private func memoEquivalent(_ local: Memo, _ remote: Memo) -> Bool {
+        guard local.location == remote.location else { return false }
         guard local.content == remote.content else { return false }
         guard local.pinned == remote.pinned else { return false }
         guard local.rowStatus == remote.rowStatus else { return false }
@@ -640,6 +651,8 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             syncState: .pendingCreate,
             lastSyncedAt: nil
         )
+
+        duplicated.location = local.location
 
         let resources = local.resources
             .filter { $0.accountKey == accountKey && !$0.softDeleted }
@@ -698,7 +711,8 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             resources: resources,
             tags: tags,
             createdAt: local.createdAt,
-            updatedAt: local.updatedAt
+            updatedAt: local.updatedAt,
+            location: memo.location
         )
         store.reconcileServerCreatedMemo(
             local: local,
@@ -721,7 +735,8 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             visibility: memo.visibility,
             tags: tags,
             pinned: memo.pinned,
-            updatedAt: local.updatedAt
+            updatedAt: local.updatedAt,
+            location: supportsMemoLocations ? memo.location.map(MemoLocationUpdate.set) ?? .remove : nil
         )
         applyRemoteMemo(updated, syncedAt: updated.updatedAt)
         return updated

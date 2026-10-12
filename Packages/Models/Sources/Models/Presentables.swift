@@ -16,6 +16,7 @@ public protocol ResourcePresentable {
 public protocol MemoPresentable {
     var user: RemoteUser? { get }
     var content: String { get }
+    var location: MemoLocation? { get }
     var pinned: Bool { get }
     var rowStatus: RowStatus { get }
     var visibility: MemoVisibility { get }

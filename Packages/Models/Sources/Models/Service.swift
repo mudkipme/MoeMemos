@@ -10,6 +10,7 @@ import SwiftData
 
 @MainActor
 public protocol RemoteService: Sendable {
+    var supportsMemoLocations: Bool { get }
     func memoVisibilities() -> [MemoVisibility]
     func listMemos() async throws -> [Memo]
     func listArchivedMemos() async throws -> [Memo]
@@ -20,7 +21,8 @@ public protocol RemoteService: Sendable {
         resources: [Resource],
         tags: [String]?,
         createdAt: Date?,
-        updatedAt: Date?
+        updatedAt: Date?,
+        location: MemoLocation?
     ) async throws -> Memo
     func updateMemo(
         remoteId: String,
@@ -29,7 +31,8 @@ public protocol RemoteService: Sendable {
         visibility: MemoVisibility?,
         tags: [String]?,
         pinned: Bool?,
-        updatedAt: Date?
+        updatedAt: Date?,
+        location: MemoLocationUpdate?
     ) async throws -> Memo
     func deleteMemo(remoteId: String) async throws
     func archiveMemo(remoteId: String) async throws
@@ -53,13 +56,14 @@ public protocol MemoCommentService: RemoteService {
 /// Identifiers are SwiftData `PersistentIdentifier`s, not server ids.
 @MainActor
 public protocol Service: Sendable {
+    var supportsMemoLocations: Bool { get }
     func memoVisibilities() -> [MemoVisibility]
     func listMemos() async throws -> [StoredMemo]
     func listArchivedMemos() async throws -> [StoredMemo]
     func memo(id: PersistentIdentifier) -> StoredMemo?
 
-    func createMemo(content: String, visibility: MemoVisibility?, resources: [PersistentIdentifier], tags: [String]?) async throws -> StoredMemo
-    func updateMemo(id: PersistentIdentifier, content: String?, resources: [PersistentIdentifier]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> StoredMemo
+    func createMemo(content: String, visibility: MemoVisibility?, resources: [PersistentIdentifier], tags: [String]?, location: MemoLocation?) async throws -> StoredMemo
+    func updateMemo(id: PersistentIdentifier, content: String?, resources: [PersistentIdentifier]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?, location: MemoLocationUpdate?) async throws -> StoredMemo
     func deleteMemo(id: PersistentIdentifier) async throws
     func archiveMemo(id: PersistentIdentifier) async throws
     func restoreMemo(id: PersistentIdentifier) async throws
@@ -82,4 +86,28 @@ public protocol SyncableService: Sendable {
 @MainActor
 public protocol PendingOperationsService: Sendable {
     func waitForPendingOperations() async
+}
+
+public extension RemoteService {
+    var supportsMemoLocations: Bool { false }
+
+    func createMemo(content: String, visibility: MemoVisibility?, resources: [Resource], tags: [String]?, createdAt: Date?, updatedAt: Date?) async throws -> Memo {
+        try await createMemo(content: content, visibility: visibility, resources: resources, tags: tags, createdAt: createdAt, updatedAt: updatedAt, location: nil)
+    }
+
+    func updateMemo(remoteId: String, content: String?, resources: [Resource]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?, updatedAt: Date?) async throws -> Memo {
+        try await updateMemo(remoteId: remoteId, content: content, resources: resources, visibility: visibility, tags: tags, pinned: pinned, updatedAt: updatedAt, location: nil)
+    }
+}
+
+public extension Service {
+    var supportsMemoLocations: Bool { true }
+
+    func createMemo(content: String, visibility: MemoVisibility?, resources: [PersistentIdentifier], tags: [String]?) async throws -> StoredMemo {
+        try await createMemo(content: content, visibility: visibility, resources: resources, tags: tags, location: nil)
+    }
+
+    func updateMemo(id: PersistentIdentifier, content: String?, resources: [PersistentIdentifier]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> StoredMemo {
+        try await updateMemo(id: id, content: content, resources: resources, visibility: visibility, tags: tags, pinned: pinned, location: nil)
+    }
 }

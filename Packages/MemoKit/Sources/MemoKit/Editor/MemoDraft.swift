@@ -6,14 +6,15 @@ struct MemoDraft: Codable, Equatable {
     var text: String
     var visibility: MemoVisibility
     var resourceIDs: [PersistentIdentifier]
+    var location: MemoLocation? = nil
 
     static func == (lhs: MemoDraft, rhs: MemoDraft) -> Bool {
         lhs.text.utf16.elementsEqual(rhs.text.utf16)
-            && lhs.visibility == rhs.visibility && lhs.resourceIDs == rhs.resourceIDs
+            && lhs.visibility == rhs.visibility && lhs.resourceIDs == rhs.resourceIDs && lhs.location == rhs.location
     }
 
     var hasContent: Bool {
-        !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !resourceIDs.isEmpty
+        !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !resourceIDs.isEmpty || location != nil
     }
 }
 

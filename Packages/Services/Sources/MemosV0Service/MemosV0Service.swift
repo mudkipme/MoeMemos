@@ -64,8 +64,10 @@ public final class MemosV0Service: RemoteService {
         resources: [Resource],
         tags: [String]?,
         createdAt: Date?,
-        updatedAt: Date?
+        updatedAt: Date?,
+        location: MemoLocation? = nil
     ) async throws -> Memo {
+        if location != nil { throw MoeMemosError.locationUnsupported }
         _ = updatedAt
         var memosVisibility: MemosV0Visibility? = nil
         if let visibility = visibility {
@@ -94,8 +96,10 @@ public final class MemosV0Service: RemoteService {
         visibility: MemoVisibility?,
         tags: [String]?,
         pinned: Bool?,
-        updatedAt: Date?
+        updatedAt: Date?,
+        location: MemoLocationUpdate? = nil
     ) async throws -> Memo {
+        if location != nil { throw MoeMemosError.locationUnsupported }
         guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
         var memo: MemosV0Memo?
         if let pinned = pinned {

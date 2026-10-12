@@ -68,5 +68,6 @@ let package = Package(
                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")
             ]
         ),
+        .testTarget(name: "MemosV1ServiceTests", dependencies: ["MemosV1Service"]),
     ]
 )

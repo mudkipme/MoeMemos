@@ -22,6 +22,23 @@ public final class StoredMemo {
     public var serverId: String?
     /// Stable cross-client backup identity, independent of server and database IDs.
     public var backupId: String? = nil
+    // Optional columns allow existing stores to migrate without losing memos.
+    public var locationPlaceholder: String? = nil
+    public var locationLatitude: Double? = nil
+    public var locationLongitude: Double? = nil
+
+    public var location: MemoLocation? {
+        get {
+            guard let latitude = locationLatitude, let longitude = locationLongitude else { return nil }
+            return MemoLocation(placeholder: locationPlaceholder ?? "", latitude: latitude, longitude: longitude)
+        }
+        set {
+            locationPlaceholder = newValue?.placeholder
+            locationLatitude = newValue?.latitude
+            locationLongitude = newValue?.longitude
+        }
+    }
+
     public var content: String
     public var pinned: Bool
     public var rowStatus: RowStatus

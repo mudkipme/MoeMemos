@@ -30,6 +30,7 @@ public struct MemoEditor: View {
     @State private var showingImagePicker = false
     @State private var showingDocumentScanner = false
     @State private var showingFilePicker = false
+    @State private var showingLocationPicker = false
     @State private var showingJournalingSuggestionsPicker = false
     @State private var submitError: Error?
     @State private var showingErrorToast = false
@@ -51,7 +52,7 @@ public struct MemoEditor: View {
     }
 
     private var currentDraft: MemoDraft {
-        MemoDraft(text: text, visibility: viewModel.visibility, resourceIDs: viewModel.resourceList.map(\.id))
+        MemoDraft(text: text, visibility: viewModel.visibility, resourceIDs: viewModel.resourceList.map(\.id), location: viewModel.location)
     }
 
     private var isCurrentAccount: Bool {
@@ -72,12 +73,14 @@ public struct MemoEditor: View {
         let original = MemoDraft(
             text: memo?.content ?? "",
             visibility: memo?.visibility ?? accountManager.currentUser?.defaultVisibility ?? .private,
-            resourceIDs: resources.map(\.id)
+            resourceIDs: resources.map(\.id),
+            location: memo?.location
         )
         let savedDraft = store.load(defaultVisibility: original.visibility)
         let restored = savedDraft ?? original
         text = restored.text
         viewModel.visibility = restored.visibility
+        viewModel.location = restored.location
         viewModel.resourceList = restored.resourceIDs.compactMap { id in
             guard let resource = service?.resource(id: id),
                   resource.accountKey == accountKey, !resource.softDeleted else { return nil }
@@ -173,6 +176,11 @@ public struct MemoEditor: View {
                 focused = false
                 showingFilePicker = true
             },
+            supportsLocations: viewModel.supportsLocations,
+            onPickLocation: {
+                focused = false
+                showingLocationPicker = true
+            },
             isFocused: $focused
         )
     }
@@ -218,6 +226,26 @@ public struct MemoEditor: View {
                         .font(.footnote)
                         .foregroundStyle(.orange)
                         .padding(.horizontal)
+                }
+                if let location = viewModel.location {
+                    HStack {
+                        Button {
+                            focused = false
+                            showingLocationPicker = true
+                        } label: {
+                            Label(location.displayName, systemImage: "mappin.and.ellipse")
+                                .lineLimit(2)
+                        }
+                        Spacer()
+                        Button("location.remove", systemImage: "xmark.circle.fill") {
+                            viewModel.location = nil
+                        }
+                        .labelStyle(.iconOnly)
+                        .foregroundStyle(.secondary)
+                    }
+                    .font(.subheadline)
+                    .padding(.horizontal)
+                    .disabled(isBusy || !isCurrentAccount || !viewModel.supportsLocations)
                 }
                 attachmentImportStatus
                 MemoEditorResourceView(viewModel: viewModel)
@@ -287,6 +315,12 @@ public struct MemoEditor: View {
                 }
             }
             .prioritizeVisibility()
+        }
+        .sheet(isPresented: $showingLocationPicker) {
+            MemoLocationPicker(location: viewModel.location) { location in
+                guard isCurrentAccount, !isBusy else { return }
+                viewModel.location = location
+            }
         }
         .fullScreenCover(isPresented: $showingImagePicker, content: {
             ImagePicker { image in
@@ -485,9 +519,9 @@ public struct MemoEditor: View {
         do {
             let resourceIds = viewModel.resourceList.map(\.id)
             if let memo = memo {
-                try await actions.editMemo(memo.id, text, viewModel.visibility, resourceIds, tags)
+                try await actions.editMemo(memo.id, text, viewModel.visibility, resourceIds, tags, viewModel.location)
             } else {
-                try await actions.createMemo(text, viewModel.visibility, resourceIds, tags)
+                try await actions.createMemo(text, viewModel.visibility, resourceIds, tags, viewModel.location)
             }
             finished = true
             draftStore?.clear()

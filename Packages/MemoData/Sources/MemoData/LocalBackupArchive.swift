@@ -1,5 +1,6 @@
 import CryptoKit
 import Foundation
+import Models
 import ZIPFoundation
 
 // Version 1 is shared with MoeMemosAndroid's LocalBackupArchive. Keep the wire
@@ -20,6 +21,7 @@ struct LocalBackupMemo: Codable, Sendable, Equatable {
     var visibility: String
     var pinned: Bool
     var archived: Bool
+    var location: MemoLocation? = nil
 }
 
 struct LocalBackupAttachment: Codable, Sendable, Equatable {
@@ -89,9 +91,12 @@ enum LocalBackupArchive {
     static func timestamp(_ date: Date) -> String {
         // Foundation's default formatter emits only milliseconds. Retain the
         // submillisecond precision available in Date when moving between clients.
-        let seconds = floor(date.timeIntervalSince1970)
-        let nanos = Int((date.timeIntervalSince1970 - seconds) * 1_000_000_000)
-        let base = Date(timeIntervalSince1970: seconds).ISO8601Format()
+        // Date stores seconds relative to 2001. Converting to the Unix epoch
+        // before extracting the fraction can discard a bit of stored precision.
+        let interval = date.timeIntervalSinceReferenceDate
+        let seconds = floor(interval)
+        let nanos = Int((interval - seconds) * 1_000_000_000)
+        let base = Date(timeIntervalSinceReferenceDate: seconds).ISO8601Format()
         return String(base.dropLast()) + String(format: ".%09dZ", nanos)
     }
 
@@ -285,6 +290,7 @@ enum LocalBackupArchive {
             try require(memoIds.insert(memo.id).inserted, "Duplicate memo identifier")
             try validatePath(memo.contentFile)
             try require(paths.insert(memo.contentFile).inserted, "Duplicate content path")
+            try require(memo.location?.isValid != false, "Invalid memo location")
             _ = try date(memo.createdAt)
             _ = try date(memo.updatedAt)
             try require(["PRIVATE", "PROTECTED", "PUBLIC", "SPACE"].contains(memo.visibility), "Unknown memo visibility")

@@ -37,7 +37,8 @@ final class LocalService: Service {
         return memo
     }
 
-    func createMemo(content: String, visibility: MemoVisibility?, resources: [PersistentIdentifier], tags: [String]?) async throws -> StoredMemo {
+    func createMemo(content: String, visibility: MemoVisibility?, resources: [PersistentIdentifier], tags: [String]?, location: MemoLocation? = nil) async throws -> StoredMemo {
+        if let location, !location.isValid { throw MoeMemosError.invalidParams }
         let createdAt = Date()
         let memo = Memo(
             content: content,
@@ -47,7 +48,8 @@ final class LocalService: Service {
             resources: [],
             createdAt: createdAt,
             updatedAt: createdAt,
-            remoteId: nil
+            remoteId: nil,
+            location: location
         )
 
         let stored = store.upsertMemo(memo, syncState: .synced)
@@ -63,7 +65,8 @@ final class LocalService: Service {
         return stored
     }
 
-    func updateMemo(id: PersistentIdentifier, content: String?, resources: [PersistentIdentifier]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?) async throws -> StoredMemo {
+    func updateMemo(id: PersistentIdentifier, content: String?, resources: [PersistentIdentifier]?, visibility: MemoVisibility?, tags: [String]?, pinned: Bool?, location: MemoLocationUpdate? = nil) async throws -> StoredMemo {
+        if let value = location?.location, !value.isValid { throw MoeMemosError.invalidParams }
         guard let stored = store.fetchMemo(id: id) else {
             throw MoeMemosError.invalidParams
         }
@@ -74,6 +77,7 @@ final class LocalService: Service {
         if let visibility {
             stored.visibility = visibility
         }
+        if let location { stored.location = location.location }
         if let pinned {
             stored.pinned = pinned
         }

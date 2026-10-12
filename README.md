@@ -27,6 +27,7 @@ Moe Memos is available on App Store for free. You can also build this app with X
 - Fully functional offline and automatically pushes data when back online
 - Extended Markdown support
 - Upload images, videos, and other file types
+- Attach places with Apple Maps, place search, or your current location
 - Organize and find memos with tags, pinning, and search
 - View your memo activity with a progress graph
 - Liquid Glass, Dark Mode, and Dynamic Type support

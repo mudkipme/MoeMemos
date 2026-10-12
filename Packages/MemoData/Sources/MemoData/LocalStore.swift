@@ -195,6 +195,7 @@ final class LocalStore {
         }
 
         local.serverId = serverId
+        local.location = created.location
         local.content = created.content
         local.pinned = created.pinned
         local.rowStatus = created.rowStatus
@@ -226,6 +227,7 @@ final class LocalStore {
             )
         }
 
+        stored.location = memo.location
         stored.content = memo.content
         stored.pinned = memo.pinned
         stored.rowStatus = memo.rowStatus

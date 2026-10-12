@@ -15,6 +15,8 @@ struct MemoEditorToolbar: View {
     let supportsDocumentScanning: Bool
     let onScanDocument: () -> Void
     let onPickFiles: () -> Void
+    let supportsLocations: Bool
+    let onPickLocation: () -> Void
     @Binding var isFocused: Bool
 
     private func icon(_ title: LocalizedStringKey, systemImage: String) -> some View {
@@ -79,6 +81,9 @@ struct MemoEditorToolbar: View {
                     Button("input.scan", systemImage: "doc.viewfinder", action: onScanDocument)
                 }
                 Button("input.files", systemImage: "doc", action: onPickFiles)
+                if supportsLocations {
+                    Button("location.add", systemImage: "mappin.and.ellipse", action: onPickLocation)
+                }
                 if supportsJournalingSuggestions {
                     Section {
                         Button("input.journaling", systemImage: "wand.and.sparkles", action: onPickJournalingSuggestion)

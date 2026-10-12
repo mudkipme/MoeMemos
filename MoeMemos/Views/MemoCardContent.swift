@@ -80,6 +80,9 @@ struct MemoCardContent: View {
             ForEach(resources()) { content in
                 resourceView(for: content)
             }
+            if let location = memo.location, location.isValid {
+                MemoLocationView(location: location)
+            }
         }
         .onChange(of: memo.content) { _, newContent in
             guard newContent != cachedRawMarkdown else {

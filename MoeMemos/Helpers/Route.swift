@@ -82,11 +82,11 @@ private struct MemoEditorSheet: View {
                     try await memosViewModel.loadTags()
                     return memosViewModel.tags
                 },
-                createMemo: { content, visibility, resources, tags in
-                    try await memosViewModel.createMemo(content: content, visibility: visibility, resources: resources, tags: tags)
+                createMemo: { content, visibility, resources, tags, location in
+                    try await memosViewModel.createMemo(content: content, visibility: visibility, resources: resources, tags: tags, location: location)
                 },
-                editMemo: { id, content, visibility, resources, tags in
-                    try await memosViewModel.editMemo(id: id, content: content, visibility: visibility, resources: resources, tags: tags)
+                editMemo: { id, content, visibility, resources, tags, location in
+                    try await memosViewModel.editMemo(id: id, content: content, visibility: visibility, resources: resources, tags: tags, location: location.map(MemoLocationUpdate.set) ?? .remove)
                 }
             )
         )

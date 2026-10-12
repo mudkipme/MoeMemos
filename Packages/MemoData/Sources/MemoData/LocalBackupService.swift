@@ -64,7 +64,7 @@ public actor LocalBackupService {
         let records = memos.enumerated().map { index, memo in
             LocalBackupMemo(id: memo.backupId!, contentFile: "memos/\(index).md",
                 createdAt: LocalBackupArchive.timestamp(memo.createdAt), updatedAt: LocalBackupArchive.timestamp(memo.updatedAt),
-                visibility: Self.visibility(memo.visibility), pinned: memo.pinned, archived: memo.rowStatus == .archived)
+                visibility: Self.visibility(memo.visibility), pinned: memo.pinned, archived: memo.rowStatus == .archived, location: memo.location)
         }
         let attachments = resources.enumerated().map { index, resource in
             LocalBackupAttachment(id: resource.backupId!, memoId: resource.memo?.backupId, filename: resource.filename,
@@ -119,6 +119,7 @@ public actor LocalBackupService {
             let stored = StoredMemo(accountKey: accountKey, content: data.contents[memo.contentFile]!, pinned: memo.pinned,
                 rowStatus: memo.archived ? .archived : .normal, visibility: Self.visibility(memo.visibility),
                 createdAt: try LocalBackupArchive.date(memo.createdAt), updatedAt: try LocalBackupArchive.date(memo.updatedAt))
+            stored.location = memo.location
             stored.backupId = memo.id
             context.insert(stored)
             inserted[memo.id] = stored

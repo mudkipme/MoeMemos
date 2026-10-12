@@ -13,6 +13,7 @@ public enum MoeMemosError: LocalizedError {
     case invalidStatusCode(Int, String?)
     case invalidParams
     case fileTooLarge(Int64)
+    case locationUnsupported
     case unsupportedVersion
     case accessTokenExpired
     case accountCredentialSaveFailed(accountKey: String)
@@ -32,6 +33,8 @@ public enum MoeMemosError: LocalizedError {
             return "Please enter a valid input."
         case .fileTooLarge(let maxBytes):
             return "File is too large. Max size is \(formatByteCount(maxBytes))."
+        case .locationUnsupported:
+            return NSLocalizedString("location.unsupported", comment: "Location unavailable on legacy server")
         case .unsupportedVersion:
             return SupportedMemosVersion.localizedSupportedVersionsMessage()
         case .accessTokenExpired:
