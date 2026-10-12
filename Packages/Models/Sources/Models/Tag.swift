@@ -15,4 +15,9 @@ public struct Tag: Hashable, Identifiable {
     public init(name: String) {
         self.name = name
     }
+
+    /// Matches this tag or any descendant separated by a slash.
+    public func matches(_ tagName: String) -> Bool {
+        tagName == name || tagName.hasPrefix(name + "/")
+    }
 }
