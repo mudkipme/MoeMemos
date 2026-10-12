@@ -19,6 +19,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
 
     // Serialize all remote operations + sync to avoid conflicting writes.
     private var operationChain: Task<Void, Never>?
+    private var resourceDownloads: [PersistentIdentifier: Task<URL, Error>] = [:]
 
     init(remote: RemoteService, context: ModelContext, accountKey: String) {
         self.remote = remote
@@ -362,38 +363,48 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             try? store.save()
             return url
         }
+        if let download = resourceDownloads[id] {
+            return try await download.value
+        }
         guard let remoteURL = resource.url else {
             throw MoeMemosError.invalidParams
         }
 
-        let downloaded = try await remote.download(url: remoteURL, mimeType: resource.mimeType)
-        let storedURL: URL
-        if downloaded.isFileURL {
-            storedURL = try ResourceFileStore.store(
-                fileAt: downloaded,
-                filename: resource.filename,
-                mimeType: resource.mimeType,
-                accountKey: accountKey,
-                resourceId: UUID().uuidString
-            )
-        } else {
-            let data = try Data(contentsOf: downloaded)
-            storedURL = try ResourceFileStore.store(
-                data: data,
-                filename: resource.filename,
-                mimeType: resource.mimeType,
-                accountKey: accountKey,
-                resourceId: UUID().uuidString
-            )
+        // Share the canonical file operation; cancelling one waiter must not cancel it for others.
+        let download = Task { @MainActor in
+            defer { resourceDownloads[id] = nil }
+
+            let downloaded = try await remote.download(url: remoteURL, mimeType: resource.mimeType)
+            let storedURL: URL
+            if downloaded.isFileURL {
+                storedURL = try ResourceFileStore.store(
+                    fileAt: downloaded,
+                    filename: resource.filename,
+                    mimeType: resource.mimeType,
+                    accountKey: accountKey,
+                    resourceId: UUID().uuidString
+                )
+            } else {
+                let data = try Data(contentsOf: downloaded)
+                storedURL = try ResourceFileStore.store(
+                    data: data,
+                    filename: resource.filename,
+                    mimeType: resource.mimeType,
+                    accountKey: accountKey,
+                    resourceId: UUID().uuidString
+                )
+            }
+            resource.localPath = storedURL.path
+            if resource.serverId != nil {
+                resource.urlString = remoteURL.absoluteString
+            } else {
+                resource.urlString = storedURL.absoluteString
+            }
+            try? store.save()
+            return storedURL
         }
-        resource.localPath = storedURL.path
-        if resource.serverId != nil {
-            resource.urlString = remoteURL.absoluteString
-        } else {
-            resource.urlString = storedURL.absoluteString
-        }
-        try? store.save()
-        return storedURL
+        resourceDownloads[id] = download
+        return try await download.value
     }
 
     // MARK: - SyncableService
