@@ -204,15 +204,15 @@ struct MemosList: View {
         let nonPinned = memoList.filter { !($0.pinned == true) }
         var fullList = pinned + nonPinned
         
-        if let tag = tag {
-            fullList = fullList.filter({ memo in
-                MemoTagExtractor.extract(from: memo.content).contains(tag.name)
-            })
-        }
-        
         if !searchString.isEmpty {
             fullList = fullList.filter({ memo in
                 memo.content.localizedCaseInsensitiveContains(searchString)
+            })
+        }
+
+        if let tag = tag {
+            fullList = fullList.filter({ memo in
+                MemoTagExtractor.extract(from: memo.content).contains(tag.name)
             })
         }
         
