@@ -7,6 +7,11 @@ struct MemoDraft: Codable, Equatable {
     var visibility: MemoVisibility
     var resourceIDs: [PersistentIdentifier]
 
+    static func == (lhs: MemoDraft, rhs: MemoDraft) -> Bool {
+        lhs.text.utf16.elementsEqual(rhs.text.utf16)
+            && lhs.visibility == rhs.visibility && lhs.resourceIDs == rhs.resourceIDs
+    }
+
     var hasContent: Bool {
         !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !resourceIDs.isEmpty
     }

@@ -141,4 +141,18 @@ final class MemoDraftTests: XCTestCase {
         reopened.resourceList = memo.resources
         XCTAssertEqual(reopened.resourceList.map(\.id), [resource.id])
     }
+
+    func testNormalizationOnlyChangesArePersistedExactly() throws {
+        let nfc = MemoDraft(text: "caf\u{e9}", visibility: .private, resourceIDs: [])
+        let nfd = MemoDraft(text: "cafe\u{301}", visibility: .private, resourceIDs: [])
+        XCTAssertEqual(nfc.text, nfd.text)
+        XCTAssertNotEqual(nfc, nfd)
+        try withDefaults { defaults in
+            let store = MemoDraftStore(defaults: defaults, accountKey: "test")
+            try store.save(nfc)
+            try store.save(nfd)
+            let restored = try XCTUnwrap(store.load(defaultVisibility: .private))
+            XCTAssertEqual(Array(restored.text.utf16), Array(nfd.text.utf16))
+        }
+    }
 }

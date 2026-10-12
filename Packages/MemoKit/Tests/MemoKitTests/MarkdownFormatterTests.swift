@@ -140,4 +140,35 @@ final class MarkdownFormatterTests: XCTestCase {
         XCTAssertEqual(applyTodo(to: "- buy mi|lk"), "- [ ] buy mi|lk")
         XCTAssertEqual(applyTodo(to: "a\nb|"), "a\n- [ ] b|")
     }
+
+    func testListToolsPreserveIndentationAndReplaceExistingPrefixes() {
+        XCTAssertEqual(applyTodo(to: "  + [x] ta|sk"), "  + [ ] ta|sk")
+        XCTAssertEqual(applyTodo(to: "  12. ta|sk"), "  - [ ] ta|sk")
+        XCTAssertEqual(applyTodo(to: "\t* [ ] ta|sk"), "\t* [x] ta|sk")
+        XCTAssertEqual(apply(.bulletList, to: "  1. [one\n    2. two]"), "  - [one\n    - two]")
+        XCTAssertEqual(apply(.numberedList, to: "  - [one\n    - two]"), "  1. [one\n    2. two]")
+        XCTAssertEqual(apply(.quote, to: "  > qu|ote"), "  qu|ote")
+    }
+
+    func testEveryFormatPreservesUnicodeRepresentationAndSelectionBoundaries() {
+        for payload in ["👨‍👩‍👧‍👦", "👍🏽", "🇯🇵", "1️⃣", "caf\u{e9}", "cafe\u{301}", "한"] {
+            let text = "🎉 \(payload) end"
+            let selection = NSRange(location: "🎉 ".utf16.count, length: payload.utf16.count)
+            for format in MarkdownFormat.allCases {
+                let edit = MarkdownFormatter.edit(for: format, in: text, selection: selection)
+                XCTAssertTrue(edit.isValid(in: text), "\(format): \(payload)")
+                let result = edit.applied(to: text)
+                let payloadRange = (result as NSString).range(of: payload, options: .literal)
+                XCTAssertNotEqual(payloadRange.location, NSNotFound)
+                if payloadRange.location != NSNotFound {
+                    XCTAssertEqual(Array((result as NSString).substring(with: payloadRange).utf16), Array(payload.utf16))
+                }
+            }
+        }
+    }
+
+    func testEditValidationRejectsSelectionInsideResultGraphemeCluster() {
+        let edit = MarkdownEdit(range: NSRange(), replacement: "👨‍👩‍👧‍👦", selection: NSRange(location: 2, length: 0))
+        XCTAssertFalse(edit.isValid(in: ""))
+    }
 }

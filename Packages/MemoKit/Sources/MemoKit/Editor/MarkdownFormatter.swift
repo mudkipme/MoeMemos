@@ -1,5 +1,19 @@
 import Foundation
 
+/// UTF-16 ranges belong to one exact text snapshot. Conversion alone does not
+/// guarantee that their endpoints lie on extended-grapheme-cluster boundaries.
+enum EditorTextRange {
+    static func characters(_ range: NSRange, in text: String) -> Range<String.Index>? {
+        let length = text.utf16.count
+        guard range.location >= 0, range.location <= length,
+              range.length >= 0, range.length <= length - range.location,
+              let converted = Range(range, in: text),
+              let lower = String.Index(converted.lowerBound, within: text),
+              let upper = String.Index(converted.upperBound, within: text) else { return nil }
+        return lower..<upper
+    }
+}
+
 public enum MarkdownFormat: CaseIterable, Sendable {
     case bold
     case italic
@@ -58,6 +72,11 @@ struct MarkdownEdit: Equatable {
     var range: NSRange
     var replacement: String
     var selection: NSRange
+
+    func isValid(in text: String) -> Bool {
+        guard EditorTextRange.characters(range, in: text) != nil else { return false }
+        return EditorTextRange.characters(selection, in: applied(to: text)) != nil
+    }
 
     func applied(to text: String) -> String {
         (text as NSString).replacingCharacters(in: range, with: replacement)
@@ -187,19 +206,17 @@ enum MarkdownFormatter {
     static func toggleTodo(in text: String, selection: NSRange) -> MarkdownEdit {
         let ns = text as NSString
         let lineRange = contentLineRange(of: NSRange(location: selection.location, length: 0), in: ns)
-        let line = ns.substring(with: lineRange)
-        let newPrefix: String
-        let existing: Int
-        if line.hasPrefix("- [ ] ") {
-            (existing, newPrefix) = (6, "- [x] ")
-        } else if let symbol = ["- [x] ", "- [X] ", "* ", "- "].first(where: line.hasPrefix) {
-            (existing, newPrefix) = ((symbol as NSString).length, "- [ ] ")
-        } else {
-            (existing, newPrefix) = (0, "- [ ] ")
-        }
-        let edit = LineEdit(lineStart: lineRange.location, removedLength: existing, inserted: newPrefix)
+        let fullLine = ns.substring(with: lineRange)
+        let indentation = String(fullLine.prefix { $0 == " " || $0 == "\t" })
+        let line = String(fullLine.dropFirst(indentation.count))
+        let bulletLength = prefixLength(bulletPattern, in: line)
+        let existing = max(bulletLength, prefixLength(numberedPattern, in: line))
+        let bullet = bulletLength > 0 ? String(line.prefix(1)) : "-"
+        let newPrefix = bullet + (line.hasPrefix(bullet + " [ ] ") ? " [x] " : " [ ] ")
+        let prefixStart = lineRange.location + indentation.utf16.count
+        let edit = LineEdit(lineStart: prefixStart, removedLength: existing, inserted: newPrefix)
         return MarkdownEdit(
-            range: NSRange(location: lineRange.location, length: existing),
+            range: NSRange(location: prefixStart, length: existing),
             replacement: newPrefix,
             selection: map(selection, through: [edit])
         )
@@ -227,7 +244,7 @@ enum MarkdownFormatter {
         let blockRange = contentLineRange(of: selection, in: ns)
         let lines = ns.substring(with: blockRange).components(separatedBy: "\n")
         let candidates = lines.count > 1 ? lines.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty } : lines
-        let applied = !candidates.isEmpty && candidates.allSatisfy(isApplied)
+        let applied = !candidates.isEmpty && candidates.allSatisfy { isApplied(String($0.drop { $0 == " " || $0 == "\t" })) }
 
         var edits: [LineEdit] = []
         var output: [String] = []
@@ -238,10 +255,12 @@ enum MarkdownFormatter {
             if lines.count > 1, line.trimmingCharacters(in: .whitespaces).isEmpty {
                 output.append(line)
             } else {
-                let (removed, inserted) = transform(line, applied, index)
+                let indentation = String(line.prefix { $0 == " " || $0 == "\t" })
+                let content = String(line.dropFirst(indentation.count))
+                let (removed, inserted) = transform(content, applied, index)
                 index += 1
-                edits.append(LineEdit(lineStart: location, removedLength: removed, inserted: inserted))
-                output.append(inserted + (line as NSString).substring(from: removed))
+                edits.append(LineEdit(lineStart: location + indentation.utf16.count, removedLength: removed, inserted: inserted))
+                output.append(indentation + inserted + (content as NSString).substring(from: removed))
             }
             location += length + 1
         }
@@ -289,11 +308,12 @@ enum MarkdownFormatter {
     }
 
     private static func trimmingWhitespace(_ selection: NSRange, in ns: NSString) -> NSRange {
-        var start = selection.location
-        var end = NSMaxRange(selection)
-        let whitespace = CharacterSet.whitespacesAndNewlines
-        while start < end, let scalar = UnicodeScalar(ns.character(at: start)), whitespace.contains(scalar) { start += 1 }
-        while end > start, let scalar = UnicodeScalar(ns.character(at: end - 1)), whitespace.contains(scalar) { end -= 1 }
-        return NSRange(location: start, length: end - start)
+        let text = ns as String
+        guard let range = EditorTextRange.characters(selection, in: text) else { return selection }
+        var start = range.lowerBound
+        var end = range.upperBound
+        while start < end, text[start].isWhitespace { start = text.index(after: start) }
+        while end > start, text[text.index(before: end)].isWhitespace { end = text.index(before: end) }
+        return NSRange(start..<end, in: text)
     }
 }
