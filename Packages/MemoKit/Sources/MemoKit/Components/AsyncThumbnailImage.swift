@@ -12,11 +12,13 @@ public struct AsyncThumbnailImage: View {
     let videoURL: URL?
     @State private var thumbnail: UIImage?
     @State private var isLoading = false
+    @State private var thumbnailURL: URL?
     
     public init(videoURL: URL?, thumbnail: UIImage? = nil, isLoading: Bool = false) {
         self.videoURL = videoURL
         self.thumbnail = thumbnail
         self.isLoading = isLoading
+        self.thumbnailURL = thumbnail != nil ? videoURL : nil
     }
     
     public var body: some View {
@@ -32,10 +34,8 @@ public struct AsyncThumbnailImage: View {
                 Color.gray
             }
         }
-        .onAppear {
-            Task {
-                await loadThumbnail()
-            }
+        .task(id: videoURL) {
+            await loadThumbnail()
         }
     }
     
@@ -78,14 +78,22 @@ public struct AsyncThumbnailImage: View {
     }
     
     private func loadThumbnail() async {
-        guard thumbnail == nil, !isLoading else { return }
+        guard thumbnail == nil || thumbnailURL != videoURL else { return }
+        thumbnail = nil
+        thumbnailURL = nil
+        guard let videoURL else {
+            isLoading = false
+            return
+        }
         isLoading = true
         
         do {
             let image = try await VideoThumbnailGenerator.generateThumbnail(from: videoURL)
+            guard !Task.isCancelled else { return }
             self.thumbnail = image
+            self.thumbnailURL = videoURL
         } catch {
-            print(error)
+            guard !Task.isCancelled else { return }
         }
         self.isLoading = false
     }

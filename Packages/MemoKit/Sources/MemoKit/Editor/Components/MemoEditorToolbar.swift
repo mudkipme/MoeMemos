@@ -3,6 +3,8 @@ import Models
 
 struct MemoEditorToolbar: View {
     let tags: [Tag]
+    var tagQuery: String?
+    var isComposing = false
     let onInsertTag: (Tag?) -> Void
     let onToggleTodo: () -> Void
     let onFormat: (MarkdownFormat) -> Void
@@ -36,6 +38,7 @@ struct MemoEditorToolbar: View {
             Button(action: onToggleTodo) {
                 icon("input.toggle-checklist", systemImage: "checklist")
             }
+            .disabled(isComposing)
 
             Menu {
                 formatButtons([.bold, .italic, .strikethrough, .code])
@@ -51,14 +54,15 @@ struct MemoEditorToolbar: View {
             } label: {
                 icon("input.format", systemImage: "textformat")
             }
+            .disabled(isComposing)
 
             Menu {
                 Button("input.new-tag", systemImage: "number") {
                     onInsertTag(nil)
                 }
-                if !tags.isEmpty {
+                if !matchingTags.isEmpty {
                     Section {
-                        ForEach(tags) { tag in
+                        ForEach(matchingTags) { tag in
                             Button(tag.name) { onInsertTag(tag) }
                         }
                     }
@@ -66,6 +70,7 @@ struct MemoEditorToolbar: View {
             } label: {
                 icon("input.insert-tag", systemImage: "number")
             }
+            .disabled(isComposing)
 
             Menu {
                 Button("input.photos", systemImage: "photo.on.rectangle", action: onPickPhotos)
@@ -85,6 +90,14 @@ struct MemoEditorToolbar: View {
         }
         .buttonStyle(.borderless)
         .padding(4)
+    }
+
+    private var matchingTags: [Tag] {
+        let names = Set(tags.map(\.name)).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        return names.filter { name in
+            guard let tagQuery, !tagQuery.isEmpty else { return true }
+            return name.localizedCaseInsensitiveContains(tagQuery)
+        }.map { Tag(name: $0) }
     }
 
     private var keyboardButton: some View {

@@ -9,8 +9,6 @@ import SwiftData
 @_weakLinked @preconcurrency import JournalingSuggestions
 #endif
 
-private let listItemSymbolList = ["- [ ] ", "- [x] ", "- [X] ", "* ", "- "]
-
 @MainActor
 public struct MemoEditor: View {
     public let memo: StoredMemo?
@@ -21,7 +19,7 @@ public struct MemoEditor: View {
 
     @State private var text = ""
     @State private var selection: TextSelection?
-    @State private var isApplyingAutoContinuation = false
+    @State private var isComposing = false
     @State private var textController = TextViewController()
 
     @State private var focused = false
@@ -44,6 +42,7 @@ public struct MemoEditor: View {
     @State private var finished = false
     @State private var isSaving = false
     @State private var importingCount = 0
+    @State private var attachmentImporter = MemoAttachmentImporter()
     @State private var showingCloseConfirmation = false
 
     public init(memo: StoredMemo?, actions: MemoEditorActions) {
@@ -55,11 +54,15 @@ public struct MemoEditor: View {
         MemoDraft(text: text, visibility: viewModel.visibility, resourceIDs: viewModel.resourceList.map(\.id))
     }
 
-    private var isBusy: Bool { isSaving || importingCount > 0 }
-    private var canSave: Bool { !isBusy && currentDraft.hasContent }
+    private var isCurrentAccount: Bool {
+        draftStore?.accountKey == accountManager.currentAccount?.key && draftStore != nil
+    }
+    private var isBusy: Bool { isSaving || importingCount > 0 || attachmentImporter.isImporting }
+    private var canSave: Bool { !isBusy && isCurrentAccount && !attachmentImporter.hasUnfinishedImports && currentDraft.hasContent }
 
     private func restoreDraft() {
-        guard draftStore == nil, let accountKey = accountManager.currentAccount?.key else { return }
+        guard draftStore == nil, let accountKey = memo?.accountKey ?? accountManager.currentAccount?.key else { return }
+        let service = accountManager.service(for: accountKey)
         let store = MemoDraftStore(
             defaults: UserDefaults(suiteName: AppInfo.groupContainerIdentifier) ?? .standard,
             accountKey: accountKey,
@@ -76,13 +79,14 @@ public struct MemoEditor: View {
         text = restored.text
         viewModel.visibility = restored.visibility
         viewModel.resourceList = restored.resourceIDs.compactMap { id in
-            guard let resource = accountManager.currentService?.resource(id: id),
+            guard let resource = service?.resource(id: id),
                   resource.accountKey == accountKey, !resource.softDeleted else { return nil }
             return resource
         }
         selection = .init(insertionPoint: text.endIndex)
         initialDraft = original
         draftStore = store
+        viewModel.accountKey = accountKey
         if savedDraft == currentDraft, (memo == nil ? currentDraft.hasContent : currentDraft != original) {
             lastPersistedDraft = currentDraft
             draftFeedback = memo == nil ? "input.draft-restored" : "input.unsaved-changes-restored"
@@ -118,7 +122,8 @@ public struct MemoEditor: View {
 
     private func closeEditor() {
         guard !isBusy else { return }
-        if memo != nil && currentDraft != initialDraft {
+        textController.commitComposition()
+        if (memo != nil && currentDraft != initialDraft) || attachmentImporter.hasUnfinishedImports {
             showingCloseConfirmation = true
         } else {
             if persistDraft() {
@@ -132,6 +137,8 @@ public struct MemoEditor: View {
     private func toolbar() -> some View {
         MemoEditorToolbar(
             tags: availableTags,
+            tagQuery: isComposing ? nil : MemoTextEditing.tagToken(in: textController.text ?? text, selection: currentNSSelection() ?? NSRange())?.query,
+            isComposing: isComposing,
             onInsertTag: { tag in
                 insert(tag: tag)
                 focused = true
@@ -175,11 +182,12 @@ public struct MemoEditor: View {
         ZStack(alignment: .bottom) {
             VStack(alignment: .leading) {
                 privacyMenu
-                    .disabled(isSaving)
+                    .disabled(isSaving || !isCurrentAccount)
                     .padding(.horizontal)
                 TextView(
                     text: $text, selection: $selection, isFocused: $focused,
-                    controller: textController, onFormat: { apply($0) }
+                    controller: textController, onFormat: { apply($0) },
+                    onCompositionChange: { isComposing = $0 }
                 )
                     .disabled(isSaving)
                     .accessibilityLabel(Text("input.memo-content"))
@@ -205,12 +213,19 @@ public struct MemoEditor: View {
                         .font(.footnote)
                         .padding(.horizontal)
                 }
+                if draftStore != nil, !isCurrentAccount {
+                    Label("input.account-changed", systemImage: "exclamationmark.triangle")
+                        .font(.footnote)
+                        .foregroundStyle(.orange)
+                        .padding(.horizontal)
+                }
+                attachmentImportStatus
                 MemoEditorResourceView(viewModel: viewModel)
-                    .disabled(isBusy)
+                    .disabled(isBusy || !isCurrentAccount)
             }
             .safeAreaInset(edge: .bottom) {
                 toolbar()
-                    .disabled(isBusy)
+                    .disabled(isBusy || !isCurrentAccount)
             }
         }
 
@@ -225,12 +240,12 @@ public struct MemoEditor: View {
         .onChange(of: currentDraft) { _, _ in
             persistDraft()
         }
-        .onChange(of: text) { oldValue, newValue in
-            applyAutoListContinuationIfNeeded(oldValue: oldValue, newValue: newValue)
-        }
-        .task {
+        .task(id: accountManager.currentAccount?.key) {
+            guard isCurrentAccount else { return }
             do {
-                availableTags = try await actions.loadTags()
+                let tags = try await actions.loadTags()
+                guard !Task.isCancelled, isCurrentAccount else { return }
+                availableTags = tags
             } catch {
                 print(error)
             }
@@ -242,7 +257,7 @@ public struct MemoEditor: View {
             persistDraft()
         }
         .confirmationDialog("input.unsaved.title", isPresented: $showingCloseConfirmation, titleVisibility: .visible) {
-            Button("input.save") { Task { try await saveMemo() } }
+            Button("input.save") { Task { await saveMemo() } }
                 .disabled(!canSave)
             Button("input.discard", role: .destructive) {
                 finished = true
@@ -276,7 +291,7 @@ public struct MemoEditor: View {
         .fullScreenCover(isPresented: $showingImagePicker, content: {
             ImagePicker { image in
                 Task {
-                    try await upload(images: [image])
+                    await upload(images: [image])
                 }
             }
             .edgesIgnoringSafeArea(.all)
@@ -291,15 +306,58 @@ public struct MemoEditor: View {
             .edgesIgnoringSafeArea(.all)
         }
 #endif
-        .interactiveDismissDisabled(isBusy || draftSaveFailed || (memo != nil && currentDraft != initialDraft))
+        .interactiveDismissDisabled(isBusy || attachmentImporter.hasUnfinishedImports || draftSaveFailed || (memo != nil && currentDraft != initialDraft))
     }
 
     private var saveButton: some View {
         Button("input.save") {
-            Task { try await saveMemo() }
+            Task { await saveMemo() }
         }
         .keyboardShortcut(.return, modifiers: .command)
         .disabled(!canSave)
+    }
+
+    @ViewBuilder
+    private var attachmentImportStatus: some View {
+        if attachmentImporter.hasUnfinishedImports {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(attachmentImporter.items) { item in
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(item.input.name).lineLimit(1)
+                                if case .failed(let message) = item.state {
+                                    Label(message, systemImage: "exclamationmark.triangle")
+                                        .foregroundStyle(.red)
+                                        .lineLimit(2)
+                                }
+                            }
+                            Spacer()
+                            if case .failed = item.state {
+                                Button("common.retry", systemImage: "arrow.clockwise") {
+                                    Task {
+                                        await attachmentImporter.retry(id: item.id)
+                                        persistDraft()
+                                    }
+                                }
+                                .labelStyle(.iconOnly)
+                                .disabled(isBusy || !isCurrentAccount)
+                                Button("input.remove-attachment", systemImage: "xmark.circle") {
+                                    attachmentImporter.remove(id: item.id)
+                                }
+                                .labelStyle(.iconOnly)
+                                .disabled(isBusy)
+                            } else {
+                                ProgressView()
+                            }
+                        }
+                    }
+                }
+                .font(.footnote)
+                .padding(.horizontal)
+            }
+            .frame(maxHeight: 100)
+        }
     }
 
     public var body: some View {
@@ -310,21 +368,20 @@ public struct MemoEditor: View {
                 .onChange(of: viewModel.photos) { _, newValue in
                     Task {
                         if !newValue.isEmpty {
-                            try await upload(images: newValue)
                             viewModel.photos = []
+                            await upload(images: newValue)
                         }
                     }
                 }
                 .fileImporter(
                     isPresented: $showingFilePicker,
                     allowedContentTypes: [.data],
-                    allowsMultipleSelection: false
+                    allowsMultipleSelection: true
                 ) { result in
                     switch result {
                     case .success(let urls):
-                        guard let url = urls.first else { return }
                         Task {
-                            try await upload(fileURL: url)
+                            await upload(fileURLs: urls)
                         }
                     case .failure(let error):
                         submitError = error
@@ -335,61 +392,42 @@ public struct MemoEditor: View {
         }
     }
 
-    private func upload(images: [PhotosPickerItem]) async throws {
-        importingCount += 1
-        defer {
-            importingCount -= 1
-            persistDraft()
-        }
-        do {
-            for item in images {
+    private func upload(images: [PhotosPickerItem]) async {
+        let editorViewModel = viewModel
+        await attachmentImporter.importItems(images.enumerated().map { index, item in
+            MemoAttachmentImporter.Input(name: "\(NSLocalizedString("input.photos", comment: "Photos")) \(index + 1)") {
                 let contentType = item.supportedContentTypes.first
                 let imageData = try await item.loadTransferable(type: Data.self)
-                guard let imageData = imageData else { continue }
+                guard let imageData else { throw MemoEditorError.unreadableAttachment }
 
                 let fileExtension = contentType?.preferredFilenameExtension
                 let filename = fileExtension.map { "\(UUID().uuidString).\($0)" } ?? "\(UUID().uuidString).dat"
                 let mimeType = contentType?.preferredMIMEType ?? "application/octet-stream"
-                try await viewModel.upload(data: imageData, filename: filename, mimeType: mimeType)
+                try await editorViewModel.upload(data: imageData, filename: filename, mimeType: mimeType)
             }
-            submitError = nil
-        } catch {
-            submitError = error
-            showingErrorToast = true
-        }
+        })
+        persistDraft()
     }
 
-    private func upload(images: [UIImage]) async throws {
-        importingCount += 1
-        defer {
-            importingCount -= 1
-            persistDraft()
-        }
-        do {
-            for image in images {
-                guard let data = image.jpegData(compressionQuality: 1.0) else { continue }
-                try await viewModel.upload(data: data, filename: "\(UUID().uuidString).jpg", mimeType: "image/jpeg")
+    private func upload(images: [UIImage]) async {
+        let editorViewModel = viewModel
+        await attachmentImporter.importItems(images.enumerated().map { index, image in
+            MemoAttachmentImporter.Input(name: "\(NSLocalizedString("input.photos", comment: "Photos")) \(index + 1)") {
+                guard let data = image.jpegData(compressionQuality: 1.0) else { throw MemoEditorError.unreadableAttachment }
+                try await editorViewModel.upload(data: data, filename: "\(UUID().uuidString).jpg", mimeType: "image/jpeg")
             }
-            submitError = nil
-        } catch {
-            submitError = error
-            showingErrorToast = true
-        }
+        })
+        persistDraft()
     }
 
-    private func upload(fileURL: URL) async throws {
-        importingCount += 1
-        defer {
-            importingCount -= 1
-            persistDraft()
-        }
-        do {
-            try await viewModel.upload(fileURL: fileURL)
-            submitError = nil
-        } catch {
-            submitError = error
-            showingErrorToast = true
-        }
+    private func upload(fileURLs: [URL]) async {
+        let editorViewModel = viewModel
+        await attachmentImporter.importItems(fileURLs.map { url in
+            .init(name: url.lastPathComponent) {
+                try await editorViewModel.upload(fileURL: url)
+            }
+        })
+        persistDraft()
     }
 
 #if canImport(VisionKit) && os(iOS) && !targetEnvironment(macCatalyst)
@@ -403,14 +441,12 @@ public struct MemoEditor: View {
 
         switch result {
         case .success(let images):
-            do {
+            let editorViewModel = viewModel
+            let filename = scannedDocumentFilename()
+            await attachmentImporter.importItems([.init(name: filename) {
                 let data = try ScannedDocumentPDFBuilder.makePDFData(from: images)
-                try await viewModel.upload(data: data, filename: scannedDocumentFilename(), mimeType: "application/pdf")
-                submitError = nil
-            } catch {
-                submitError = error
-                showingErrorToast = true
-            }
+                try await editorViewModel.upload(data: data, filename: filename, mimeType: "application/pdf")
+            }])
         case .cancelled:
             break
         case .failure(let error):
@@ -435,12 +471,15 @@ public struct MemoEditor: View {
         return "scan-\(formatter.string(from: date)).pdf"
     }
 
-    private func saveMemo() async throws {
+    private func saveMemo() async {
         guard canSave else { return }
+        textController.commitComposition()
         let wasFocused = focused
         focused = false
         isSaving = true
         defer { isSaving = false }
+        // Use the committed UIKit text, including any final IME candidate.
+        text = textController.text ?? text
         let tags = viewModel.extractCustomTags(from: text)
 
         do {
@@ -510,33 +549,39 @@ public struct MemoEditor: View {
     }
 
     private func insert(tag: Tag?) {
-        let tagText = tag.map { "#\($0.name) " } ?? "#"
-        insertAtSelection(tagText)
+        guard !textController.isComposing else { return }
+        let content = textController.text ?? text
+        let selection = currentNSSelection() ?? NSRange(location: content.utf16.count, length: 0)
+        apply(MemoTextEditing.tagEdit(name: tag?.name, in: content, selection: selection))
     }
 
     private func toggleTodoItem() {
-        guard let selection = currentNSSelection() else { return }
-        apply(MarkdownFormatter.toggleTodo(in: text, selection: selection))
+        guard !textController.isComposing, let selection = currentNSSelection() else { return }
+        apply(MarkdownFormatter.toggleTodo(in: textController.text ?? text, selection: selection))
     }
 
     private func apply(_ format: MarkdownFormat) {
-        let selection = currentNSSelection() ?? NSRange(location: (text as NSString).length, length: 0)
-        apply(MarkdownFormatter.edit(for: format, in: text, selection: selection))
+        guard !textController.isComposing else { return }
+        let content = textController.text ?? text
+        let selection = currentNSSelection() ?? NSRange(location: content.utf16.count, length: 0)
+        apply(MarkdownFormatter.edit(for: format, in: content, selection: selection))
     }
 
     /// Prefers editing through the text view so the change can be undone.
     private func apply(_ edit: MarkdownEdit) {
-        if textController.apply(edit) { return }
+        guard textController.apply(edit) == .unavailable, edit.isValid(in: text) else { return }
         text = edit.applied(to: text)
-        if let range = Range(edit.selection, in: text) {
+        if let range = EditorTextRange.characters(edit.selection, in: text) {
             selection = TextSelection(range: range)
         }
     }
 
     private func currentNSSelection() -> NSRange? {
         if let range = textController.selectedRange { return range }
-        guard let range = currentSelectionRange() else { return nil }
-        return NSRange(range, in: text)
+        guard let range = currentSelectionRange(),
+              let lower = String.Index(range.lowerBound, within: text),
+              let upper = String.Index(range.upperBound, within: text) else { return nil }
+        return NSRange(lower..<upper, in: text)
     }
 
     private func currentSelectionRange() -> Range<String.Index>? {
@@ -549,52 +594,6 @@ public struct MemoEditor: View {
         @unknown default:
             return nil
         }
-    }
-
-    private func applyAutoListContinuationIfNeeded(oldValue _: String, newValue: String) {
-        guard !isApplyingAutoContinuation else {
-            isApplyingAutoContinuation = false
-            return
-        }
-
-        guard
-            let selectionRange = currentSelectionRange(),
-            selectionRange.lowerBound == selectionRange.upperBound,
-            selectionRange.lowerBound > newValue.startIndex,
-            newValue[newValue.index(before: selectionRange.lowerBound)] == "\n"
-        else {
-            return
-        }
-
-        let insertionPoint = selectionRange.lowerBound
-        let newlineIndex = newValue.index(before: insertionPoint)
-        let contentBefore = newValue[newValue.startIndex..<newlineIndex]
-        let lastLineBreak = contentBefore.lastIndex(of: "\n")
-        let currentLineStart = lastLineBreak.map { newValue.index(after: $0) } ?? newValue.startIndex
-        let currentLine = newValue[currentLineStart..<newlineIndex]
-
-        guard let prefixStr = continuationPrefix(for: currentLine) else { return }
-        let location = NSRange(insertionPoint..<insertionPoint, in: newValue).location
-        isApplyingAutoContinuation = true
-        apply(MarkdownEdit(
-            range: NSRange(location: location, length: 0),
-            replacement: prefixStr,
-            selection: NSRange(location: location + (prefixStr as NSString).length, length: 0)
-        ))
-    }
-
-    /// The prefix to start the next line with, or `nil` if the line isn't a non-empty list item or quote.
-    private func continuationPrefix(for line: Substring) -> String? {
-        if let prefixStr = listItemSymbolList.first(where: { line.hasPrefix($0) }) {
-            return line.count > prefixStr.count ? prefixStr : nil
-        }
-        if let match = line.prefixMatch(of: #/(\d+)\. /#), line.count > match.output.0.count, let number = Int(match.output.1) {
-            return "\(number + 1). "
-        }
-        if line.hasPrefix("> "), line.count > 2 {
-            return "> "
-        }
-        return nil
     }
 
     private func insertAtSelection(_ insertedText: String) {
@@ -644,21 +643,7 @@ public struct MemoEditor: View {
         let urls = await journalingSuggestionAssetURLs(from: suggestion)
         guard !urls.isEmpty else { return }
 
-        var firstError: Error?
-        for url in urls {
-            do {
-                try await viewModel.upload(fileURL: url)
-            } catch {
-                if firstError == nil {
-                    firstError = error
-                }
-            }
-        }
-
-        if let firstError {
-            submitError = firstError
-            showingErrorToast = true
-        }
+        await upload(fileURLs: urls)
     }
 
     private func journalingSuggestionAssetURLs(from suggestion: JournalingSuggestion) async -> [URL] {

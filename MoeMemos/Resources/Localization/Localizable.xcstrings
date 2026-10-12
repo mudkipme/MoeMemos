@@ -2236,6 +2236,59 @@
     "Hourly" : {
 
     },
+    "input.account-changed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wechsle zum ursprünglichen Konto zurück, um dieses Memo zu speichern oder Anhänge zu importieren."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch back to the original account to save this memo or import attachments."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revenez au compte d’origine pour enregistrer ce mémo ou importer des pièces jointes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Torna all’account originale per salvare questo memo o importare allegati."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このメモを保存したり添付ファイルを読み込むには、元のアカウントに戻してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вернитесь к исходной учётной записи, чтобы сохранить заметку или импортировать вложения."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请切换回原来的账户以保存此笔记或导入附件。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請切換回原來的帳戶以儲存此筆記或匯入附件。"
+          }
+        }
+      }
+    },
     "input.attach" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3557,6 +3610,59 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "收起鍵盤"
+          }
+        }
+      }
+    },
+    "input.import-unreadable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Anhang konnte nicht gelesen werden. Versuche es erneut oder entferne ihn, um fortzufahren."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This attachment could not be read. Retry or remove it to continue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de lire cette pièce jointe. Réessayez ou supprimez-la pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile leggere questo allegato. Riprova o rimuovilo per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この添付ファイルを読み込めませんでした。再試行するか、削除して続けてください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось прочитать вложение. Повторите попытку или удалите его, чтобы продолжить."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取此附件。请重试或移除后继续。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法讀取此附件。請重試或移除後繼續。"
           }
         }
       }

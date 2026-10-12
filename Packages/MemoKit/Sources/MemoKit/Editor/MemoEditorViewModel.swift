@@ -12,15 +12,26 @@ import SwiftData
 @Observable public class MemoEditorViewModel: ResourceManager {
     private static let maxUploadSizeBytes: Int64 = 1_073_741_824
     @ObservationIgnored
-    @Injected(\.accountManager) private var accountManager
+    private let accountManager: AccountManager
     @ObservationIgnored
-    var service: Service { get throws { try accountManager.mustCurrentService } }
+    var accountKey: String?
+    @ObservationIgnored
+    var service: Service {
+        get throws {
+            if let accountKey, accountManager.currentAccount?.key != accountKey {
+                throw MemoEditorError.accountChanged
+            }
+            return try accountManager.mustCurrentService
+        }
+    }
 
     public var resourceList = [StoredResource]()
     public var visibility: MemoVisibility = .private
     public var photos: [PhotosPickerItem] = []
 
-    public init() {}
+    public init(accountManager: AccountManager? = nil) {
+        self.accountManager = accountManager ?? Container.shared.accountManager()
+    }
 
     public var removalLabel: String {
         NSLocalizedString("input.remove-attachment", comment: "Remove attachment from draft")
@@ -35,6 +46,8 @@ import SwiftData
     }
 
     public func upload(fileURL: URL) async throws {
+        // Capture the editor account before any file preparation can suspend.
+        let service = try self.service
         let accessed = fileURL.startAccessingSecurityScopedResource()
         defer {
             if accessed {
@@ -48,8 +61,11 @@ import SwiftData
         }
         let filename = resourceValues?.name ?? fileURL.lastPathComponent
         let mimeType = resourceValues?.contentType?.preferredMIMEType ?? "application/octet-stream"
-        let data = try Data(contentsOf: fileURL)
-        try await upload(data: data, filename: filename, mimeType: mimeType)
+        let data = try await Task.detached { try Data(contentsOf: fileURL) }.value
+        try Task.checkCancellation()
+        try validateUploadSize(Int64(data.count))
+        let stored = try await service.createResource(filename: filename, data: data, type: mimeType, memoId: nil)
+        resourceList.append(stored)
     }
 
     public func deleteResource(id: PersistentIdentifier) async throws {
