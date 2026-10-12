@@ -29,7 +29,7 @@ import Factory
             let (response, nextPageToken) = try await service.listWorkspaceMemos(pageSize: 20, pageToken: nil)
             memoList = response
             loading = false
-            hasMore = response.count >= 20
+            hasMore = nextPageToken?.isEmpty == false
             self.nextPageToken = nextPageToken
         } catch {
             loading = false
@@ -45,7 +45,7 @@ import Factory
             let (response, nextPageToken) = try await service.listWorkspaceMemos(pageSize: 20, pageToken: self.nextPageToken)
             memoList += response
             loading = false
-            hasMore = response.count >= 20
+            hasMore = nextPageToken?.isEmpty == false
             self.nextPageToken = nextPageToken
         } catch {
             loading = false

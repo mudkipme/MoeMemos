@@ -55,7 +55,8 @@ public final class MemosV0Service: RemoteService {
         }
         let resp = try await client.listPublicMemos(query: .init(limit: pageSize, offset: offset))
         let memos = try resp.ok.body.json
-        return (memos.map { $0.toMemo(host: hostURL) }, String(offset + pageSize))
+        let nextPageToken = memos.count < pageSize ? nil : String(offset + pageSize)
+        return (memos.map { $0.toMemo(host: hostURL) }, nextPageToken)
     }
     
     public func createMemo(
