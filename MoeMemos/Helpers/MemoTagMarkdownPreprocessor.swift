@@ -2,6 +2,15 @@ import Foundation
 import Markdown
 
 enum MemoTagMarkdownPreprocessor {
+    @MainActor
+    private static let displayMarkdownCache: NSCache<NSString, NSString> = {
+        let cache = NSCache<NSString, NSString>()
+        // Eviction hints, not a strict memory bound.
+        cache.countLimit = 256
+        cache.totalCostLimit = 4 * 1024 * 1024
+        return cache
+    }()
+
     private static let tagLinkScheme = "moememos"
     private static let tagLinkHost = "tag"
     private static let tagNameQueryItem = "name"
@@ -11,11 +20,23 @@ enum MemoTagMarkdownPreprocessor {
         return set
     }()
 
+    @MainActor
     static func preprocessForDisplay(_ markdown: String) -> String {
+        let key = markdown as NSString
+        if let cached = displayMarkdownCache.object(forKey: key) {
+            return cached as String
+        }
+
         let document = Document(parsing: markdown)
         var rewriter = TagLinkDisplayRewriter()
         let rewritten = (rewriter.visit(document) as? Document) ?? document
-        return rewritten.format()
+        let result = rewritten.format()
+        let value = result as NSString
+        let cost = (key.length + value.length) * MemoryLayout<UInt16>.stride
+        if cost <= displayMarkdownCache.totalCostLimit {
+            displayMarkdownCache.setObject(value, forKey: key, cost: cost)
+        }
+        return result
     }
 
     static func restoreRawMarkdown(_ markdown: String) -> String {
