@@ -206,7 +206,7 @@ struct MemosList: View {
         
         if let tag = tag {
             fullList = fullList.filter({ memo in
-                MemoTagExtractor.extract(from: memo.content).contains(tag.name)
+                MemoTagExtractor.extract(from: memo.content).contains(where: tag.matches)
             })
         }
         

@@ -6,7 +6,7 @@ struct TagVisitor: MarkupWalker {
 
     private static let allowedTagCharacters: CharacterSet = {
         var set = CharacterSet.alphanumerics
-        set.insert(charactersIn: "/_")
+        set.insert(charactersIn: "/_-")
         return set
     }()
     
