@@ -30,9 +30,10 @@ public struct Memo: Equatable, Sendable, Hashable {
     public var resources: [Resource]
     public var createdAt: Date
     public var updatedAt: Date
+    public var location: MemoLocation?
     public var remoteId: String?
     
-    public init(user: RemoteUser? = nil, content: String, pinned: Bool = false, rowStatus: RowStatus = .normal, visibility: MemoVisibility = .private, resources: [Resource] = [], createdAt: Date = .now, updatedAt: Date = .now, remoteId: String? = nil) {
+    public init(user: RemoteUser? = nil, content: String, pinned: Bool = false, rowStatus: RowStatus = .normal, visibility: MemoVisibility = .private, resources: [Resource] = [], createdAt: Date = .now, updatedAt: Date = .now, remoteId: String? = nil, location: MemoLocation? = nil) {
         self.user = user
         self.content = content
         self.pinned = pinned
@@ -42,5 +43,6 @@ public struct Memo: Equatable, Sendable, Hashable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.remoteId = remoteId
+        self.location = location
     }
 }

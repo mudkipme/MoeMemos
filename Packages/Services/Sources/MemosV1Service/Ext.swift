@@ -24,7 +24,8 @@ extension MemosV1Memo {
             resources: attachments?.map { $0.toResource(host: host) } ?? [],
             createdAt: createTime ?? .now,
             updatedAt: updateTime ?? .now,
-            remoteId: name
+            remoteId: name,
+            location: location.map { MemoLocation(placeholder: $0.value1.placeholder ?? "", latitude: $0.value1.latitude ?? 0, longitude: $0.value1.longitude ?? 0) }
         )
     }
 }

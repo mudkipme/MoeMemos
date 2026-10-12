@@ -26,6 +26,20 @@ final class MemoDraftTests: XCTestCase {
         )
     }
 
+    func testLocationOnlyDraftRoundTripsAndOldDraftDecodes() throws {
+        try withDefaults { defaults in
+            let store = MemoDraftStore(defaults: defaults, accountKey: "test")
+            let location = MemoLocation(placeholder: "Equator", latitude: 0, longitude: 0)
+            let draft = MemoDraft(text: "", visibility: .private, resourceIDs: [], location: location)
+            XCTAssertTrue(draft.hasContent)
+            try store.save(draft)
+            XCTAssertEqual(store.load(defaultVisibility: .public), draft)
+            XCTAssertTrue(MemoDraftStore.hasNewMemoDraft(defaults: defaults, accountKey: "test"))
+            let oldDraft = Data(#"{"text":"Old draft","visibility":{"private":{}},"resourceIDs":[]}"#.utf8)
+            XCTAssertNil(try JSONDecoder().decode(MemoDraft.self, from: oldDraft).location)
+        }
+    }
+
     func testRestoresAttachmentOnlyDraftAndVisibility() throws {
         let container = try makeContainer()
         let resource = makeResource()

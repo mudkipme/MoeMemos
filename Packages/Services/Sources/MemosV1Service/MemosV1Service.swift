@@ -21,14 +21,14 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
     private let userId: String?
     private let grpcSetCookieMiddleware = GRPCSetCookieMiddleware()
     
-    public nonisolated init(hostURL: URL, accessToken: String?, userId: String?) {
+    public nonisolated init(hostURL: URL, accessToken: String?, userId: String?, transport: (any ClientTransport)? = nil) {
         self.hostURL = hostURL
         self.accessToken = accessToken
         self.userId = userId
         urlSession = URLSession(configuration: URLSessionConfiguration.default)
         client = Client(
             serverURL: hostURL,
-            transport: URLSessionTransport(configuration: .init(session: urlSession)),
+            transport: transport ?? URLSessionTransport(configuration: .init(session: urlSession)),
             middlewares: [
                 AccessTokenAuthenticationMiddleware(accessToken: accessToken),
                 grpcSetCookieMiddleware
@@ -36,6 +36,8 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         )
     }
     
+    public var supportsMemoLocations: Bool { true }
+
     public func memoVisibilities() -> [MemoVisibility] {
         return [.private, .local, .public]
     }
@@ -86,8 +88,10 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         resources: [Resource],
         tags: [String]?,
         createdAt: Date?,
-        updatedAt: Date?
+        updatedAt: Date?,
+        location: MemoLocation? = nil
     ) async throws -> Memo {
+        if let location, !location.isValid { throw MoeMemosError.invalidParams }
         _ = tags
         let memosResources: [MemosV1Resource] = resources.compactMap {
             var resource: MemosV1Resource? = nil
@@ -102,7 +106,8 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
             updateTime: updatedAt,
             content: content,
             visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
-            attachments: memosResources
+            attachments: memosResources,
+            location: location.map { .init(value1: .init(placeholder: $0.placeholder, latitude: $0.latitude, longitude: $0.longitude)) }
         )))
         let memo = try resp.ok.body.json
         
@@ -117,8 +122,10 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         visibility: MemoVisibility?,
         tags: [String]?,
         pinned: Bool?,
-        updatedAt: Date?
+        updatedAt: Date?,
+        location: MemoLocationUpdate? = nil
     ) async throws -> Memo {
+        if let value = location?.location, !value.isValid { throw MoeMemosError.invalidParams }
         _ = tags
         let memosResources: [MemosV1Resource]? = resources?.compactMap {
             var resource: MemosV1Resource? = nil
@@ -128,12 +135,19 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
             return resource
         }
 
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(
+        var mask = ["update_time"]
+        if content != nil { mask.append("content") }
+        if visibility != nil { mask.append("visibility") }
+        if pinned != nil { mask.append("pinned") }
+        if resources != nil { mask.append("attachments") }
+        if location != nil { mask.append("location") }
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), query: .init(updateMask: mask.joined(separator: ",")), body: .json(.init(
             updateTime: updatedAt ?? .now,
             content: content,
             visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
             pinned: pinned,
-            attachments: memosResources
+            attachments: memosResources,
+            location: location?.location.map { .init(value1: .init(placeholder: $0.placeholder, latitude: $0.latitude, longitude: $0.longitude)) }
         )))
         let memo = try resp.ok.body.json
         let result = memo.toMemo(host: hostURL)
@@ -166,15 +180,15 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
     }
     
     public func archiveMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(state: .ARCHIVED)))
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), query: .init(updateMask: "state"), body: .json(.init(state: .ARCHIVED)))
         _ = try resp.ok
     }
-    
+
     public func restoreMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), body: .json(.init(state: .NORMAL)))
+        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), query: .init(updateMask: "state"), body: .json(.init(state: .NORMAL)))
         _ = try resp.ok
     }
-    
+
     public func listTags() async throws -> [Tag] {
         guard let userId = userId else { throw MoeMemosError.notLogin }
         let resp = try await client.UserService_GetUserStats(path: .init(user: "\(userId)"))

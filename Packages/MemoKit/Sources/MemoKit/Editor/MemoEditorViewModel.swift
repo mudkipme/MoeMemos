@@ -26,6 +26,8 @@ import SwiftData
     }
 
     public var resourceList = [StoredResource]()
+    public var location: MemoLocation?
+    public var supportsLocations: Bool { (try? service.supportsMemoLocations) == true }
     public var visibility: MemoVisibility = .private
     public var photos: [PhotosPickerItem] = []
 

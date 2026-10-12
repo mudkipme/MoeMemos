@@ -101,9 +101,9 @@ enum BackgroundSyncThrottle {
     }
     
     @MainActor
-    func createMemo(content: String, visibility: MemoVisibility = .private, resources: [PersistentIdentifier]? = nil, tags: [String]?) async throws {
+    func createMemo(content: String, visibility: MemoVisibility = .private, resources: [PersistentIdentifier]? = nil, tags: [String]?, location: MemoLocation? = nil) async throws {
         let service = try self.service
-        let created = try await service.createMemo(content: content, visibility: visibility, resources: resources ?? [], tags: tags)
+        let created = try await service.createMemo(content: content, visibility: visibility, resources: resources ?? [], tags: tags, location: location)
         memoList.insert(created, at: 0)
         try await loadTags()
     }
@@ -124,9 +124,9 @@ enum BackgroundSyncThrottle {
     }
     
     @MainActor
-    func editMemo(id: PersistentIdentifier, content: String, visibility: MemoVisibility = .private, resources: [PersistentIdentifier]? = nil, tags: [String]?) async throws {
+    func editMemo(id: PersistentIdentifier, content: String, visibility: MemoVisibility = .private, resources: [PersistentIdentifier]? = nil, tags: [String]?, location: MemoLocationUpdate? = nil) async throws {
         let service = try self.service
-        _ = try await service.updateMemo(id: id, content: content, resources: resources, visibility: visibility, tags: tags, pinned: nil)
+        _ = try await service.updateMemo(id: id, content: content, resources: resources, visibility: visibility, tags: tags, pinned: nil, location: service.supportsMemoLocations ? location : nil)
         try await loadTags()
     }
 
