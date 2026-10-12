@@ -146,6 +146,11 @@ enum BackgroundSyncThrottle {
         let service = try self.service
         guard let syncService = service as? SyncableService else { return }
 
+        syncing = true
+        defer {
+            syncing = false
+        }
+
         let approvalToPersist: HigherV1SyncApprovalToPersist?
         switch try await evaluateSyncGate(trigger: trigger, forceHigherV1VersionSync: forceHigherV1VersionSync) {
         case .allow(let approval):
@@ -154,11 +159,6 @@ enum BackgroundSyncThrottle {
             return
         case .manualError(let error):
             throw error
-        }
-
-        syncing = true
-        defer {
-            syncing = false
         }
 
         try await syncService.sync()
