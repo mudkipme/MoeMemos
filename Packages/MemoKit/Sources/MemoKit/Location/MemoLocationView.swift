@@ -3,6 +3,11 @@ import Models
 import SwiftUI
 
 extension MemoLocation {
+    var localizedDisplayName: String {
+        let name = placeholder.trimmingCharacters(in: .whitespacesAndNewlines)
+        return name.isEmpty ? String(localized: "location.selected") : name
+    }
+
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
@@ -25,7 +30,7 @@ public struct MemoLocationView: View {
         Button {
             showingMap = true
         } label: {
-            Label(location.displayName, systemImage: "mappin.and.ellipse")
+            Label(location.localizedDisplayName, systemImage: "mappin.and.ellipse")
                 .font(.subheadline)
                 .multilineTextAlignment(.leading)
         }
@@ -44,15 +49,14 @@ private struct MemoLocationDetail: View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
                 Map(initialPosition: .region(location.region)) {
-                    Marker(location.displayName, coordinate: location.coordinate)
+                    Marker(location.localizedDisplayName, coordinate: location.coordinate)
                 }
                 .mapControls { MapCompass() }
                 .clipShape(RoundedRectangle(cornerRadius: 16))
-                Text(location.displayName).font(.headline)
-                Text(location.coordinatesText).foregroundStyle(.secondary).textSelection(.enabled)
+                Text(location.localizedDisplayName).font(.headline)
                 Button("location.open-maps", systemImage: "map") {
                     let item = MKMapItem(placemark: MKPlacemark(coordinate: location.coordinate))
-                    item.name = location.displayName
+                    item.name = location.localizedDisplayName
                     item.openInMaps()
                 }
                 .buttonStyle(.borderedProminent)
