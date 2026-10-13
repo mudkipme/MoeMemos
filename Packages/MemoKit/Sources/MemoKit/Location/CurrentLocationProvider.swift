@@ -2,26 +2,29 @@ import CoreLocation
 import Foundation
 import Observation
 
-/// Requests a single fix only in response to the current-location button.
+/// Manages permission and a single MapKit fix after the current-location button is tapped.
 @MainActor
 @Observable
 final class CurrentLocationProvider: NSObject, @preconcurrency CLLocationManagerDelegate {
     var coordinate: CLLocationCoordinate2D?
     var isRequesting = false
     var errorKey: String?
-    @ObservationIgnored private let manager = CLLocationManager()
+    private(set) var showsUserLocation = false
+    @ObservationIgnored private let manager: CLLocationManager
     @ObservationIgnored private var timeout: Task<Void, Never>?
+    @ObservationIgnored private var requestedAt: Date?
 
-    override init() {
+    init(manager: CLLocationManager = CLLocationManager()) {
+        self.manager = manager
         super.init()
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
     }
 
     func request() {
         guard !isRequesting else { return }
         errorKey = nil
         coordinate = nil
+        requestedAt = .now
         isRequesting = true
         timeout = Task { [weak self] in
             try? await Task.sleep(for: .seconds(20))
@@ -30,7 +33,7 @@ final class CurrentLocationProvider: NSObject, @preconcurrency CLLocationManager
         }
         switch manager.authorizationStatus {
         case .notDetermined: manager.requestWhenInUseAuthorization()
-        case .authorizedAlways, .authorizedWhenInUse: manager.requestLocation()
+        case .authorizedAlways, .authorizedWhenInUse: showsUserLocation = true
         case .denied, .restricted: finish(error: "location.permission-denied")
         @unknown default: finish(error: "location.unavailable")
         }
@@ -39,7 +42,8 @@ final class CurrentLocationProvider: NSObject, @preconcurrency CLLocationManager
     func cancel() {
         timeout?.cancel()
         timeout = nil
-        manager.stopUpdatingLocation()
+        showsUserLocation = false
+        requestedAt = nil
         isRequesting = false
     }
 
@@ -51,19 +55,24 @@ final class CurrentLocationProvider: NSObject, @preconcurrency CLLocationManager
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         guard isRequesting else { return }
         switch manager.authorizationStatus {
-        case .authorizedAlways, .authorizedWhenInUse: manager.requestLocation()
+        case .authorizedAlways, .authorizedWhenInUse: showsUserLocation = true
         case .denied, .restricted: finish(error: "location.permission-denied")
         default: break
         }
     }
 
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard isRequesting, let location = locations.last, location.horizontalAccuracy >= 0 else { return }
+    func receiveMapLocation(_ location: CLLocation) {
+        guard isRequesting, showsUserLocation, let requestedAt,
+              location.horizontalAccuracy >= 0,
+              CLLocationCoordinate2DIsValid(location.coordinate),
+              location.timestamp >= requestedAt.addingTimeInterval(-10),
+              location.timestamp <= Date.now.addingTimeInterval(5) else { return }
+        // Preserve MapKit's coordinate so the saved pin matches the displayed Apple map.
         coordinate = location.coordinate
         finish()
     }
 
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    func mapLocationFailed() {
         guard isRequesting else { return }
         finish(error: "location.unavailable")
     }

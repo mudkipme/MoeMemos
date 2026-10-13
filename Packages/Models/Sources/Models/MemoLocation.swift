@@ -1,6 +1,7 @@
 import Foundation
 
-/// Memos' location payload. Coordinates use WGS 84 decimal degrees.
+/// Memos' location payload, with coordinates in decimal degrees.
+/// Locations picked in the app preserve the coordinates supplied by Apple MapKit.
 public struct MemoLocation: Codable, Equatable, Hashable, Sendable {
     public var placeholder: String
     public var latitude: Double

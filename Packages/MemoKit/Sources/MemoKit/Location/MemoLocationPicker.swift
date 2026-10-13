@@ -6,50 +6,39 @@ import SwiftUI
 public struct MemoLocationPicker: View {
     private let onSelect: (MemoLocation) -> Void
     @Environment(\.dismiss) private var dismiss
-    @State private var position: MapCameraPosition
     @State private var name: String
-    @State private var latitude: String
-    @State private var longitude: String
+    @State private var coordinate: CLLocationCoordinate2D?
+    @State private var selectionID = UUID()
+    @State private var isResolvingName = false
+    @State private var nameLookupFailed = false
     @State private var query = ""
     @State private var results: [MKMapItem] = []
     @State private var searchError = false
     @State private var isSearching = false
     @State private var currentLocation = CurrentLocationProvider()
-    @FocusState private var coordinateFieldFocused: Bool
 
     public init(location: MemoLocation?, onSelect: @escaping (MemoLocation) -> Void) {
         self.onSelect = onSelect
         _name = State(initialValue: location?.placeholder ?? "")
-        _latitude = State(initialValue: location.map { String($0.latitude) } ?? "")
-        _longitude = State(initialValue: location.map { String($0.longitude) } ?? "")
-        _position = State(initialValue: location.map { .region($0.region) } ?? .automatic)
-    }
-
-    private func number(_ text: String) -> Double? {
-        let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        return Double(text.replacingOccurrences(of: Locale.current.decimalSeparator ?? ".", with: "."))
+        _coordinate = State(initialValue: location?.coordinate)
     }
 
     private var selectedLocation: MemoLocation? {
-        guard let lat = number(latitude), let lon = number(longitude) else { return nil }
-        let location = MemoLocation(placeholder: name, latitude: lat, longitude: lon)
+        guard let coordinate else { return nil }
+        let location = MemoLocation(placeholder: name, latitude: coordinate.latitude, longitude: coordinate.longitude)
         return location.isValid ? location : nil
     }
 
     public var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                MapReader { proxy in
-                    Map(position: $position) {
-                        if let location = selectedLocation {
-                            Marker(location.displayName, coordinate: location.coordinate)
-                        }
-                    }
-                    .mapControls { MapCompass() }
-                    .onTapGesture { point in
-                        guard let coordinate = proxy.convert(point, from: .local) else { return }
-                        select(coordinate, name: "")
-                    }
+                MemoLocationPickerMap(
+                    location: selectedLocation,
+                    selectionID: selectionID,
+                    showsUserLocation: currentLocation.showsUserLocation,
+                    currentLocation: currentLocation
+                ) { coordinate in
+                    select(coordinate, name: "")
                 }
                 .frame(minHeight: 180, idealHeight: 260, maxHeight: 300)
                 .accessibilityHint(Text("location.map-hint"))
@@ -81,7 +70,6 @@ public struct MemoLocationPicker: View {
                     }
                     Section {
                         Button {
-                            coordinateFieldFocused = false
                             currentLocation.request()
                         } label: {
                             HStack {
@@ -93,19 +81,15 @@ public struct MemoLocationPicker: View {
                         if let error = currentLocation.errorKey {
                             Text(LocalizedStringKey(error)).foregroundStyle(.secondary).font(.footnote)
                         }
-                        TextField("location.name", text: $name)
+                        HStack {
+                            TextField("location.name", text: $name)
+                            if isResolvingName { ProgressView() }
+                        }
+                        if nameLookupFailed {
+                            Text("location.name-unavailable").foregroundStyle(.secondary).font(.footnote)
+                        }
                     } footer: {
                         Text("location.map-hint")
-                    }
-                    Section {
-                        TextField("location.latitude", text: $latitude)
-                            .keyboardType(.numbersAndPunctuation)
-                            .focused($coordinateFieldFocused)
-                        TextField("location.longitude", text: $longitude)
-                            .keyboardType(.numbersAndPunctuation)
-                            .focused($coordinateFieldFocused)
-                    } footer: {
-                        Text("location.coordinate-hint")
                     }
                 }
             }
@@ -122,15 +106,12 @@ public struct MemoLocationPicker: View {
                         onSelect(location)
                         dismiss()
                     }
-                    .disabled(selectedLocation == nil)
+                    .disabled(selectedLocation == nil || isResolvingName || currentLocation.isRequesting)
                 }
             }
             .task(id: query) { await search() }
-            .onChange(of: [selectedLocation?.latitude, selectedLocation?.longitude]) { _, _ in
-                guard let location = selectedLocation else { return }
-                position = .region(location.region)
-            }
-            .onChange(of: currentLocation.coordinate?.latitude) { _, _ in
+            .task(id: selectionID) { await resolveName() }
+            .onChange(of: [currentLocation.coordinate?.latitude, currentLocation.coordinate?.longitude]) { _, _ in
                 guard let coordinate = currentLocation.coordinate else { return }
                 select(coordinate, name: "")
             }
@@ -140,11 +121,37 @@ public struct MemoLocationPicker: View {
 
     private func select(_ coordinate: CLLocationCoordinate2D, name: String) {
         currentLocation.cancel()
-        coordinateFieldFocused = false
+        currentLocation.errorKey = nil
         self.name = name
-        latitude = String(coordinate.latitude)
-        longitude = String(coordinate.longitude)
-        position = .region(MemoLocation(latitude: coordinate.latitude, longitude: coordinate.longitude).region)
+        self.coordinate = coordinate
+        selectionID = UUID()
+        nameLookupFailed = false
+        isResolvingName = false
+    }
+
+    private func resolveName() async {
+        guard let coordinate, name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let id = selectionID
+        let originalName = name
+        isResolvingName = true
+        do {
+            // Debounce map taps so moving a pin doesn't flood the geocoding service.
+            try await Task.sleep(for: .milliseconds(300))
+            let resolvedName = try await MemoLocationGeocoder.name(for: coordinate)
+            guard !Task.isCancelled, selectionID == id else { return }
+            isResolvingName = false
+            // Keep a name typed by the user while the lookup was in flight.
+            guard name == originalName else { return }
+            if let resolvedName {
+                name = resolvedName
+            } else {
+                nameLookupFailed = true
+            }
+        } catch {
+            guard !Task.isCancelled, selectionID == id else { return }
+            isResolvingName = false
+            nameLookupFailed = name == originalName
+        }
     }
 
     private func search() async {

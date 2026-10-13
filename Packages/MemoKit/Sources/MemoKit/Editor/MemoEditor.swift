@@ -233,7 +233,7 @@ public struct MemoEditor: View {
                             focused = false
                             showingLocationPicker = true
                         } label: {
-                            Label(location.displayName, systemImage: "mappin.and.ellipse")
+                            Label(location.localizedDisplayName, systemImage: "mappin.and.ellipse")
                                 .lineLimit(2)
                         }
                         Spacer()
