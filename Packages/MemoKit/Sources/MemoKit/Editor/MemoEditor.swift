@@ -25,6 +25,7 @@ public struct MemoEditor: View {
     @State private var focused = false
     @State private var requestedInitialFocus = false
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var showingPhotoPicker = false
     @State private var showingImagePicker = false
@@ -251,7 +252,7 @@ public struct MemoEditor: View {
                 MemoEditorResourceView(viewModel: viewModel)
                     .disabled(isBusy || !isCurrentAccount)
             }
-            .safeAreaInset(edge: .bottom) {
+            .bottomAccessoryBar {
                 toolbar()
                     .disabled(isBusy || !isCurrentAccount)
             }
@@ -281,8 +282,8 @@ public struct MemoEditor: View {
         .onDisappear {
             persistDraft()
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-            persistDraft()
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { persistDraft() }
         }
         .confirmationDialog("input.unsaved.title", isPresented: $showingCloseConfirmation, titleVisibility: .visible) {
             Button("input.save") { Task { await saveMemo() } }
@@ -302,7 +303,8 @@ public struct MemoEditor: View {
                 Button {
                     closeEditor()
                 } label: {
-                    Text("input.close")
+                    Label("input.close", systemImage: "xmark")
+                        .labelStyle(.iconOnly)
                 }
                 .disabled(isBusy)
             }
@@ -344,9 +346,10 @@ public struct MemoEditor: View {
     }
 
     private var saveButton: some View {
-        Button("input.save") {
+        Button("input.save", systemImage: "checkmark") {
             Task { await saveMemo() }
         }
+        .labelStyle(.iconOnly)
         .keyboardShortcut(.return, modifiers: .command)
         .disabled(!canSave)
     }

@@ -17,6 +17,8 @@ struct MemosList: View {
     let tag: Tag?
 
     @State private var searchString = ""
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(AppPath.self) private var appPath
     @Environment(AccountManager.self) private var accountManager
     @Environment(AccountViewModel.self) var userState: AccountViewModel
@@ -130,10 +132,12 @@ struct MemosList: View {
                 }
             }
             if #available(iOS 26.0, *) {
-                DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                DefaultToolbarItem(kind: .search, placement: horizontalSizeClass == .regular ? .topBarTrailing : .bottomBar)
                     .prioritizeVisibility()
-                ToolbarSpacer(.flexible, placement: .bottomBar)
-                ToolbarItem(placement: .bottomBar) {
+                if horizontalSizeClass != .regular {
+                    ToolbarSpacer(.flexible, placement: .bottomBar)
+                }
+                ToolbarItem(placement: horizontalSizeClass == .regular ? .topBarTrailing : .bottomBar) {
                     Button {
                         appPath.presentedSheet = .newMemo
                     } label: {
@@ -144,6 +148,7 @@ struct MemosList: View {
             }
         }
         .searchable(text: $searchString)
+        .compactSearchToolbar()
         .navigationTitle(tag?.name ?? NSLocalizedString("memo.memos", comment: "Memos"))
         .alert(NSLocalizedString("sync.failed.title", comment: "Manual sync failed alert title"), isPresented: $showingManualSyncAlert) {
             Button(NSLocalizedString("common.ok", comment: "OK button label"), role: .cancel) {}
@@ -158,11 +163,12 @@ struct MemosList: View {
         } message: {
             Text(manualSyncAlertMessage ?? moeMemosHigherMemosVersionSyncWarning)
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
             refreshDraftAvailability()
             Task {
                 if memosViewModel.inited {
-                    try await memosViewModel.loadMemos()
+                    try? await memosViewModel.loadMemos()
                 }
             }
         }

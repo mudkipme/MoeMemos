@@ -13,6 +13,7 @@ import Models
 import Env
 import SwiftData
 import Account
+import DesignSystem
 
 @MainActor
 struct MemoView: View {
@@ -83,10 +84,12 @@ struct MemoView: View {
                             }
                         }
                     }
+                    .frame(maxWidth: 760, alignment: .leading)
+                    .frame(maxWidth: .infinity)
                     .padding()
                 }
                 .scrollDismissesKeyboard(.interactively)
-                .safeAreaInset(edge: .bottom) {
+                .bottomAccessoryBar {
                     if commentsEnabled, let commentsViewModel {
                         MemoCommentComposer(sending: commentsViewModel.sending) { content in
                             try await commentsViewModel.sendComment(content: content)

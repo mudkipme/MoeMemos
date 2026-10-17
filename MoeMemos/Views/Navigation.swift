@@ -10,9 +10,9 @@ import Env
 
 struct Navigation: View {
     @Binding var selection: Route?
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(AppPath.self) private var appPath
-    @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
+    @State private var preferredCompactColumn: NavigationSplitViewColumn = .detail
     @State private var currentRoute: Route = .memos
     @State private var navigationPath: [Route] = []
     @State private var pathUpdateTask: Task<Void, Never>?
@@ -20,7 +20,7 @@ struct Navigation: View {
     var body: some View {
         @Bindable var appPath = appPath
 
-        NavigationSplitView(columnVisibility: $columnVisibility) {
+        NavigationSplitView(columnVisibility: $columnVisibility, preferredCompactColumn: $preferredCompactColumn) {
             Sidebar(selection: $selection)
         } detail: {
             NavigationStack(path: $navigationPath) {
@@ -30,22 +30,13 @@ struct Navigation: View {
                 }
             }
         }
-        .onChange(of: horizontalSizeClass, initial: true) { _, newValue in
-            if newValue == .compact {
-                columnVisibility = .detailOnly
-            } else {
-                columnVisibility = .all
-            }
-        }
         .onChange(of: selection) { _, newValue in
             guard let newValue else {
                 return
             }
             currentRoute = newValue
             navigationPath.removeAll()
-            if horizontalSizeClass == .compact {
-                columnVisibility = .detailOnly
-            }
+            preferredCompactColumn = .detail
         }
         .onChange(of: appPath.navigationRequest) { _, newValue in
             guard let newValue else {
@@ -70,6 +61,7 @@ struct Navigation: View {
 
     private func applyNavigationRequest(_ request: NavigationRequest, appPath: AppPath) {
         pathUpdateTask?.cancel()
+        preferredCompactColumn = .detail
         defer {
             appPath.navigationRequest = nil
         }

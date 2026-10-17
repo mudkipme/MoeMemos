@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Models
+import DesignSystem
 
 /// A single comment row.
 @MainActor
@@ -270,7 +271,7 @@ struct MemoCommentsSheet: View {
                 }
             }
         }
-        .safeAreaInset(edge: .bottom) {
+        .bottomAccessoryBar {
             if let viewModel {
                 MemoCommentComposer(sending: viewModel.sending) { content in
                     try await viewModel.sendComment(content: content)
