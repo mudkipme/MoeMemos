@@ -5,6 +5,72 @@ import XCTest
 
 @MainActor
 final class TextViewTests: XCTestCase {
+    private final class ResponderTrackingTextView: UITextView {
+        var simulatedFirstResponder = false
+        var becomeCount = 0
+        var resignCount = 0
+
+        override var isFirstResponder: Bool { simulatedFirstResponder }
+
+        override func becomeFirstResponder() -> Bool {
+            becomeCount += 1
+            simulatedFirstResponder = true
+            return true
+        }
+
+        override func resignFirstResponder() -> Bool {
+            resignCount += 1
+            simulatedFirstResponder = false
+            return true
+        }
+    }
+
+    func testKeyboardDismissalRunsAfterViewUpdate() async {
+        let editor = TextView(text: .constant("Draft"), selection: .constant(nil), isFocused: .constant(false))
+        let coordinator = editor.makeCoordinator()
+        let textView = ResponderTrackingTextView()
+        textView.text = "Draft"
+        textView.simulatedFirstResponder = true
+        textView.resignCount = 0
+
+        coordinator.updateView(textView, isEnabled: true)
+
+        XCTAssertEqual(textView.resignCount, 0, "Resigning during updateUIView can re-enter SwiftUI's responder graph")
+        await coordinator.responderUpdateTask?.value
+        XCTAssertEqual(textView.resignCount, 1)
+        XCTAssertFalse(textView.isFirstResponder)
+    }
+
+    func testQueuedFocusUsesLatestBindingAndEnabledState() async {
+        var focused = true
+        let editor = TextView(
+            text: .constant("Draft"), selection: .constant(nil),
+            isFocused: Binding(get: { focused }, set: { focused = $0 })
+        )
+        let coordinator = editor.makeCoordinator()
+        let textView = ResponderTrackingTextView()
+        coordinator.updateView(textView, isEnabled: true)
+        focused = false
+        coordinator.updateView(textView, isEnabled: false)
+
+        XCTAssertTrue(textView.isEditable, "Disabling editing can also change the first responder")
+        await coordinator.responderUpdateTask?.value
+        XCTAssertEqual(textView.becomeCount, 0)
+        XCTAssertFalse(textView.isEditable)
+    }
+
+    func testDismantlingCancelsPendingKeyboardPresentation() async {
+        let editor = TextView(text: .constant("Draft"), selection: .constant(nil), isFocused: .constant(true))
+        let coordinator = editor.makeCoordinator()
+        let textView = ResponderTrackingTextView()
+        coordinator.updateView(textView, isEnabled: true)
+
+        TextView.dismantleUIView(textView, coordinator: coordinator)
+        await coordinator.responderUpdateTask?.value
+
+        XCTAssertEqual(textView.becomeCount, 0)
+    }
+
     func testUserFocusAndDismissalUpdateBinding() {
         var focused = false
         let editor = TextView(

@@ -18,7 +18,6 @@ struct MemoCardImageView: View {
     @Environment(AccountManager.self) private var memosManager: AccountManager
     @Environment(\.openURL) private var openURL
     @State private var resolvedURLs = [String: URL]()
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
 
     private func key(for resource: any ResourcePresentable, index: Int) -> String {
         if let stored = resource as? StoredResource {
@@ -72,21 +71,21 @@ struct MemoCardImageView: View {
     }
 
     @ViewBuilder
-    private func getAsyncImage(resource: any ResourcePresentable, key: String) -> some View {
+    private func getAsyncImage(resource: any ResourcePresentable, key: String, contentMode: ContentMode) -> some View {
         if resource.mimeType.hasPrefix("video/") {
-            asyncVideoThumbnailImage(resource: resource, key: key)
+            asyncVideoThumbnailImage(resource: resource, key: key, contentMode: contentMode)
         } else if resource.mimeType.hasPrefix("image/") {
-            asyncImage(resource: resource, key: key)
+            asyncImage(resource: resource, key: key, contentMode: contentMode)
         } else {
             EmptyView()
         }
     }
     
-    private func asyncImage(resource: any ResourcePresentable, key: String) -> some View {
+    private func asyncImage(resource: any ResourcePresentable, key: String, contentMode: ContentMode) -> some View {
         AsyncImage(url: displayURL(for: resource, key: key)) { image in
             image
                 .resizable()
-                .scaledToFill()
+                .aspectRatio(contentMode: contentMode)
                 .allowsHitTesting(false)
                 .clipped()
         } placeholder: {
@@ -97,8 +96,8 @@ struct MemoCardImageView: View {
         }
     }
     
-    private func asyncVideoThumbnailImage(resource: any ResourcePresentable, key: String) -> some View {
-        AsyncThumbnailImage(videoURL: displayURL(for: resource, key: key))
+    private func asyncVideoThumbnailImage(resource: any ResourcePresentable, key: String, contentMode: ContentMode) -> some View {
+        AsyncThumbnailImage(videoURL: displayURL(for: resource, key: key), contentMode: contentMode)
             .task {
                 await resolveLocalFileIfNeeded(for: resource, key: key)
             }
@@ -140,9 +139,9 @@ struct MemoCardImageView: View {
         //
         // Please submit a pull request if you have a better solution
         Color(white: 1, opacity: 0.00001).overlay {
-            getAsyncImage(resource: resource, key: key)
+            getAsyncImage(resource: resource, key: key, contentMode: contentMode)
         }
-        .aspectRatio(aspectRatio, contentMode: contentMode)
+        .aspectRatio(aspectRatio, contentMode: .fit)
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
         .cornerRadius(8)
@@ -153,29 +152,12 @@ struct MemoCardImageView: View {
 
     @ViewBuilder
     private var content: some View {
-        if horizontalSizeClass == .regular {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 200), spacing: 5)], spacing: 5) {
+        if media.count == 1 {
+            imageItem(resource: media[0], key: key(for: media[0], index: 0), aspectRatio: 16.0 / 9.0, contentMode: .fit)
+        } else {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 5)], spacing: 5) {
                 ForEach(Array(media.enumerated()), id: \.offset) { index, resource in
                     imageItem(resource: resource, key: key(for: resource, index: index), aspectRatio: 1.0, contentMode: .fill)
-                }
-            }
-        } else {
-            switch media.count {
-            case 1:
-                imageItem(resource: media[0], key: key(for: media[0], index: 0), aspectRatio: 16.0 / 9.0, contentMode: .fit)
-            case 2...3:
-                HStack(spacing: 5) {
-                    ForEach(Array(media.enumerated()), id: \.offset) { index, resource in
-                        imageItem(resource: resource, key: key(for: resource, index: index), aspectRatio: 1.0, contentMode: .fill)
-                    }
-                }
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: .infinity)
-            default:
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: media.count == 4 ? 120 : 90, maximum: 150), spacing: 5)], spacing: 5) {
-                    ForEach(Array(media.enumerated()), id: \.offset) { index, resource in
-                        imageItem(resource: resource, key: key(for: resource, index: index), aspectRatio: 1.0, contentMode: .fill)
-                    }
                 }
             }
         }

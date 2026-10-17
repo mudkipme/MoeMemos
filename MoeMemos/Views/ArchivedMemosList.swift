@@ -8,10 +8,12 @@
 import MemoData
 import SwiftUI
 import Models
+import DesignSystem
 
 struct ArchivedMemosList: View {
     @State private var viewModel = ArchivedMemoListViewModel()
     @State private var searchString = ""
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var loading = true
     @State private var loadError: String?
     @Environment(MemosViewModel.self) private var memosViewModel: MemosViewModel
@@ -66,13 +68,15 @@ struct ArchivedMemosList: View {
                 }
             }
             if #available(iOS 26.0, *) {
-                DefaultToolbarItem(kind: .search, placement: .bottomBar)
+                DefaultToolbarItem(kind: .search, placement: horizontalSizeClass == .regular ? .topBarTrailing : .bottomBar)
+                    .prioritizeVisibility()
             }
         }
         .task {
             await loadMemos()
         }
         .searchable(text: $searchString)
+        .compactSearchToolbar()
         .alert(NSLocalizedString("sync.failed.title", comment: "Manual sync failed alert title"), isPresented: $showingManualSyncAlert) {
             Button(NSLocalizedString("common.ok", comment: "OK button label"), role: .cancel) {}
         } message: {

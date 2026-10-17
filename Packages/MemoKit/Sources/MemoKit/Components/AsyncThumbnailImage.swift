@@ -10,12 +10,14 @@ import AVFoundation
 
 public struct AsyncThumbnailImage: View {
     let videoURL: URL?
+    private let contentMode: ContentMode
     @State private var thumbnail: UIImage?
     @State private var isLoading = false
     @State private var thumbnailURL: URL?
     
-    public init(videoURL: URL?, thumbnail: UIImage? = nil, isLoading: Bool = false) {
+    public init(videoURL: URL?, thumbnail: UIImage? = nil, isLoading: Bool = false, contentMode: ContentMode = .fill) {
         self.videoURL = videoURL
+        self.contentMode = contentMode
         self.thumbnail = thumbnail
         self.isLoading = isLoading
         self.thumbnailURL = thumbnail != nil ? videoURL : nil
@@ -44,7 +46,7 @@ public struct AsyncThumbnailImage: View {
         if let thumbnail = thumbnail {
             Image(uiImage: thumbnail)
                 .resizable()
-                .aspectRatio(contentMode: .fill)
+                .aspectRatio(contentMode: contentMode)
         } else if isLoading {
             ProgressView()
         } else {

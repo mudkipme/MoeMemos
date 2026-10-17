@@ -99,6 +99,10 @@ struct TextView: UIViewRepresentable {
         Coordinator(self)
     }
 
+    static func dismantleUIView(_ textView: UITextView, coordinator: Coordinator) {
+        coordinator.responderUpdateTask?.cancel()
+    }
+
     private func nsRange(for selection: TextSelection?, in text: String) -> NSRange? {
         guard let selection else { return nil }
         switch selection.indices {
@@ -116,6 +120,7 @@ struct TextView: UIViewRepresentable {
     final class Coordinator: NSObject, UITextViewDelegate {
         var parent: TextView
         var isUpdatingView = false
+        private(set) var responderUpdateTask: Task<Void, Never>?
         private var isComposing = false
 
         init(_ parent: TextView) {
@@ -127,10 +132,8 @@ struct TextView: UIViewRepresentable {
             (textView as? MarkdownTextView)?.onFormat = parent.onFormat
             isUpdatingView = true
             defer { isUpdatingView = false }
-            let hadMarkedText = textView.markedTextRange != nil
-            textView.isEditable = isEnabled
             // Marked text and its selection belong to the input method until committed.
-            if !hadMarkedText, textView.markedTextRange == nil {
+            if textView.markedTextRange == nil {
                 // Canonically equal NFC/NFD strings can have different UTF-16
                 // lengths. UIKit text must match the selection's actual encoding.
                 if !textView.text.utf16.elementsEqual(parent.text.utf16) {
@@ -141,16 +144,24 @@ struct TextView: UIViewRepresentable {
                 }
             }
 
-            if isEnabled, parent.isFocused, !textView.isFirstResponder {
-                textView.becomeFirstResponder()
-            } else if (!isEnabled || !parent.isFocused), textView.isFirstResponder {
-                textView.resignFirstResponder()
-            }
-            if hadMarkedText, textView.markedTextRange == nil {
-                // Resigning can commit a candidate synchronously. Publish its final
-                // text after SwiftUI's update rather than from inside updateUIView.
-                Task { @MainActor [weak self, weak textView] in
-                    guard let self, let textView else { return }
+            // First-responder changes query SwiftUI's responder graph. Performing
+            // them inside updateUIView can re-enter that graph while it is updating,
+            // especially when saving after the Duo changes display or orientation.
+            // Changing isEditable can also resign focus, so defer it with the rest.
+            responderUpdateTask?.cancel()
+            responderUpdateTask = Task { @MainActor [weak self, weak textView] in
+                guard !Task.isCancelled, let self, let textView else { return }
+                let hadMarkedText = textView.markedTextRange != nil
+                self.isUpdatingView = true
+                textView.isEditable = isEnabled
+                if isEnabled, self.parent.isFocused, !textView.isFirstResponder {
+                    textView.becomeFirstResponder()
+                } else if (!isEnabled || !self.parent.isFocused), textView.isFirstResponder {
+                    textView.resignFirstResponder()
+                }
+                self.isUpdatingView = false
+                if hadMarkedText, textView.markedTextRange == nil {
+                    // Resigning can commit an input-method candidate synchronously.
                     self.textViewDidChange(textView)
                 }
             }

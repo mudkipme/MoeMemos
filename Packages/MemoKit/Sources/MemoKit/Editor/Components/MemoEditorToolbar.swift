@@ -121,24 +121,50 @@ struct MemoEditorToolbar: View {
     var body: some View {
         if #available(iOS 26, *) {
             GlassEffectContainer(spacing: 12) {
-                HStack(spacing: 12) {
-                    writingTools
-                        .glassEffect(.regular.interactive(), in: .capsule)
-                    Spacer(minLength: 12)
-                    keyboardButton
-                        .glassEffect(.regular.interactive(), in: .circle)
-                }
+                fittingToolbar
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
         } else {
-            HStack(spacing: 12) {
-                writingTools
-                Spacer(minLength: 12)
-                keyboardButton
-            }
+            fittingToolbar
             .padding(.horizontal, 12)
             .background(.bar)
+        }
+    }
+
+    private var fittingToolbar: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 12) {
+                writingToolsBackground
+                Spacer(minLength: 12)
+                keyboardButtonBackground
+            }
+            HStack(spacing: 12) {
+                ScrollView(.horizontal) {
+                    writingToolsBackground
+                }
+                .frame(height: 52)
+                .scrollIndicators(.hidden)
+                keyboardButtonBackground
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var writingToolsBackground: some View {
+        if #available(iOS 26, *) {
+            writingTools.glassEffect(.regular.interactive(), in: .capsule)
+        } else {
+            writingTools
+        }
+    }
+
+    @ViewBuilder
+    private var keyboardButtonBackground: some View {
+        if #available(iOS 26, *) {
+            keyboardButton.glassEffect(.regular.interactive(), in: .circle)
+        } else {
+            keyboardButton
         }
     }
 }
