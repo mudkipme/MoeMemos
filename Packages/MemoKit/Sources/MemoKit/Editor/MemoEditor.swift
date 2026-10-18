@@ -181,8 +181,7 @@ public struct MemoEditor: View {
             onPickLocation: {
                 focused = false
                 showingLocationPicker = true
-            },
-            isFocused: $focused
+            }
         )
     }
 

@@ -19,8 +19,7 @@ final class MemoEditorToolbarTests: XCTestCase {
             onScanDocument: {},
             onPickFiles: {},
             supportsLocations: true,
-            onPickLocation: {},
-            isFocused: .constant(false)
+            onPickLocation: {}
         )
 
         for width: CGFloat in [180, 220, 280, 340, 600] {

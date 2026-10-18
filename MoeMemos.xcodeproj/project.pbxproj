@@ -35,7 +35,6 @@
 		193DE92328C5E267002651E0 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92228C5E267002651E0 /* Settings.swift */; };
 		193DE93028C65104002651E0 /* MemosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193DE92F28C65104002651E0 /* MemosViewModel.swift */; };
 		1948CCAD2996B3FA00AB1986 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 1948CCAF2996B3FA00AB1986 /* Localizable.xcstrings */; };
-		D3813A1E2ED0000100000001 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = D3813A1E2ED0000100000002 /* InfoPlist.xcstrings */; };
 		194B273128C3973400A48675 /* MoeMemosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B273028C3973400A48675 /* MoeMemosApp.swift */; };
 		194B273328C3973400A48675 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194B273228C3973400A48675 /* ContentView.swift */; };
 		194B273528C3973600A48675 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 194B273428C3973600A48675 /* Assets.xcassets */; };
@@ -103,6 +102,7 @@
 		AA2700000000000000010004 /* MemoData in Frameworks */ = {isa = PBXBuildFile; productRef = AA2700000000000000000004 /* MemoData */; };
 		AA2700000000000000010005 /* MemoSystem in Frameworks */ = {isa = PBXBuildFile; productRef = AA2700000000000000000005 /* MemoSystem */; };
 		AA2700000000000000030000 /* Env in Frameworks */ = {isa = PBXBuildFile; productRef = 19113B8C2C1D97A200365C05 /* Env */; };
+		D3813A1E2ED0000100000001 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = D3813A1E2ED0000100000002 /* InfoPlist.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -160,7 +160,6 @@
 		193DE92F28C65104002651E0 /* MemosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemosViewModel.swift; sourceTree = "<group>"; };
 		193F04E129CCBA320010E3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		1948CCAF2996B3FA00AB1986 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		D3813A1E2ED0000100000002 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		194B272D28C3973400A48675 /* MoeMemos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoeMemos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		194B273028C3973400A48675 /* MoeMemosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoeMemosApp.swift; sourceTree = "<group>"; };
 		194B273228C3973400A48675 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -205,6 +204,7 @@
 		2C6B0A842F8112F000A1C0DE /* SupportPurchaseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportPurchaseStore.swift; sourceTree = "<group>"; };
 		AA1000000000000000000001 /* MemoCommentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCommentsViewModel.swift; sourceTree = "<group>"; };
 		AA1000000000000000000003 /* MemoComments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoComments.swift; sourceTree = "<group>"; };
+		D3813A1E2ED0000100000002 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

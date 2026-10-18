@@ -17,7 +17,6 @@ struct MemoEditorToolbar: View {
     let onPickFiles: () -> Void
     let supportsLocations: Bool
     let onPickLocation: () -> Void
-    @Binding var isFocused: Bool
 
     private func icon(_ title: LocalizedStringKey, systemImage: String) -> some View {
         Label(title, systemImage: systemImage)
@@ -105,19 +104,6 @@ struct MemoEditorToolbar: View {
         }.map { Tag(name: $0) }
     }
 
-    private var keyboardButton: some View {
-        Button {
-            isFocused.toggle()
-        } label: {
-            icon(
-                isFocused ? "input.hide-keyboard" : "input.show-keyboard",
-                systemImage: isFocused ? "keyboard.chevron.compact.down" : "keyboard"
-            )
-        }
-        .buttonStyle(.borderless)
-        .padding(4)
-    }
-
     var body: some View {
         if #available(iOS 26, *) {
             GlassEffectContainer(spacing: 12) {
@@ -136,8 +122,7 @@ struct MemoEditorToolbar: View {
         ViewThatFits(in: .horizontal) {
             HStack(spacing: 12) {
                 writingToolsBackground
-                Spacer(minLength: 12)
-                keyboardButtonBackground
+                Spacer(minLength: 0)
             }
             HStack(spacing: 12) {
                 ScrollView(.horizontal) {
@@ -145,7 +130,6 @@ struct MemoEditorToolbar: View {
                 }
                 .frame(height: 52)
                 .scrollIndicators(.hidden)
-                keyboardButtonBackground
             }
         }
     }
@@ -156,15 +140,6 @@ struct MemoEditorToolbar: View {
             writingTools.glassEffect(.regular.interactive(), in: .capsule)
         } else {
             writingTools
-        }
-    }
-
-    @ViewBuilder
-    private var keyboardButtonBackground: some View {
-        if #available(iOS 26, *) {
-            keyboardButton.glassEffect(.regular.interactive(), in: .circle)
-        } else {
-            keyboardButton
         }
     }
 }
