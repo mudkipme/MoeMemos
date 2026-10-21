@@ -26,6 +26,7 @@ public struct MemoEditor: View {
     @State private var requestedInitialFocus = false
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     @State private var showingPhotoPicker = false
     @State private var showingImagePicker = false
@@ -61,6 +62,10 @@ public struct MemoEditor: View {
     }
     private var isBusy: Bool { isSaving || importingCount > 0 || attachmentImporter.isImporting }
     private var canSave: Bool { !isBusy && isCurrentAccount && !attachmentImporter.hasUnfinishedImports && currentDraft.hasContent }
+
+    private var usesCompactPhoneLayout: Bool {
+        UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass == .compact
+    }
 
     private func restoreDraft() {
         guard draftStore == nil, let accountKey = memo?.accountKey ?? accountManager.currentAccount?.key else { return }
@@ -189,9 +194,11 @@ public struct MemoEditor: View {
     private func editor() -> some View {
         ZStack(alignment: .bottom) {
             VStack(alignment: .leading) {
-                privacyMenu
-                    .disabled(isSaving || !isCurrentAccount)
-                    .padding(.horizontal)
+                if !usesCompactPhoneLayout {
+                    privacyMenu
+                        .disabled(isSaving || !isCurrentAccount)
+                        .padding(.horizontal)
+                }
                 TextView(
                     text: $text, selection: $selection, isFocused: $focused,
                     controller: textController, onFormat: { apply($0) },
@@ -207,7 +214,7 @@ public struct MemoEditor: View {
                         }
                     }
                     .padding(.horizontal)
-                if let draftFeedback, !isBusy {
+                if let draftFeedback, !isBusy, !usesCompactPhoneLayout {
                     Label(
                         LocalizedStringKey(draftFeedback),
                         systemImage: draftSaveFailed ? "exclamationmark.triangle" : "checkmark.circle"
@@ -252,8 +259,16 @@ public struct MemoEditor: View {
                     .disabled(isBusy || !isCurrentAccount)
             }
             .bottomAccessoryBar {
-                toolbar()
-                    .disabled(isBusy || !isCurrentAccount)
+                HStack(spacing: 0) {
+                    toolbar()
+                        .disabled(isBusy || !isCurrentAccount)
+                    if usesCompactPhoneLayout {
+                        privacyMenu
+                            .disabled(isSaving || !isCurrentAccount)
+                            .frame(minHeight: 44)
+                            .padding(.trailing)
+                    }
+                }
             }
         }
 
