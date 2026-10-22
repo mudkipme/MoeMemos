@@ -78,7 +78,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             content: content,
             pinned: false,
             rowStatus: .normal,
-            visibility: visibility ?? .private,
+            visibility: visibility ?? store.fetchUser()?.defaultVisibility ?? .private,
             createdAt: now,
             updatedAt: now,
             softDeleted: false,
