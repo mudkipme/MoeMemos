@@ -974,6 +974,10 @@ components:
         ListMemoCommentsResponse:
             type: object
             properties:
+                comments:
+                    type: array
+                    items:
+                        "$ref": "#/components/schemas/Memo"
                 memos:
                     type: array
                     items:
@@ -1411,6 +1415,11 @@ components:
                     allOf:
                     -   "$ref": "#/components/schemas/UserStats_MemoTypeStats"
                     description: The stats of memo types.
+                tagCounts:
+                    type: object
+                    additionalProperties:
+                        type: integer
+                        format: int32
                 tagCount:
                     type: object
                     additionalProperties:

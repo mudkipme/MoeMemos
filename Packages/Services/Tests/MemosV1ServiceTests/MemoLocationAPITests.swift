@@ -63,6 +63,9 @@ private actor LocationTransport: ClientTransport {
     var body = Data()
 
     func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String) async throws -> (HTTPResponse, HTTPBody?) {
+        if request.path == "/api/v1/instance/profile" {
+            return (HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]), HTTPBody(#"{"version":"0.31.0"}"#))
+        }
         self.path = request.path
         self.body = try await body.mapData() ?? Data()
         var memo = try JSONSerialization.jsonObject(with: self.body) as? [String: Any] ?? [:]

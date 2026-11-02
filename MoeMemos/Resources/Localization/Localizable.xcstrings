@@ -2006,49 +2006,49 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moe Memos unterstützt nur Memos-Instanzen mit %1$@-kompatibler API sowie Memos %2$@ bis %3$@."
+            "value" : "Moe Memos unterstützt nur Memos-Instanzen mit %1$@-kompatibler API sowie Memos %2$@ bis %3$@ und %4$@ bis %5$@."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moe Memos only supports Memos instances compatible with the %1$@ API, and Memos %2$@ to %3$@."
+            "value" : "Moe Memos only supports Memos instances compatible with the %1$@ API, Memos %2$@ to %3$@, and Memos %4$@ to %5$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moe Memos prend uniquement en charge les instances Memos compatibles avec l'API %1$@, et Memos de %2$@ à %3$@."
+            "value" : "Moe Memos prend uniquement en charge les instances Memos compatibles avec l'API %1$@, Memos de %2$@ à %3$@ et Memos de %4$@ à %5$@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moe Memos supporta solo istanze Memos compatibili con l'API %1$@, e Memos da %2$@ a %3$@."
+            "value" : "Moe Memos supporta solo istanze Memos compatibili con l'API %1$@, Memos da %2$@ a %3$@ e Memos da %4$@ a %5$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moe Memos は %1$@ 互換 API の Memos インスタンスと、%2$@ から %3$@ までの Memos のみをサポートしています。"
+            "value" : "Moe Memos は %1$@ 互換 API の Memos インスタンスと、%2$@ から %3$@ まで、および %4$@ から %5$@ までの Memos のみをサポートしています。"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moe Memos поддерживает только экземпляры Memos с API, совместимым с %1$@, а также Memos от %2$@ до %3$@."
+            "value" : "Moe Memos поддерживает только экземпляры Memos с API, совместимым с %1$@, а также Memos от %2$@ до %3$@ и от %4$@ до %5$@."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moe Memos 仅支持与 %1$@ API 兼容的 Memos 实例，以及 %2$@ 到 %3$@ 的 Memos。"
+            "value" : "Moe Memos 仅支持与 %1$@ API 兼容的 Memos 实例，以及 %2$@ 到 %3$@ 和 %4$@ 到 %5$@ 的 Memos。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moe Memos 僅支援與 %1$@ API 相容的 Memos 實例，以及 %2$@ 到 %3$@ 的 Memos。"
+            "value" : "Moe Memos 僅支援與 %1$@ API 相容的 Memos 實例，以及 %2$@ 到 %3$@ 和 %4$@ 到 %5$@ 的 Memos。"
           }
         }
       }

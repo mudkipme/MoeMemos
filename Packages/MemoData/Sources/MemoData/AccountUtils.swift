@@ -87,7 +87,9 @@ public func detectMemosVersion(account: Account) async throws -> MemosVersion {
 public func evaluateMemosVersionCompatibility(_ version: MemosVersion) -> MemosVersionCompatibility {
     guard let minimumV0 = SemanticVersion(SupportedMemosVersion.minimumV0),
           let minimumV1 = SemanticVersion(SupportedMemosVersion.minimumV1),
-          let maximumV1 = SemanticVersion(SupportedMemosVersion.maximumV1) else {
+          let maximumV1 = SemanticVersion(SupportedMemosVersion.maximumV1),
+          let minimumCalendar = SemanticVersion(SupportedMemosVersion.minimumCalendar),
+          let maximumCalendar = SemanticVersion(SupportedMemosVersion.maximumCalendar) else {
         return .unsupported
     }
 
@@ -110,7 +112,7 @@ public func evaluateMemosVersionCompatibility(_ version: MemosVersion) -> MemosV
         if semver < minimumV1 {
             return .unsupported
         }
-        if semver > maximumV1 {
+        if semver > maximumV1 && !(minimumCalendar...maximumCalendar).contains(semver) {
             return .v1HigherThanSupported(version: raw)
         }
         return .supported
