@@ -45,6 +45,18 @@ final class AccountTests: XCTestCase {
         XCTAssertEqual(result, .supported)
     }
 
+    func testV1CompatibilitySupportsCalendarVersions() {
+        for version in ["26.10.0", "26.10.1", "26.11.0", "26.11.0-rc.1"] {
+            XCTAssertEqual(evaluateMemosVersionCompatibility(.v1(version: version)), .supported)
+        }
+    }
+
+    func testV1CompatibilityRequiresWarningOutsideSupportedCalendarVersions() {
+        for version in ["26.9.0", "26.11.1", "26.12.0"] {
+            XCTAssertEqual(evaluateMemosVersionCompatibility(.v1(version: version)), .v1HigherThanSupported(version: version))
+        }
+    }
+
     func testV1CompatibilityRequiresWarningForHigherThan0310() {
         let result = evaluateMemosVersionCompatibility(.v1(version: "0.31.1"))
         XCTAssertEqual(result, .v1HigherThanSupported(version: "0.31.1"))

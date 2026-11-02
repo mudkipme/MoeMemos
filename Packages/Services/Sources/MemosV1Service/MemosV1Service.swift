@@ -31,6 +31,7 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
             transport: transport ?? URLSessionTransport(configuration: .init(session: urlSession)),
             middlewares: [
                 AccessTokenAuthenticationMiddleware(accessToken: accessToken),
+                MemosAPIRoutingMiddleware(),
                 grpcSetCookieMiddleware
             ]
         )
@@ -166,7 +167,7 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         repeat {
             let resp = try await client.MemoService_ListMemoComments(path: .init(memo: getId(remoteId: memoRemoteId)), query: .init(pageSize: 200, pageToken: nextPageToken, orderBy: nil))
             let data = try resp.ok.body.json
-            comments += data.memos ?? []
+            comments += data.comments ?? data.memos ?? []
             nextPageToken = data.nextPageToken
         } while (nextPageToken?.isEmpty == false)
 
@@ -195,7 +196,7 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         let data = try resp.ok.body.json
         
         var tags = [Tag]()
-        if let tagCount = data.tagCount?.additionalProperties {
+        if let tagCount = data.tagCounts?.additionalProperties ?? data.tagCount?.additionalProperties {
             for (tag, _) in tagCount {
                 tags.append(.init(name: tag))
             }
