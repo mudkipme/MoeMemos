@@ -79,7 +79,22 @@ final class MemosCalendarVersionTests: XCTestCase {
             do {
                 _ = try await service.createMemo(content: "Created", visibility: nil, resources: [], tags: nil, createdAt: nil, updatedAt: nil)
                 XCTFail("Expected profile error")
-            } catch {}
+            } catch let error as MoeMemosError {
+                switch status {
+                case .unauthorized:
+                    if case .accessTokenExpired = error {} else {
+                        XCTFail("Expected accessTokenExpired, got \(error)")
+                    }
+                case .internalServerError:
+                    if case .invalidStatusCode(500, let message) = error {
+                        XCTAssertEqual(message, "Legacy route unavailable")
+                    } else {
+                        XCTFail("Expected invalidStatusCode(500), got \(error)")
+                    }
+                default:
+                    XCTFail("Unexpected status \(status)")
+                }
+            }
             let requests = await transport.requests
             XCTAssertEqual(requests.count, 1)
             XCTAssertEqual(requests.first?.path, "/api/v1/instance/profile")

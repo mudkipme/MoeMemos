@@ -31,7 +31,7 @@ struct MemosList: View {
     var body: some View {
         let defaultMemoVisibility = userState.currentUser?.defaultVisibility ?? .private
         let filteredMemoList = filterMemoList(memosViewModel.memoList, tag: tag, searchString: searchString)
-        let unsyncedCount = memosViewModel.memoList.filter { $0.syncState != .synced }.count
+        let unsyncedCount = memosViewModel.unsyncedCount
         let canSync = ((try? memosViewModel.service) as? SyncableService) != nil
         let isFirstLoad = !memosViewModel.inited && memosViewModel.memoList.isEmpty
         
@@ -126,7 +126,11 @@ struct MemosList: View {
         .toolbar {
             if canSync {
                 ToolbarItem(placement: .topBarTrailing) {
-                    SyncStatusBadge(syncing: memosViewModel.syncing, unsyncedCount: unsyncedCount) {
+                    SyncStatusBadge(
+                        syncing: memosViewModel.syncing,
+                        unsyncedCount: unsyncedCount,
+                        hasAuthError: memosViewModel.syncAuthError
+                    ) {
                         triggerManualSync()
                     }
                 }

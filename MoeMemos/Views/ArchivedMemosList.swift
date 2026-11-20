@@ -23,7 +23,7 @@ struct ArchivedMemosList: View {
 
     var body: some View {
         let filteredMemoList = filterMemoList(viewModel.archivedMemoList)
-        let unsyncedCount = memosViewModel.memoList.filter { $0.syncState != .synced }.count
+        let unsyncedCount = memosViewModel.unsyncedCount
         let canSync = ((try? memosViewModel.service) as? SyncableService) != nil
 
         Group {
@@ -62,7 +62,11 @@ struct ArchivedMemosList: View {
         .toolbar {
             if canSync {
                 ToolbarItem(placement: .topBarTrailing) {
-                    SyncStatusBadge(syncing: memosViewModel.syncing, unsyncedCount: unsyncedCount) {
+                    SyncStatusBadge(
+                        syncing: memosViewModel.syncing,
+                        unsyncedCount: unsyncedCount,
+                        hasAuthError: memosViewModel.syncAuthError
+                    ) {
                         triggerManualSync()
                     }
                 }
@@ -118,6 +122,7 @@ struct ArchivedMemosList: View {
                     showingHigherV1SyncConfirmation = true
                 }
             } catch {
+                try? await viewModel.reloadArchivedMemos()
                 manualSyncAlertMessage = error.localizedDescription
                 showingManualSyncAlert = true
             }

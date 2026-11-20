@@ -30,6 +30,7 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
             serverURL: hostURL,
             transport: transport ?? URLSessionTransport(configuration: .init(session: urlSession)),
             middlewares: [
+                HTTPStatusErrorMiddleware(),
                 AccessTokenAuthenticationMiddleware(accessToken: accessToken),
                 MemosAPIRoutingMiddleware(),
                 grpcSetCookieMiddleware
@@ -49,7 +50,9 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         var nextPageToken: String? = nil
         
         repeat {
-            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .NORMAL, filter: "creator == \"users/\(userId)\""))
+            let resp = try await normalizeClientError {
+                try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .NORMAL, filter: "creator == \"users/\(userId)\""))
+            }
             let data = try resp.ok.body.json
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
@@ -64,7 +67,9 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         var nextPageToken: String? = nil
         
         repeat {
-            let resp = try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .ARCHIVED, filter: "creator == \"users/\(userId)\""))
+            let resp = try await normalizeClientError {
+                try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .ARCHIVED, filter: "creator == \"users/\(userId)\""))
+            }
             let data = try resp.ok.body.json
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
@@ -74,7 +79,9 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
     }
     
     public func listWorkspaceMemos(pageSize: Int, pageToken: String?) async throws -> (list: [Memo], nextPageToken: String?) {
-        let resp = try await client.MemoService_ListMemos(query: .init(pageSize: Int32(pageSize), pageToken: pageToken, filter: "visibility in [\"PUBLIC\", \"PROTECTED\"]"))
+        let resp = try await normalizeClientError {
+            try await client.MemoService_ListMemos(query: .init(pageSize: Int32(pageSize), pageToken: pageToken, filter: "visibility in [\"PUBLIC\", \"PROTECTED\"]"))
+        }
         let data = try resp.ok.body.json
         let memos = data.memos ?? []
         let result = await memosWithUsers(memos)
@@ -102,14 +109,16 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
             return resource
         }
         
-        let resp = try await client.MemoService_CreateMemo(body: .json(.init(
-            createTime: createdAt,
-            updateTime: updatedAt,
-            content: content,
-            visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
-            attachments: memosResources,
-            location: location.map { .init(value1: .init(placeholder: $0.placeholder, latitude: $0.latitude, longitude: $0.longitude)) }
-        )))
+        let resp = try await normalizeClientError {
+            try await client.MemoService_CreateMemo(body: .json(.init(
+                createTime: createdAt,
+                updateTime: updatedAt,
+                content: content,
+                visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
+                attachments: memosResources,
+                location: location.map { .init(value1: .init(placeholder: $0.placeholder, latitude: $0.latitude, longitude: $0.longitude)) }
+            )))
+        }
         let memo = try resp.ok.body.json
         
         let result = memo.toMemo(host: hostURL)
@@ -142,21 +151,25 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         if pinned != nil { mask.append("pinned") }
         if resources != nil { mask.append("attachments") }
         if location != nil { mask.append("location") }
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), query: .init(updateMask: mask.joined(separator: ",")), body: .json(.init(
-            updateTime: updatedAt ?? .now,
-            content: content,
-            visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
-            pinned: pinned,
-            attachments: memosResources,
-            location: location?.location.map { .init(value1: .init(placeholder: $0.placeholder, latitude: $0.latitude, longitude: $0.longitude)) }
-        )))
+        let resp = try await normalizeClientError {
+            try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), query: .init(updateMask: mask.joined(separator: ",")), body: .json(.init(
+                updateTime: updatedAt ?? .now,
+                content: content,
+                visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
+                pinned: pinned,
+                attachments: memosResources,
+                location: location?.location.map { .init(value1: .init(placeholder: $0.placeholder, latitude: $0.latitude, longitude: $0.longitude)) }
+            )))
+        }
         let memo = try resp.ok.body.json
         let result = memo.toMemo(host: hostURL)
         return result
     }
     
     public func deleteMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_DeleteMemo(path: .init(memo: getId(remoteId: remoteId)))
+        let resp = try await normalizeClientError {
+            try await client.MemoService_DeleteMemo(path: .init(memo: getId(remoteId: remoteId)))
+        }
         _ = try resp.ok
     }
 
@@ -165,7 +178,9 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         var nextPageToken: String? = nil
 
         repeat {
-            let resp = try await client.MemoService_ListMemoComments(path: .init(memo: getId(remoteId: memoRemoteId)), query: .init(pageSize: 200, pageToken: nextPageToken, orderBy: nil))
+            let resp = try await normalizeClientError {
+                try await client.MemoService_ListMemoComments(path: .init(memo: getId(remoteId: memoRemoteId)), query: .init(pageSize: 200, pageToken: nextPageToken, orderBy: nil))
+            }
             let data = try resp.ok.body.json
             comments += data.comments ?? data.memos ?? []
             nextPageToken = data.nextPageToken
@@ -175,24 +190,32 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
     }
 
     public func createMemoComment(memoRemoteId: String, content: String) async throws -> Memo {
-        let resp = try await client.MemoService_CreateMemoComment(path: .init(memo: getId(remoteId: memoRemoteId)), query: .init(commentId: nil), body: .json(.init(content: content)))
+        let resp = try await normalizeClientError {
+            try await client.MemoService_CreateMemoComment(path: .init(memo: getId(remoteId: memoRemoteId)), query: .init(commentId: nil), body: .json(.init(content: content)))
+        }
         let comment = try resp.ok.body.json
         return await memosWithUsers([comment]).first ?? comment.toMemo(host: hostURL)
     }
     
     public func archiveMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), query: .init(updateMask: "state"), body: .json(.init(state: .ARCHIVED)))
+        let resp = try await normalizeClientError {
+            try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), query: .init(updateMask: "state"), body: .json(.init(state: .ARCHIVED)))
+        }
         _ = try resp.ok
     }
 
     public func restoreMemo(remoteId: String) async throws {
-        let resp = try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), query: .init(updateMask: "state"), body: .json(.init(state: .NORMAL)))
+        let resp = try await normalizeClientError {
+            try await client.MemoService_UpdateMemo(path: .init(memo: getId(remoteId: remoteId)), query: .init(updateMask: "state"), body: .json(.init(state: .NORMAL)))
+        }
         _ = try resp.ok
     }
 
     public func listTags() async throws -> [Tag] {
         guard let userId = userId else { throw MoeMemosError.notLogin }
-        let resp = try await client.UserService_GetUserStats(path: .init(user: "\(userId)"))
+        let resp = try await normalizeClientError {
+            try await client.UserService_GetUserStats(path: .init(user: "\(userId)"))
+        }
         let data = try resp.ok.body.json
         
         var tags = [Tag]()
@@ -205,29 +228,37 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
     }
     
     public func listResources() async throws -> [Resource] {
-        let resp = try await client.AttachmentService_ListAttachments()
+        let resp = try await normalizeClientError {
+            try await client.AttachmentService_ListAttachments()
+        }
         let data = try resp.ok.body.json
         return data.attachments?.map { $0.toResource(host: hostURL) } ?? []
     }
     
     public func createResource(filename: String, data: Data, type: String, memoRemoteId: String?) async throws -> Resource {
-        let resp = try await client.AttachmentService_CreateAttachment(body: .json(.init(
-            filename: filename,
-            content: .init(data),
-            _type: type,
-            memo: memoRemoteId.map(getName(remoteId:))
-        )))
+        let resp = try await normalizeClientError {
+            try await client.AttachmentService_CreateAttachment(body: .json(.init(
+                filename: filename,
+                content: .init(data),
+                _type: type,
+                memo: memoRemoteId.map(getName(remoteId:))
+            )))
+        }
         let data = try resp.ok.body.json
         return data.toResource(host: hostURL)
     }
     
     public func deleteResource(remoteId: String) async throws {
-        let resp = try await client.AttachmentService_DeleteAttachment(path: .init(attachment: getId(remoteId: remoteId)))
+        let resp = try await normalizeClientError {
+            try await client.AttachmentService_DeleteAttachment(path: .init(attachment: getId(remoteId: remoteId)))
+        }
         _ = try resp.ok
     }
     
     public func getCurrentUser() async throws -> UserSnapshot {
-        let resp = try await client.AuthService_GetCurrentUser()
+        let resp = try await normalizeClientError {
+            try await client.AuthService_GetCurrentUser()
+        }
 
         let user: MemosV1User
         switch resp {
@@ -246,14 +277,18 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         }
         
         guard let name = user.name else { throw MoeMemosError.unsupportedVersion }
-        let userSettingResp = try await client.UserService_GetUserSetting(path: .init(user: getId(remoteId: name), setting: "GENERAL"))
+        let userSettingResp = try await normalizeClientError {
+            try await client.UserService_GetUserSetting(path: .init(user: getId(remoteId: name), setting: "GENERAL"))
+        }
         
         let setting = try userSettingResp.ok.body.json
         return await toUserSnapshot(user, setting: setting)
     }
     
     public func getWorkspaceProfile() async throws -> MemosV1Profile {
-        let resp = try await client.InstanceService_GetInstanceProfile()
+        let resp = try await normalizeClientError {
+            try await client.InstanceService_GetInstanceProfile()
+        }
         return try resp.ok.body.json
     }
     

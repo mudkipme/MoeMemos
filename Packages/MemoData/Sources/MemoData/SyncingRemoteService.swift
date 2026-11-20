@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import OSLog
 import SwiftData
 import Models
 
@@ -13,17 +14,46 @@ import Models
 /// - Sync engine talks to the server via `RemoteService` using server ids (Memo.remoteId / Resource.remoteId).
 @MainActor
 final class SyncingRemoteService: Service, SyncableService, PendingOperationsService {
+    private static let logger = Logger(subsystem: "me.mudkip.MoeMemos", category: "Sync")
+
     private let remote: RemoteService
     private let store: LocalStore
     private let accountKey: String
 
     // Serialize all remote operations + sync to avoid conflicting writes.
     private var operationChain: Task<Void, Never>?
+    private var stateChangeHandler: (@MainActor () -> Void)?
+    private(set) var lastSyncError: Error?
 
     init(remote: RemoteService, context: ModelContext, accountKey: String) {
         self.remote = remote
         self.store = LocalStore(context: context, accountKey: accountKey)
         self.accountKey = accountKey
+    }
+
+    func setStateChangeHandler(_ handler: (@MainActor () -> Void)?) {
+        stateChangeHandler = handler
+    }
+
+    func pendingChangesCount() -> Int {
+        let pendingMemos = store.allMemos(includeDeleted: true).filter { $0.syncState != .synced }.count
+        let pendingResources = store.allResources(includeDeleted: true).filter { $0.syncState != .synced }.count
+        return pendingMemos + pendingResources
+    }
+
+    private func notifyStateChanged() {
+        stateChangeHandler?()
+    }
+
+    private func recordBackgroundSuccess() {
+        lastSyncError = nil
+        notifyStateChanged()
+    }
+
+    private func recordBackgroundError(_ error: Error, context: String) {
+        Self.logger.error("Background \(context, privacy: .public) failed: \(error.localizedDescription, privacy: .public)")
+        lastSyncError = error
+        notifyStateChanged()
     }
 
     private func enqueueOperation(_ operation: @escaping @MainActor () async -> Void) {
@@ -95,6 +125,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         }
 
         try store.save()
+        notifyStateChanged()
 
         let memoId = stored.persistentModelID
         let memoTags = tags
@@ -107,8 +138,9 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                       latest.syncState == .pendingCreate else { return }
                 _ = try await self.pushLocalCreate(local: latest, tags: memoTags)
                 try self.store.save()
+                self.recordBackgroundSuccess()
             } catch {
-                return
+                self.recordBackgroundError(error, context: "createMemo")
             }
         }
 
@@ -139,12 +171,9 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         }
 
         stored.updatedAt = .now
-        if stored.serverId == nil {
-            stored.syncState = .pendingCreate
-        } else if stored.syncState == .synced {
-            stored.syncState = .pendingUpdate
-        }
+        stored.syncState = SyncStateTransition.stateAfterUpdate(serverId: stored.serverId)
         try store.save()
+        notifyStateChanged()
 
         let memoId = stored.persistentModelID
         enqueueOperation { [weak self] in
@@ -155,8 +184,9 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                       latest.syncState != .synced else { return }
                 _ = try await self.pushLocalMemo(local: latest, tags: tags)
                 try self.store.save()
+                self.recordBackgroundSuccess()
             } catch {
-                return
+                self.recordBackgroundError(error, context: "updateMemo")
             }
         }
 
@@ -167,13 +197,15 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         guard let stored = store.fetchMemo(id: id) else { return }
         stored.softDeleted = true
         stored.updatedAt = .now
-        if stored.serverId != nil, stored.syncState == .synced {
-            stored.syncState = .pendingDelete
-        } else if stored.serverId == nil {
-            stored.syncState = .synced
+        let nextState = SyncStateTransition.stateAfterDelete(serverId: stored.serverId)
+        stored.syncState = nextState
+        if nextState == .synced {
             stored.lastSyncedAt = .now
         }
         try store.save()
+        notifyStateChanged()
+
+        guard nextState == .pendingDelete else { return }
 
         let memoId = stored.persistentModelID
         enqueueOperation { [weak self] in
@@ -183,65 +215,55 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                       latest.softDeleted,
                       latest.syncState == .pendingDelete,
                       let serverId = latest.serverId else { return }
-                try await self.remote.deleteMemo(remoteId: serverId)
+                try await self.deleteMemoIgnoringNotFound(remoteId: serverId)
                 latest.syncState = .synced
+                latest.lastSyncedAt = .now
                 try self.store.save()
+                self.recordBackgroundSuccess()
             } catch {
-                return
+                self.recordBackgroundError(error, context: "deleteMemo")
             }
         }
     }
 
     func archiveMemo(id: PersistentIdentifier) async throws {
-        guard let stored = store.fetchMemo(id: id) else { return }
-        stored.rowStatus = .archived
-        stored.updatedAt = .now
-        if stored.serverId == nil {
-            stored.syncState = .pendingCreate
-        } else if stored.syncState == .synced {
-            stored.syncState = .pendingUpdate
-        }
-        try store.save()
-
-        let memoId = stored.persistentModelID
-        enqueueOperation { [weak self] in
-            guard let self else { return }
-            do {
-                guard let latest = self.store.fetchMemo(id: memoId),
-                      latest.rowStatus == .archived,
-                      let serverId = latest.serverId else { return }
-                try await self.remote.archiveMemo(remoteId: serverId)
-                latest.syncState = .synced
-                try self.store.save()
-            } catch {
-                return
-            }
-        }
+        try changeRowStatus(id: id, targetStatus: .archived)
     }
 
     func restoreMemo(id: PersistentIdentifier) async throws {
+        try changeRowStatus(id: id, targetStatus: .normal)
+    }
+
+    private func changeRowStatus(id: PersistentIdentifier, targetStatus: RowStatus) throws {
         guard let stored = store.fetchMemo(id: id) else { return }
-        stored.rowStatus = .normal
-        stored.updatedAt = .now
-        if stored.serverId == nil {
-            stored.syncState = .pendingCreate
-        } else if stored.syncState == .synced {
-            stored.syncState = .pendingUpdate
-        }
+        let transition = SyncStateTransition.stateAfterRowStatusChange(serverId: stored.serverId, currentState: stored.syncState)
+        let mutationDate = Date()
+        stored.rowStatus = targetStatus
+        stored.updatedAt = mutationDate
+        stored.syncState = transition.nextState
         try store.save()
+        notifyStateChanged()
 
         let memoId = stored.persistentModelID
+        let operationName = targetStatus == .archived ? "archiveMemo" : "restoreMemo"
         enqueueOperation { [weak self] in
             guard let self else { return }
             do {
                 guard let latest = self.store.fetchMemo(id: memoId),
-                      latest.rowStatus == .normal,
-                      let serverId = latest.serverId else { return }
-                try await self.remote.restoreMemo(remoteId: serverId)
-                latest.syncState = .synced
+                      !latest.softDeleted,
+                      latest.rowStatus == targetStatus,
+                      latest.syncState != .synced else { return }
+
+                if latest.serverId == nil || transition.requiresFullPush || latest.updatedAt != mutationDate {
+                    _ = try await self.pushLocalMemo(local: latest, tags: nil)
+                } else if let serverId = latest.serverId {
+                    try await self.pushRowStatus(remoteId: serverId, rowStatus: targetStatus)
+                    latest.syncState = .synced
+                }
                 try self.store.save()
+                self.recordBackgroundSuccess()
             } catch {
-                return
+                self.recordBackgroundError(error, context: operationName)
             }
         }
     }
@@ -286,6 +308,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         )
 
         try store.save()
+        notifyStateChanged()
 
         let resourceId = stored.persistentModelID
         enqueueOperation { [weak self] in
@@ -305,8 +328,9 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                     memo.updatedAt = .now
                     try? self.store.save()
                 }
+                self.recordBackgroundSuccess()
             } catch {
-                return
+                self.recordBackgroundError(error, context: "createResource")
             }
         }
 
@@ -318,14 +342,16 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         resource.softDeleted = true
         resource.updatedAt = .now
 
-        if resource.serverId != nil, resource.syncState == .synced {
-            resource.syncState = .pendingDelete
-        } else {
-            resource.syncState = .synced
+        let nextState = SyncStateTransition.stateAfterDelete(serverId: resource.serverId)
+        resource.syncState = nextState
+        if nextState == .synced {
             resource.lastSyncedAt = .now
             ResourceFileStore.deleteFile(atPath: resource.localPath)
         }
         try store.save()
+        notifyStateChanged()
+
+        guard nextState == .pendingDelete else { return }
 
         let resourceId = resource.persistentModelID
         enqueueOperation { [weak self] in
@@ -335,13 +361,14 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                       latest.softDeleted,
                       latest.syncState == .pendingDelete,
                       let serverId = latest.serverId else { return }
-                try await self.remote.deleteResource(remoteId: serverId)
+                try await self.deleteResourceIgnoringNotFound(remoteId: serverId)
                 latest.syncState = .synced
                 latest.lastSyncedAt = .now
                 ResourceFileStore.deleteFile(atPath: latest.localPath)
                 try self.store.save()
+                self.recordBackgroundSuccess()
             } catch {
-                return
+                self.recordBackgroundError(error, context: "deleteResource")
             }
         }
     }
@@ -414,11 +441,35 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
 
     func sync() async throws {
         try await runSerialized { [self] in
-            try await self.syncCurrentUserStrict()
+            var firstItemError: Error?
 
-            let remoteNormal = try await self.remote.listMemos()
-            let remoteArchived = try await self.remote.listArchivedMemos()
-            let remoteMemos = remoteNormal + remoteArchived
+            @MainActor
+            func handleItemError(_ error: Error, context: String) throws {
+                Self.logger.error("Sync \(context, privacy: .public) failed: \(error.localizedDescription, privacy: .public)")
+                if SyncErrorClassifier.shouldAbortSync(error) {
+                    try? self.store.save()
+                    self.lastSyncError = error
+                    self.notifyStateChanged()
+                    throw error
+                }
+                if firstItemError == nil {
+                    firstItemError = error
+                }
+            }
+
+            let remoteMemos: [Memo]
+            do {
+                try await self.syncCurrentUserStrict()
+                let remoteNormal = try await self.remote.listMemos()
+                let remoteArchived = try await self.remote.listArchivedMemos()
+                remoteMemos = remoteNormal + remoteArchived
+            } catch {
+                Self.logger.error("Sync fetch failed: \(error.localizedDescription, privacy: .public)")
+                self.lastSyncError = error
+                self.notifyStateChanged()
+                throw error
+            }
+
             let syncedAt = Date()
 
             let localMemos = self.store.allMemos(includeDeleted: true)
@@ -440,15 +491,13 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                 guard let serverId = remoteMemo.remoteId else { continue }
                 if let local = localByServerId[serverId] {
                     if local.softDeleted {
-                        if local.syncState == .pendingDelete {
-                            try await self.resolveLocalDeleted(local: local, remote: remoteMemo, syncedAt: syncedAt)
-                        } else {
-                            // Deleted rows not in `pendingDelete` were not explicitly requested by the user.
-                            // Never treat them as authority to delete server data.
-                            self.applyRemoteMemo(remoteMemo, syncedAt: syncedAt)
+                        if let error = await self.resolveLocalDeleted(local: local, remote: remoteMemo, syncedAt: syncedAt) {
+                            try handleItemError(error, context: "resolveLocalDeleted")
                         }
                     } else {
-                        try await self.resolveBothPresent(local: local, remote: remoteMemo, syncedAt: syncedAt)
+                        if let error = await self.resolveBothPresent(local: local, remote: remoteMemo, syncedAt: syncedAt) {
+                            try handleItemError(error, context: "resolveBothPresent")
+                        }
                     }
                 } else {
                     self.applyRemoteMemo(remoteMemo, syncedAt: syncedAt)
@@ -458,7 +507,9 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             for local in localMemos {
                 if let serverId = local.serverId {
                     if remoteById[serverId] == nil {
-                        try await self.resolveServerDeleted(local: local, syncedAt: syncedAt)
+                        if let error = await self.resolveServerDeleted(local: local, syncedAt: syncedAt) {
+                            try handleItemError(error, context: "resolveServerDeleted")
+                        }
                     }
                 } else {
                     if local.softDeleted {
@@ -469,7 +520,12 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                             let pushed = try await self.pushLocalMemo(local: local, tags: nil)
                             self.applyRemoteMemo(pushed, syncedAt: syncedAt)
                         } catch {
-                            local.syncState = .pendingCreate
+                            if local.serverId == nil {
+                                local.syncState = .pendingCreate
+                            } else {
+                                local.syncState = .pendingUpdate
+                            }
+                            try handleItemError(error, context: "pushPendingCreate")
                         }
                     }
                 }
@@ -484,16 +540,21 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                         ResourceFileStore.deleteFile(atPath: resource.localPath)
                         continue
                     }
-                    try await self.remote.deleteResource(remoteId: serverId)
+                    try await self.deleteResourceIgnoringNotFound(remoteId: serverId)
                     resource.syncState = .synced
                     resource.lastSyncedAt = syncedAt
                     ResourceFileStore.deleteFile(atPath: resource.localPath)
                 } catch {
-                    continue
+                    try handleItemError(error, context: "deletePendingResource")
                 }
             }
 
             try self.store.save()
+            self.lastSyncError = firstItemError
+            self.notifyStateChanged()
+            if let firstItemError {
+                throw firstItemError
+            }
         }
     }
 
@@ -505,59 +566,72 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         try store.save()
     }
 
-    private func resolveLocalDeleted(local: StoredMemo, remote: Memo, syncedAt: Date) async throws {
-        guard local.syncState == .pendingDelete else {
-            applyRemoteMemo(remote, syncedAt: syncedAt)
-            return
-        }
+    private func resolveLocalDeleted(local: StoredMemo, remote: Memo, syncedAt: Date) async -> Error? {
         let remoteChanged = hasRemoteChanged(local: local, remote: remote)
         let remoteMatchesDeletedLocal = memoEquivalent(memoFromStored(local), remote)
 
-        if remoteChanged || !remoteMatchesDeletedLocal {
+        switch SyncStateTransition.resolveLocalDeleted(
+            syncState: local.syncState,
+            remoteChanged: remoteChanged,
+            remoteMatchesLocal: remoteMatchesDeletedLocal
+        ) {
+        case .restoreFromRemote:
             applyRemoteMemo(remote, syncedAt: syncedAt)
-        } else {
+            return nil
+        case .deleteOnServer:
             do {
-                try await remoteDelete(remoteId: remote.remoteId)
+                if let remoteId = remote.remoteId {
+                    try await deleteMemoIgnoringNotFound(remoteId: remoteId)
+                }
                 local.syncState = .synced
                 // Track the last remote updatedAt we observed, not the local sync time.
                 local.lastSyncedAt = remote.updatedAt
+                return nil
             } catch {
                 local.syncState = .pendingDelete
+                return error
             }
         }
     }
 
-    private func resolveBothPresent(local: StoredMemo, remote: Memo, syncedAt: Date) async throws {
+    private func resolveBothPresent(local: StoredMemo, remote: Memo, syncedAt: Date) async -> Error? {
         let localMemo = memoFromStored(local)
         let localChanged = local.syncState != .synced
         let remoteChanged = hasRemoteChanged(local: local, remote: remote)
         let equivalent = memoEquivalent(localMemo, remote)
 
-        if equivalent {
+        switch SyncStateTransition.resolveBothPresent(
+            localChanged: localChanged,
+            remoteChanged: remoteChanged,
+            equivalent: equivalent
+        ) {
+        case .markSynced:
             local.syncState = .synced
             local.lastSyncedAt = remote.updatedAt
-            return
-        }
-
-        if !localChanged {
+            return nil
+        case .applyRemote:
             applyRemoteMemo(remote, syncedAt: syncedAt)
-            return
-        }
-
-        if !remoteChanged {
+            return nil
+        case .pushLocal:
             do {
-                let updated = try await pushLocalMemo(local: local, tags: nil)
+                let updated = try await pushLocalMemo(local: local, tags: nil, remoteBaseline: remote)
                 applyRemoteMemo(updated, syncedAt: syncedAt)
                 try store.save()
+                return nil
             } catch {
                 local.syncState = local.serverId == nil ? .pendingCreate : .pendingUpdate
+                return error
             }
-            return
+        case .duplicateLocalAndApplyRemote:
+            // Both changed: preserve local edits as a new memo and apply remote version.
+            do {
+                _ = try await createDuplicateFromLocal(local, syncedAt: syncedAt)
+            } catch {
+                Self.logger.error("Failed to duplicate conflicting local memo: \(error.localizedDescription, privacy: .public)")
+            }
+            applyRemoteMemo(remote, syncedAt: syncedAt)
+            return nil
         }
-
-        // Both changed.
-        _ = try? await createDuplicateFromLocal(local, syncedAt: syncedAt)
-        applyRemoteMemo(remote, syncedAt: syncedAt)
     }
 
     private func hasRemoteChanged(local: StoredMemo, remote: Memo) -> Bool {
@@ -568,14 +642,15 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         return remote.updatedAt != lastSyncedAt
     }
 
-    private func resolveServerDeleted(local: StoredMemo, syncedAt: Date) async throws {
-        if local.softDeleted {
+    private func resolveServerDeleted(local: StoredMemo, syncedAt: Date) async -> Error? {
+        switch SyncStateTransition.resolveServerDeleted(
+            localSoftDeleted: local.softDeleted,
+            localChanged: local.syncState != .synced
+        ) {
+        case .markLocalDeletedSynced:
             local.syncState = .synced
-            return
-        }
-
-        let localChanged = local.syncState != .synced
-        if localChanged {
+            return nil
+        case .recreateOnServer:
             local.serverId = nil
             local.syncState = .pendingCreate
             local.lastSyncedAt = nil
@@ -583,12 +658,15 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                 let pushed = try await pushLocalMemo(local: local, tags: nil)
                 applyRemoteMemo(pushed, syncedAt: syncedAt)
                 try store.save()
+                return nil
             } catch {
-                local.syncState = .pendingCreate
+                local.syncState = local.serverId == nil ? .pendingCreate : .pendingUpdate
+                return error
             }
-        } else {
+        case .softDeleteLocal:
             local.softDeleted = true
             local.syncState = .synced
+            return nil
         }
     }
 
@@ -611,10 +689,14 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
     }
 
     private func memoEquivalent(_ local: Memo, _ remote: Memo) -> Bool {
+        guard local.rowStatus == remote.rowStatus else { return false }
+        return memoFieldsExcludingRowStatusEquivalent(local, remote)
+    }
+
+    private func memoFieldsExcludingRowStatusEquivalent(_ local: Memo, _ remote: Memo) -> Bool {
         guard local.location == remote.location else { return false }
         guard local.content == remote.content else { return false }
         guard local.pinned == remote.pinned else { return false }
-        guard local.rowStatus == remote.rowStatus else { return false }
         guard local.visibility == remote.visibility else { return false }
         return resourceSignature(local.resources) == resourceSignature(remote.resources)
     }
@@ -685,8 +767,9 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                       latest.syncState == .pendingCreate else { return }
                 _ = try await self.pushLocalCreate(local: latest, tags: nil)
                 try self.store.save()
+                self.recordBackgroundSuccess()
             } catch {
-                return
+                self.recordBackgroundError(error, context: "pushConflictedDuplicate")
             }
         }
 
@@ -695,14 +778,18 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
 
     // MARK: - Push Helpers
 
-    private func pushLocalMemo(local: StoredMemo, tags: [String]?) async throws -> Memo {
+    private func pushLocalMemo(local: StoredMemo, tags: [String]?, remoteBaseline: Memo? = nil) async throws -> Memo {
         if local.serverId == nil || local.syncState == .pendingCreate {
             return try await pushLocalCreate(local: local, tags: tags)
         }
-        return try await pushLocalUpdate(local: local, tags: tags)
+        return try await pushLocalUpdate(local: local, tags: tags, remoteBaseline: remoteBaseline)
     }
 
     private func pushLocalCreate(local: StoredMemo, tags: [String]?) async throws -> Memo {
+        let desiredPinned = local.pinned
+        let desiredRowStatus = local.rowStatus
+        let desiredUpdatedAt = local.updatedAt
+
         let resources = try await ensureUploadedResources(for: local, memoServerId: nil)
         let memo = memoFromStored(local)
         let created = try await remote.createMemo(
@@ -719,16 +806,69 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             created: created,
             syncedAt: created.updatedAt
         )
+        if desiredPinned != created.pinned || desiredRowStatus != created.rowStatus {
+            local.pinned = desiredPinned
+            local.rowStatus = desiredRowStatus
+            local.syncState = .pendingUpdate
+        }
         try store.save()
-        return created
+
+        var finalMemo = created
+        if desiredPinned != finalMemo.pinned, let serverId = local.serverId {
+            let updated = try await remote.updateMemo(
+                remoteId: serverId,
+                content: nil,
+                resources: nil,
+                visibility: nil,
+                tags: nil,
+                pinned: desiredPinned,
+                updatedAt: desiredUpdatedAt,
+                location: nil
+            )
+            finalMemo = updated
+            applyRemoteMemo(updated, syncedAt: updated.updatedAt)
+            if desiredRowStatus != finalMemo.rowStatus {
+                local.rowStatus = desiredRowStatus
+                local.syncState = .pendingUpdate
+            }
+            try store.save()
+        }
+
+        if desiredRowStatus != finalMemo.rowStatus, let serverId = local.serverId {
+            try await pushRowStatus(remoteId: serverId, rowStatus: desiredRowStatus)
+            finalMemo.rowStatus = desiredRowStatus
+            local.rowStatus = desiredRowStatus
+            local.syncState = .synced
+            try store.save()
+        }
+
+        return finalMemo
     }
 
-    private func pushLocalUpdate(local: StoredMemo, tags: [String]?) async throws -> Memo {
+    private func pushLocalUpdate(local: StoredMemo, tags: [String]?, remoteBaseline: Memo? = nil) async throws -> Memo {
         guard let serverId = local.serverId else { throw MoeMemosError.invalidParams }
-        let resources = try await ensureUploadedResources(for: local, memoServerId: serverId)
+        let desiredRowStatus = local.rowStatus
 
+        let hasUnuploadedResources = local.resources.contains {
+            $0.accountKey == accountKey && !$0.softDeleted && $0.serverId == nil && $0.syncState != .pendingDelete
+        }
+        if let remoteBaseline,
+           !hasUnuploadedResources,
+           memoFieldsExcludingRowStatusEquivalent(memoFromStored(local), remoteBaseline) {
+            if desiredRowStatus != remoteBaseline.rowStatus {
+                try await pushRowStatus(remoteId: serverId, rowStatus: desiredRowStatus)
+            }
+            var updated = remoteBaseline
+            updated.rowStatus = desiredRowStatus
+            local.rowStatus = desiredRowStatus
+            local.syncState = .synced
+            local.lastSyncedAt = remoteBaseline.updatedAt
+            return updated
+        }
+
+        let resources = try await ensureUploadedResources(for: local, memoServerId: serverId)
         let memo = memoFromStored(local)
-        let updated = try await remote.updateMemo(
+        var updated = try await remote.updateMemo(
             remoteId: serverId,
             content: memo.content,
             resources: resources,
@@ -739,7 +879,50 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             location: supportsMemoLocations ? memo.location.map(MemoLocationUpdate.set) ?? .remove : nil
         )
         applyRemoteMemo(updated, syncedAt: updated.updatedAt)
+
+        if updated.rowStatus != desiredRowStatus {
+            local.rowStatus = desiredRowStatus
+            local.syncState = .pendingUpdate
+            try store.save()
+
+            try await pushRowStatus(remoteId: serverId, rowStatus: desiredRowStatus)
+            updated.rowStatus = desiredRowStatus
+            local.rowStatus = desiredRowStatus
+            local.syncState = .synced
+        }
+
         return updated
+    }
+
+    private func pushRowStatus(remoteId: String, rowStatus: RowStatus) async throws {
+        switch rowStatus {
+        case .archived:
+            try await remote.archiveMemo(remoteId: remoteId)
+        case .normal:
+            try await remote.restoreMemo(remoteId: remoteId)
+        }
+    }
+
+    private func deleteMemoIgnoringNotFound(remoteId: String) async throws {
+        do {
+            try await remote.deleteMemo(remoteId: remoteId)
+        } catch {
+            if SyncErrorClassifier.isAlreadyDeletedOnServer(error) {
+                return
+            }
+            throw error
+        }
+    }
+
+    private func deleteResourceIgnoringNotFound(remoteId: String) async throws {
+        do {
+            try await remote.deleteResource(remoteId: remoteId)
+        } catch {
+            if SyncErrorClassifier.isAlreadyDeletedOnServer(error) {
+                return
+            }
+            throw error
+        }
     }
 
     private func ensureUploadedResources(for local: StoredMemo, memoServerId: String?) async throws -> [Resource] {
@@ -775,11 +958,6 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         local.syncState = .synced
         local.lastSyncedAt = remoteResource.updatedAt
         return remoteResource
-    }
-
-    private func remoteDelete(remoteId: String?) async throws {
-        guard let remoteId else { return }
-        try await remote.deleteMemo(remoteId: remoteId)
     }
 
     private func loadResourceData(stored: StoredResource) throws -> Data? {

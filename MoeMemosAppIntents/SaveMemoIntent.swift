@@ -58,8 +58,12 @@ struct SaveMemoIntent: AppIntent {
                 resourceIds.append(created.id)
             }
         }
-        let memo = try await service.createMemo(content: content, visibility: nil, resources: resourceIds, tags: nil)
+        let tags = MemoTagExtractor.extract(from: content)
+        let memo = try await service.createMemo(content: content, visibility: nil, resources: resourceIds, tags: tags)
         await MemoSpotlightIndex.shared.flush()
+        if let pendingService = service as? PendingOperationsService {
+            await pendingService.waitForPendingOperations(timeout: .seconds(10))
+        }
         guard let entity = MemoEntity(memo: memo, accountName: account.nickname) else {
             throw MemoIntentError.notFound
         }
