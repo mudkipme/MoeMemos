@@ -27,6 +27,7 @@ public final class MemosV0Service: RemoteService {
             serverURL: hostURL,
             transport: URLSessionTransport(configuration: .init(session: urlSession)),
             middlewares: [
+                HTTPStatusErrorMiddleware(),
                 AccessTokenAuthenticationMiddleware(accessToken: accessToken)
             ]
         )
@@ -37,13 +38,17 @@ public final class MemosV0Service: RemoteService {
     }
     
     public func listMemos() async throws -> [Memo] {
-        let resp = try await client.listMemos(query: .init(rowStatus: .NORMAL))
+        let resp = try await normalizeClientError {
+            try await client.listMemos(query: .init(rowStatus: .NORMAL))
+        }
         let memos = try resp.ok.body.json
         return memos.map { $0.toMemo(host: hostURL) }
     }
     
     public func listArchivedMemos() async throws -> [Memo] {
-        let resp = try await client.listMemos(query: .init(rowStatus: .ARCHIVED))
+        let resp = try await normalizeClientError {
+            try await client.listMemos(query: .init(rowStatus: .ARCHIVED))
+        }
         let memos = try resp.ok.body.json
         return memos.map { $0.toMemo(host: hostURL) }
     }
@@ -53,7 +58,9 @@ public final class MemosV0Service: RemoteService {
         if let pageToken = pageToken, let pageTokenNumber = Int(pageToken) {
             offset = pageTokenNumber
         }
-        let resp = try await client.listPublicMemos(query: .init(limit: pageSize, offset: offset))
+        let resp = try await normalizeClientError {
+            try await client.listPublicMemos(query: .init(limit: pageSize, offset: offset))
+        }
         let memos = try resp.ok.body.json
         return (memos.map { $0.toMemo(host: hostURL) }, String(offset + pageSize))
     }
@@ -73,12 +80,14 @@ public final class MemosV0Service: RemoteService {
         if let visibility = visibility {
             memosVisibility = .init(memoVisibility: visibility)
         }
-        let resp = try await client.createMemo(body: .json(.init(
-            content: content,
-            createdTs: createdAt.map { Int($0.timeIntervalSince1970) },
-            resourceIdList: resources.compactMap { if let remoteId = $0.remoteId { return Int(remoteId) } else { return nil } },
-            visibility: memosVisibility
-        )))
+        let resp = try await normalizeClientError {
+            try await client.createMemo(body: .json(.init(
+                content: content,
+                createdTs: createdAt.map { Int($0.timeIntervalSince1970) },
+                resourceIdList: resources.compactMap { if let remoteId = $0.remoteId { return Int(remoteId) } else { return nil } },
+                visibility: memosVisibility
+            )))
+        }
         let memo = try resp.ok.body.json
         
         if let tags = tags {
@@ -103,7 +112,9 @@ public final class MemosV0Service: RemoteService {
         guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
         var memo: MemosV0Memo?
         if let pinned = pinned {
-            let resp = try await client.organizeMemo(path: .init(memoId: id), body: .json(.init(pinned: pinned)))
+            let resp = try await normalizeClientError {
+                try await client.organizeMemo(path: .init(memoId: id), body: .json(.init(pinned: pinned)))
+            }
             memo = try resp.ok.body.json
             // the response might be incorrect
             memo?.pinned = pinned
@@ -114,12 +125,14 @@ public final class MemosV0Service: RemoteService {
             if let visibility = visibility {
                 memosVisibility = .init(memoVisibility: visibility)
             }
-            let resp = try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
-                content: content,
-                resourceIdList: resources?.compactMap { if let remoteId = $0.remoteId { return Int(remoteId) } else { return nil } },
-                updatedTs: updatedAt.map { Int($0.timeIntervalSince1970) },
-                visibility: memosVisibility
-            )))
+            let resp = try await normalizeClientError {
+                try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
+                    content: content,
+                    resourceIdList: resources?.compactMap { if let remoteId = $0.remoteId { return Int(remoteId) } else { return nil } },
+                    updatedTs: updatedAt.map { Int($0.timeIntervalSince1970) },
+                    visibility: memosVisibility
+                )))
+            }
             memo = try resp.ok.body.json
         }
         
@@ -135,34 +148,44 @@ public final class MemosV0Service: RemoteService {
     
     public func deleteMemo(remoteId: String) async throws {
         guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
-        let resp = try await client.deleteMemo(path: .init(memoId: id))
+        let resp = try await normalizeClientError {
+            try await client.deleteMemo(path: .init(memoId: id))
+        }
         _ = try resp.ok
     }
     
     public func archiveMemo(remoteId: String) async throws {
         guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
-        let resp = try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
-            rowStatus: .ARCHIVED
-        )))
+        let resp = try await normalizeClientError {
+            try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
+                rowStatus: .ARCHIVED
+            )))
+        }
         _ = try resp.ok
     }
     
     public func restoreMemo(remoteId: String) async throws {
         guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
-        let resp = try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
-            rowStatus: .NORMAL
-        )))
+        let resp = try await normalizeClientError {
+            try await client.updateMemo(path: .init(memoId: id), body: .json(.init(
+                rowStatus: .NORMAL
+            )))
+        }
         _ = try resp.ok
     }
     
     public func listTags() async throws -> [Tag] {
-        let resp = try await client.listTags()
+        let resp = try await normalizeClientError {
+            try await client.listTags()
+        }
         let tags = try resp.ok.body.json
         return tags.map { Tag(name: $0) }
     }
     
     public func listResources() async throws -> [Resource] {
-        let resp = try await client.listResources()
+        let resp = try await normalizeClientError {
+            try await client.listResources()
+        }
         let resources = try resp.ok.body.json
         return resources.map { $0.toResource(host: hostURL) }
     }
@@ -171,19 +194,25 @@ public final class MemosV0Service: RemoteService {
         let multipartBody: MultipartBody<Operations.uploadResource.Input.Body.multipartFormPayload> = [
             .undocumented(.init(name: "file", filename: filename, headerFields: [.contentType: type], body: .init(data)))
         ]
-        let resp = try await client.uploadResource(body: .multipartForm(multipartBody))
+        let resp = try await normalizeClientError {
+            try await client.uploadResource(body: .multipartForm(multipartBody))
+        }
         let resource = try resp.ok.body.json
         return resource.toResource(host: hostURL)
     }
     
     public func deleteResource(remoteId: String) async throws {
         guard let id = Int(remoteId) else { throw MoeMemosError.invalidParams }
-        let resp = try await client.deleteResource(path: .init(resourceId: id))
+        let resp = try await normalizeClientError {
+            try await client.deleteResource(path: .init(resourceId: id))
+        }
         _ = try resp.ok
     }
     
     public func getCurrentUser() async throws -> Models.UserSnapshot {
-        let resp = try await client.getCurrentUser()
+        let resp = try await normalizeClientError {
+            try await client.getCurrentUser()
+        }
         switch resp {
         case .ok(let ok):
             let memosUser = try ok.body.json
@@ -201,7 +230,9 @@ public final class MemosV0Service: RemoteService {
     }
     
     public func getStatus() async throws -> MemosV0Status {
-        let resp = try await client.getStatus()
+        let resp = try await normalizeClientError {
+            try await client.getStatus()
+        }
         return try resp.ok.body.json
     }
     

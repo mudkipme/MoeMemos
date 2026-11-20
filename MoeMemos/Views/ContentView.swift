@@ -41,6 +41,7 @@ struct ContentView: View {
                 }
             })
             .task {
+                memosViewModel.startConnectivityMonitoring()
                 await loadCurrentUser()
             }
             .task(id: accountManager.currentAccount) {

@@ -33,8 +33,12 @@ import SwiftData
 
     @MainActor
     func reloadArchivedMemos() async throws {
+        let accountKey = accountManager.currentAccount?.key
         let service = try self.service
-        archivedMemoList = try await service.listArchivedMemos()
+        let loaded = try await service.listArchivedMemos()
+        guard accountManager.currentAccount?.key == accountKey else { return }
+        archivedMemoList = loaded
+        memosViewModel.refreshSyncStatus()
     }
     
     @MainActor
@@ -44,6 +48,7 @@ import SwiftData
         archivedMemoList = archivedMemoList.filter({ memo in
             memo.id != id
         })
+        memosViewModel.refreshSyncStatus()
     }
     
     @MainActor
@@ -53,18 +58,23 @@ import SwiftData
         archivedMemoList = archivedMemoList.filter({ memo in
             memo.id != id
         })
+        memosViewModel.refreshSyncStatus()
     }
     
     @MainActor
     private func startBackgroundSync() {
-        guard BackgroundSyncThrottle.canStartSync() else { return }
+        let accountKey = accountManager.currentAccount?.key
+        guard BackgroundSyncThrottle.canStartSync(for: accountKey) else { return }
 
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
                 try await self.memosViewModel.syncNow(trigger: .automatic)
+                guard self.accountManager.currentAccount?.key == accountKey else { return }
                 let service = try self.service
-                self.archivedMemoList = try await service.listArchivedMemos()
+                let loaded = try await service.listArchivedMemos()
+                guard self.accountManager.currentAccount?.key == accountKey else { return }
+                self.archivedMemoList = loaded
             } catch {
                 // Keep the current list when background sync fails.
                 return

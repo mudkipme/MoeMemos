@@ -100,7 +100,7 @@ class ShareViewController: SLComposeServiceViewController {
         // Share extensions are short-lived. Wait for queued remote operations so
         // this post does not stay local-only until the main app opens.
         if let pendingService = memos as? PendingOperationsService {
-            await pendingService.waitForPendingOperations()
+            await pendingService.waitForPendingOperations(timeout: .seconds(10))
         }
     }
     

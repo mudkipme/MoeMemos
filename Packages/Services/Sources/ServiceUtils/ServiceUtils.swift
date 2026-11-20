@@ -10,6 +10,68 @@ import DataURI
 import Models
 import CryptoKit
 import UniformTypeIdentifiers
+import OpenAPIRuntime
+import HTTPTypes
+
+private struct ErrorMessagePayload: Decodable {
+    let message: String?
+}
+
+/// Converts non-2xx HTTP responses into typed `MoeMemosError` values so sync and UI layers
+/// can reliably distinguish auth expiry (401/403), missing resources (404), and transient 5xx errors.
+public struct HTTPStatusErrorMiddleware: ClientMiddleware {
+    public init() {}
+
+    public func intercept(
+        _ request: HTTPRequest,
+        body: HTTPBody?,
+        baseURL: URL,
+        operationID: String,
+        next: (HTTPRequest, HTTPBody?, URL) async throws -> (HTTPResponse, HTTPBody?)
+    ) async throws -> (HTTPResponse, HTTPBody?) {
+        let (response, responseBody) = try await next(request, body, baseURL)
+        let statusCode = response.status.code
+        guard (200..<300).contains(statusCode) else {
+            if statusCode == 401 || statusCode == 403 {
+                throw MoeMemosError.accessTokenExpired
+            }
+            var message: String?
+            if let responseBody,
+               let data = try? await Data(collecting: responseBody, upTo: 65_536),
+               let payload = try? JSONDecoder().decode(ErrorMessagePayload.self, from: data),
+               let decodedMessage = payload.message,
+               !decodedMessage.isEmpty {
+                message = decodedMessage
+            }
+            throw MoeMemosError.invalidStatusCode(statusCode, message)
+        }
+        return (response, responseBody)
+    }
+}
+
+/// Unwraps `OpenAPIRuntime.ClientError` to expose the underlying `MoeMemosError` or `URLError`.
+public func normalizeClientError<T>(
+    isolation: isolated (any Actor)? = #isolation,
+    _ operation: () async throws -> T
+) async throws -> T {
+    do {
+        return try await operation()
+    } catch let clientError as ClientError {
+        if let memosError = clientError.underlyingError as? MoeMemosError {
+            throw memosError
+        }
+        if let urlError = clientError.underlyingError as? URLError {
+            throw urlError
+        }
+        if let statusCode = clientError.response?.status.code {
+            if statusCode == 401 || statusCode == 403 {
+                throw MoeMemosError.accessTokenExpired
+            }
+            throw MoeMemosError.invalidStatusCode(statusCode, nil)
+        }
+        throw clientError
+    }
+}
 
 public func downloadData(urlSession: URLSession, url: URL, middleware: (@Sendable (URLRequest) async throws -> URLRequest)? = nil) async throws -> Data {
     if url.scheme == "data" {

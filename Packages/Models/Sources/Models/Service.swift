@@ -81,11 +81,80 @@ public protocol Service: Sendable {
 @MainActor
 public protocol SyncableService: Sendable {
     func sync() async throws
+    func pendingChangesCount() -> Int
+    var lastSyncError: Error? { get }
+    func setStateChangeHandler(_ handler: (@MainActor () -> Void)?)
 }
 
 @MainActor
 public protocol PendingOperationsService: Sendable {
     func waitForPendingOperations() async
+    func waitForPendingOperations(timeout: Duration) async
+}
+
+public extension SyncableService {
+    func pendingChangesCount() -> Int { 0 }
+    var lastSyncError: Error? { nil }
+    func setStateChangeHandler(_ handler: (@MainActor () -> Void)?) {}
+}
+
+@MainActor
+private final class PendingWaitState {
+    private var continuation: CheckedContinuation<Void, Never>?
+    private var timerTask: Task<Void, Never>?
+    private var completed = false
+
+    func start(
+        continuation: CheckedContinuation<Void, Never>,
+        timeout: Duration,
+        operation: @escaping @MainActor () async -> Void
+    ) {
+        if completed {
+            continuation.resume()
+            return
+        }
+        self.continuation = continuation
+        timerTask = Task { @MainActor [weak self] in
+            do {
+                try await Task.sleep(for: timeout)
+            } catch {
+                return
+            }
+            self?.finish()
+        }
+        Task { @MainActor [weak self] in
+            await operation()
+            self?.finish()
+        }
+    }
+
+    func finish() {
+        guard !completed else { return }
+        completed = true
+        timerTask?.cancel()
+        timerTask = nil
+        let continuation = self.continuation
+        self.continuation = nil
+        continuation?.resume()
+    }
+}
+
+public extension PendingOperationsService {
+    func waitForPendingOperations(timeout: Duration) async {
+        guard !Task.isCancelled else { return }
+        let state = PendingWaitState()
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                state.start(continuation: continuation, timeout: timeout) {
+                    await self.waitForPendingOperations()
+                }
+            }
+        } onCancel: {
+            Task { @MainActor in
+                state.finish()
+            }
+        }
+    }
 }
 
 public extension RemoteService {
