@@ -210,6 +210,86 @@ final class SyncingRemoteServiceTests: XCTestCase {
         XCTAssertNil(service.lastSyncError)
     }
 
+    func testDeletingMemoDiscardsAttachmentWhenUploadHasFailed() async throws {
+        let container = try makeContainer()
+        let remote = StubSyncRemote()
+        remote.createResourceErrorToThrow = MoeMemosError.invalidStatusCode(413, nil)
+        let service = SyncingRemoteService(remote: remote, context: container.mainContext, accountKey: "remote")
+        let store = LocalStore(context: container.mainContext, accountKey: "remote")
+        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try Data([0]).write(to: fileURL)
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+        let resource = store.createLocalResource(
+            filename: "photo.png",
+            size: 1,
+            mimeType: "image/png",
+            createdAt: .now,
+            updatedAt: .now,
+            urlString: fileURL.absoluteString,
+            localPath: fileURL.path,
+            syncState: .pendingCreate
+        )
+        try store.save()
+
+        let memo = try await service.createMemo(content: "Attachment", visibility: .private, resources: [resource.id], tags: nil)
+        await service.waitForPendingOperations()
+        XCTAssertEqual(service.pendingChangesCount(), 2)
+        XCTAssertNotNil(service.lastSyncError)
+
+        remote.beforeCreateResource = {
+            try await service.deleteMemo(id: memo.id)
+            XCTAssertEqual(service.pendingChangesCount(), 0)
+            XCTAssertNil(service.lastSyncError)
+        }
+        defer { remote.beforeCreateResource = nil }
+
+        try await service.sync()
+
+        XCTAssertTrue(resource.softDeleted)
+        XCTAssertEqual(memo.syncState, .synced)
+        XCTAssertEqual(service.pendingChangesCount(), 0)
+        XCTAssertNil(service.lastSyncError)
+
+        try await service.sync()
+        XCTAssertEqual(remote.createResourceAttempts, 2)
+        XCTAssertTrue(remote.memos.isEmpty)
+    }
+
+    func testSyncDiscardsPendingAttachmentOfPreviouslyDeletedMemo() async throws {
+        let container = try makeContainer()
+        let remote = StubSyncRemote()
+        let service = SyncingRemoteService(remote: remote, context: container.mainContext, accountKey: "remote")
+        let store = LocalStore(context: container.mainContext, accountKey: "remote")
+        let memo = store.createLocalMemo(
+            content: "Deleted",
+            pinned: false,
+            rowStatus: .normal,
+            visibility: .private,
+            createdAt: .now,
+            updatedAt: .now,
+            softDeleted: true,
+            syncState: .synced
+        )
+        let resource = store.createLocalResource(
+            filename: "photo.png",
+            size: 1,
+            mimeType: "image/png",
+            createdAt: .now,
+            updatedAt: .now,
+            urlString: "file:///photo.png",
+            memo: memo,
+            syncState: .pendingCreate
+        )
+        try store.save()
+        XCTAssertEqual(service.pendingChangesCount(), 1)
+
+        try await service.sync()
+
+        XCTAssertTrue(resource.softDeleted)
+        XCTAssertEqual(service.pendingChangesCount(), 0)
+        XCTAssertEqual(remote.createResourceAttempts, 0)
+    }
+
     func testDeleteResourceFromNonSyncedStateMarksPendingDelete() async throws {
         let container = try makeContainer()
         let remote = StubSyncRemote()
@@ -337,6 +417,8 @@ final class SyncingRemoteServiceTests: XCTestCase {
 private final class StubSyncRemote: RemoteService {
     var errorToThrow: Error?
     var createErrorToThrow: Error?
+    var createResourceErrorToThrow: Error?
+    var beforeCreateResource: (() async throws -> Void)?
     var deleteErrorToThrow: Error?
     var createDelay: Duration?
 
@@ -344,6 +426,7 @@ private final class StubSyncRemote: RemoteService {
     var deletedResourceIds: [String] = []
     var updateCallCount = 0
     var createAttempts = 0
+    var createResourceAttempts = 0
     private var nextId = 1
 
     var supportsMemoLocations: Bool { true }
@@ -442,7 +525,9 @@ private final class StubSyncRemote: RemoteService {
     func listResources() async throws -> [Resource] { [] }
 
     func createResource(filename: String, data: Data, type: String, memoRemoteId: String?) async throws -> Resource {
-        if let error = errorToThrow { throw error }
+        createResourceAttempts += 1
+        try await beforeCreateResource?()
+        if let error = createResourceErrorToThrow ?? errorToThrow { throw error }
         return Resource(
             filename: filename,
             size: data.count,
