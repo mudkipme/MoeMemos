@@ -14,12 +14,15 @@ import ServiceUtils
 
 @MainActor
 public final class MemosV1Service: RemoteService, MemoCommentService {
+    private static let memoParentVersion = SemanticVersion(major: 26, minor: 11, patch: 2)
+
     private let hostURL: URL
     private let urlSession: URLSession
     private let client: Client
     private let accessToken: String?
     private let userId: String?
     private let grpcSetCookieMiddleware = GRPCSetCookieMiddleware()
+    private var hasMemoParentAPI: Bool?
     
     public nonisolated init(hostURL: URL, accessToken: String?, userId: String?, transport: (any ClientTransport)? = nil) {
         self.hostURL = hostURL
@@ -45,32 +48,21 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
     }
     
     public func listMemos() async throws -> [Memo] {
-        guard let userId = userId else { throw MoeMemosError.notLogin }
-        var memos = [Memo]()
-        var nextPageToken: String? = nil
-        
-        repeat {
-            let resp = try await normalizeClientError {
-                try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .NORMAL, filter: "creator == \"users/\(userId)\""))
-            }
-            let data = try resp.ok.body.json
-            memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
-            nextPageToken = data.nextPageToken
-        } while (nextPageToken?.isEmpty == false)
-        
-        return memos
+        try await listOwnMemos(state: .NORMAL)
     }
-    
+
     public func listArchivedMemos() async throws -> [Memo] {
+        try await listOwnMemos(state: .ARCHIVED)
+    }
+
+    private func listOwnMemos(state: Operations.MemoService_ListMemos.Input.Query.statePayload) async throws -> [Memo] {
         guard let userId = userId else { throw MoeMemosError.notLogin }
+        let filter = try await topLevelMemoFilter("creator == \"users/\(userId)\"")
         var memos = [Memo]()
         var nextPageToken: String? = nil
-        
+
         repeat {
-            let resp = try await normalizeClientError {
-                try await client.MemoService_ListMemos(query: .init(pageSize: 200, pageToken: nextPageToken, state: .ARCHIVED, filter: "creator == \"users/\(userId)\""))
-            }
-            let data = try resp.ok.body.json
+            let data = try await listMemoPage(pageSize: 200, pageToken: nextPageToken, state: state, filter: filter)
             memos += data.memos?.map { $0.toMemo(host: hostURL) } ?? []
             nextPageToken = data.nextPageToken
         } while (nextPageToken?.isEmpty == false)
@@ -79,15 +71,30 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
     }
     
     public func listWorkspaceMemos(pageSize: Int, pageToken: String?) async throws -> (list: [Memo], nextPageToken: String?) {
-        let resp = try await normalizeClientError {
-            try await client.MemoService_ListMemos(query: .init(pageSize: Int32(pageSize), pageToken: pageToken, filter: "visibility in [\"PUBLIC\", \"PROTECTED\"]"))
-        }
-        let data = try resp.ok.body.json
+        let filter = try await topLevelMemoFilter("visibility in [\"PUBLIC\", \"PROTECTED\"]")
+        let data = try await listMemoPage(pageSize: Int32(pageSize), pageToken: pageToken, filter: filter)
         let memos = data.memos ?? []
         let result = await memosWithUsers(memos)
 
         let nextPageToken = data.nextPageToken?.isEmpty == true ? nil : data.nextPageToken
         return (result, nextPageToken)
+    }
+
+    private func listMemoPage(
+        pageSize: Int32,
+        pageToken: String?,
+        state: Operations.MemoService_ListMemos.Input.Query.statePayload? = nil,
+        filter: String?
+    ) async throws -> Components.Schemas.ListMemosResponse {
+        let response = try await normalizeClientError {
+            try await client.MemoService_ListMemos(query: .init(pageSize: pageSize, pageToken: pageToken, state: state, filter: filter))
+        }
+        return try response.ok.body.json
+    }
+
+    private func topLevelMemoFilter(_ filter: String? = nil) async throws -> String? {
+        guard try await usesMemoParentAPI() else { return filter }
+        return filter.map { "\($0) && parent == null" } ?? "parent == null"
     }
     
     public func createMemo(
@@ -109,20 +116,22 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
             return resource
         }
         
-        let resp = try await normalizeClientError {
-            try await client.MemoService_CreateMemo(body: .json(.init(
-                createTime: createdAt,
-                updateTime: updatedAt,
-                content: content,
-                visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
-                attachments: memosResources,
-                location: location.map { .init(value1: .init(placeholder: $0.placeholder, latitude: $0.latitude, longitude: $0.longitude)) }
-            )))
+        let memo = try await createMemo(.init(
+            createTime: createdAt,
+            updateTime: updatedAt,
+            content: content,
+            visibility: visibility.map(MemosV1Visibility.init(memoVisibility:)),
+            attachments: memosResources,
+            location: location.map { .init(value1: .init(placeholder: $0.placeholder, latitude: $0.latitude, longitude: $0.longitude)) }
+        ))
+        return memo.toMemo(host: hostURL)
+    }
+
+    private func createMemo(_ memo: MemosV1Memo) async throws -> MemosV1Memo {
+        let response = try await normalizeClientError {
+            try await client.MemoService_CreateMemo(body: .json(memo))
         }
-        let memo = try resp.ok.body.json
-        
-        let result = memo.toMemo(host: hostURL)
-        return result
+        return try response.ok.body.json
     }
     
     public func updateMemo(
@@ -174,26 +183,48 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
     }
 
     public func listMemoComments(memoRemoteId: String) async throws -> [Memo] {
+        let memoId = getId(remoteId: memoRemoteId)
+        let filter: String?
+        if try await usesMemoParentAPI() {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .withoutEscapingSlashes
+            let parent = try String(decoding: encoder.encode("memos/\(memoId)"), as: UTF8.self)
+            filter = "parent == \(parent)"
+        } else {
+            filter = nil
+        }
         var comments = [MemosV1Memo]()
         var nextPageToken: String? = nil
 
         repeat {
-            let resp = try await normalizeClientError {
-                try await client.MemoService_ListMemoComments(path: .init(memo: getId(remoteId: memoRemoteId)), query: .init(pageSize: 200, pageToken: nextPageToken, orderBy: nil))
+            if let filter {
+                let data = try await listMemoPage(pageSize: 200, pageToken: nextPageToken, filter: filter)
+                comments += data.memos ?? []
+                nextPageToken = data.nextPageToken
+            } else {
+                let resp = try await normalizeClientError {
+                    try await client.MemoService_ListMemoComments(path: .init(memo: memoId), query: .init(pageSize: 200, pageToken: nextPageToken, orderBy: nil))
+                }
+                let data = try resp.ok.body.json
+                comments += data.comments ?? data.memos ?? []
+                nextPageToken = data.nextPageToken
             }
-            let data = try resp.ok.body.json
-            comments += data.comments ?? data.memos ?? []
-            nextPageToken = data.nextPageToken
         } while (nextPageToken?.isEmpty == false)
 
         return await memosWithUsers(comments)
     }
 
     public func createMemoComment(memoRemoteId: String, content: String) async throws -> Memo {
-        let resp = try await normalizeClientError {
-            try await client.MemoService_CreateMemoComment(path: .init(memo: getId(remoteId: memoRemoteId)), query: .init(commentId: nil), body: .json(.init(content: content)))
+        let memoId = getId(remoteId: memoRemoteId)
+        let comment: MemosV1Memo
+        if try await usesMemoParentAPI() {
+            comment = try await createMemo(.init(content: content, parent: "memos/\(memoId)"))
+        } else {
+            let resp = try await normalizeClientError {
+                try await client.MemoService_CreateMemoComment(path: .init(memo: memoId), query: .init(commentId: nil), body: .json(.init(content: content)))
+            }
+            comment = try resp.ok.body.json
         }
-        let comment = try resp.ok.body.json
         return await memosWithUsers([comment]).first ?? comment.toMemo(host: hostURL)
     }
     
@@ -213,8 +244,9 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
 
     public func listTags() async throws -> [Tag] {
         guard let userId = userId else { throw MoeMemosError.notLogin }
+        let filter = try await topLevelMemoFilter()
         let resp = try await normalizeClientError {
-            try await client.UserService_GetUserStats(path: .init(user: "\(userId)"))
+            try await client.UserService_GetUserStats(path: .init(user: userId), query: .init(filter: filter))
         }
         let data = try resp.ok.body.json
         
@@ -289,7 +321,17 @@ public final class MemosV1Service: RemoteService, MemoCommentService {
         let resp = try await normalizeClientError {
             try await client.InstanceService_GetInstanceProfile()
         }
-        return try resp.ok.body.json
+        let profile = try resp.ok.body.json
+        let version = profile.version.flatMap(SemanticVersion.init)
+        hasMemoParentAPI = version.map { $0 >= Self.memoParentVersion } ?? false
+        return profile
+    }
+
+    private func usesMemoParentAPI() async throws -> Bool {
+        if hasMemoParentAPI == nil {
+            _ = try await getWorkspaceProfile()
+        }
+        return hasMemoParentAPI == true
     }
     
     public func download(url: URL, mimeType: String? = nil) async throws -> URL {

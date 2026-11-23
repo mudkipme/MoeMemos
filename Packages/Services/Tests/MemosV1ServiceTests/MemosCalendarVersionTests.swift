@@ -8,23 +8,31 @@ import XCTest
 @MainActor
 final class MemosCalendarVersionTests: XCTestCase {
     func testCalendarVersionsSupportLoginSyncCommentsTagsAndWrites() async throws {
-        for (version, status) in [("26.10.0", HTTPResponse.Status.gone), ("26.11.0", .notFound)] {
+        let versions: [(String, HTTPResponse.Status)] = [
+            ("26.10.0", .gone), ("26.11.0", .notFound), ("26.11.1", .notFound), ("26.11.2", .notFound)
+        ]
+        for (version, status) in versions {
+            let hasMemoParent = version == "26.11.2"
             let transport = CompatibilityTransport(version: version, legacyStatus: status)
             let service = MemosV1Service(hostURL: URL(string: "https://memos.example/notes")!, accessToken: "test-token", userId: "alice", transport: transport)
 
-            let profile = try await service.getWorkspaceProfile()
-            XCTAssertEqual(profile.version, version)
+            let memos = try await service.listMemos()
+            XCTAssertEqual(memos.map(\.content), ["Memo"])
             let user = try await service.getCurrentUser()
             XCTAssertEqual(user.remoteId, "alice")
             XCTAssertEqual(user.defaultVisibility, .local)
-            let memos = try await service.listMemos()
-            XCTAssertEqual(memos.map(\.content), ["Memo"])
-            let comments = try await service.listMemoComments(memoRemoteId: "memos/one")
+            let archived = try await service.listArchivedMemos()
+            XCTAssertEqual(archived.map(\.content), ["Memo"])
+            let workspace = try await service.listWorkspaceMemos(pageSize: 20, pageToken: nil)
+            XCTAssertEqual(workspace.list.map(\.content), ["Memo"])
+            let comments = try await service.listMemoComments(memoRemoteId: "memos/one|legacy")
             XCTAssertEqual(comments.map(\.content), ["Comment", "Next comment"])
             let tags = try await service.listTags()
             XCTAssertEqual(tags.map(\.name), ["swift"])
             let created = try await service.createMemo(content: "Created", visibility: .private, resources: [], tags: nil, createdAt: nil, updatedAt: nil)
             XCTAssertEqual(created.content, "Created")
+            let comment = try await service.createMemoComment(memoRemoteId: "memos/one|legacy", content: "Reply")
+            XCTAssertEqual(comment.content, "Reply")
             let attachment = try await service.createResource(filename: "note.txt", data: Data("file".utf8), type: "text/plain", memoRemoteId: nil)
             XCTAssertEqual(attachment.filename, "note.txt")
             try await service.archiveMemo(remoteId: "memos/one")
@@ -33,14 +41,40 @@ final class MemosCalendarVersionTests: XCTestCase {
 
             let requests = await transport.requests
             XCTAssertEqual(requests.filter { $0.path == "/api/v1/instance/profile" }.count, 1)
+            XCTAssertEqual(requests.filter { $0.path == "/api/instance/profile" }.count, 1)
             XCTAssertTrue(requests.dropFirst().allSatisfy { $0.path?.hasPrefix("/api/") == true && $0.path?.hasPrefix("/api/v1/") == false })
             XCTAssertTrue(requests.allSatisfy { $0.headerFields[.authorization] == "Bearer test-token" })
-            XCTAssertTrue(requests.contains { $0.path?.contains("pageToken=next") == true })
+
+            let memoQueries = requests.filter { $0.method == .get && $0.path?.hasPrefix("/api/memos?") == true }
+            let topLevel = hasMemoParent ? " && parent == null" : ""
+            XCTAssertEqual(memoQueries.map { queryValue("filter", in: $0.path) }, [
+                "creator == \"users/alice\"\(topLevel)",
+                "creator == \"users/alice\"\(topLevel)",
+                "visibility in [\"PUBLIC\", \"PROTECTED\"]\(topLevel)"
+            ] + (hasMemoParent ? Array(repeating: "parent == \"memos/one\"", count: 2) : []))
+            XCTAssertEqual(queryValue("state", in: memoQueries.dropFirst().first?.path), "ARCHIVED")
+            let stats = requests.first { $0.path?.hasPrefix("/api/users/alice:getStats") == true }
+            XCTAssertNotNil(stats)
+            XCTAssertEqual(queryValue("filter", in: stats?.path), hasMemoParent ? "parent == null" : nil)
+            let commentPath = hasMemoParent ? "/api/memos" : "/api/memos/one/comments"
+            let expectedPostPaths = ["/api/memos", commentPath, "/api/attachments"]
+            XCTAssertEqual(requests.filter { $0.method == .post }.compactMap(\.path), expectedPostPaths)
+            let paginatedCommentRequest = try XCTUnwrap(requests.first { queryValue("pageToken", in: $0.path) == "next" })
+            XCTAssertTrue(paginatedCommentRequest.path?.hasPrefix("\(commentPath)?") == true)
+            if hasMemoParent {
+                XCTAssertFalse(requests.contains { $0.path?.contains("/comments") == true })
+            }
+
             let writes = await transport.writes
-            XCTAssertEqual(writes.count, 4)
+            XCTAssertEqual(writes.count, 5)
             let memoBody = try XCTUnwrap(writes.first)
             let memoJSON = try JSONSerialization.jsonObject(with: memoBody) as? [String: Any]
             XCTAssertEqual(memoJSON?["content"] as? String, "Created")
+            XCTAssertNil(memoJSON?["parent"])
+            let commentBody = try XCTUnwrap(writes.dropFirst().first)
+            let commentJSON = try JSONSerialization.jsonObject(with: commentBody) as? [String: Any]
+            XCTAssertEqual(commentJSON?["content"] as? String, "Reply")
+            XCTAssertEqual(commentJSON?["parent"] as? String, hasMemoParent ? "memos/one" : nil)
             let bases = await transport.baseURLs
             XCTAssertTrue(bases.allSatisfy { $0.absoluteString == "https://memos.example/notes" })
         }
@@ -138,13 +172,12 @@ private actor CompatibilityTransport: ClientTransport {
         case "UserService_GetUser":
             return response(["name": "users/alice", "username": "alice", "role": "USER", "state": "NORMAL"])
         case "MemoService_ListMemos":
+            if version == "26.11.2", queryValue("filter", in: request.path)?.hasPrefix("parent == \"") == true {
+                return commentPage("memos", path: request.path)
+            }
             return response(["memos": [["name": "memos/one", "content": "Memo"]]])
         case "MemoService_ListMemoComments":
-            let nextPage = request.path?.contains("pageToken=next") == true
-            return response([
-                legacyStatus == nil ? "memos" : "comments": [["name": "memos/comment", "content": nextPage ? "Next comment" : "Comment", "creator": "users/alice"]],
-                "nextPageToken": nextPage ? "" : "next"
-            ])
+            return commentPage(legacyStatus == nil ? "memos" : "comments", path: request.path)
         case "UserService_GetUserStats":
             return response([legacyStatus == nil ? "tagCount" : "tagCounts": ["swift": 2]])
         default:
@@ -152,7 +185,19 @@ private actor CompatibilityTransport: ClientTransport {
         }
     }
 
+    private func commentPage(_ key: String, path: String?) -> (HTTPResponse, HTTPBody?) {
+        let nextPage = queryValue("pageToken", in: path) == "next"
+        return response([
+            key: [["name": "memos/comment", "content": nextPage ? "Next comment" : "Comment", "creator": "users/alice"]],
+            "nextPageToken": nextPage ? "" : "next"
+        ])
+    }
+
     private func response(_ json: [String: Any], status: HTTPResponse.Status = .ok) -> (HTTPResponse, HTTPBody?) {
         (HTTPResponse(status: status, headerFields: [.contentType: "application/json"]), HTTPBody(try! JSONSerialization.data(withJSONObject: json)))
     }
+}
+
+private func queryValue(_ name: String, in path: String?) -> String? {
+    URLComponents(string: path ?? "")?.queryItems?.first { $0.name == name }?.value
 }
