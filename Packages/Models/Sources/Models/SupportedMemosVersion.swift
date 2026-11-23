@@ -12,7 +12,7 @@ public enum SupportedMemosVersion {
     public static let minimumV1 = "0.27.0"
     public static let maximumV1 = "0.31.0"
     public static let minimumCalendar = "26.10.0"
-    public static let maximumCalendar = "26.11.1"
+    public static let maximumCalendar = "26.11.2"
 
     public static func localizedSupportedVersionsMessage() -> String {
         let format = NSLocalizedString("compat.supported-versions", comment: "Supported Memos versions for Moe Memos")

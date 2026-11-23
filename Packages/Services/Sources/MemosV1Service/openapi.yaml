@@ -857,6 +857,11 @@ paths:
                 required: true
                 schema:
                     type: string
+            -   name: filter
+                in: query
+                description: A CEL expression selecting the memos to count.
+                schema:
+                    type: string
             responses:
                 '200':
                     description: OK
@@ -1143,10 +1148,9 @@ components:
                     -   "$ref": "#/components/schemas/Memo_Property"
                     description: Output only. The computed properties of the memo.
                 parent:
-                    readOnly: true
                     type: string
                     description: |-
-                        Output only. The name of the parent memo.
+                        The parent memo. Set on creation to create a comment on Memos 26.11.2 and later.
                          Format: memos/{memo}
                 snippet:
                     readOnly: true
