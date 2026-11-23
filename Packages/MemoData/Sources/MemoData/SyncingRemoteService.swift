@@ -136,7 +136,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                       latest.serverId == nil,
                       latest.softDeleted == false,
                       latest.syncState == .pendingCreate else { return }
-                _ = try await self.pushLocalCreate(local: latest, tags: memoTags)
+                guard try await self.pushLocalCreate(local: latest, tags: memoTags) != nil else { return }
                 try self.store.save()
                 self.recordBackgroundSuccess()
             } catch {
@@ -182,7 +182,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                 guard let latest = self.store.fetchMemo(id: memoId),
                       latest.softDeleted == false,
                       latest.syncState != .synced else { return }
-                _ = try await self.pushLocalMemo(local: latest, tags: tags)
+                guard try await self.pushLocalMemo(local: latest, tags: tags) != nil else { return }
                 try self.store.save()
                 self.recordBackgroundSuccess()
             } catch {
@@ -202,8 +202,13 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         if nextState == .synced {
             stored.lastSyncedAt = .now
         }
+        let discardedAttachments = discardPendingAttachments(of: stored, at: stored.updatedAt)
         try store.save()
-        notifyStateChanged()
+        if discardedAttachments && nextState == .synced && pendingChangesCount() == 0 {
+            recordBackgroundSuccess()
+        } else {
+            notifyStateChanged()
+        }
 
         guard nextState == .pendingDelete else { return }
 
@@ -255,7 +260,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                       latest.syncState != .synced else { return }
 
                 if latest.serverId == nil || transition.requiresFullPush || latest.updatedAt != mutationDate {
-                    _ = try await self.pushLocalMemo(local: latest, tags: nil)
+                    guard try await self.pushLocalMemo(local: latest, tags: nil) != nil else { return }
                 } else if let serverId = latest.serverId {
                     try await self.pushRowStatus(remoteId: serverId, rowStatus: targetStatus)
                     latest.syncState = .synced
@@ -313,15 +318,18 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         let resourceId = stored.persistentModelID
         enqueueOperation { [weak self] in
             guard let self else { return }
+            guard let latest = self.store.fetchResource(id: resourceId),
+                  latest.serverId == nil,
+                  !latest.softDeleted,
+                  latest.memo?.softDeleted != true,
+                  latest.syncState == .pendingCreate else { return }
             do {
-                guard let latest = self.store.fetchResource(id: resourceId),
-                      latest.serverId == nil,
-                      latest.softDeleted == false,
-                      latest.syncState == .pendingCreate else { return }
                 _ = try await self.pushLocalResourceCreate(local: latest)
+                guard !latest.softDeleted else { return }
                 try self.store.save()
 
                 if let memo = latest.memo,
+                   !memo.softDeleted,
                    memo.serverId != nil,
                    memo.syncState == .synced {
                     memo.syncState = .pendingUpdate
@@ -330,6 +338,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                 }
                 self.recordBackgroundSuccess()
             } catch {
+                guard !latest.softDeleted else { return }
                 self.recordBackgroundError(error, context: "createResource")
             }
         }
@@ -475,6 +484,9 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             let localMemos = self.store.allMemos(includeDeleted: true)
             var localByServerId: [String: StoredMemo] = [:]
             for memo in localMemos {
+                if memo.softDeleted {
+                    self.discardPendingAttachments(of: memo, at: syncedAt)
+                }
                 if let serverId = memo.serverId {
                     localByServerId[serverId] = memo
                 }
@@ -517,8 +529,9 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                         local.lastSyncedAt = syncedAt
                     } else {
                         do {
-                            let pushed = try await self.pushLocalMemo(local: local, tags: nil)
-                            self.applyRemoteMemo(pushed, syncedAt: syncedAt)
+                            if let pushed = try await self.pushLocalMemo(local: local, tags: nil) {
+                                self.applyRemoteMemo(pushed, syncedAt: syncedAt)
+                            }
                         } catch {
                             if local.serverId == nil {
                                 local.syncState = .pendingCreate
@@ -559,6 +572,21 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
     }
 
     // MARK: - Sync Helpers
+
+    @discardableResult
+    private func discardPendingAttachments(of memo: StoredMemo, at date: Date) -> Bool {
+        let pendingAttachments = memo.resources.filter {
+            $0.accountKey == accountKey && $0.serverId == nil && $0.syncState == .pendingCreate
+        }
+        for resource in pendingAttachments {
+            resource.softDeleted = true
+            resource.syncState = .synced
+            resource.updatedAt = date
+            resource.lastSyncedAt = date
+            resource.localPath = nil
+        }
+        return !pendingAttachments.isEmpty
+    }
 
     private func syncCurrentUserStrict() async throws {
         let snapshot = try await remote.getCurrentUser()
@@ -614,8 +642,9 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             return nil
         case .pushLocal:
             do {
-                let updated = try await pushLocalMemo(local: local, tags: nil, remoteBaseline: remote)
-                applyRemoteMemo(updated, syncedAt: syncedAt)
+                if let updated = try await pushLocalMemo(local: local, tags: nil, remoteBaseline: remote) {
+                    applyRemoteMemo(updated, syncedAt: syncedAt)
+                }
                 try store.save()
                 return nil
             } catch {
@@ -655,8 +684,9 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             local.syncState = .pendingCreate
             local.lastSyncedAt = nil
             do {
-                let pushed = try await pushLocalMemo(local: local, tags: nil)
-                applyRemoteMemo(pushed, syncedAt: syncedAt)
+                if let pushed = try await pushLocalMemo(local: local, tags: nil) {
+                    applyRemoteMemo(pushed, syncedAt: syncedAt)
+                }
                 try store.save()
                 return nil
             } catch {
@@ -765,7 +795,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
                       latest.serverId == nil,
                       latest.softDeleted == false,
                       latest.syncState == .pendingCreate else { return }
-                _ = try await self.pushLocalCreate(local: latest, tags: nil)
+                guard try await self.pushLocalCreate(local: latest, tags: nil) != nil else { return }
                 try self.store.save()
                 self.recordBackgroundSuccess()
             } catch {
@@ -778,19 +808,19 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
 
     // MARK: - Push Helpers
 
-    private func pushLocalMemo(local: StoredMemo, tags: [String]?, remoteBaseline: Memo? = nil) async throws -> Memo {
+    private func pushLocalMemo(local: StoredMemo, tags: [String]?, remoteBaseline: Memo? = nil) async throws -> Memo? {
         if local.serverId == nil || local.syncState == .pendingCreate {
             return try await pushLocalCreate(local: local, tags: tags)
         }
         return try await pushLocalUpdate(local: local, tags: tags, remoteBaseline: remoteBaseline)
     }
 
-    private func pushLocalCreate(local: StoredMemo, tags: [String]?) async throws -> Memo {
+    private func pushLocalCreate(local: StoredMemo, tags: [String]?) async throws -> Memo? {
         let desiredPinned = local.pinned
         let desiredRowStatus = local.rowStatus
         let desiredUpdatedAt = local.updatedAt
 
-        let resources = try await ensureUploadedResources(for: local, memoServerId: nil)
+        guard let resources = try await ensureUploadedResources(for: local, memoServerId: nil) else { return nil }
         let memo = memoFromStored(local)
         let created = try await remote.createMemo(
             content: memo.content,
@@ -845,7 +875,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         return finalMemo
     }
 
-    private func pushLocalUpdate(local: StoredMemo, tags: [String]?, remoteBaseline: Memo? = nil) async throws -> Memo {
+    private func pushLocalUpdate(local: StoredMemo, tags: [String]?, remoteBaseline: Memo? = nil) async throws -> Memo? {
         guard let serverId = local.serverId else { throw MoeMemosError.invalidParams }
         let desiredRowStatus = local.rowStatus
 
@@ -866,7 +896,7 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
             return updated
         }
 
-        let resources = try await ensureUploadedResources(for: local, memoServerId: serverId)
+        guard let resources = try await ensureUploadedResources(for: local, memoServerId: serverId) else { return nil }
         let memo = memoFromStored(local)
         var updated = try await remote.updateMemo(
             remoteId: serverId,
@@ -925,14 +955,19 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         }
     }
 
-    private func ensureUploadedResources(for local: StoredMemo, memoServerId: String?) async throws -> [Resource] {
-        let storedResources = local.resources
-            .filter { $0.accountKey == accountKey && !$0.softDeleted }
-
-        for res in storedResources where res.serverId == nil && res.syncState != .pendingDelete {
-            _ = try await pushLocalResourceCreate(local: res, memoServerId: memoServerId)
+    private func ensureUploadedResources(for local: StoredMemo, memoServerId: String?) async throws -> [Resource]? {
+        for resource in local.resources where resource.accountKey == accountKey
+            && !resource.softDeleted && resource.serverId == nil && resource.syncState != .pendingDelete {
+            guard !local.softDeleted else { return nil }
+            do {
+                _ = try await pushLocalResourceCreate(local: resource, memoServerId: memoServerId)
+            } catch {
+                guard !local.softDeleted else { return nil }
+                throw error
+            }
         }
 
+        guard !local.softDeleted else { return nil }
         return local.resources
             .filter { $0.accountKey == accountKey && !$0.softDeleted }
             .compactMap { $0.toResource() }
@@ -955,8 +990,12 @@ final class SyncingRemoteService: Service, SyncableService, PendingOperationsSer
         )
         local.serverId = remoteResource.remoteId
         local.urlString = remoteResource.url.absoluteString
-        local.syncState = .synced
-        local.lastSyncedAt = remoteResource.updatedAt
+        if local.softDeleted {
+            try await deleteResource(id: local.id)
+        } else {
+            local.syncState = .synced
+            local.lastSyncedAt = remoteResource.updatedAt
+        }
         return remoteResource
     }
 
